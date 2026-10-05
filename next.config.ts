@@ -53,6 +53,11 @@ const seguranca = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Build da Hostinger (05/10): o Turbopack pede ~1,5 GB e era morto por falta
+  // de memória em "Creating an optimized production build", sem mensagem. Daí
+  // o webpack (`next build --webpack`, no package.json), com economia de
+  // memória e um processo só na geração das páginas (eram 15): cabe em 768 MB.
+  experimental: { cpus: 1, webpackMemoryOptimizations: true },
   // A raiz do repositório tem outro package-lock.json; a aplicação é esta pasta.
   turbopack: { root: path.join(__dirname) },
   async headers() {
