@@ -1,0 +1,276 @@
+@import "tailwindcss";
+@import "shadcn/tailwind.css";
+@import "./vidro.css";
+@import "./movimento.css";
+@import "./nichos.css";
+
+/* ============================================================
+   ATLAS DIGITAL — folha global
+   Paleta da marca (contexto de produto, seção 3): navy, bronze e
+   creme, acrescida de neutros quentes para as superfícies claras.
+   Três tons de seção, por atributo data-tom:
+     escuro — navy, a assinatura da marca (capa, demonstrador, fim);
+     claro  — névoa neutra quente, onde se lê e se decide;
+     branco — superfície limpa, para alternar com a névoa.
+   Os tokens nomeiam função, no vocabulário do shadcn; a cor fica no
+   valor. Contrastes medidos sobre o fundo do próprio tom.
+   ============================================================ */
+
+@theme inline {
+  /* As fontes do site de 28/08, em todo aparelho (pedido do usuário em
+     05/10; app/layout.tsx): font-display, Archivo Black — títulos h1 e h2,
+     números, preços e monogramas; font-sub, Archivo — lide (300) e
+     subtítulos h3 (500); font-sans, Inter — o texto, a interface e os
+     rótulos. De 03 a 05/10, San Francisco e Inter (regra 1 das diretrizes). */
+  --font-sans: var(--font-texto);
+  --font-display: var(--font-titulo);
+  --font-sub: var(--font-subtitulo);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-deep: var(--deep);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.55);
+}
+
+/* Coluna de 1.120 px, como no site de 28/08. */
+@theme {
+  --container-pagina: 70rem;
+  --ease-atlas: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-mola: cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+/* A escala tipográfica do Atlas (regra 1, "escalas rigorosas"): sete
+   degraus, cada um com a sua entrelinha — text-rotulo, text-nota,
+   text-corpo, text-destaque, text-numero, text-titulo, text-display.
+   Nenhum tamanho fora deles nas páginas do Atlas (até 03/10, eram 62). Os
+   três maiores são fluidos e chegam ao teto perto de 1.150 px. Os sites de
+   demonstração (app/demos/) e as telas dos nichos têm a escala da
+   identidade de cada um. Espaçamento entre letras, o do site de 28/08:
+   tracking-titulo no Archivo Black (h1, h2 e números), tracking-sub no
+   Archivo (lide, perguntas), o do corpo (abaixo) no texto, tracking-wider
+   nos rótulos em caixa-alta. */
+@theme {
+  --tracking-titulo: -0.032em;
+  --tracking-sub: -0.015em;
+
+  --text-rotulo: 0.75rem; /* 12 px: rótulos, legendas, sobrescritos */
+  --text-rotulo--line-height: 1.35;
+  --text-nota: 0.875rem; /* 14 px: interface, notas, metadados */
+  --text-nota--line-height: 1.5;
+  --text-corpo: 1.0625rem; /* 17 px: texto corrido, o tamanho do corpo */
+  --text-corpo--line-height: 1.6;
+  --text-destaque: clamp(1.125rem, 1rem + 0.5vw, 1.3125rem); /* 18 a 21 px: lide e subtítulos */
+  --text-destaque--line-height: 1.45;
+  --text-numero: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem); /* 24 a 36 px: números e preços */
+  --text-numero--line-height: 1.1;
+  --text-titulo: clamp(2rem, 1.3rem + 3vw, 3.5rem); /* 32 a 56 px: títulos de seção */
+  --text-titulo--line-height: 1.05;
+  --text-display: clamp(2.5rem, 1.4rem + 5vw, 5rem); /* 40 a 80 px: a capa e as aberturas */
+  --text-display--line-height: 1;
+}
+
+/* Tons da cena, os mesmos em toda a página (da branchCto): a moldura e o
+   meio vêm dos degradês do site de 28/08; a luz fria, da aurora da capa;
+   a luz quente, do bronze claro. A cena da chamada final saiu em 03/10
+   (regra 3 das diretrizes) e voltou no mesmo dia, a pedido do usuário. */
+:root {
+  --moldura: #061729; /* fundo mais profundo: a base da chamada final */
+  --meio: #123457; /* passagem entre a moldura e o navy */
+  --luz-fria: rgb(35 90 150 / 0.42);
+  --luz-quente: rgb(217 167 107 / 0.16);
+}
+
+/* Tom escuro: navy, o padrão da página. */
+:root,
+[data-tom="escuro"] {
+  --background: #0f2a47;
+  --foreground: #f3efec; /* 12,73:1 */
+  --deep: #08203b;
+  --card: #132f50;
+  --card-foreground: #f3efec;
+  --popover: #08203b;
+  --popover-foreground: #f3efec;
+  --primary: #c08a4a; /* ação: 4,84:1 */
+  --primary-hover: #d9a76b; /* navy sobre ele: 6,7:1 */
+  --primary-foreground: #08203b;
+  --secondary: #f3efec;
+  --secondary-foreground: #0f2a47;
+  --muted: #183a62;
+  --muted-foreground: #9fb2c6; /* 6,70:1 */
+  --accent: #d9a76b; /* vínculo: 6,72:1 */
+  --border: rgb(243 239 236 / 0.13); /* divisória */
+  --input: rgb(243 239 236 / 0.45); /* contorno de controle: 3,6:1 */
+  --ring: #d9a76b;
+  --radius: 1.125rem;
+  /* Vidro sobre o escuro */
+  --vidro: rgb(19 47 80 / 0.52);
+  --vidro-borda: rgb(243 239 236 / 0.16);
+  --vidro-brilho: rgb(255 255 255 / 0.16);
+  --sombra: rgb(3 12 24 / 0.5);
+  /* Borda de luz dos blocos no escuro (no lugar da sombra), a versão
+     acesa no hover e no foco e o orbe que segue o ponteiro (.vd-luz). */
+  --aresta: rgb(243 239 236 / 0.1);
+  --aresta-acesa: rgb(217 167 107 / 0.55);
+  --orbe: rgb(217 167 107 / 0.2);
+  /* Vidro líquido (receita do plugin liquid-glass): a tinta é incolor — a
+     cor vem de trás —, e o aro são três realces internos que leem como
+     uma borda polida. */
+  --vidro-liquido-tinta-topo: rgb(255 255 255 / 0.06);
+  --vidro-liquido-tinta-base: rgb(179 179 179 / 0.06);
+  --vidro-liquido-aro-topo: rgb(255 255 255 / 0.5);
+  --vidro-liquido-aro-fio: rgb(255 255 255 / 0.1);
+  --vidro-liquido-aro-base: rgb(255 255 255 / 0.06);
+  --vidro-liquido-contorno: rgb(255 255 255 / 0.08);
+  --vidro-liquido-sombra: 0 18px 40px rgb(0 0 0 / 0.35);
+}
+
+/* Tons claros: o claro (névoa neutra quente) e o branco (superfície limpa).
+   Só o fundo, o cartão e o apagado mudam entre os dois (abaixo). */
+[data-tom="claro"],
+[data-tom="branco"] {
+  --foreground: #0f2a47;
+  --card-foreground: #0f2a47;
+  --secondary: #0f2a47;
+  --secondary-foreground: #f3efec;
+  --muted-foreground: #4b5f75; /* 5,9:1 no claro; 6,3:1 no branco */
+  --accent: #8a5a24; /* 5,3:1 no claro; 5,6:1 no branco */
+  /* Divisória translúcida (regra 3), no tom quente das opacas de antes
+     (#e2ddd7 no claro, #e6e1db no branco): sobre a névoa dá #dfd9d3; sobre
+     o branco e os cartões brancos, #e7e4e0. */
+  --border: rgb(98 72 45 / 0.15);
+  --input: rgb(15 42 71 / 0.6); /* 3,9:1 no claro */
+  --ring: #8a5a24;
+  --vidro: rgb(255 255 255 / 0.62);
+  --vidro-borda: rgb(255 255 255 / 0.75);
+  --vidro-brilho: rgb(255 255 255 / 0.7);
+  --sombra: rgb(15 42 71 / 0.14);
+  --aresta: rgb(15 42 71 / 0.07);
+  --aresta-acesa: rgb(138 90 36 / 0.45);
+  --orbe: rgb(217 167 107 / 0.22);
+  --vidro-liquido-aro-topo: rgb(255 255 255 / 0.55);
+  --vidro-liquido-aro-fio: rgb(255 255 255 / 0.12);
+  --vidro-liquido-contorno: rgb(15 42 71 / 0.12);
+  --vidro-liquido-sombra: 0 10px 30px rgb(15 42 71 / 0.1);
+}
+[data-tom="claro"] {
+  --background: #f5f3f0;
+  --card: #ffffff;
+  --muted: #ebe7e2;
+}
+[data-tom="branco"] {
+  --background: #ffffff;
+  --card: #f5f3f0;
+  --muted: #f0ece7;
+}
+
+@layer base {
+  /* Dentro de camada, para que utilitários bg-* possam sobrepor. */
+  [data-tom] {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  * {
+    @apply border-border;
+  }
+  html {
+    background: var(--background);
+    scroll-behavior: smooth;
+    /* Sem o realce azul do toque no Android: cada peça responde ao toque
+       com a sua própria cor (vidro.css, .vd-bloco:active; os botões). */
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    font-size: var(--text-corpo);
+    line-height: var(--text-corpo--line-height);
+    letter-spacing: -0.011em;
+    overflow-x: clip;
+    /* Peso que a fonte não tem não é inventado: o Archivo Black só tem o
+       400, o Archivo, de 300 a 500 (app/fontes/README.md). */
+    font-synthesis-weight: none;
+  }
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  /* Destino de âncora (seção, bloco) recebe o foco da navegação interna
+     (components/ilhas/ancoras.tsx) sem ser um controle: sem contorno. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+  /* Toda âncora reserva a altura do cabeçalho (72 px) e um respiro. */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+  /* Títulos como no site de 28/08: h1 e h2 em Archivo Black, compactos;
+     subtítulos h3 em Archivo Medium. O tamanho vem da escala (text-titulo,
+     text-display). De 03 a 05/10, os dois na família do texto, em
+     semibold. Os sites de demonstração trocam a família, o peso e o
+     espaçamento (app/demos/demos.css), mas não a entrelinha. */
+  h1,
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: var(--tracking-titulo);
+    line-height: 1;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--font-sub);
+    font-weight: 500;
+    letter-spacing: -0.018em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Desabilitado (regra 4): todo controle que pode ficar inativo mostra que
+     está — apagado e sem a mão do clique. Na base: o controle que precisa
+     de outro desenho (o botão de pausa, que some) o escreve por cima. */
+  :is(button, input, select, textarea):disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/* Duas seções seguidas no mesmo tom não somam dois respiros: a segunda
+   começa sem o de cima, e o intervalo entre os dois conteúdos é um respiro
+   só, o mesmo em todo o site (components/estrutura.tsx, Secao). Fora das
+   camadas, para vencer os utilitários de espaçamento de cada seção. Só
+   entre <section> (as seções do Atlas e as aberturas das páginas): as
+   seções podem não ser filhas diretas do <main> (transição de página). */
+section[data-tom="escuro"] + section[data-tom="escuro"],
+section[data-tom="claro"] + section[data-tom="claro"],
+section[data-tom="branco"] + section[data-tom="branco"] {
+  padding-top: 0;
+}

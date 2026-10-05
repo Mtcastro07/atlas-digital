@@ -1,0 +1,172 @@
+/* ============================================================
+   ATLAS DIGITAL — nichos e simulador
+   Vindo da branchCto na fusão com a branchCEO (01/10/2026). Serve às
+   telas fotografadas dos demonstrativos (components/telas/), à vitrine
+   (secoes/vitrine.tsx), às prévias e ao simulador de planos
+   (secoes/escada.tsx, secoes/planos.tsx, ilhas/painel-do-simulador.tsx)
+   e aos sites de app/demos/. Cores sempre pelos tokens do tom de cada nicho.
+   ============================================================ */
+
+@theme inline {
+  /* Cor da marca do nicho (telas dos demonstrativos e sites). */
+  --color-marca: var(--marca);
+}
+
+/* Tons dos demonstrativos: a identidade de cada nicho, a mesma dos demos
+   (demos/producao/nicho_*.py) — a paleta do Atlas não vai para o demo
+   (ESTEIRA, estágio 2). Usados nas telas fotografadas (components/telas/)
+   e no palco de cada nicho na vitrine (components/secoes/vitrine.tsx).
+   Contrastes calculados sobre o fundo de cada tom. */
+[data-tom="deposito"] {
+  /* Grafite de cimento curado; laranja de sinalização de obra para a ação; creme de cal. */
+  --background: #1b2128;
+  --foreground: #f2efe9; /* 14,1:1 */
+  --deep: #12171c;
+  --card: #242c35;
+  --card-foreground: #f2efe9;
+  --muted: #2e3843;
+  --muted-foreground: #a3adb8; /* 7,1:1 */
+  --primary: #e0662b;
+  --primary-foreground: #12171c; /* 5,2:1 */
+  --secondary: #f2efe9;
+  --secondary-foreground: #1b2128;
+  --accent: #f08b54; /* 6,6:1 */
+  --border: rgb(242 239 233 / 0.13);
+  --input: rgb(242 239 233 / 0.3);
+  --ring: #f08b54;
+}
+[data-tom="nutricao"] {
+  /* Palha e verde de horta; o damasco, único tom quente, fica com a ação. */
+  --background: #f7f4ed;
+  --foreground: #2e4636; /* 9,4:1 */
+  --deep: #ece7dc;
+  --card: #ffffff;
+  --card-foreground: #2e4636;
+  --muted: #f1ede3;
+  --muted-foreground: #5a6b5f; /* 5,2:1 */
+  --primary: #96501f;
+  --primary-foreground: #ffffff; /* 6,1:1 */
+  --secondary: #2e4636;
+  --secondary-foreground: #f7f4ed; /* 9,4:1 */
+  --accent: #96501f; /* 5,5:1 */
+  --border: #e2dcd1;
+  --input: rgb(46 70 54 / 0.4);
+  --ring: #96501f;
+}
+[data-tom="barbearia"] {
+  /* Couro, osso e latão (barbearia, segunda versão do demo): couro escuro
+     de fundo, osso no texto, latão só na ação e no traço da marca. */
+  --background: #17110e;
+  --foreground: #efe6d6; /* 15,1:1 */
+  --deep: #100b09;
+  --card: #221a16;
+  --card-foreground: #efe6d6;
+  --muted: #2c221d;
+  --muted-foreground: #b3a591; /* 7,7:1 */
+  --primary: #c79d55;
+  --primary-foreground: #17110e; /* 7,5:1 */
+  --secondary: #7a2c22; /* couro: a faixa e os detalhes */
+  --secondary-foreground: #efe6d6; /* 7,7:1 */
+  --accent: #dcbb7c; /* 10,2:1 */
+  --border: rgb(239 230 214 / 0.12);
+  --input: rgb(239 230 214 / 0.3);
+  --ring: #dcbb7c;
+}
+/* Cores da marca de cada nicho (components/nichos/marcas.tsx): valem no
+   tom do nicho e também em peça solta sobre outro tom (data-nicho: o
+   cabeçalho de cada nicho na vitrine). */
+[data-tom="deposito"],
+[data-nicho="deposito"] {
+  --marca: #e0662b; /* o quadro laranja dos blocos */
+  --marca-tinta: #12171c; /* 5,2:1 */
+}
+[data-tom="nutricao"],
+[data-nicho="nutricao"] {
+  --marca: #a9bfa8; /* verde de horta claro: o círculo e as manchas */
+  --marca-tinta: #2e4636; /* 5,2:1 */
+  --marca-ponto: #96501f; /* o grão de damasco */
+}
+[data-tom="barbearia"],
+[data-nicho="barbearia"] {
+  --marca: #c79d55; /* o latão do selo */
+  --marca-tinta: #17110e;
+}
+
+@layer components {
+  /* ---------- identidade dos nichos ----------
+     Padrões gerados das marcas dos demonstrativos, nas telas e no palco de
+     cada nicho na vitrine (sem figura: a ilustração está suspensa;
+     ESTEIRA, VI.3 — textura e gradiente gerados). Cores do tom do nicho. */
+  /* Depósito: a faixa zebrada de obra, laranja e grafite a 45°. */
+  .vd-zebrada {
+    background: repeating-linear-gradient(-45deg, var(--primary) 0 9px, var(--deep) 9px 18px);
+  }
+  /* Depósito: a parede de blocos em amarração, quase apagada. */
+  .vd-blocos {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='56' height='28'><path d='M0 .5H56M0 14.5H56M.5 0V14M28.5 14V28' stroke='%23f2efe9' stroke-opacity='.06' fill='none'/></svg>");
+    background-size: 56px 28px;
+  }
+  /* Depósito: a trena sob as medidas da calculadora — um traço a cada
+     6 px e uma marca maior a cada 30 px, no laranja claro do tom. */
+  .vd-trena {
+    background:
+      repeating-linear-gradient(90deg, var(--accent) 0 1px, transparent 1px 30px) left bottom / 100% 9px no-repeat,
+      repeating-linear-gradient(90deg, color-mix(in srgb, var(--accent) 50%, transparent) 0 1px, transparent 1px 6px) left bottom / 100% 5px no-repeat;
+  }
+  /* Nutrição: manchas suaves de verde de horta e de damasco sobre a palha.
+     Círculos que se apagam antes da borda do elemento: nenhuma aresta reta. */
+  .vd-mancha {
+    background:
+      radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--marca) 60%, transparent) 0%, transparent 52%),
+      radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--primary) 16%, transparent) 0%, transparent 42%);
+  }
+}
+
+/* ---------- simulador (components/ilhas/painel-do-simulador.tsx) ----------
+   O diálogo entra e sai só por opacidade; o fundo da página escurece e
+   para de rolar enquanto ele está aberto. */
+.vd-simulador {
+  opacity: 0;
+  transition:
+    opacity 450ms var(--ease-atlas),
+    overlay 450ms allow-discrete,
+    display 450ms allow-discrete;
+}
+.vd-simulador[open] {
+  opacity: 1;
+}
+@starting-style {
+  .vd-simulador[open] {
+    opacity: 0;
+  }
+}
+.vd-simulador::backdrop {
+  background: rgb(4 14 28 / 0);
+  transition:
+    background-color 450ms var(--ease-atlas),
+    overlay 450ms allow-discrete,
+    display 450ms allow-discrete;
+}
+.vd-simulador[open]::backdrop {
+  background: rgb(4 14 28 / 0.78);
+}
+@starting-style {
+  .vd-simulador[open]::backdrop {
+    background: rgb(4 14 28 / 0);
+  }
+}
+html.simulador-aberto {
+  overflow: hidden;
+}
+/* A moldura escura dos celulares do simulador (a mesma de qualquer aparelho). */
+.vd-moldura-de-celular {
+  background: #0b0d10;
+  border-color: #0b0d10;
+}
+/* O fundo da prévia de cada site: o tom do próprio site, com uma luz de canto. */
+.vd-previa {
+  background:
+    radial-gradient(90% 70% at 85% 0%, color-mix(in srgb, var(--primary) 30%, transparent), transparent 70%),
+    radial-gradient(70% 60% at 0% 100%, color-mix(in srgb, var(--foreground) 10%, transparent), transparent 70%),
+    var(--background);
+}

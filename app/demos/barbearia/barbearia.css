@@ -1,0 +1,497 @@
+/* Barbearia Santa Rosa (plano Completo), prefixo bb-. Carregado só pelas
+   páginas deste site (app/demos/barbearia/layout.tsx).
+
+   A identidade: noite e latão, como uma sala de cinema. Quase preto, osso
+   no texto, latão na ação e no traço; couro (vinho) nos detalhes.
+   Instrument Serif nos títulos (alta, condensada, de alto contraste, com
+   itálico), Jost no texto e nos rótulos (geométrica, a letra dos letreiros
+   de barbearia). O 3D é o centro: um palco em WebGL fixo atrás de todas as
+   páginas (.bb-palco, ilha Palco3D), que desenha as fichas da casa e as
+   vira uma na outra com a rolagem; as seções são transparentes para ele
+   aparecer. Por cima, peças em CSS 3D ligadas à rolagem (--p, ilha
+   CenaDeRolagem): os anéis de duração, os números em volume, as moedas da
+   equipe, o risco das ausências e o mapa que se levanta. A barra de
+   navegação é constante: fica no layout, presa no topo, em todas as
+   páginas. Decisões de 01/10, a pedido do usuário; a vedação da ESTEIRA,
+   VII, à tridimensionalidade em WebGL fica a ratificar. */
+
+[data-demo="barbearia"] {
+  --background: #0b0908; /* noite */
+  --foreground: #efe6d6; /* osso, 16,6:1 */
+  --card: #15110e;
+  --card-foreground: #efe6d6;
+  --deep: #070605;
+  --muted: #1f1915;
+  --muted-foreground: #ad9f8b; /* 7,9:1 */
+  --primary: #c9a15a; /* latão */
+  --primary-foreground: #0b0908; /* 8,6:1 */
+  --secondary: #6e2a20; /* couro */
+  --secondary-foreground: #efe6d6;
+  --accent: #e0c48a; /* latão claro, 11,6:1 */
+  --border: rgb(239 230 214 / 0.12);
+  --input: rgb(239 230 214 / 0.3);
+  --ring: #e0c48a;
+  --aresta: rgb(239 230 214 / 0.1);
+  --aresta-acesa: color-mix(in srgb, var(--primary) 55%, transparent);
+  --orbe: color-mix(in srgb, var(--primary) 20%, transparent);
+
+  font-family: var(--font-corpo), "Futura", "Century Gothic", sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+html:has([data-demo="barbearia"]) {
+  background: #0b0908;
+  color-scheme: dark;
+}
+[data-demo="barbearia"] ::selection {
+  background: #c9a15a;
+  color: #0b0908;
+}
+/* Tudo o que não é o palco fica por cima dele. A barra fica fora da regra:
+   esta folha não tem camada, e a regra venceria o fixed e o z-50 do
+   Tailwind, que têm (@layer utilities), por menor que fosse a
+   especificidade. Até 03/10, vencia: a barra "constante" rolava com a
+   página e empurrava tudo 78 px para baixo (no celular, o texto da capa
+   saía da primeira tela). */
+:where([data-demo="barbearia"]) > :where(:not(.bb-palco, .bb-barra)) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- tipografia ---------- */
+.bb-exibicao {
+  font-family: var(--font-exibicao), "Didot", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+.bb-rotulo {
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+/* O latão em degradê, para os números e os títulos de destaque. */
+.bb-latao {
+  background: linear-gradient(176deg, #f3dfa8 0%, #c9a15a 42%, #8a6730 70%, #e6cc8e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- o palco 3D ---------- */
+.bb-palco {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1400ms var(--ease-atlas);
+}
+.bb-palco[data-pronto] {
+  opacity: 1;
+}
+/* A reserva do 3D: o selo em traço, no lugar do objeto — sem script, sem
+   WebGL e, desde 03/10, enquanto o palco carrega (o estado de carga,
+   abaixo). Quando o primeiro quadro chega, ela se apaga enquanto a moeda
+   acende no mesmo lugar (até 03/10, display: none, sem passagem). */
+.bb-reserva {
+  visibility: hidden;
+  opacity: 0;
+}
+html:not(.js) .bb-reserva,
+[data-sem-3d] .bb-reserva,
+.bb-palco:not([data-pronto]) ~ main .bb-reserva {
+  visibility: visible;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bb-reserva {
+    transition:
+      opacity 900ms var(--ease-atlas),
+      visibility 0s linear 900ms;
+  }
+  html:not(.js) .bb-reserva,
+  [data-sem-3d] .bb-reserva,
+  .bb-palco:not([data-pronto]) ~ main .bb-reserva {
+    transition:
+      opacity 900ms var(--ease-atlas),
+      visibility 0s;
+  }
+}
+/* No celular e no tablet, o selo da capa fica no alto, centrado, no lugar
+   da ficha (sem 3D e enquanto o palco carrega); sem 3D, as outras cenas
+   fecham o espaço que guardavam para ela. */
+@media (max-width: 1023.98px) {
+  .bb-reserva {
+    top: 27svh;
+    right: auto;
+    left: 50%;
+    width: min(56vw, 300px);
+    translate: -50% -50%;
+  }
+  html:not(.js) [data-objeto]:not([data-com-reserva]),
+  [data-sem-3d] [data-objeto]:not([data-com-reserva]) {
+    min-height: 0;
+    padding-top: 7rem;
+  }
+}
+
+/* O estado de carga do palco (regra 4 das diretrizes, 03/10). Até 03/10,
+   até o motor desenhar o primeiro quadro (ele é baixado com o navegador
+   ocioso), o canvas ficava transparente e a reserva, escondida: no
+   celular, a metade de cima das seções com ficha (o espaço que
+   textoEmbaixo guarda para ela) ficava vazia. Agora, com script e enquanto
+   o canvas não tem data-pronto: na capa (data-com-reserva), a reserva em
+   traço se desenha no lugar da moeda; nas outras seções com ficha, o lugar
+   dela é o halo quente que o palco desenha atrás de toda ficha, com um
+   segundo halo por cima que pulsa só por opacidade (parado com movimento
+   reduzido). Um halo, não um contorno: a ficha que vem pode ser redonda,
+   oitavada ou uma placa. No primeiro quadro, o pulso para e o halo se
+   apaga enquanto a ficha acende no mesmo lugar; na troca de página, com o
+   palco pronto, ele já nasce apagado. Sem 3D (data-sem-3d), não há halo.
+   Só CSS: o motor não sabe dele. O lugar e o tamanho seguem a geometria
+   do motor (palco-3d/motor.ts, faixa e alvoDaRolagem): no celular e no
+   tablet, centrado, com o centro a 27% da altura da tela abaixo do topo da
+   seção e o diâmetro de até 62% da largura e 32% da altura; a partir de
+   1024 px, no meio da faixa do seu lado — de 95 px depois do meio da tela
+   a 40 px da borda, com 8% de folga — e até 60% da altura. */
+[data-objeto] {
+  --carga-topo: 27svh;
+  --carga-x: 50%;
+  --carga-diametro: min(62vw, 32svh);
+}
+@media (max-width: 1023.98px) {
+  /* As seções de conteúdo longo não têm ficha no celular (data-so-computador). */
+  [data-objeto][data-so-computador] {
+    --carga-diametro: 0px;
+  }
+}
+@media (min-width: 1024px) {
+  [data-objeto] {
+    --carga-topo: 50%;
+    --carga-x: calc(75% + 27.5px);
+    --carga-diametro: min(60vh, calc((50% - 135px) / 1.08));
+  }
+  [data-objeto][data-lado="esquerda"] {
+    --carga-x: calc(25% - 27.5px);
+  }
+  [data-objeto][data-lado="centro"] {
+    --carga-x: 50%;
+  }
+}
+.js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva]) {
+  position: relative;
+}
+.js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva])::before,
+.js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva])::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: var(--carga-topo);
+  left: var(--carga-x);
+  width: var(--carga-diametro);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva])::before {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--primary) 14%, transparent), color-mix(in srgb, var(--primary) 6%, transparent) 60%, transparent);
+}
+.js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva])::after {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--primary) 9%, transparent), transparent 70%);
+}
+.js:not([data-sem-3d]) .bb-palco:not([data-pronto]) ~ main [data-objeto]:not([data-com-reserva])::before {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva])::before {
+    transition: opacity 900ms var(--ease-atlas);
+  }
+  .js:not([data-sem-3d]) .bb-palco:not([data-pronto]) ~ main [data-objeto]:not([data-com-reserva])::after {
+    animation: bb-carga 1400ms ease-in-out infinite alternate;
+  }
+}
+@keyframes bb-carga {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------- a barra de navegação, constante ---------- */
+.bb-barra {
+  background: linear-gradient(rgb(11 9 8 / 0.82), rgb(11 9 8 / 0.62));
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--primary) 35%, transparent);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bb-barra {
+    background: var(--background);
+  }
+}
+.bb-nav-item {
+  position: relative;
+}
+.bb-nav-item::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.5rem;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  transform: translateX(-50%) scale(0);
+  transition: transform 450ms var(--ease-atlas);
+}
+.bb-nav-item[aria-current="page"]::after {
+  transform: translateX(-50%) scale(1);
+}
+.bb-nav-item[aria-current="page"] {
+  color: var(--accent);
+}
+
+/* O botão de latão: o brilho corre no hover, só por transform (só onde há
+   ponteiro: no toque, o hover ficava preso depois do toque). No toque, o
+   latão escurece — a resposta é a cor; o botão não anda. Em cima, o fio
+   claro, que é o relevo do metal; em volta, o brilho dourado, de 30 px a
+   80% (saiu em 03/10 pela regra 3 das Diretrizes de Design Premium e
+   voltou no mesmo dia, a pedido do usuário: é parte da identidade do
+   site). */
+.bb-botao {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, #dcb978, #b8904c);
+  color: var(--primary-foreground);
+  box-shadow: inset 0 1px 0 rgb(255 245 220 / 0.55), 0 14px 30px -18px rgb(201 161 90 / 0.8);
+}
+.bb-botao::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 40%;
+  z-index: -1;
+  background: linear-gradient(100deg, transparent, rgb(255 248 228 / 0.65), transparent);
+  transform: translateX(-140%) skewX(-18deg);
+  transition: transform 900ms var(--ease-atlas);
+}
+@media (hover: hover) {
+  .bb-botao:hover::after {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+.bb-botao:active {
+  filter: brightness(0.9);
+}
+/* O botão da página aberta (o "Agendar" da barra, na página Agendar): em
+   fio, sem o latão cheio — a página já é esta. Até 03/10, só o
+   aria-current, sem marca à vista. */
+.bb-botao[aria-current="page"] {
+  background: transparent;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 60%, transparent);
+}
+.bb-fio {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 60%, transparent);
+}
+
+/* ---------- vidro escuro (painéis sobre o palco) ----------
+   Separado da noite pelos fios de dentro (a luz de cima e a borda sutil)
+   e por uma sombra de 80 px a 90% (saiu em 03/10 pela regra 3 das
+   Diretrizes de Design Premium e voltou no mesmo dia, a pedido do
+   usuário: é parte da identidade do site). */
+.bb-vidro {
+  background: linear-gradient(160deg, rgb(26 21 17 / 0.78), rgb(11 9 8 / 0.72));
+  -webkit-backdrop-filter: blur(22px) saturate(130%);
+  backdrop-filter: blur(22px) saturate(130%);
+  box-shadow:
+    inset 0 1px 0 rgb(239 230 214 / 0.08),
+    inset 0 0 0 1px rgb(239 230 214 / 0.07),
+    0 40px 80px -40px rgb(0 0 0 / 0.9);
+}
+
+/* ---------- o capítulo: a linha que acende ---------- */
+.bb-capitulo {
+  position: relative;
+  isolation: isolate;
+}
+.bb-capitulo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 16%, transparent), transparent 70%);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  transition: transform 700ms var(--ease-atlas);
+}
+/* A linha acende no foco do teclado, no toque (de uma vez, sem a seta
+   andar) e sob o ponteiro — só onde há ponteiro: no toque, o hover ficava
+   preso depois do toque (até 03/10). */
+.bb-capitulo .bb-capitulo-seta {
+  transition: transform 600ms var(--ease-atlas);
+}
+.bb-capitulo:is(:focus-visible, :active)::before {
+  transform: scaleX(1);
+}
+.bb-capitulo:active::before {
+  transition-duration: 0ms;
+}
+.bb-capitulo:focus-visible .bb-capitulo-seta {
+  transform: translateX(10px);
+}
+@media (hover: hover) {
+  .bb-capitulo:hover::before {
+    transform: scaleX(1);
+  }
+  .bb-capitulo:hover .bb-capitulo-seta {
+    transform: translateX(10px);
+  }
+}
+
+/* ---------- a página que entra ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .bb-pagina {
+    animation: bb-pagina 1100ms var(--ease-atlas) both;
+  }
+  .ja-aberto .bb-pagina {
+    animation: none;
+  }
+}
+@keyframes bb-pagina {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+
+/* ---------- as faixas do poste e o selo ---------- */
+.bb-faixas {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--secondary) 0 16px,
+    var(--foreground) 16px 32px,
+    var(--primary) 32px 48px,
+    var(--foreground) 48px 64px
+  );
+  background-size: 90.5px 90.5px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .bb-faixas[data-ambiente] {
+    animation: bb-faixas 3.2s linear infinite;
+  }
+  .js .bb-selo-gira[data-ambiente] {
+    animation: bb-gira 48s linear infinite;
+  }
+}
+@keyframes bb-faixas {
+  to {
+    background-position: 90.5px 0;
+  }
+}
+@keyframes bb-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.bb-selo-gira {
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+.ambiente-pausado .bb-faixas,
+.ambiente-pausado .bb-selo-gira,
+.bb-faixas[data-fora],
+.bb-selo-gira[data-fora] {
+  animation-play-state: paused !important;
+}
+
+/* ---------- cenas em CSS 3D, ligadas à rolagem (--p, de 0 a 1) ---------- */
+[data-cena] {
+  --p: 1;
+}
+/* Os anéis de duração: cada um fecha, ao rolar, até a sua fração. */
+.bb-anel .bb-arco {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--fracao) * clamp(0, calc(var(--p) * 1.5 - 0.1), 1));
+}
+/* Os números ganham volume: de chapados e inclinados a extrudados. */
+.bb-extrusao {
+  position: relative;
+  display: inline-block;
+  transform-style: preserve-3d;
+  transform: perspective(900px) rotateX(calc((1 - var(--p)) * 32deg + 12deg)) rotateY(calc((1 - var(--p)) * -26deg - 16deg));
+}
+.bb-extrusao-camada {
+  position: absolute;
+  inset: 0;
+  color: color-mix(in srgb, var(--primary) calc(78% - var(--k) * 4%), black);
+  transform: translateZ(calc(var(--k) * -1.9px * var(--p)));
+}
+.bb-extrusao-face {
+  position: relative;
+  transform: translateZ(0.5px);
+}
+/* As moedas da equipe: giram de perfil para frente. */
+.bb-moeda {
+  transform: perspective(700px) rotateY(calc((1 - clamp(0, calc(var(--p) * 1.5), 1)) * 88deg));
+}
+/* As ausências: o risco atravessa cada item ao rolar. */
+.bb-risco {
+  background-image: linear-gradient(var(--primary), var(--primary));
+  background-repeat: no-repeat;
+  background-position: 0 56%;
+  background-size: calc(clamp(0, calc(var(--p) * 1.5 - var(--i) * 0.25), 1) * 100%) 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* O mapa: sai inclinado como uma planta sobre a mesa, endireita e as ruas se desenham. */
+.bb-mapa-3d {
+  transform: perspective(1400px) rotateX(calc((1 - var(--p)) * 52deg)) scale(calc(0.88 + var(--p) * 0.12));
+  transform-origin: 50% 100%;
+}
+.bb-mapa-3d .bb-rua {
+  stroke-dasharray: 1;
+  stroke-dashoffset: clamp(0, calc(1 - var(--p) * 1.25), 1);
+}
+.bb-mapa-3d .bb-alfinete {
+  opacity: clamp(0, calc(var(--p) * 2 - 1), 1);
+  transform: translateY(calc((1 - var(--p)) * -46px));
+}
+/* A linha do tempo: o fio de latão desce com a rolagem. */
+.bb-linha-fio {
+  transform: scaleY(clamp(0, var(--p), 1));
+  transform-origin: 50% 0;
+}
+
+/* ---------- traço que se desenha e texto que surge (a reserva do selo) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .bb-traco {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: bb-traco 1600ms var(--ease-atlas) forwards;
+    animation-delay: var(--atraso, 0ms);
+  }
+  .ja-aberto .bb-traco {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes bb-traco {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* O campo de data no escuro. */
+[data-demo="barbearia"] input[type="date"] {
+  color-scheme: dark;
+}

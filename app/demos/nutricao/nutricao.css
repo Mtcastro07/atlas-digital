@@ -1,0 +1,201 @@
+/* Nutrição Icaraí (plano Essencial), prefixo nt-. Carregado só pelas
+   páginas deste site (app/demos/nutricao/layout.tsx).
+
+   A identidade: uma folha impressa. Papel cor de palha com grão, tinta
+   verde de horta, damasco só na ação. Fraunces nos títulos (eixo óptico
+   de cartaz, redonda e itálica), Newsreader no texto — as duas com
+   serifa, as únicas dos três sites. Peças de impresso: sumário com
+   pontilhado, entrevista em P. e R., nota de rodapé, legenda de figura,
+   colofão e o índice em algarismos romanos. Movimento do Essencial:
+   revelação e transições — a página entra como uma folha que assenta e o
+   pontilhado corre até o número. Nada contínuo. */
+
+[data-demo="nutricao"] {
+  --background: #f4efe4; /* palha */
+  --foreground: #1e3326; /* tinta verde, 11,5:1 */
+  --card: #faf7f0;
+  --card-foreground: #1e3326;
+  --deep: #e9e2d3;
+  --muted: #ece6d9;
+  --muted-foreground: #4f6053; /* 5,8:1 */
+  --primary: #a0521f; /* damasco queimado: a ação */
+  --primary-foreground: #fffaf2; /* 5,5:1 */
+  --secondary: #e1e6d7; /* sálvia: a nota */
+  --marcador: #c6cdbe; /* sálvia com 14% de tinta: o marca-texto (a tinta sobre ele, 8,3:1) */
+  --secondary-foreground: #1e3326;
+  --accent: #8d461a; /* 6:1 */
+  --border: #d6ccb9;
+  --input: rgb(30 51 38 / 0.38);
+  --ring: #8d461a;
+  /* A letra da marca, na Fraunces do próprio site (a 600 da vitrine não
+     entra aqui: junto com as fontes do site, o empacotador as reunia num
+     pacote só, e a página "Para quem" do Atlas pré-carregava as fontes
+     deste site; medido em 01/10). */
+  --font-nicho: var(--font-exibicao);
+  --marca: #a9bfa8;
+  --marca-tinta: #1e3326;
+  --marca-ponto: #a0521f;
+
+  font-family: var(--font-corpo), Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.55;
+  background-color: var(--background);
+  /* O grão do papel: ruído gerado, quase invisível. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .25  0 0 0 0 .2  0 0 0 0 .1  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  color: var(--foreground);
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+}
+html:has([data-demo="nutricao"]) {
+  background: #f4efe4;
+  color-scheme: light;
+}
+[data-demo="nutricao"] ::selection {
+  background: #d9e2cf;
+  color: var(--foreground);
+}
+
+/* ---------- tipografia ---------- */
+.nt-exibicao {
+  font-family: var(--font-exibicao), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.028em;
+  font-kerning: normal;
+}
+/* Versalete: os rótulos, o fólio, os nomes do índice. */
+.nt-versal {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.085em;
+  font-variant-numeric: oldstyle-nums;
+}
+/* A capitular do primeiro parágrafo. */
+.nt-capitular::first-letter {
+  float: left;
+  margin: 0.08em 0.1em 0 -0.02em;
+  font-family: var(--font-exibicao), Georgia, serif;
+  font-size: 4.25em;
+  line-height: 0.78;
+  color: var(--foreground);
+}
+.nt-numeros {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* ---------- filetes e pontilhado ---------- */
+/* Filete duplo: o fio grosso e o fino, como no topo de uma página impressa. */
+.nt-filete-duplo {
+  height: 5px;
+  border-top: 2px solid var(--foreground);
+  border-bottom: 1px solid var(--foreground);
+}
+/* O pontilhado do sumário e da carta: corre do rótulo até o valor. */
+.nt-pontilhado {
+  flex: 1 1 2rem;
+  min-width: 2rem;
+  height: 0.5em;
+  margin: 0 0.5em;
+  align-self: baseline;
+  background: radial-gradient(circle, currentColor 0.9px, transparent 1.3px) 0 100% / 9px 4px repeat-x;
+  opacity: 0.55;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1500ms var(--ease-atlas) calc(var(--atraso, 0ms) + 200ms);
+}
+.dm-oculto .nt-pontilhado {
+  clip-path: inset(0 100% 0 0);
+  transition: none;
+}
+
+/* ---------- vínculos ---------- */
+.nt-vinculo {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  transition: text-decoration-color 300ms var(--ease-atlas), color 300ms var(--ease-atlas);
+}
+/* Sob o ponteiro, o fio fica inteiro — também quando o ponteiro está em
+   outra parte do mesmo vínculo (o algarismo do colofão). Só onde há
+   ponteiro: no toque, o hover ficava preso depois do toque (até 03/10). */
+@media (hover: hover) {
+  .nt-vinculo:hover,
+  :hover > .nt-vinculo {
+    text-decoration-color: currentColor;
+  }
+}
+/* O índice do cabeçalho: a página aberta fica em itálico, com o filete. */
+.nt-indice a[aria-current="page"] .nt-indice-rotulo {
+  font-style: italic;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+/* ---------- a folha que assenta (transição de página) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .nt-folha {
+    animation: nt-folha 900ms var(--ease-atlas) both;
+  }
+  .ja-aberto .nt-folha {
+    animation: none;
+  }
+}
+@keyframes nt-folha {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* ---------- botão de WhatsApp sempre à mão (item do plano) ---------- */
+/* O halo da cor do papel, que o separa do texto que passa por baixo, e
+   uma sombra de 40 px a 55% (saiu em 03/10 pela regra 3 das Diretrizes de
+   Design Premium e voltou no mesmo dia, a pedido do usuário: é parte da
+   identidade do site). */
+.nt-flutuante {
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, var(--background) 80%, transparent),
+    0 18px 40px -16px rgb(30 51 38 / 0.55);
+}
+.nt-flutuante-rotulo {
+  opacity: 0;
+  translate: 8px 0;
+  transition: opacity 300ms var(--ease-atlas), translate 300ms var(--ease-atlas);
+}
+.nt-flutuante:focus-visible .nt-flutuante-rotulo {
+  opacity: 1;
+  translate: 0 0;
+}
+@media (hover: hover) {
+  .nt-flutuante:hover .nt-flutuante-rotulo {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+/* No celular, o botão recolhe ao rolar para baixo e volta ao rolar para cima
+   (ilha RecolherAoRolar, data-recolhido): o texto da folha fica livre. */
+@media (max-width: 767.98px) {
+  .nt-flutuante {
+    transition:
+      opacity 350ms var(--ease-atlas),
+      translate 350ms var(--ease-atlas),
+      visibility 350ms;
+  }
+  .nt-flutuante[data-recolhido] {
+    opacity: 0;
+    translate: 0 14px;
+    visibility: hidden;
+  }
+}
+
+/* A letra da marca no peso que a fonte do site tem (400, sem negrito sintético). */
+[data-demo="nutricao"] svg text {
+  font-weight: 400;
+}
+
+/* ---------- o mapa gravado ---------- */
+.nt-mapa .rua-borda {
+  stroke: var(--foreground);
+}
+.nt-mapa .rua-miolo {
+  stroke: var(--card);
+}

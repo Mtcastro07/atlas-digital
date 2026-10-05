@@ -1,0 +1,698 @@
+/* ============================================================
+   ATLAS DIGITAL — movimento
+   Nenhuma animação acompanha a posição da rolagem. Há três tipos de
+   movimento:
+   - a entrada da capa, uma vez, na carga: só transform e opacity, que
+     o navegador resolve na GPU, sem refazer layout;
+   - a assinatura da marca, recuperada do site de 28/08 (pedido de
+     Gabriel Ribeiro Ota Yida, 01/10): a esfera de arame que gira atrás
+     do título da capa e o globo do logotipo, que dá uma volta sob o
+     ponteiro ou, no celular, a cada vez que aparece;
+   - transições de interação — hover, toque, troca de aba, abertura de
+     painel —, declaradas junto de cada componente.
+   Da branchCto (fusão de 01/10): o título da capa que se compõe palavra
+   a palavra (a partir de 1024 px), o reflexo da chamada final e o
+   ambiente contínuo pausável. O que se move sem parar ([data-ambiente]:
+   a esfera e o seu halo, a faixa, o reflexo, o globo de O Atlas) só roda
+   com script (.js, posto pelo <head> de app/layout.tsx), porque é o
+   script que oferece o botão de pausa do cabeçalho (WCAG 2.2.2,
+   components/ilhas/controle-do-movimento.tsx); para fora da tela e com a
+   pausa (.ambiente-pausado). Recarregar ou voltar pelo histórico não
+   repete a entrada (.ja-aberto). O halo e o reflexo saíram em 03/10, pela
+   regra 3 das Diretrizes de Design Premium, e voltaram no mesmo dia a
+   pedido do usuário: são parte da identidade do site.
+   Com prefers-reduced-motion, a página chega pronta (sem entrada), a
+   esfera fica parada e as transições de interação guardam só cor,
+   opacidade e sombra.
+   ============================================================ */
+
+@layer components {
+  .mov-globo ellipse,
+  .mov-meridiano {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  /* Janela de cada palavra do título da capa: a palavra sobe de dentro
+     dela. A folga vertical guarda as descendentes. */
+  .mov-janela {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+  /* Janela com folga dos lados (as linhas das aberturas): a tarja que
+     abre a linha avança 0,1 em sobre a margem (.mov-tarja-na-margem) e não
+     é cortada. A margem negativa devolve a folga: a linha não muda. */
+  .mov-janela-folgada {
+    padding-inline: 0.12em;
+    margin-inline: -0.12em;
+  }
+  .mov-palavra {
+    display: inline-block;
+  }
+  /* Faixa de nichos (secoes/faixa.tsx e a do site da barbearia): as pontas se apagam. */
+  .mov-faixa-pai {
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 7%, black 93%, transparent);
+    mask-image: linear-gradient(90deg, transparent, black 7%, black 93%, transparent);
+  }
+
+  /* ---------- esfera da capa (components/marca/esfera.tsx) ---------- */
+  /* 640 px no computador (700 no site de 28/08, cuja capa era só o
+     título): assim a esfera inteira cabe entre o cabeçalho e os aparelhos. */
+  .mov-esfera-eixo {
+    --lado: min(84vmin, 640px);
+    width: var(--lado);
+    height: var(--lado);
+  }
+  .mov-esfera-eixo svg {
+    overflow: visible;
+    fill: none;
+    stroke: color-mix(in srgb, var(--primary) 62%, transparent);
+    stroke-width: 1.5;
+  }
+  .mov-esfera-eixo .mov-paralelo {
+    stroke: color-mix(in srgb, var(--primary) 48%, transparent);
+    stroke-width: 1.3;
+  }
+  .mov-esfera-eixo .mov-acento {
+    stroke: color-mix(in srgb, var(--accent) 92%, transparent);
+    stroke-width: 1.8;
+  }
+  /* Parado, cada meridiano fica aberto na largura da sua fase. */
+  .mov-meridiano {
+    transform: scaleX(var(--estatico, 1));
+  }
+  /* Halo quente atrás da esfera. */
+  .mov-esfera-brilho {
+    width: min(96vmin, 780px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--primary) 34%, transparent) 0%,
+      rgb(30 80 132 / 0.22) 38%,
+      transparent 68%
+    );
+  }
+  /* Véu em duas camadas: a interna garante o contraste do texto; a
+     externa deixa a esfera legível nas bordas. */
+  .mov-esfera-veu {
+    background: radial-gradient(
+      70% 56% at 50% 47%,
+      color-mix(in srgb, var(--background) 46%, transparent) 0%,
+      color-mix(in srgb, var(--background) 20%, transparent) 62%,
+      transparent 86%
+    );
+  }
+  /* Os traços se dissolvem atrás do texto da capa: uma máscara radial só
+     nos traços (o halo e o véu ficam inteiros), sem forma pintada por cima
+     do fundo. Antes, um anteparo da cor do fundo atrás do bloco de texto,
+     ainda a 80% na borda de cima e a ~50% na de baixo, cortava o globo e o
+     halo em linha reta (pedido do usuário, 01/10: "parte de um retângulo
+     está recortando o globo").
+     A máscara fica no invólucro dos traços (ilhas/esfera-viva.tsx): o bloco
+     de texto mais 60% da altura dele em cima e embaixo (2,2 vezes o bloco;
+     a esfera inteira cabe). O palco começa 48 px abaixo do bloco, e as
+     porcentagens de top e bottom são da altura do palco (a do bloco menos
+     48 px): daí as contas. Assim o bloco ocupa sempre de 27,3% a 72,7% do
+     invólucro, em qualquer largura, e o raio da elipse pode ser porcentagem
+     pura (o Chromium recusa calc com porcentagem e pixel no raio de um
+     gradiente radial). Até a meia altura do bloco (22,7% = 76,9% do raio
+     de 29,6%), os traços somem; dali, voltam numa transição longa (~15% da
+     altura do bloco, uns 60 px), sem degrau. Na horizontal, a elipse tem a
+     largura do palco: atrás do texto, a faixa vai de borda a borda da
+     esfera. */
+  .mov-esfera-tracos {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(-48px * 1.6 - 60%);
+    bottom: calc(-60% - 48px * 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    --mascara: radial-gradient(
+      100% 29.6% at 50% 50%,
+      transparent 0%,
+      transparent 76.9%,
+      rgb(0 0 0 / 0.08) 81%,
+      rgb(0 0 0 / 0.3) 86%,
+      rgb(0 0 0 / 0.62) 91%,
+      rgb(0 0 0 / 0.88) 96%,
+      #000 100%
+    );
+    -webkit-mask-image: var(--mascara);
+    mask-image: var(--mascara);
+  }
+  /* Atrás do bloco de texto (acima da esfera: z-[1], components/secoes/capa.tsx),
+     um gradiente radial da cor do fundo apaga o halo onde há letra e volta
+     a deixá-lo aparecer devagar. Ele é a "transição de cor para o texto"
+     do pedido: a elipse cabe na própria caixa (closest-side) e chega a
+     transparente nas quatro bordas, então não sobra contorno. Medido pixel
+     a pixel em 10 instantes da rotação (390, 768, 1024 e 1440 px): título
+     ≥ 10,9:1, lide ≥ 6,45:1, "Conhecer o método" ≥ 5,96:1 — no nível do
+     anteparo retangular ou acima (9,3; 6,44; 5,8). O topo da caixa é fixo, em rem: em
+     porcentagem, subia enquanto o texto da capa chegava em partes, e o
+     navegador contava um deslocamento de layout (CLS até 0,06, 01/10). */
+  .mov-anteparo {
+    position: relative;
+    isolation: isolate;
+  }
+  .mov-anteparo::before {
+    content: "";
+    position: absolute;
+    inset: -3rem -6% -16%;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--background) 92%, transparent) 0%,
+      color-mix(in srgb, var(--background) 86%, transparent) 50%,
+      color-mix(in srgb, var(--background) 52%, transparent) 78%,
+      transparent 100%
+    );
+  }
+}
+
+@media (max-width: 767.98px) {
+  .mov-esfera-eixo {
+    --lado: min(100vmin, 440px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Entrada (o menu do celular, as páginas da barbearia): o elemento sobe
+     28 px e aparece. --atraso escalona a entrada. */
+  .mov-entra {
+    opacity: 0;
+    transform: translateY(28px);
+    animation: mov-entra 1100ms var(--ease-atlas) forwards;
+    animation-delay: var(--atraso, 0ms);
+  }
+  /* Aberturas das páginas (rótulo, lide e figura): só se acendem, sem
+     crescer nem deslocar. */
+  .mov-surge {
+    opacity: 0;
+    animation: mov-surge 700ms var(--ease-atlas) forwards;
+    animation-delay: var(--atraso, 0ms);
+  }
+  /* Título da capa: cada palavra sobe da própria janela, em sequência —
+     o "título que se compõe" do plano Completo, que o rodapé diz aplicar.
+     Só a partir de 1024 px: no celular, o título pinta parado, sem
+     atrasar o LCP. */
+  @media (min-width: 1024px) {
+    .mov-palavra {
+      transform: translateY(110%);
+      animation: mov-entra 1050ms var(--ease-atlas) forwards;
+      animation-delay: var(--atraso, 0ms);
+    }
+  }
+  /* Reabertura (recarregar, voltar): a capa chega pronta. */
+  .ja-aberto :is(.mov-entra, .mov-surge, .mov-palavra) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Globo do logotipo: volta completa no foco pelo teclado... */
+  .mov-globo:is(a:focus-visible *) ellipse {
+    animation: mov-giro-completo 1.15s var(--ease-atlas) 1;
+  }
+
+  /* Esfera da capa: cada meridiano dá uma volta a cada 16 s, cada um
+     numa fase (--fase); o halo pulsa devagar. Pausa fora de vista
+     (data-pausa, ilhas/esfera-viva.tsx). */
+  .js .mov-meridiano {
+    animation: mov-meridiano 16s linear infinite;
+    animation-delay: var(--fase, 0s);
+  }
+  .js .mov-esfera-brilho {
+    animation: mov-pulsa 8s var(--ease-atlas) infinite alternate;
+  }
+  [data-pausa] :is(.mov-meridiano, .mov-esfera-brilho) {
+    animation-play-state: paused;
+  }
+
+  /* Globo de O Atlas (marca/globo.tsx, `girando`): cada meridiano percorre
+     a sua longitude, uma volta a cada 36 s, a partir da fase do desenho
+     parado (--atraso-longitude). Só depois de entrar na tela (data-visivel). */
+  .js [data-visivel] .mov-longitude {
+    animation: mov-longitude 36s linear infinite;
+    animation-delay: var(--atraso-longitude, 0s);
+  }
+
+  /* Um reflexo atravessa o título da chamada final a cada 8 s, depois que
+     ele entra na tela (data-visivel), pela mesma razão da faixa. */
+  .js .mov-reflexo[data-visivel] {
+    background-image: linear-gradient(100deg, var(--foreground) 0 40%, #ffffff 50%, var(--foreground) 60% 100%);
+    background-size: 260% 100%;
+    background-position: 100% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: mov-reflexo 8s var(--ease-atlas) infinite;
+  }
+
+  /* A faixa de nichos corre (o ponteiro sobre ela a detém: abaixo, só onde
+     há ponteiro). Só depois de entrar na tela (data-visivel,
+     ilhas/controle-do-movimento.tsx): na carga, ela está abaixo da dobra,
+     e correr ali custaria um recálculo de estilo por quadro, sem ninguém
+     ver. */
+  .js :is([data-visivel] .mov-faixa, .mov-faixa[data-visivel]) {
+    animation: mov-faixa 60s linear infinite;
+  }
+
+  /* Pausa: fora da tela, ou pelo botão do cabeçalho. A lista nomeia as
+     peças que correm (aqui e em app/demos/demos.css), em vez de "tudo
+     dentro de [data-ambiente]": um seletor universal seria testado em
+     cada elemento da página a cada recálculo de estilo. */
+  .ambiente-pausado :is(.mov-meridiano, .mov-esfera-brilho, .mov-faixa, .mov-reflexo, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude),
+  [data-fora] :is(.mov-meridiano, .mov-esfera-brilho, .mov-faixa, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude),
+  :is(.mov-faixa, .mov-reflexo)[data-fora] {
+    animation-play-state: paused !important;
+  }
+}
+
+/* ...e sob o ponteiro, só onde há ponteiro: no toque, quem dispara o giro
+   é o aparecimento do logotipo (ilhas/giro-do-globo.tsx). .mov-giro marca
+   um bloco inteiro como área de hover (o símbolo de "O Atlas"). A faixa
+   para sob o ponteiro também só aqui: até 03/10, valia no toque, e a faixa
+   ficava parada depois de tocada. */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .mov-globo:is(a:hover *, .mov-giro:hover *) ellipse {
+    animation: mov-giro-completo 1.15s var(--ease-atlas) 1;
+  }
+  .mov-faixa-pai:hover .mov-faixa {
+    animation-play-state: paused;
+  }
+}
+
+/* Movimento reduzido: deslocamento, escala, giro e altura passam a ser
+   instantâneos em toda transição de interação — o bloco não sobe, o
+   cursor do seletor salta, o painel do menu aparece em fade sem descer.
+   !important porque a regra precisa vencer os utilitários do Tailwind e
+   as classes vd-*, qualquer que seja a especificidade. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity,
+      box-shadow, visibility !important;
+  }
+}
+
+@keyframes mov-entra {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes mov-surge {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mov-reflexo {
+  0%,
+  55% {
+    background-position: 100% 0;
+  }
+  85%,
+  100% {
+    background-position: 0 0;
+  }
+}
+@keyframes mov-meridiano {
+  0% { transform: scaleX(1); }
+  25% { transform: scaleX(0); }
+  50% { transform: scaleX(-1); }
+  75% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+/* A largura aparente de um meridiano ao longo da volta é o cosseno da
+   longitude: doze pontos, para a passagem não parecer um vaivém linear. */
+@keyframes mov-longitude {
+  0% { transform: scaleX(1); }
+  8.333% { transform: scaleX(0.866); }
+  16.667% { transform: scaleX(0.5); }
+  25% { transform: scaleX(0); }
+  33.333% { transform: scaleX(-0.5); }
+  41.667% { transform: scaleX(-0.866); }
+  50% { transform: scaleX(-1); }
+  58.333% { transform: scaleX(-0.866); }
+  66.667% { transform: scaleX(-0.5); }
+  75% { transform: scaleX(0); }
+  83.333% { transform: scaleX(0.5); }
+  91.667% { transform: scaleX(0.866); }
+  100% { transform: scaleX(1); }
+}
+@keyframes mov-pulsa {
+  from {
+    transform: scale(0.96);
+    opacity: 0.75;
+  }
+  to {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+@keyframes mov-giro-completo {
+  0% { transform: scaleX(1); }
+  25% { transform: scaleX(0.05); }
+  50% { transform: scaleX(-1); }
+  75% { transform: scaleX(0.05); }
+  100% { transform: scaleX(1); }
+}
+@keyframes mov-faixa {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- transição entre páginas ----------
+   O <ViewTransition> do React nos template.tsx de cada site
+   (components/transicao-de-pagina.tsx), ligado sozinho pelo App Router a
+   cada navegação. Como nas páginas da Apple: a página que sai se apaga
+   rápida, subindo um pouco; a que entra chega de baixo, devagar, depois
+   que a outra saiu. O cabeçalho fica ancorado (grupo "cabecalho"): não se
+   apaga nem se move. Só transform e opacity. Com movimento reduzido, a
+   troca é imediata. Cliques durante a transição passam para a página. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.pagina-sai) {
+  animation: 300ms cubic-bezier(0.4, 0, 1, 1) both vt-pagina-sai;
+}
+::view-transition-new(.pagina-entra) {
+  animation: 700ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both vt-pagina-entra;
+}
+::view-transition-group(cabecalho) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(cabecalho) {
+  display: none;
+}
+::view-transition-new(cabecalho) {
+  animation: none;
+}
+@keyframes vt-pagina-sai {
+  to {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+@keyframes vt-pagina-entra {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ---------- componentes do Spell UI (components/ui/spell/) ----------
+   Instalados pelo CLI do shadcn em 03/10/2026, a pedido do usuário
+   ("baixe no projeto e spell UI, e utilize componentes que você acha que
+   enriqueceria nosso site"), e adaptados às regras daqui: o movimento é a
+   entrada (uma vez, sem repetir ao recarregar) ou ambiente (só com script,
+   pausável, parado fora da tela); com movimento reduzido, tudo chega pronto. */
+
+/* Gradient Wave Text: uma faixa de cor atravessa a palavra uma vez, da
+   esquerda para a direita. A janela (bordas apagadas pela máscara) corre
+   por cima; dentro, a cópia pintada com o degradê da marca corre ao
+   contrário e fica parada sobre o texto (as duas com o tamanho da peça: os
+   101% se anulam). A peça recorta o que passa dela (contain: paint, que não
+   mexe na linha de base, como overflow: hidden mexeria, e não deixa a janela
+   abrir rolagem lateral), com uma folga por dentro, devolvida pela margem,
+   para as pontas do itálico e as descendentes. Só transform; parada, a
+   janela fica à esquerda, fora, e a cópia, recortada. Até a noite de
+   03/10, a ilha movia o degradê a cada quadro (estilo e pintura: com CPU
+   20×, 716 ms de linha principal e o LCP 0,25 s mais tarde). */
+.mov-onda {
+  position: relative;
+  display: inline-block;
+  contain: paint;
+  padding: 0.1em 0.12em 0.2em 0.04em;
+  margin: -0.1em -0.12em -0.2em -0.04em;
+}
+.mov-onda-janela,
+.mov-onda-tinta {
+  position: absolute;
+  inset: 0;
+}
+.mov-onda-janela {
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-101%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent);
+}
+.mov-onda-tinta {
+  padding: 0.1em 0.12em 0.2em 0.04em;
+  white-space: nowrap;
+  transform: translateX(101%);
+  background: linear-gradient(90deg, var(--primary), var(--accent) 35%, var(--muted-foreground) 50%, var(--accent) 65%, var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .mov-onda-janela {
+    animation: mov-onda-janela 1800ms ease-in-out var(--atraso-onda, 0ms) backwards;
+  }
+  html:not(.ja-aberto) .mov-onda-tinta {
+    animation: mov-onda-tinta 1800ms ease-in-out var(--atraso-onda, 0ms) backwards;
+  }
+}
+@keyframes mov-onda-janela {
+  from {
+    transform: translateX(-101%);
+  }
+  to {
+    transform: translateX(101%);
+  }
+}
+@keyframes mov-onda-tinta {
+  from {
+    transform: translateX(101%);
+  }
+  to {
+    transform: translateX(-101%);
+  }
+}
+
+/* Shimmer Text: um brilho atravessa o texto a cada 3 s (o selo
+   "Recomendado"; "Desde 1996", na barbearia). Como a onda: a janela de
+   bordas apagadas corre por cima, com uma cópia mais clara do texto que
+   corre ao contrário. Só transform (o original movia o fundo, que repinta a
+   cada quadro), com o mesmo recorte da onda. Ambiente: só com script e
+   depois de entrar na tela; pausa pelo botão e fora da tela. */
+.mov-cintila {
+  position: relative;
+  display: inline-block;
+  contain: paint;
+  padding: 0.1em 0.06em;
+  margin: -0.1em -0.06em;
+}
+.mov-cintila-janela,
+.mov-cintila-luz {
+  position: absolute;
+  inset: 0;
+}
+.mov-cintila-janela {
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-101%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%, #000 55%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 45%, #000 55%, transparent);
+}
+.mov-cintila-luz {
+  padding: 0.1em 0.06em;
+  white-space: nowrap;
+  transform: translateX(101%);
+  color: color-mix(in srgb, currentColor 35%, #ffffff);
+}
+/* O atalho vai inteiro, com o nome, em cada regra: sem o nome, o
+   minificador (Lightning CSS) reduzia "animation: 3s linear infinite" a
+   "animation: none", e o nome, que vinha noutra regra, rodava em 0 s. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .mov-cintila[data-visivel] .mov-cintila-janela {
+    animation: mov-cintila-janela 3s linear infinite;
+  }
+  .js .mov-cintila[data-visivel] .mov-cintila-luz {
+    animation: mov-cintila-luz 3s linear infinite;
+  }
+}
+@keyframes mov-cintila-janela {
+  0% {
+    transform: translateX(-101%);
+  }
+  50%,
+  100% {
+    transform: translateX(101%);
+  }
+}
+@keyframes mov-cintila-luz {
+  0% {
+    transform: translateX(101%);
+  }
+  50%,
+  100% {
+    transform: translateX(-101%);
+  }
+}
+
+/* Highlighted Text: a tarja de bronze das aberturas. A janela fica parada,
+   rente à caixa da palavra e 0,12 em abaixo, para as descendentes; dentro,
+   a faixa sobe e a cópia do texto em navy desce o mesmo tanto (as duas têm
+   a altura da janela: os 101% se anulam). Só transform. Parada (ou ao
+   recarregar), já no lugar.
+   A caixa da palavra tem entrelinha 1, qualquer que seja a do título: a
+   tarja tem sempre a mesma altura (no Archivo Black, de 0,1 em acima do
+   acento a 0,08 em abaixo do "g"), e o espaço entre ela e as linhas
+   vizinhas vem da entrelinha do título (1,15 nas aberturas, 05/10: com 1,
+   a tarja de "UFF" cobria a perna do "g" de "Origem"). */
+.mov-tarja {
+  position: relative;
+  display: inline-block;
+  padding-inline: 0.1em;
+}
+.mov-tarja:not([data-marcador]) {
+  line-height: 1;
+}
+/* A palavra que abre a linha ("Niterói,"): a tarja avança sobre a margem,
+   e a letra fica alinhada com as linhas de baixo (até 05/10, entrava 0,1 em). */
+.mov-tarja-na-margem {
+  margin-inline-start: -0.1em;
+}
+/* Cantos arredondados (pedido do usuário, 03/10: "priorizar arredondamentos
+   na interface"): a janela recorta a faixa com eles. */
+.mov-tarja-janela {
+  position: absolute;
+  inset: 0 0 -0.12em;
+  overflow: hidden;
+  border-radius: 0.16em;
+}
+.mov-tarja-faixa,
+.mov-tarja-tinta {
+  position: absolute;
+  inset: 0;
+}
+.mov-tarja-faixa {
+  overflow: hidden;
+  background: var(--primary);
+}
+.mov-tarja-tinta {
+  padding-inline: 0.1em;
+  white-space: nowrap;
+  color: var(--primary-foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .mov-tarja:not([data-marcador]) .mov-tarja-faixa {
+    animation: mov-tarja-faixa 800ms var(--ease-atlas) var(--atraso-tarja, 0ms) both;
+  }
+  html:not(.ja-aberto) .mov-tarja:not([data-marcador]) .mov-tarja-tinta {
+    animation: mov-tarja-tinta 800ms var(--ease-atlas) var(--atraso-tarja, 0ms) both;
+  }
+}
+/* Variante marca-texto (data-marcador; na nutrição): a faixa por trás do
+   texto (isolation: a janela em z -1 fica sob o texto, não sob a página),
+   da metade da altura do x até a linha de base, na cor de --marcador (o
+   bronze a 30%, se o tom não der a sua). Entra da esquerda, uma vez, na
+   entrada da página; o preenchimento só para trás (backwards): acabada, a
+   animação não segura a faixa, e a revelação dos sites de exemplo pode
+   recolhê-la abaixo da dobra e a fazer passar na entrada da tela
+   (.dm-a-marcar, app/demos/demos.css). */
+.mov-tarja[data-marcador] {
+  isolation: isolate;
+}
+.mov-tarja[data-marcador] .mov-tarja-janela {
+  inset: 0.5em -0.04em 0.04em;
+  z-index: -1;
+  border-radius: 0.12em;
+}
+.mov-tarja[data-marcador] .mov-tarja-faixa {
+  background: var(--marcador, color-mix(in srgb, var(--primary) 30%, transparent));
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .mov-tarja[data-marcador] .mov-tarja-faixa {
+    animation: mov-marcador 900ms var(--ease-atlas) var(--atraso-tarja, 0ms) backwards;
+  }
+}
+@keyframes mov-marcador {
+  from {
+    transform: translateX(-101%);
+  }
+}
+@keyframes mov-tarja-faixa {
+  from {
+    transform: translateY(101%);
+  }
+}
+@keyframes mov-tarja-tinta {
+  from {
+    transform: translateY(-101%);
+  }
+}
+
+/* Bars Spinner: doze barras em volta do centro, cada uma se apagando a seu
+   tempo (a espera, regra 4). Só opacidade; parado, em leque. */
+.mov-barras {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: var(--barras, 16px);
+  height: var(--barras, 16px);
+}
+.mov-barras > span {
+  position: absolute;
+  top: 46%;
+  left: 38%;
+  width: 24%;
+  height: 8%;
+  border-radius: 6px;
+  background: currentColor;
+  transform: rotate(calc(var(--i) * 30deg)) translate(146%);
+  opacity: calc(0.15 + var(--i) * 0.07);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mov-barras > span {
+    animation: mov-barras 1.2s linear infinite;
+    animation-delay: calc(var(--i) * 0.1s - 1.2s);
+  }
+}
+@keyframes mov-barras {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
+
+/* As cópias são só desenho: fora da seleção, para quem copia o texto não
+   levar a palavra duas vezes (a árvore de acessibilidade e a busca já as
+   ignoram: aria-hidden, data-nosnippet). */
+.mov-onda-janela,
+.mov-cintila-janela,
+.mov-tarja-janela {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Com cores forçadas, as cópias pintadas pelo fundo sairiam sem cor: somem, e fica o texto de baixo. */
+@media (forced-colors: active) {
+  .mov-onda-janela,
+  .mov-cintila-janela {
+    display: none;
+  }
+}

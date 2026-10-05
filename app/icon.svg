@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+<title>Atlas Digital</title>
+<circle cx="128" cy="128" r="128" fill="#0F2A47"/>
+<g transform="translate(47.6,56.6) scale(0.86)">
+<path fill="#F3EFEC" fill-rule="evenodd" d="M52,14 L103,14 L126,80 L146,80 L146,58 L178,58 L178,81 Q178,108 138,111 L156,166 L112,166 L98,120 Q96,110 94,110 L74,110 Q54,110 54,132 L54,166 L0,166 Z M77,50 L85,79 L69,79 Z"/>
+<g fill="none" stroke="#F3EFEC" stroke-width="6.0">
+<circle cx="163" cy="24" r="21.75"/>
+<ellipse cx="163" cy="24" rx="9.75" ry="21.75"/>
+<path d="M142.6,16.5 H183.4 M142.6,31.5 H183.4"/>
+</g></g></svg>

@@ -1,0 +1,852 @@
+/* ============================================================
+   ATLAS DIGITAL — materiais e interações
+   Vidro (desfoque, translucidez e brilho de borda), vidro líquido, a
+   barra do cabeçalho, a aresta de luz dos blocos, a moldura de celular
+   que expõe os demonstrativos, o controle segmentado, o esqueleto do
+   carregamento e as transições de hover. Nenhuma animação aqui acompanha
+   a rolagem da página (o trilho da galeria segue a rolagem da própria
+   galeria). Prefixo vd- em todas as classes.
+   Fusão de 01/10/2026: a organização da página é a da branchCEO; os
+   materiais (vidro líquido, barra, cena, grão, aresta, orbe, brilho,
+   letras que rolam, botão magnético) vêm da branchCto.
+   Diretrizes de 03/10 (CLAUDE.md da raiz): a cena e o grão da chamada
+   final, o orbe que segue o ponteiro, a faixa de luz do botão principal,
+   o reflexo da tela e a moldura de titânio do celular saíram pela regra 3
+   e voltaram no mesmo dia, a pedido do usuário — são a identidade do
+   site; ficaram de fora só a etiqueta de vidro e a luz de estúdio, que já
+   estavam sem uso.
+   ============================================================ */
+
+@layer components {
+  /* ---------- vidro ----------
+     Tinta translúcida do tom + desfoque do que passa por trás + filete
+     de luz na borda superior. Use com parcimônia: o desfoque custa GPU,
+     então fica em superfícies pequenas (os controles e o menu do celular). */
+  .vd-vidro {
+    position: relative;
+    isolation: isolate;
+    background: var(--vidro);
+    -webkit-backdrop-filter: blur(20px) saturate(170%);
+    backdrop-filter: blur(20px) saturate(170%);
+    border: 1px solid var(--vidro-borda);
+    box-shadow:
+      inset 0 1px 0 var(--vidro-brilho),
+      0 12px 32px -14px var(--sombra);
+  }
+  /* Reflexo especular: luz entrando pelo canto superior esquerdo. */
+  .vd-vidro::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+      140deg,
+      rgb(255 255 255 / 0.16) 0%,
+      rgb(255 255 255 / 0) 34%,
+      rgb(255 255 255 / 0) 70%,
+      rgb(255 255 255 / 0.05) 100%
+    );
+  }
+
+  /* ---------- barra do cabeçalho ----------
+     Pílula de vidro líquido que flutua sobre a página, com a organização
+     da barra de 28/08: marca, menu no centro exato, ações
+     (components/secoes/cabecalho.tsx). Quase transparente: o que passa por
+     trás aparece desfocado e, no Chromium com ponteiro fino, dobra-se na
+     borda (refração, components/ilhas/vidro-liquido.tsx); este
+     backdrop-filter é a saída para os demais. Como o vidro da Apple, ela
+     se adapta ao que passa por trás (data-fundo no <header>, lido por
+     components/ilhas/cabecalho-retratil.tsx; regras na barra adaptativa, adiante):
+     sobre o escuro, tinta navy leve e fundo escurecido, com texto creme;
+     sobre o claro, vidro claro, com texto navy; sobre os dois, tinta navy
+     densa. --vidro-filtro leva o que se soma ao desfoque — e à refração,
+     que o lê da mesma variável. Um reflexo especular na borda de cima e um
+     brilho interno embaixo dão a espessura do líquido. */
+  .vd-barra {
+    --vidro-filtro: saturate(180%) brightness(0.5);
+    border: 1px solid var(--vidro-liquido-contorno);
+    background-color: rgb(15 42 71 / 0.4);
+    background-image: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.12) 0%,
+      rgb(255 255 255 / 0.02) 48%,
+      rgb(255 255 255 / 0) 62%,
+      rgb(255 255 255 / 0.06) 100%
+    );
+    -webkit-backdrop-filter: blur(16px) var(--vidro-filtro);
+    backdrop-filter: blur(16px) var(--vidro-filtro);
+    box-shadow:
+      0 18px 40px -18px var(--sombra),
+      inset 0 1px 0 var(--vidro-liquido-aro-topo),
+      inset 0 0 0 1px var(--vidro-liquido-aro-fio),
+      inset 0 -1px 0 var(--vidro-liquido-aro-base),
+      inset 0 -14px 22px -20px rgb(255 255 255 / 0.4);
+    transition:
+      background-color 450ms var(--ease-atlas),
+      border-color 450ms var(--ease-atlas),
+      box-shadow 450ms var(--ease-atlas);
+  }
+
+  /* ---------- vidro líquido ----------
+     Receita do plugin liquid-glass (stormaref/LiquidGlassSkill), em
+     tokens do site. Duas camadas: este CSS pinta a tinta incolor e o aro
+     polido; a refração, que dobra o fundo na borda, vem da ilha
+     VidroLiquido (data-vidro-liquido), só no Chromium com ponteiro fino.
+     Sem ela, fica este vidro fosco. Precisa de fundo com variação atrás
+     (luz, traço, texto): sobre fundo liso, lê como caixa cinza. Filho de
+     vidro não pinta fundo nem borda próprios. */
+  .vd-vidro-liquido {
+    position: relative;
+    border: 1px solid var(--vidro-liquido-contorno);
+    background: linear-gradient(180deg, var(--vidro-liquido-tinta-topo), var(--vidro-liquido-tinta-base));
+    box-shadow:
+      var(--vidro-liquido-sombra),
+      inset 0 1px 0 var(--vidro-liquido-aro-topo),
+      inset 0 0 0 1px var(--vidro-liquido-aro-fio),
+      inset 0 -1px 0 var(--vidro-liquido-aro-base);
+    -webkit-backdrop-filter: blur(3px) saturate(125%);
+    backdrop-filter: blur(3px) saturate(125%);
+  }
+  /* ---------- cena ----------
+     Fundo de seção escura com as duas luzes do site de 28/08: a aurora
+     fria de um lado e a luz quente do outro, sobre um degradê da moldura
+     ao navy. --luz-x / --luz-y posicionam a luz quente, --aurora-x /
+     --aurora-y a fria; --cena-topo e --cena-base orientam o degradê (a
+     chamada final desce do navy à moldura). */
+  .vd-cena {
+    background:
+      radial-gradient(52% 58% at var(--luz-x, 78%) var(--luz-y, 40%), var(--luz-quente) 0%, transparent 70%),
+      radial-gradient(48% 62% at var(--aurora-x, 6%) var(--aurora-y, 0%), var(--luz-fria) 0%, transparent 72%),
+      linear-gradient(180deg, var(--cena-topo, var(--moldura)) 0%, var(--meio) 58%, var(--cena-base, var(--background)) 100%);
+  }
+  /* Grão estático (o "grão" do site de 28/08): ruído fractal em SVG, sem
+     script e sem movimento, abaixo do conteúdo. */
+  .vd-grao {
+    isolation: isolate;
+  }
+  .vd-grao::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.55;
+    mix-blend-mode: soft-light;
+    /* O grão se apaga nas bordas, para a seção vizinha (sem grão) não marcar emenda. */
+    -webkit-mask-image: linear-gradient(180deg, transparent, black 18%, black 82%, transparent);
+    mask-image: linear-gradient(180deg, transparent, black 18%, black 82%, transparent);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .35 0'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+  }
+
+  /* ---------- bloco com aresta de luz ----------
+     No escuro, a borda é luz interna de 1 px, não sombra. Com .vd-luz,
+     a aresta acende no hover e no foco do teclado, e um orbe de bronze
+     segue o ponteiro (components/ilhas/luz-do-cursor.tsx; adaptado do
+     Magic Card, Magic UI, modo orb). O orbe se move só por transform. Sem
+     a ilha (sem script, toque ou movimento reduzido), só a aresta acende.
+     O hover vale só onde há ponteiro: no toque, ficaria preso. */
+  .vd-aresta {
+    box-shadow: inset 0 0 0 1px var(--aresta);
+  }
+  .vd-luz {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .vd-luz::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px var(--aresta-acesa);
+    opacity: 0;
+    transition: opacity 450ms var(--ease-atlas);
+  }
+  .vd-orbe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 26rem;
+    height: 26rem;
+    margin: -13rem 0 0 -13rem;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(closest-side, var(--orbe), transparent);
+    opacity: 0;
+    transition:
+      opacity 500ms var(--ease-atlas),
+      transform 220ms var(--ease-atlas);
+  }
+  .vd-luz:is(:focus-visible, :has(:focus-visible))::after {
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .vd-luz:hover::after {
+      opacity: 1;
+    }
+    .luz-pronta .vd-luz:hover > .vd-orbe {
+      opacity: 1;
+    }
+  }
+
+  /* ---------- brilho do botão principal ----------
+     No hover, uma faixa de luz atravessa a pílula uma vez. A transição
+     existe só na entrada do hover: ao sair, a faixa volta sem ser vista. */
+  .vd-brilho {
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .vd-brilho::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.42) 50%, transparent 70%);
+    transform: translateX(-110%);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .vd-brilho:hover::after {
+      transform: translateX(110%);
+      transition: transform 900ms var(--ease-atlas);
+    }
+  }
+
+  /* ---------- inclinação 3D sob o ponteiro (Spell UI, Tilt Card) ----------
+     A ilha TiltCard (components/ui/spell/tilt-card.tsx) escreve o giro no
+     corpo e move o brilho; aqui, a perspectiva, a passagem e o brilho, que
+     anda só por transform num disco duas vezes maior que o aparelho. Só
+     com ponteiro fino e sem movimento reduzido (a ilha nem liga sem isso). */
+  .vd-inclina {
+    perspective: 1200px;
+  }
+  .vd-inclina-corpo {
+    position: relative;
+    transition: transform 200ms var(--ease-atlas);
+  }
+  .vd-inclina-brilho {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    overflow: hidden;
+    border-radius: var(--inclina-raio, 15cqw);
+    pointer-events: none;
+  }
+  .vd-inclina-brilho > span {
+    position: absolute;
+    inset: -50%;
+    opacity: 0;
+    background: radial-gradient(circle, rgb(255 255 255 / 0.15) 0%, transparent 40%);
+    transition: opacity 300ms var(--ease-atlas);
+  }
+
+  /* ---------- texto que rola no hover ----------
+     Uma camada de letras (components/texto-rolante.tsx), cada uma com a
+     própria cópia 1,3 linha abaixo, feita de sombra (text-shadow). No
+     hover ou no foco do vínculo, as letras sobem 1,3 linha, uma a uma (--i
+     escalona), e a cópia toma o lugar do original. Em lh (a altura da
+     linha), não em em: com a entrelinha do texto, 1,3 em ainda caía dentro
+     da caixa e a cópia aparecia por baixo. 1,3 em vez de 1 para que acento
+     e descendente não apareçam na folga. */
+  .vd-rolo {
+    position: relative;
+    display: inline-flex;
+    overflow: hidden;
+    vertical-align: top;
+    padding-block: 0.12em;
+    margin-block: -0.12em;
+  }
+  .vd-rolo > span {
+    display: inline-block;
+    white-space: pre;
+    text-shadow: 0 1.3lh currentColor;
+    transition: transform 600ms var(--ease-atlas);
+    transition-delay: calc(var(--i, 0) * 16ms);
+  }
+  /* O hover, só onde há ponteiro: no toque, ficaria preso depois do toque
+     (até 03/10, valia em qualquer aparelho). O foco do teclado, sempre. */
+  :is(a, button):focus-visible .vd-rolo > span {
+    transform: translateY(-1.3lh);
+  }
+  @media (hover: hover) {
+    :is(a, button):hover .vd-rolo > span {
+      transform: translateY(-1.3lh);
+    }
+  }
+
+  /* ---------- botão magnético ----------
+     Com [data-magnetico], o botão puxa levemente em direção ao ponteiro
+     (components/ilhas/luz-do-cursor.tsx, pela propriedade translate) e
+     volta com mola ao sair. */
+  [data-magnetico] {
+    transition-property: translate, background-color, color, border-color, box-shadow, transform;
+    transition-timing-function: var(--ease-mola);
+    transition-duration: 450ms;
+  }
+
+  /* ---------- globo em miniatura ----------
+     O separador da faixa de nichos (secoes/faixa.tsx): o globo da marca
+     desenhado por máscara num pseudoelemento, na cor do vínculo — nenhum
+     elemento a mais no DOM. */
+  .vd-separador::after {
+    content: "";
+    flex: none;
+    width: 0.7em;
+    height: 0.7em;
+    background: var(--accent);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-24 -24 48 48'><g fill='none' stroke='black' stroke-width='4'><circle r='21.75'/><ellipse rx='9.75' ry='21.75'/><path d='M-20.42 -7.5H20.42M-20.42 7.5H20.42'/></g></svg>") center / contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-24 -24 48 48'><g fill='none' stroke='black' stroke-width='4'><circle r='21.75'/><ellipse rx='9.75' ry='21.75'/><path d='M-20.42 -7.5H20.42M-20.42 7.5H20.42'/></g></svg>") center / contain no-repeat;
+  }
+
+  /* ---------- globo ----------
+     O globo do logotipo em traço, ampliado (components/marca/globo.tsx),
+     atrás do cartão de vidro líquido de "O Atlas". Linhas da marca
+     (círculo, meridiano e paralelos) em bronze claro; retícula
+     secundária, mais apagada. Espessuras em unidades do desenho
+     (quadrado de 200). */
+  .vd-globo {
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+  }
+  .vd-globo .marca {
+    stroke: var(--accent);
+    stroke-width: 0.36;
+  }
+  .vd-globo .reticula {
+    stroke: var(--accent);
+    stroke-width: 0.24;
+    opacity: 0.4;
+  }
+  /* Meridiano: elipse do tamanho do globo, estreitada por scaleX até a
+     largura aparente da sua longitude (--escala, o cosseno). A origem é o
+     (0, 0) do desenho, o centro do globo. */
+  .vd-meridiano {
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transform: scaleX(var(--escala, 1));
+  }
+  /* O scaleX achataria também a espessura: a do meridiano é a da tela. */
+  .vd-meridiano ellipse {
+    vector-effect: non-scaling-stroke;
+  }
+  .vd-globo .vd-meridiano.marca {
+    stroke-width: 1.4px;
+  }
+  .vd-globo .vd-meridiano.reticula {
+    stroke-width: 1px;
+  }
+
+  /* ---------- aparelho ----------
+     Moldura de celular em CSS, proporcional à largura (unidades cqw do
+     contêiner .vd-aparelho). A tela recebe a imagem do demonstrativo. */
+  .vd-aparelho {
+    container-type: inline-size;
+  }
+  .vd-celular {
+    position: relative;
+    padding: 3.4cqw;
+    border-radius: 15cqw;
+    background: linear-gradient(150deg, #454a52 0%, #16191e 30%, #0a0c0f 62%, #30343b 100%);
+    box-shadow:
+      inset 0 0 0 0.35cqw rgb(255 255 255 / 0.12),
+      inset 0 0 0 1.1cqw #08090b,
+      0 12cqw 24cqw -9cqw var(--sombra),
+      0 5cqw 10cqw -6cqw rgb(0 0 0 / 0.45);
+  }
+  /* Botões laterais. */
+  .vd-celular::before,
+  .vd-celular::after {
+    content: "";
+    position: absolute;
+    width: 0.9cqw;
+    border-radius: 1cqw;
+    background: #2b2f35;
+  }
+  .vd-celular::before {
+    left: -0.7cqw;
+    top: 26cqw;
+    height: 14cqw;
+  }
+  .vd-celular::after {
+    right: -0.7cqw;
+    top: 36cqw;
+    height: 22cqw;
+  }
+  .vd-tela {
+    position: relative;
+    aspect-ratio: 390 / 844;
+    overflow: hidden;
+    border-radius: 11.6cqw;
+    background: #ffffff;
+  }
+  .vd-tela > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Ilha superior do aparelho. */
+  .vd-tela::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    top: 2.9cqw;
+    left: 50%;
+    width: 29cqw;
+    height: 8.4cqw;
+    border-radius: 99px;
+    background: #050506;
+    transform: translateX(-50%);
+  }
+  /* Reflexo do vidro da tela. */
+  .vd-tela::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(118deg, rgb(255 255 255 / 0.14) 0%, rgb(255 255 255 / 0) 30%);
+  }
+
+  /* ---------- marcadores numerados sobre a tela ----------
+     Posição em % da tela (conteudo/telas-posicoes.json). Passar o
+     ponteiro na nota destaca o marcador, e vice-versa: :has(), sem script. */
+  .vd-marcador {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: var(--text-rotulo);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 0 3px rgb(255 255 255 / 0.9),
+      0 4px 10px rgb(15 42 71 / 0.3);
+    transition:
+      transform 350ms var(--ease-mola),
+      box-shadow 350ms var(--ease-atlas);
+  }
+  .vd-nota {
+    transition:
+      background-color 300ms var(--ease-atlas),
+      color 300ms var(--ease-atlas);
+  }
+  .vd-nota [data-numero] {
+    transition:
+      background-color 300ms var(--ease-atlas),
+      color 300ms var(--ease-atlas),
+      border-color 300ms var(--ease-atlas);
+  }
+
+  /* ---------- controle segmentado ----------
+     O cursor desliza até a opção escolhida (--i = posição, --n = total). */
+  .vd-segmento {
+    position: relative;
+    display: grid;
+    grid-auto-columns: 1fr;
+    grid-auto-flow: column;
+    padding: 4px;
+    border-radius: 999px;
+  }
+  .vd-segmento-cursor {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc((100% - 8px) / var(--n));
+    border-radius: 999px;
+    background: rgb(243 239 236 / 0.16);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 4px 12px -4px var(--sombra);
+    transform: translateX(calc(var(--i) * 100%));
+    transition: transform 450ms var(--ease-atlas);
+  }
+  [data-tom="claro"] .vd-segmento-cursor,
+  [data-tom="branco"] .vd-segmento-cursor {
+    background: #ffffff;
+  }
+
+  /* ---------- vínculo com seta de abertura ---------- */
+  .vd-vinculo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28em;
+    color: var(--accent);
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.28em;
+    transition:
+      text-decoration-color 300ms var(--ease-atlas),
+      color 300ms var(--ease-atlas);
+  }
+  .vd-vinculo svg {
+    transition: transform 350ms var(--ease-atlas);
+  }
+  @media (hover: hover) {
+    .vd-vinculo:hover {
+      text-decoration-color: currentColor;
+    }
+    .vd-vinculo:hover svg {
+      transform: translateX(3px);
+    }
+  }
+
+  /* ---------- bloco (azulejo de conteúdo) ----------
+     Superfície arredondada; no hover, sobe 3 px com sombra macia. */
+  .vd-bloco {
+    transition:
+      transform 450ms var(--ease-atlas),
+      box-shadow 450ms var(--ease-atlas),
+      background-color 300ms var(--ease-atlas);
+  }
+  @media (hover: hover) {
+    .vd-bloco:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 22px 44px -26px var(--sombra);
+    }
+  }
+
+  /* ---------- esqueleto (regra 4: o estado de carregamento) ----------
+     O lugar do que ainda não chegou: o fundo apagado do tom (--muted),
+     liso, com o raio do contêiner. Vai direto na peça que chega tarde — a
+     <img> das prévias, da tela da vitrine e das fotos dos sócios (a imagem,
+     ao chegar, cobre o fundo) — ou em blocos que desenham a forma do
+     conteúdo (o quadro do simulador enquanto o site abre). Por isso o pulso
+     não mexe na opacidade, que faria pulsar a imagem já carregada: é a cor
+     do fundo que vai do apagado ao fundo do tom e volta (a mesma leitura de
+     uma opacidade de 1 a 0,55), devagar, seis vezes, e para — não repinta
+     para sempre o que já chegou. Com movimento reduzido, não pulsa. É
+     decorativo: o que carrega vai escrito para leitor de tela, fora dele. */
+  .vd-esqueleto {
+    border-radius: inherit;
+    background-color: var(--muted);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .vd-esqueleto {
+      animation: vd-esqueleto 1.6s ease-in-out 6;
+    }
+  }
+}
+
+/* O controle acionado que espera o código do que pediu (o gatilho do menu
+   do celular e os do simulador, enquanto o painel baixa;
+   ilhas/menu-celular.tsx e ilhas/simulador.tsx): aria-busy, o cursor de
+   espera e um pulso de opacidade até o painel abrir — aqui não há imagem
+   por baixo. Com movimento reduzido, fica apagado, parado. Fora da camada:
+   o estado vence os utilitários do controle (o cursor-pointer do botão). */
+:is(a, button)[aria-busy="true"] {
+  cursor: progress;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(a, button)[aria-busy="true"] {
+    animation: vd-espera 1.6s ease-in-out infinite;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(a, button)[aria-busy="true"] {
+    opacity: 0.55;
+  }
+}
+/* Com as barras de espera (Spell UI, Bars Spinner; desde 03/10), a espera é
+   delas, sem o pulso: no gatilho do menu, no lugar do ícone; nos vínculos do
+   simulador (secoes/escada.tsx), .vd-espera — no botão, sobre o rótulo, que
+   se apaga sem mudar o tamanho e sem sair do nome do vínculo; na prévia, num
+   disco no centro. Fora da espera, as barras nem se desenham (nada anima
+   escondido). */
+:is(a, button)[aria-busy="true"]:has(.mov-barras) {
+  animation: none;
+  opacity: 1;
+}
+.vd-espera {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  pointer-events: none;
+}
+[aria-busy="true"] .vd-espera {
+  display: grid;
+}
+[aria-busy="true"] .vd-espera-rotulo {
+  opacity: 0;
+}
+
+@keyframes vd-esqueleto {
+  50% {
+    background-color: color-mix(in srgb, var(--muted) 55%, var(--background));
+  }
+}
+@keyframes vd-espera {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- alternador de demonstrativos (celular) ----------
+   Rádios nativos + :has(): troca sem script e com teclado (setas).
+   A partir de 1024 px, os dois aparecem lado a lado e o seletor some. */
+.vd-alternador:has(input[value="nutricao"]:checked) .vd-segmento-cursor {
+  --i: 1;
+}
+@media (max-width: 1023.98px) {
+  .vd-alternador:has(input[value="nutricao"]:checked) [data-demonstrativo="deposito"],
+  .vd-alternador:has(input[value="deposito"]:checked) [data-demonstrativo="nutricao"] {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Ao voltar a ser exibido, o demonstrativo se acende: só opacidade, sem
+     deslocar nem crescer (a troca entre nichos da branchCto). */
+  .vd-troca {
+    animation: vd-troca 600ms var(--ease-atlas);
+  }
+}
+@keyframes vd-troca {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- barra adaptativa (fora da camada: precisa vencer os tons de
+   app/globals.css, que também estão fora dela) ----------
+   O <header> diz o que passa por trás da barra (data-fundo). Sobre o claro,
+   os tokens da pílula passam aos do tom claro: o texto vira navy, e o vidro,
+   claro. Sobre os dois tons de uma vez, a tinta navy fica densa. */
+header[data-fundo="claro"] .vd-barra {
+  --foreground: #0f2a47;
+  --muted-foreground: #4b5f75; /* 5,9:1 sobre o vidro claro */
+  --accent: #8a5a24;
+  --ring: #8a5a24;
+  --card: #ffffff;
+  --border: rgb(15 42 71 / 0.14);
+  --sombra: rgb(15 42 71 / 0.18);
+  --vidro-liquido-contorno: rgb(15 42 71 / 0.1);
+  --vidro-liquido-aro-topo: rgb(255 255 255 / 0.95);
+  --vidro-liquido-aro-fio: rgb(255 255 255 / 0.4);
+  --vidro-liquido-aro-base: rgb(255 255 255 / 0.55);
+  --vidro-filtro: saturate(180%) brightness(1.1);
+  background-color: rgb(255 255 255 / 0.55);
+}
+header[data-fundo="misto"] .vd-barra {
+  --vidro-filtro: saturate(170%) brightness(0.45);
+  background-color: rgb(15 42 71 / 0.72);
+}
+
+/* ---------- os sites no palco da escada (components/secoes/escada.tsx) ----------
+   Com script, só o site do nível escolhido (data-nivel, ilha EscadaDemo)
+   fica em cena; sem script, os três aparecem um embaixo do outro. */
+.js [data-palco-sites] > [data-site] {
+  display: none;
+}
+.js [data-palco-sites][data-nivel="essencial"] > [data-site="essencial"],
+.js [data-palco-sites][data-nivel="profissional"] > [data-site="profissional"],
+.js [data-palco-sites][data-nivel="completo"] > [data-site="completo"] {
+  display: grid;
+}
+html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+  padding-top: 3rem;
+}
+
+/* Onde o navegador não desfoca o fundo, ou o sistema pede menos
+   transparência, o vidro vira superfície opaca do mesmo tom. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .vd-vidro,
+  .vd-barra,
+  header[data-fundo] .vd-barra,
+  .vd-vidro-liquido {
+    background: var(--card);
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .vd-vidro,
+  .vd-barra,
+  header[data-fundo] .vd-barra,
+  .vd-vidro-liquido {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: var(--card);
+  }
+}
+
+/* Ligação nota ↔ marcador, de 1 a 4. */
+@media (hover: hover) {
+  [data-anotacoes]:has([data-nota="1"]:hover) [data-marcador="1"],
+  [data-anotacoes]:has([data-nota="2"]:hover) [data-marcador="2"],
+  [data-anotacoes]:has([data-nota="3"]:hover) [data-marcador="3"],
+  [data-anotacoes]:has([data-nota="4"]:hover) [data-marcador="4"],
+  [data-anotacoes] [data-marcador]:hover {
+    transform: translate(-50%, -50%) scale(1.25);
+    box-shadow:
+      0 0 0 3px rgb(255 255 255 / 0.9),
+      0 0 0 9px color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+  [data-anotacoes]:has([data-marcador="1"]:hover) [data-nota="1"],
+  [data-anotacoes]:has([data-marcador="2"]:hover) [data-nota="2"],
+  [data-anotacoes]:has([data-marcador="3"]:hover) [data-nota="3"],
+  [data-anotacoes]:has([data-marcador="4"]:hover) [data-nota="4"],
+  [data-anotacoes] [data-nota]:hover {
+    background-color: var(--card);
+    color: var(--foreground);
+  }
+  [data-anotacoes] [data-nota]:hover [data-numero],
+  [data-anotacoes]:has([data-marcador="1"]:hover) [data-nota="1"] [data-numero],
+  [data-anotacoes]:has([data-marcador="2"]:hover) [data-nota="2"] [data-numero],
+  [data-anotacoes]:has([data-marcador="3"]:hover) [data-nota="3"] [data-numero],
+  [data-anotacoes]:has([data-marcador="4"]:hover) [data-nota="4"] [data-numero] {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+/* ---------- dúvidas: abrir e fechar com altura animada ----------
+   Onde o navegador não anima para "auto", abre na hora. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+  .vd-duvida::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+      block-size 450ms var(--ease-atlas),
+      content-visibility 450ms allow-discrete;
+  }
+  .vd-duvida[open]::details-content {
+    block-size: auto;
+  }
+}
+
+/* ---------- galeria de deslizar, no celular ----------
+   Abaixo do ponto da peça (768 px; 1024 px com .vd-galeria-lg), a lista
+   vira uma fila horizontal com encaixe, que sangra até a borda da tela; o
+   cartão seguinte aparece pela borda e o dedo leva de um ao outro. A
+   partir do ponto, volta a ser a grade do computador (a grade vem com o
+   prefixo do ponto: md:grid ou lg:grid; o espaço entre os cartões é o
+   utilitário gap-*). Embaixo, o trilho do avanço (.vd-galeria-trilho): o
+   polegar anda com a rolagem da própria galeria (animation-timeline), sem
+   script — é indicador de posição, não enfeite. Onde o navegador não tem
+   a linha do tempo de rolagem, o trilho não aparece. A largura do
+   polegar é a fração de um cartão (--galeria-polegar, no estilo).
+   A margem é a do Envelope (components/estrutura.tsx: 24 px, px-6; 40 px a
+   partir de 768 px): a fila sangra exatamente até a borda da tela. Até
+   03/10, 22 px, fora da grade de 4 px. Em cima e embaixo, 8 px de folga
+   dentro da rolagem, para o anel de foco dos cartões (2 px, a 3 px deles)
+   não ser cortado por ela; a margem negativa em cima devolve os cartões ao
+   lugar de antes (até 03/10, 4 px em cima, e o anel perdia 1 px). */
+@layer components {
+  .vd-galeria-quadro {
+    timeline-scope: --galeria;
+    --galeria-margem: 24px;
+  }
+  @media (min-width: 768px) {
+    .vd-galeria-quadro {
+      --galeria-margem: 40px;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .vd-galeria-quadro:not(.vd-galeria-lg) > .vd-galeria {
+      display: flex;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--galeria-margem);
+      margin-inline: calc(-1 * var(--galeria-margem));
+      margin-top: -4px;
+      padding-inline: var(--galeria-margem);
+      padding-block: 8px;
+      scrollbar-width: none;
+      scroll-timeline: --galeria x;
+    }
+    .vd-galeria-quadro:not(.vd-galeria-lg) > .vd-galeria > * {
+      flex: 0 0 min(84%, 22rem);
+      scroll-snap-align: start;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    .vd-galeria-quadro.vd-galeria-lg > .vd-galeria {
+      display: flex;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--galeria-margem);
+      margin-inline: calc(-1 * var(--galeria-margem));
+      margin-top: -4px;
+      padding-inline: var(--galeria-margem);
+      padding-block: 8px;
+      scrollbar-width: none;
+      scroll-timeline: --galeria x;
+    }
+    .vd-galeria-quadro.vd-galeria-lg > .vd-galeria > * {
+      flex: 0 0 min(86%, 24rem);
+      scroll-snap-align: start;
+    }
+  }
+  .vd-galeria::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 16 px abaixo da folga da galeria: 24 px dos cartões ao trilho (até
+     03/10, 18 px, fora da grade). */
+  .vd-galeria-trilho {
+    display: none;
+    position: relative;
+    height: 2px;
+    margin-top: 16px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--foreground) 14%, transparent);
+  }
+  .vd-galeria-trilho::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: calc(var(--galeria-polegar, 0.34) * 100%);
+    border-radius: inherit;
+    background: var(--accent);
+    animation: vd-galeria-avanco linear both;
+    animation-timeline: --galeria;
+  }
+  @supports (animation-timeline: scroll()) {
+    @media (max-width: 767.98px) {
+      .vd-galeria-quadro:not(.vd-galeria-lg) > .vd-galeria-trilho {
+        display: block;
+      }
+    }
+    @media (max-width: 1023.98px) {
+      .vd-galeria-quadro.vd-galeria-lg > .vd-galeria-trilho {
+        display: block;
+      }
+    }
+  }
+
+  /* Toque, sem ponteiro: o bloco responde em cor, sem andar nem crescer. */
+  @media (hover: none) {
+    .vd-bloco:active {
+      background-color: color-mix(in srgb, var(--card) 88%, var(--foreground));
+    }
+  }
+}
+
+@keyframes vd-galeria-avanco {
+  to {
+    translate: calc((1 / var(--galeria-polegar, 0.34) - 1) * 100%) 0;
+  }
+}
