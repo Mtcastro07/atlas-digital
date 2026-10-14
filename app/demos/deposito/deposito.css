@@ -23,10 +23,10 @@
   --primary-foreground: #15191e; /* 5,4:1 */
   --secondary: #15191e;
   --secondary-foreground: #f2efe9;
-  --accent: #a8431a; /* laranja escuro para texto sobre a cal, 5,2:1 */
+  --accent: #9a3c16; /* laranja escuro para texto sobre a cal: 5,7:1, e 5,0:1 no pior ponto do quadriculado (até 07/10, #a8431a, que caía a 4,41:1 sobre as linhas, medido pela régua) */
   --border: rgb(21 25 30 / 0.2);
   --input: rgb(21 25 30 / 0.42);
-  --ring: #a8431a;
+  --ring: #9a3c16;
   --marca: #e0662b;
   --marca-tinta: #12171c;
   --quadricula: rgb(21 25 30 / 0.055);
@@ -70,10 +70,10 @@ html:has([data-demo="deposito"]) {
   --card: #f6f4ef;
   --card-foreground: #15191e;
   --muted-foreground: #4a525c;
-  --accent: #a8431a;
+  --accent: #9a3c16;
   --border: rgb(21 25 30 / 0.2);
   --input: rgb(21 25 30 / 0.42);
-  --ring: #a8431a;
+  --ring: #9a3c16;
   color: var(--foreground);
 }
 

@@ -61,10 +61,12 @@
   /* ---------- esfera da capa (components/marca/esfera.tsx) ---------- */
   /* 640 px no computador (700 no site de 28/08, cuja capa era só o
      título): assim a esfera inteira cabe entre o cabeçalho e os aparelhos. */
+  /* Nunca maior que o invólucro da máscara (.mov-esfera-tracos, um contêiner) menos os 48 px do mt-12: o que passa
+     dele, a máscara corta em linha reta (a 768 px, o fundo saía 11 px e era cortado; corrigido em 14/10). */
   .mov-esfera-eixo {
     --lado: min(84vmin, 640px);
-    width: var(--lado);
-    height: var(--lado);
+    width: min(var(--lado), 100cqh - 48px);
+    height: min(var(--lado), 100cqh - 48px);
   }
   .mov-esfera-eixo svg {
     overflow: visible;
@@ -125,6 +127,7 @@
      largura do palco: atrás do texto, a faixa vai de borda a borda da
      esfera. */
   .mov-esfera-tracos {
+    container-type: size;
     position: absolute;
     inset-inline: 0;
     top: calc(-48px * 1.6 - 60%);
@@ -175,9 +178,12 @@
   }
 }
 
+/* No celular, desde 14/10, a esfera passa da largura e emoldura o texto em cima e embaixo, como na mesa (até então,
+   100vmin: ficava inteira atrás do bloco de texto, e só a bacia de baixo aparecia); as laterais saem pela capa
+   (overflow-hidden), e a altura do invólucro da máscara a limita (acima). */
 @media (max-width: 767.98px) {
   .mov-esfera-eixo {
-    --lado: min(100vmin, 440px);
+    --lado: min(150vw, 600px);
   }
 }
 
@@ -208,8 +214,19 @@
       animation-delay: var(--atraso, 0ms);
     }
   }
+  /* O rótulo e o lide das aberturas das páginas: como o título, só se
+     acendem a partir de 1024 px. No celular, o lide de quatro linhas pode
+     ser o elemento do LCP e partia de opacidade 0, 320 ms depois
+     (15-desempenho.md; corrigido em 14/10). */
+  @media (min-width: 1024px) {
+    .mov-surge-mesa {
+      opacity: 0;
+      animation: mov-surge 700ms var(--ease-atlas) forwards;
+      animation-delay: var(--atraso, 0ms);
+    }
+  }
   /* Reabertura (recarregar, voltar): a capa chega pronta. */
-  .ja-aberto :is(.mov-entra, .mov-surge, .mov-palavra) {
+  .ja-aberto :is(.mov-entra, .mov-surge, .mov-surge-mesa, .mov-palavra) {
     animation: none;
     opacity: 1;
     transform: none;

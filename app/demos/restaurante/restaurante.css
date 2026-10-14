@@ -1,0 +1,3790 @@
+/* Cozinha do Ingá (plano Profissional), prefixo rs-, refeita pelo padrão Atlas em 09.10.2026
+   (registros/demos/restaurante/identidade.md, seção 8; producao/esteira/19-o-padrao-atlas.md). Rodadas 1 e 2 de
+   lapidação, depois do crítico de fora: a cor em campo e o valor que vira, menos matérias e com figura (o azulejo, a
+   lousa, a madeira, a pedra), uma luz só, a ação de louça branca, e cada página aberta pela sua peça.
+
+   O mundo: o salão. A parede de azulejo verde vidrado, a lousa pendurada nela (a assinatura, em CSS 3D), a mesa de
+   madeira, a louça de ágata (a ação), a comanda do bloco, a porta de vidro canelado com a plaquinha, o cavalete na
+   calçada de pedra portuguesa. As cenas viram de valor entre a lousa, o azulejo verde, a madeira, o papel e a pedra.
+   O giz amarelo é a luz e o "hoje".
+
+   Movimento do Profissional, com o toque Atlas: a entrada da capa (o giz escreve), o balanço da lousa no prego (o
+   ambiente, pausável), a inclinação e a luz das peças sob o ponteiro, o momento de cada cena e de cada página, a
+   plaquinha que vira com o estado ao vivo, a resposta à ação. Só transform e opacity; nenhuma curva passa do
+   destino; com movimento reduzido, nada se desloca. */
+
+[data-demo="restaurante"] {
+  /* As cores por função (contraste pela fórmula da WCAG 2.2, 09.10.2026). */
+  --background: #eef0e4; /* o papel da comanda, verde-claro (o creme ficava a ΔE 0,003 do papel da nutrição) */
+  --foreground: #1f2622; /* a tinta: 13,5:1 no papel */
+  --card: #fbf9f4;
+  --card-foreground: #1f2622;
+  --muted: #e8e2d4;
+  --muted-foreground: #575a52; /* 6,1:1 no papel */
+  --primary: #2c654f;
+  --primary-foreground: #f6f3ea;
+  --accent: #6e4529; /* a madeira: o vínculo e o foco no papel, 7,2:1 */
+  --border: rgb(31 38 34 / 0.15);
+  --input: rgb(31 38 34 / 0.42);
+  --ring: #6e4529;
+
+  --rs-lousa: #113526; /* o quadro-verde: escuro (L 0,30 no OKLab) e verde de fato (croma 0,05) */
+  --rs-giz: #ece8dc; /* 11,0:1 na lousa */
+  --rs-giz-amarelo: #e2bf5c; /* 7,6:1 na lousa; 5,0:1 no verde fundo */
+  --rs-giz-apagado: #b9bbb2; /* 6,9:1 na lousa */
+  --rs-verde: #2c654f; /* o azulejo vidrado */
+  --rs-verde-fundo: #1f4a3a; /* o campo do azulejo: o branco do vidrado nele, 8,8:1 */
+  --rs-vidrado: #f6f3ea;
+  --rs-madeira: #7b5034;
+  --rs-madeira-funda: #4a2e1a; /* a mesa: o papel nela, 11,3:1 */
+  --rs-caneta: #26374f; /* a tinta da caneta do guardanapo */
+  --rs-saida: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* A sombra é a luz da janela, que entra pela esquerda: deslocada para a direita e para baixo, tingida. */
+  --rs-sombra-peca:
+    1px 1px 1px rgb(31 38 34 / 0.1), 4px 8px 14px -4px rgb(31 38 34 / 0.2), 14px 26px 46px -16px rgb(31 38 34 / 0.34),
+    30px 60px 90px -40px rgb(31 38 34 / 0.4);
+
+  /* A escala do salão (corpo de 17 a 19 px): o título de cada cena de 52 a 96 px; o giz da capa até 120 px; a palavra
+     de cartaz até 224 px. */
+  --rs-pe: 0.8125rem;
+  --rs-nota: 0.9375rem;
+  --rs-corpo: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --rs-lide: clamp(1.25rem, 1.08rem + 0.55vw, 1.5rem);
+  --rs-cena: clamp(3.25rem, 1.5rem + 4.6vw, 6rem);
+  --rs-cartaz: clamp(3rem, 0.6rem + 7.4vw, 7.5rem);
+  --rs-gigante: clamp(5.5rem, 1rem + 14vw, 14rem);
+
+  /* As matérias, pintadas uma vez em vetor (rodada 2: menos superfícies, cada uma com figura).
+     - O azulejo da casa (as quatro folhas e os quartos de círculo), nas duas faces: o verde vidrado com o desenho em
+       verde mais claro, tom sobre tom (a parede do salão, que não disputa com a lousa), e o branco com o desenho verde
+       (o barrado); o relevo de cada peça: a luz da janela na quina de cima e da esquerda, a sombra na de baixo.
+     - O azulejo pintado à mão: o mesmo desenho da casa, a pincel (o traço que treme), e o painel, o desenho inteiro
+       em escala de nove peças.
+     - A madeira: o veio com figura (o ruído em faixas; uma semente por tábua, e o veio não atravessa a junta), a fibra
+       fina e a junta das tábuas.
+     - A pedra portuguesa: as pedras irregulares, cada uma com o seu tom, sem emenda (gerada uma vez:
+       registros/demos/restaurante/ferramentas/gerar-calcada.mjs). */
+  --rs-grao: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .12 0 0 0 0 .15 0 0 0 0 .13 0 0 0 .11 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>");
+  --rs-veio: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1800' height='320'><filter id='e0' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.0016 .024' numOctaves='3' seed='5' stitchTiles='stitch' result='n'/><feComponentTransfer in='n' result='d'><feFuncR type='table' tableValues='0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0'/></feComponentTransfer><feColorMatrix in='d' result='dd' values='0 0 0 0 .06  0 0 0 0 .03  0 0 0 0 .01  .5 0 0 0 0'/><feComponentTransfer in='n' result='c'><feFuncR type='table' tableValues='0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0'/></feComponentTransfer><feColorMatrix in='c' result='cc' values='0 0 0 0 1  0 0 0 0 .82  0 0 0 0 .6  .06 0 0 0 0'/><feMerge><feMergeNode in='cc'/><feMergeNode in='dd'/></feMerge></filter><filter id='e1' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='.0016 .024' numOctaves='3' seed='17' stitchTiles='stitch' result='n'/><feComponentTransfer in='n' result='d'><feFuncR type='table' tableValues='0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0'/></feComponentTransfer><feColorMatrix in='d' result='dd' values='0 0 0 0 .06  0 0 0 0 .03  0 0 0 0 .01  .5 0 0 0 0'/><feComponentTransfer in='n' result='c'><feFuncR type='table' tableValues='0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0 0 .95 0 0'/></feComponentTransfer><feColorMatrix in='c' result='cc' values='0 0 0 0 1  0 0 0 0 .82  0 0 0 0 .6  .06 0 0 0 0'/><feMerge><feMergeNode in='cc'/><feMergeNode in='dd'/></feMerge></filter><rect y='0' width='1800' height='160' filter='url(%23e0)'/><rect y='160' width='1800' height='160' filter='url(%23e1)'/></svg>");
+  --rs-fibra: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='200'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.004 .55' numOctaves='2' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .08  0 0 0 0 .04  0 0 0 0 .01  0 0 0 -1.6 1.05'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>");
+  --rs-tabuas: repeating-linear-gradient(180deg, rgb(255 236 200 / 0.12) 0 1px, transparent 1px calc(10rem - 3px), rgb(0 0 0 / 0.55) calc(10rem - 3px) 10rem);
+  --rs-po: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .1 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  --rs-apagador: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='420'><filter id='b' filterUnits='userSpaceOnUse' x='0' y='0' width='900' height='420'><feGaussianBlur stdDeviation='10'/></filter><g fill='none' stroke='%23ffffff' stroke-linecap='round' filter='url(%23b)'><path d='M40 360C220 300 420 400 860 320' stroke-width='60' opacity='.05'/><path d='M520 395C640 360 760 380 880 360' stroke-width='34' opacity='.045'/></g></svg>");
+  --rs-azulejo-verde: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' fill='%232c654f'/><g fill='%233f7a61'><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(90 60 60)'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(180 60 60)'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(270 60 60)'/><path d='M0 0h21a21 21 0 0 1-21 21z'/><path d='M120 0v21a21 21 0 0 1-21-21z'/><path d='M120 120h-21a21 21 0 0 1 21-21z'/><path d='M0 120v-21a21 21 0 0 1 21 21z'/></g><circle cx='60' cy='60' r='4.5' fill='%232c654f'/><circle cx='60' cy='60' r='31' fill='none' stroke='%23447f66' stroke-width='1.4' stroke-dasharray='3 4'/><rect x='.5' y='.5' width='119' height='119' fill='none' stroke='%23163a2c'/></svg>");
+  --rs-azulejo-branco: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><rect width='120' height='120' fill='%23f6f3ea'/><g fill='%232c654f'><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(90 60 60)'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(180 60 60)'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(270 60 60)'/><path d='M0 0h21a21 21 0 0 1-21 21z'/><path d='M120 0v21a21 21 0 0 1-21-21z'/><path d='M120 120h-21a21 21 0 0 1 21-21z'/><path d='M0 120v-21a21 21 0 0 1 21 21z'/></g><circle cx='60' cy='60' r='4.5' fill='%23f6f3ea'/><circle cx='60' cy='60' r='31' fill='none' stroke='%232c654f' stroke-width='1.4' stroke-dasharray='3 4' opacity='.7'/><rect x='.5' y='.5' width='119' height='119' fill='none' stroke='%23d6d0c2'/></svg>");
+  --rs-pintado: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><filter id='p' x='-5%' y='-5%' width='110%' height='110%'><feTurbulence type='fractalNoise' baseFrequency='.22' numOctaves='2' seed='6'/><feDisplacementMap in='SourceGraphic' scale='1.8'/></filter><g fill='%232c654f' filter='url(%23p)' opacity='.9'><path d='M0 0h17a17 17 0 0 1-17 17z'/><path d='M100 0v17a17 17 0 0 1-17-17z'/><path d='M100 100h-17a17 17 0 0 1 17-17z'/><path d='M0 100v-17a17 17 0 0 1 17 17z'/><path d='M50 2c5 6 5 12 0 16c-5-4-5-10 0-16z'/><path d='M50 98c5-6 5-12 0-16c-5 4-5 10 0 16z'/><path d='M2 50c6-5 12-5 16 0c-4 5-10 5-16 0z'/><path d='M98 50c-6-5-12-5-16 0c4 5 10 5 16 0z'/></g><rect x='10' y='10' width='80' height='80' rx='1.5' fill='none' stroke='%232c654f' stroke-width='1.1' stroke-dasharray='5 1.2 9 1' filter='url(%23p)' opacity='.75'/></svg>");
+  --rs-painel: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><filter id='p' x='-5%' y='-5%' width='110%' height='110%'><feTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='2' seed='6'/><feDisplacementMap in='SourceGraphic' scale='.9'/></filter><g fill='%232c654f' filter='url(%23p)' opacity='.92'><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(90 60 60)'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(180 60 60)'/><path d='M60 13c10 14 10 30 0 41c-10-11-10-27 0-41z' transform='rotate(270 60 60)'/><path d='M0 0h21a21 21 0 0 1-21 21z'/><path d='M120 0v21a21 21 0 0 1-21-21z'/><path d='M120 120h-21a21 21 0 0 1 21-21z'/><path d='M0 120v-21a21 21 0 0 1 21 21z'/></g><circle cx='60' cy='60' r='4.5' fill='%23f3f0e8'/><circle cx='60' cy='60' r='31' fill='none' stroke='%232c654f' stroke-width='1.2' stroke-dasharray='3 4' opacity='.7'/></svg>");
+  --rs-relevo: linear-gradient(135deg, rgb(255 255 255 / 0.1) 0%, rgb(255 255 255 / 0) 14%, rgb(0 0 0 / 0) 86%, rgb(0 0 0 / 0.12) 100%);
+  --rs-relevo-claro: linear-gradient(135deg, rgb(255 255 255 / 0.5) 0%, rgb(255 255 255 / 0) 12%, rgb(0 0 0 / 0) 88%, rgb(60 50 30 / 0.05) 100%);
+  --rs-variacao: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='520' height='520'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='.006' numOctaves='2' seed='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .3 -.12'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  --rs-calcada: url("/demos/restaurante/calcada.svg");
+  /* A espessura de uma peça de madeira (o caixilho, o tampo do cavalete), vista com a luz da janela à esquerda: as
+     faces de baixo e da direita, em degraus de 1 px. */
+  --rs-extrusao:
+    1px 1px 0 #573620, 2px 2px 0 #53331e, 3px 3px 0 #4f301c, 4px 4px 0 #4b2e1b, 5px 5px 0 #472b19, 6px 6px 0 #432917,
+    7px 7px 0 #3f2616, 8px 8px 0 #3b2414;
+
+  font-family: var(--font-rs-texto), Georgia, serif;
+  font-size: var(--rs-corpo);
+  line-height: 1.62;
+  font-variant-numeric: tabular-nums;
+  background: var(--rs-grao), var(--background);
+  color: var(--foreground);
+  accent-color: var(--rs-verde);
+  -webkit-tap-highlight-color: transparent;
+}
+/* A altura do que fica preso no alto (a porta de vidro): o recuo do conteúdo e o da rolagem até uma âncora. */
+html:has([data-demo="restaurante"]) {
+  --rs-topo: 7.75rem;
+  background: #eef0e4;
+  color-scheme: light;
+  scroll-padding-top: var(--rs-topo);
+}
+@media (min-width: 1024px) {
+  html:has([data-demo="restaurante"]) {
+    --rs-topo: 5rem;
+  }
+}
+[data-demo="restaurante"] ::selection {
+  background: var(--rs-giz-amarelo);
+  color: var(--rs-lousa);
+}
+[data-demo="restaurante"] :is(h1, h2, h3) {
+  font-family: var(--font-rs-titulo), var(--font-rs-texto), serif;
+  font-weight: 400;
+  text-wrap: balance;
+}
+[data-demo="restaurante"] p {
+  text-wrap: pretty;
+}
+[data-demo="restaurante"] :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.rs-conteudo {
+  padding-top: var(--rs-topo);
+}
+.rs-conteudo:focus-visible {
+  outline: none;
+}
+.rs-largura {
+  width: 100%;
+  max-width: 78rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 0.6rem + 3vw, 3rem);
+}
+.rs-cena,
+.rs-abertura,
+.rs-esquina {
+  position: relative;
+  isolation: isolate;
+  /* O que passa da margem (a volta a giz, a calha, a luz da janela) não estica a página para o lado. */
+  overflow-x: clip;
+}
+@media (min-width: 1024px) {
+  .rs-cena {
+    min-height: 82svh;
+  }
+}
+.rs-titulo-de-cena {
+  font-size: var(--rs-cena);
+  line-height: 0.96;
+  letter-spacing: -0.022em;
+}
+.rs-titulo-de-pagina {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(3.25rem, 1.2rem + 5.6vw, 6.75rem);
+  line-height: 0.94;
+  letter-spacing: -0.024em;
+}
+.rs-texto-lide {
+  font-size: var(--rs-lide);
+  line-height: 1.48;
+}
+
+/* ---------- as matérias de fundo (os campos) ----------
+   Quatro, cada uma com figura: o azulejo (o verde da parede e do balcão, o branco da cozinha), a lousa, a madeira e a
+   pedra; o papel é o fundo da casa. Uma luz só, a da janela, que entra pela esquerda, alta. */
+/* A parede de azulejo verde vidrado: o desenho da casa tom sobre tom, o relevo de cada peça. */
+.rs-parede-verde {
+  background:
+    var(--rs-variacao) 0 0 / 32rem 32rem,
+    var(--rs-relevo) 0 0 / 7.5rem 7.5rem,
+    var(--rs-azulejo-verde) 0 0 / 7.5rem 7.5rem;
+  color: var(--rs-vidrado);
+}
+/* O balcão de azulejo verde liso (sem desenho): o rejunte escuro e o relevo, de peça a peça. */
+.rs-balcao-verde {
+  background:
+    var(--rs-relevo) 0 0 / 6rem 3rem,
+    linear-gradient(90deg, #163a2c 2px, transparent 2px) 0 0 / 6rem 3rem,
+    linear-gradient(180deg, #163a2c 2px, transparent 2px) 0 0 / 6rem 3rem,
+    var(--rs-variacao) 0 0 / 30rem 30rem,
+    var(--rs-verde-fundo);
+  color: var(--rs-vidrado);
+}
+/* A parede de azulejo branco da cozinha: peças de 12 rem, o rejunte e o relevo, com a grade presa ao meio da tela
+   (as bordas das peças caem no meio e a cada 12 rem dele: o painel e os azulejos pintados entram na grade). */
+.rs-parede-branca {
+  --rs-peca: 12rem;
+  /* A grade começa meia peça acima da cena: a primeira fileira à vista é a do título. */
+  --rs-subida: calc(var(--rs-peca) / -2);
+  background:
+    var(--rs-relevo-claro) calc(50% - var(--rs-peca) / 2) var(--rs-subida) / var(--rs-peca) var(--rs-peca),
+    linear-gradient(90deg, #d6cfc0 2px, transparent 2px) calc(50% - var(--rs-peca) / 2) var(--rs-subida) / var(--rs-peca) var(--rs-peca),
+    linear-gradient(180deg, #d6cfc0 2px, transparent 2px) calc(50% - var(--rs-peca) / 2) var(--rs-subida) / var(--rs-peca) var(--rs-peca),
+    #f4f1e9;
+}
+/* A mesa de madeira escura: as tábuas, o veio com figura e a fibra. */
+.rs-mesa {
+  background:
+    var(--rs-tabuas),
+    var(--rs-veio) 0 0 / 1800px 320px,
+    var(--rs-fibra) 0 0 / 600px 200px,
+    linear-gradient(180deg, #3f2615, #2a190c);
+  color: #f8f4ec;
+}
+:is(.rs-parede-verde, .rs-balcao-verde, .rs-mesa) :focus-visible {
+  outline-color: #f8f4ec;
+}
+/* A luz da janela, a mesma da capa, nas cenas de matéria: o vão claro com a cruz do caixilho, alto, à esquerda. */
+.rs-na-mesa::before,
+.rs-cardapio::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -14%;
+  z-index: -1;
+  width: 52%;
+  height: 90%;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 31%, rgb(8 18 14 / 0.2) 33% 34%, transparent 36% 65%, rgb(8 18 14 / 0.2) 67% 68%, transparent 70%),
+    linear-gradient(180deg, transparent 0 44%, rgb(8 18 14 / 0.2) 47% 48%, transparent 51%),
+    rgb(255 244 212 / 0.4);
+  transform: skewX(-20deg) rotate(3deg);
+  mix-blend-mode: soft-light;
+  -webkit-mask: radial-gradient(closest-side, #000 40%, transparent);
+  mask: radial-gradient(closest-side, #000 40%, transparent);
+}
+.rs-cardapio {
+  position: relative;
+  isolation: isolate;
+}
+
+/* ---------- a porta de vidro (o cabeçalho) ---------- */
+.rs-porta {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  /* O vidro da porta, fosco, sobre o desfoque do que passa atrás; a quina do vidro pega a luz. */
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.35), rgb(255 255 255 / 0) 40%),
+    rgb(238 240 233 / 0.7);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow:
+    inset 0 -1px 0 rgb(255 255 255 / 0.75),
+    0 1px 0 rgb(31 38 34 / 0.14),
+    0 12px 26px -20px rgb(31 38 34 / 0.5);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .rs-porta {
+    background: #e9ece4;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .rs-porta {
+    background: #e9ece4;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+.rs-porta-vidro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "nome direita" "paginas paginas";
+  align-items: center;
+  column-gap: 1.25rem;
+}
+@media (min-width: 1024px) {
+  .rs-porta-vidro {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "nome paginas direita";
+    min-height: 5rem;
+  }
+}
+.rs-porta-nome {
+  grid-area: nome;
+  display: flex;
+  min-height: 2.75rem;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 0.5rem;
+}
+/* O nome pintado no vidro: a letra verde do pintor de letreiro, com o fio creme em volta. */
+.rs-porta-letreiro {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--rs-verde-fundo);
+  text-shadow:
+    -1px 0 #f6f3ea,
+    1px 0 #f6f3ea,
+    0 -1px #f6f3ea,
+    0 1px #f6f3ea,
+    1px 2px 0 rgb(31 38 34 / 0.18);
+}
+.rs-porta-descricao {
+  margin-top: 0.25rem;
+  font-size: var(--rs-pe);
+  font-style: italic;
+  color: #464a43;
+}
+.rs-porta-paginas {
+  grid-area: paginas;
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin-inline: -0.75rem;
+}
+@media (min-width: 1024px) {
+  .rs-porta-paginas {
+    justify-content: center;
+    margin-inline: 0;
+  }
+}
+.rs-porta-pagina {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  padding-inline: 0.75rem;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: var(--rs-nota);
+  color: #3f433d;
+  transition: color 180ms ease-out;
+}
+.rs-porta-pagina:focus-visible {
+  outline-offset: -3px;
+}
+/* O traço de giz sob a página: escrito sob a página de agora; nas outras, ele se escreve sob o ponteiro, da esquerda
+   para a direita, e se recolhe para a direita. */
+.rs-porta-pagina::after {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.45rem;
+  height: 0.38rem;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M1 5.2C18 3 34 6.4 52 4.4S84 2.6 99 4.8' fill='none' stroke='%232c654f' stroke-width='2.6' stroke-linecap='round'/></svg>") center / 100% 100% no-repeat;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 260ms var(--rs-saida);
+}
+.rs-porta-pagina[aria-current]::after {
+  transform: scaleX(1);
+}
+.rs-porta-pagina[aria-current] {
+  color: var(--foreground);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rs-porta-pagina:hover {
+    color: var(--foreground);
+  }
+  .rs-porta-pagina:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+.rs-porta-direita {
+  grid-area: direita;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+/* A lousinha da porta: o prato de hoje, a giz, pendurada ao lado da plaquinha (só na mesa larga). */
+.rs-porta-lousinha {
+  display: none;
+}
+@media (min-width: 1536px) {
+  .rs-porta-lousinha {
+    display: block;
+    max-width: 15rem;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    background:
+      var(--rs-po),
+      var(--rs-lousa);
+    box-shadow:
+      0 0 0 3px var(--rs-madeira),
+      0 3px 6px rgb(31 38 34 / 0.35);
+    padding: 0.3rem 0.7rem;
+    color: var(--rs-giz);
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .rs-porta-lousinha span {
+    font-style: italic;
+    color: var(--rs-giz-amarelo);
+  }
+}
+.rs-porta-acao[aria-current] {
+  visibility: hidden;
+}
+@media (max-width: 767px) {
+  .rs-porta-acao {
+    display: none;
+  }
+}
+.rs-porta-pausa button {
+  color: var(--rs-lousa);
+}
+/* A plaquinha da porta, pendurada por um cordão: "Aberto" de um lado, "Fechado" do outro; vira quando o estado muda.
+   Embaixo, o que vem depois ("fecha às 15h30"). */
+.rs-plaquinha {
+  position: relative;
+  display: grid;
+  width: 6.75rem;
+  justify-items: center;
+  perspective: 400px;
+  padding-top: 0.7rem;
+}
+.rs-plaquinha-cordao {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2.4rem;
+  height: 0.75rem;
+  translate: -50% 0;
+  border: 1.5px solid #8a7a5c;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+.rs-plaquinha-giro {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 2.1rem;
+  transform-style: preserve-3d;
+  transition: transform 700ms var(--rs-saida);
+}
+.rs-plaquinha[data-aberta="false"] .rs-plaquinha-giro {
+  transform: rotateY(180deg);
+}
+.rs-plaquinha-face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 0.3rem;
+  backface-visibility: hidden;
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  box-shadow:
+    inset 0 0 0 2px #f6f3ea,
+    inset 0 0 0 3px rgb(0 0 0 / 0.2),
+    0 2px 4px rgb(31 38 34 / 0.3);
+}
+.rs-plaquinha-face[data-face="aberto"] {
+  background: linear-gradient(180deg, #33735b, var(--rs-verde-fundo));
+  color: var(--rs-vidrado);
+}
+.rs-plaquinha-face[data-face="fechado"] {
+  transform: rotateY(180deg);
+  background: linear-gradient(180deg, #6a432a, var(--rs-madeira-funda));
+  color: var(--rs-vidrado);
+}
+.rs-plaquinha-linha {
+  margin-top: 0.15rem;
+  font-size: 0.6875rem;
+  font-style: italic;
+  line-height: 1.2;
+  color: #3f433d;
+  white-space: nowrap;
+}
+
+/* ---------- a ação: o botão de ágata ----------
+   A louça esmaltada branca, com a borda verde (a identidade, seção 8): o branco do esmalte com o brilho em cima e a
+   borda pintada. Sob o ponteiro, o brilho do esmalte cruza uma vez e a borda escurece; ao pressionar, 0,97. O botão
+   não anda nem cresce, e nada de sombra que se anima. A outra ação (a de contorno) é o mesmo prato sem o esmalte. */
+@layer components {
+  .rs-agata {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    min-height: 3.125rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    overflow: hidden;
+    border: 3px solid var(--rs-verde);
+    border-radius: 999px;
+    background:
+      radial-gradient(120% 90% at 50% -25%, #ffffff, rgb(255 255 255 / 0) 62%),
+      linear-gradient(180deg, #fffefa, #ebe7dc);
+    box-shadow:
+      inset 0 0 0 1.5px rgb(255 255 255 / 0.95),
+      inset 0 -5px 8px rgb(31 38 34 / 0.1),
+      2px 3px 3px rgb(20 26 23 / 0.24),
+      8px 14px 22px -12px rgb(20 26 23 / 0.5);
+    padding: 0.55rem 1.6rem;
+    color: var(--rs-lousa);
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    transition:
+      border-color 200ms ease-out,
+      transform 110ms ease-out;
+  }
+  .rs-agata svg {
+    color: var(--rs-verde);
+  }
+  .rs-agata-grande {
+    min-height: 3.75rem;
+    padding: 0.75rem 2.1rem;
+    font-size: 1.1875rem;
+  }
+  .rs-agata-miuda {
+    min-height: 2.75rem;
+    padding-inline: 1.2rem;
+    font-size: var(--rs-nota);
+  }
+  .rs-agata-contorno {
+    border-width: 2px;
+    border-color: rgb(44 101 79 / 0.6);
+    background: rgb(255 255 255 / 0.55);
+    box-shadow: none;
+  }
+  .rs-agata::after {
+    content: "";
+    position: absolute;
+    inset: -20% auto -20% 0;
+    z-index: -1;
+    width: 36%;
+    background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.95), transparent);
+    transform: translateX(-140%) skewX(-16deg);
+  }
+  .rs-agata:active {
+    transform: scale(0.97);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .rs-agata:hover {
+    border-color: #0f2a1f;
+    background:
+      radial-gradient(120% 100% at 50% -10%, #ffffff, rgb(255 255 255 / 0) 70%),
+      linear-gradient(180deg, #ffffff, #f1eee5);
+    color: var(--rs-verde-fundo);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .rs-agata:hover::after {
+    animation: rs-esmalte 760ms var(--rs-saida) both;
+  }
+}
+@keyframes rs-esmalte {
+  to {
+    transform: translateX(400%) skewX(-16deg);
+  }
+}
+
+/* ---------- o vínculo: o pontilhado do cardápio ----------
+   Os pontos ficam; sob o ponteiro, o traço cheio se escreve por cima, da esquerda para a direita, e se recolhe para a
+   direita. */
+.rs-pontilhado,
+.rs-pontilhado-claro {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-weight: 700;
+  color: var(--accent);
+  background: radial-gradient(circle, currentColor 0.09em, transparent 0.1em) left calc(100% - 0.55rem) / 0.32em 0.2em repeat-x;
+}
+.rs-pontilhado-claro {
+  color: inherit;
+}
+.rs-pontilhado::after,
+.rs-pontilhado-claro::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(0.55rem - 0.05em);
+  height: 0.11em;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 280ms var(--rs-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rs-pontilhado:hover::after,
+  .rs-pontilhado-claro:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+.rs-pontilhado:focus-visible::after,
+.rs-pontilhado-claro:focus-visible::after {
+  transform: scaleX(1);
+  transition: none;
+}
+
+/* O vínculo escrito na lousa: o risco de giz embaixo, que engrossa sob o ponteiro (o amarelo é do hoje e do preço). */
+.rs-risco-de-giz {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  color: var(--rs-giz);
+  font-weight: 700;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M1 5C20 2.6 40 6.2 60 4.2S88 2.8 99 4.6' fill='none' stroke='%23ece8dc' stroke-opacity='.7' stroke-width='2.2' stroke-linecap='round'/></svg>") left calc(100% - 0.3rem) / 100% 0.45rem no-repeat;
+  transition: background-size 220ms ease-out;
+}
+.rs-risco-de-giz:hover {
+  background-size: 100% 0.62rem;
+}
+.rs-lousa :focus-visible,
+.rs-parede :focus-visible {
+  outline-color: var(--rs-giz-amarelo);
+}
+
+/* O item de lista (o prato): o tique da comanda se escreve na margem. */
+.rs-tique {
+  position: absolute;
+  left: -1.9rem;
+  top: 0.55rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+  transform: scale(0.55) rotate(-8deg);
+  transform-origin: 20% 80%;
+  transition:
+    opacity 160ms ease-out,
+    transform 240ms var(--rs-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.rs-prato-do-balcao, .rs-dia, .rs-prato-cartaz):hover .rs-tique {
+    opacity: 1;
+    transform: none;
+  }
+  .rs-prato-cartaz:hover .rs-prato-cartaz-preco {
+    color: var(--rs-verde);
+  }
+}
+:is(.rs-prato-do-balcao, .rs-dia, .rs-prato-cartaz):focus-within .rs-tique {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- a lousa pendurada (a assinatura, em CSS 3D) ---------- */
+.rs-pendurada {
+  --rs-espessura: 1.2rem;
+  position: relative;
+  padding-top: 3.1rem;
+  perspective: 1500px;
+}
+.rs-prego {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  width: 0.95rem;
+  height: 0.95rem;
+  margin-left: -0.475rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e4dfd2, #7a7366 55%, #3c3832);
+  box-shadow: 3px 4px 4px rgb(20 26 23 / 0.45);
+}
+.rs-barbante {
+  position: absolute;
+  top: 0.45rem;
+  left: 22%;
+  width: 56%;
+  height: 2.75rem;
+  overflow: visible;
+  fill: none;
+  stroke: #8a7a5c;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  transform-origin: 50% 0;
+  rotate: var(--balanco, 0deg);
+}
+/* A pose: a de repouso (--rx0, --ry0: a da capa já vem inclinada, com a espessura à vista), mais a do ponteiro. */
+.rs-quadro {
+  position: relative;
+  transform-style: preserve-3d;
+  transform-origin: 50% -3rem;
+  rotate: var(--balanco, 0deg);
+  transform: rotateX(calc(var(--rx0, 0deg) + var(--rx, 0deg))) rotateY(calc(var(--ry0, 0deg) + var(--ry, 0deg)));
+  transition: transform 520ms var(--rs-saida);
+  will-change: transform;
+}
+.rs-pendurada[data-sob] .rs-quadro {
+  transition-duration: 140ms;
+}
+.rs-quadro-frente {
+  position: relative;
+  border-radius: 0.75rem;
+  padding: clamp(0.8rem, 0.5rem + 0.8vw, 1.2rem);
+  background:
+    var(--rs-veio) 0 0 / 1800px 320px,
+    var(--rs-fibra) 0 0 / 600px 200px,
+    linear-gradient(160deg, #8f5f3b, #6e4528 50%, #573620);
+  /* O caixilho tem espessura: as faces de baixo e da direita, à vista com a luz da janela, e a sombra na parede. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.32),
+    inset 1px 0 0 rgb(255 255 255 / 0.14),
+    inset 0 -2px 0 rgb(0 0 0 / 0.3),
+    var(--rs-extrusao),
+    var(--rs-sombra-peca);
+}
+/* As quatro bordas do caixilho, faces de verdade: a de cima e a da esquerda pegam a luz da janela. */
+.rs-quadro-borda {
+  position: absolute;
+  background: linear-gradient(90deg, #5e3c24, #4a2e1a);
+}
+.rs-quadro-borda[data-lado="cima"],
+.rs-quadro-borda[data-lado="baixo"] {
+  left: 0.4rem;
+  right: 0.4rem;
+  height: var(--rs-espessura);
+}
+.rs-quadro-borda[data-lado="cima"] {
+  top: 0;
+  transform-origin: top;
+  transform: rotateX(-90deg);
+  background: #a87b54;
+}
+.rs-quadro-borda[data-lado="baixo"] {
+  bottom: 1.3rem;
+  transform-origin: bottom;
+  transform: rotateX(90deg);
+}
+.rs-quadro-borda[data-lado="esquerda"],
+.rs-quadro-borda[data-lado="direita"] {
+  top: 0.4rem;
+  bottom: 1.6rem;
+  width: var(--rs-espessura);
+}
+.rs-quadro-borda[data-lado="esquerda"] {
+  left: 0;
+  transform-origin: left;
+  transform: rotateY(90deg);
+  background: #94693f;
+}
+.rs-quadro-borda[data-lado="direita"] {
+  right: 0;
+  transform-origin: right;
+  transform: rotateY(-90deg);
+}
+.rs-lousa {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 0.4rem;
+  background:
+    var(--rs-apagador) center / cover no-repeat,
+    radial-gradient(65% 55% at 30% 35%, rgb(236 232 220 / 0.06), transparent 70%),
+    var(--rs-lousa);
+  box-shadow:
+    inset 0 0 46px rgb(0 0 0 / 0.5),
+    inset 0 2px 5px rgb(0 0 0 / 0.55);
+  color: var(--rs-giz);
+}
+.rs-lousa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--rs-po);
+  opacity: 0.7;
+}
+/* A luz da janela na lousa: em repouso, no canto de cima; sob a mão, vai aonde o ponteiro está, e acende. */
+.rs-lousa-janela {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(28rem 18rem at var(--lx, 88%) var(--ly, 6%), rgb(255 248 228 / 0.08), transparent 70%);
+}
+[data-sob] .rs-lousa-janela {
+  background: radial-gradient(24rem 17rem at var(--lx, 88%) var(--ly, 6%), rgb(255 248 228 / 0.17), transparent 70%);
+}
+.rs-giz {
+  filter: url(#giz-do-salao);
+}
+/* A calha do giz: a régua de madeira sob o caixilho, com a luz em cima; o giz e o apagador deitados nela. */
+.rs-calha {
+  position: relative;
+  height: 1.3rem;
+  margin: -0.2rem -2.5% 0;
+  border-radius: 0.25rem 0.25rem 0.45rem 0.45rem;
+  background:
+    var(--rs-veio) 0 0 / 1800px 320px,
+    linear-gradient(180deg, #a2734c 0%, #7b5034 38%, #573620 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.32),
+    10px 16px 22px -12px rgb(20 26 23 / 0.6);
+}
+.rs-calha-giz {
+  position: absolute;
+  top: -0.3rem;
+  left: 7%;
+  width: 3.3rem;
+  height: 0.5rem;
+  border-radius: 0.3rem;
+  background: linear-gradient(180deg, #fffdf6, #d8d3c4);
+  box-shadow: 2px 2px 2px rgb(0 0 0 / 0.35);
+  rotate: -3deg;
+}
+.rs-calha-giz[data-cor="amarelo"] {
+  left: calc(7% + 4.2rem);
+  width: 2.1rem;
+  background: linear-gradient(180deg, #f6da84, #c9a446);
+  rotate: 5deg;
+}
+.rs-calha-apagador {
+  position: absolute;
+  top: -0.85rem;
+  left: calc(7% + 7.6rem);
+  width: 5.8rem;
+  height: 1.3rem;
+  border-radius: 0.25rem;
+  background: linear-gradient(180deg, #c49a6d 0%, #a67b52 52%, #2e2b27 52%, #3d3934 100%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.35),
+    3px 3px 4px rgb(0 0 0 / 0.38);
+}
+
+/* ---------- 1 · a parede do salão (a capa) ----------
+   A parede de azulejo verde vidrado de ponta a ponta; a luz da janela entra pela esquerda e projeta o caixilho na
+   parede e na lousa; a lousa pendurada no prego, já inclinada, com o título escrito a giz. */
+.rs-capa {
+  display: grid;
+  min-height: max(42rem, calc(100svh - var(--rs-topo)));
+  align-content: center;
+  padding-block: clamp(2rem, 1rem + 3vw, 4rem) clamp(3.5rem, 2rem + 4vw, 6rem);
+  box-shadow:
+    inset 0 -40px 60px -40px rgb(10 24 18 / 0.6),
+    inset 0 40px 60px -40px rgb(10 24 18 / 0.4);
+}
+/* A luz da janela: o vão claro, com a cruz do caixilho em sombra, deitado na parede (e sobre a lousa). */
+.rs-capa::after {
+  content: "";
+  position: absolute;
+  top: -12%;
+  left: -16%;
+  z-index: 3;
+  width: 46%;
+  height: 120%;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent 0 32%, rgb(8 18 14 / 0.6) 32% 35%, transparent 35% 66%, rgb(8 18 14 / 0.6) 66% 69%, transparent 69%),
+    linear-gradient(180deg, transparent 0 46%, rgb(8 18 14 / 0.6) 46% 49%, transparent 49%),
+    rgb(255 244 212 / 0.42);
+  transform: skewX(-20deg) rotate(3deg);
+  filter: blur(12px);
+  mix-blend-mode: soft-light;
+  -webkit-mask: radial-gradient(closest-side, #000 55%, transparent);
+  mask: radial-gradient(closest-side, #000 55%, transparent);
+}
+.rs-capa .rs-pendurada {
+  --rx0: 2deg;
+  --ry0: 7deg;
+  max-width: 68rem;
+  margin-inline: auto;
+}
+/* Na capa, a calha é uma prateleira: a face de cima à vista, onde a ação fica de pé. */
+.rs-capa .rs-calha {
+  height: 2rem;
+  background:
+    linear-gradient(180deg, #b3855c 0 0.55rem, #6e4528 0.55rem 0.7rem, transparent 0.7rem),
+    var(--rs-veio) 0 0 / 1800px 320px,
+    linear-gradient(180deg, #7b5034, #4a2e1a);
+}
+.rs-capa-lousa {
+  display: grid;
+  column-gap: 2rem;
+  padding: clamp(2rem, 1.2rem + 2.8vw, 3.75rem) clamp(1.5rem, 1rem + 3vw, 4rem) clamp(3rem, 2.4rem + 1.5vw, 3.75rem);
+}
+@media (min-width: 1024px) {
+  .rs-capa-lousa {
+    grid-template-columns: minmax(0, 1fr) 15rem;
+  }
+  .rs-capa-hoje,
+  .rs-capa-pe {
+    grid-column: 1 / -1;
+  }
+}
+/* A panela a giz: o traço do giz (o filtro) e o vapor que sobe devagar (o ambiente: pausável, parado fora da tela e
+   com movimento reduzido). */
+.rs-panela {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .rs-panela {
+    display: block;
+    width: 100%;
+    align-self: center;
+    overflow: visible;
+    fill: none;
+    stroke: var(--rs-giz);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rs-vapor path {
+    animation: rs-vapor 4.8s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+  .rs-vapor path:nth-child(2) {
+    animation-delay: -1.6s;
+  }
+  .rs-vapor path:nth-child(3) {
+    animation-delay: -3.2s;
+  }
+  [data-na-tela] .rs-vapor path {
+    animation-play-state: running;
+  }
+  html.ambiente-pausado .rs-vapor path {
+    animation-play-state: paused;
+  }
+}
+@keyframes rs-vapor {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+.rs-capa-titulo {
+  font-size: var(--rs-cartaz);
+  line-height: 0.92;
+  letter-spacing: -0.018em;
+  color: var(--rs-giz);
+}
+.rs-capa-hoje {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1.25rem;
+  margin-top: clamp(1.75rem, 1rem + 2vw, 2.75rem);
+  border-top: 1px dashed rgb(236 232 220 / 0.3);
+  padding-top: 1.25rem;
+}
+.rs-capa-dia {
+  font-size: var(--rs-lide);
+  font-style: italic;
+  color: var(--rs-giz-amarelo);
+}
+.rs-capa-prato {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.6rem);
+  line-height: 1.06;
+}
+.rs-capa-preco {
+  margin-left: auto;
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(2rem, 1.4rem + 1.6vw, 2.9rem);
+  font-variant-numeric: normal;
+  line-height: 1;
+  color: var(--rs-giz-amarelo);
+}
+.rs-capa-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  margin-top: 1rem;
+  color: var(--rs-giz);
+}
+/* A ação, de pé na prateleira da calha, em frente à lousa: a base do prato na face de cima. */
+.rs-capa-acao {
+  position: absolute;
+  right: 9%;
+  bottom: calc(100% - 0.45rem);
+  z-index: 2;
+}
+
+/* ---------- 2 · o cardápio em cartaz ----------
+   A tipografia como imagem: "Pratos" em escala de cartaz, e os seis pratos com o preço, sem descrição (o resto está
+   no cardápio). */
+.rs-cartaz-do-dia {
+  display: grid;
+  align-content: center;
+  padding-block: clamp(4.5rem, 3rem + 5vw, 8rem);
+}
+.rs-palavra-gigante {
+  font-size: var(--rs-gigante);
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  margin-left: -0.05em;
+}
+.rs-cartaz-grade {
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(1.5rem, 1rem + 2vw, 3rem);
+}
+@media (min-width: 1024px) {
+  .rs-cartaz-grade {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.5fr);
+    align-items: end;
+    gap: 4rem;
+  }
+}
+.rs-cartaz-pratos {
+  display: grid;
+  border-top: 2px solid var(--foreground);
+}
+.rs-prato-cartaz {
+  position: relative;
+  display: flex;
+  align-items: last baseline;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-block: 0.9rem 0.8rem;
+}
+.rs-prato-cartaz-nome {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(1.75rem, 1.2rem + 1.5vw, 2.75rem);
+  line-height: 1;
+}
+.rs-prato-cartaz-preco {
+  margin-left: auto;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 1rem + 0.4vw, 1.4rem);
+  white-space: nowrap;
+  transition: color 180ms ease-out;
+}
+.rs-cartaz-lado p {
+  color: var(--muted-foreground);
+}
+
+/* A linha de cardápio (no cardápio e no pedido): o nome, o pontilhado até o preço (alinhado à última linha do nome,
+   que pode quebrar) e o detalhe embaixo. */
+.rs-prato-do-balcao {
+  position: relative;
+}
+.rs-prato-linha {
+  display: flex;
+  align-items: last baseline;
+  gap: 0.6rem;
+}
+.rs-prato-nome {
+  flex: 0 1 auto;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  line-height: 1.25;
+  /* O nome que quebra fica em duas linhas parelhas: o pontilhado da última nunca vira um toco. */
+  text-wrap: balance;
+}
+.rs-prato-pontos {
+  flex: 1 0 2.25rem;
+  height: 0.25rem;
+  background: radial-gradient(circle, rgb(31 38 34 / 0.45) 1px, transparent 1.3px) left center / 0.42rem 0.25rem repeat-x;
+  transform-origin: left center;
+}
+.rs-prato-preco {
+  font-weight: 700;
+  white-space: nowrap;
+}
+.rs-prato-detalhe {
+  margin-top: 0.3rem;
+  max-width: 48ch;
+  font-size: var(--rs-nota);
+  color: var(--muted-foreground);
+}
+
+/* ---------- 3 · a comanda na mesa ----------
+   A mesa de madeira escura, com a lâmpada em cima; o bloco de comandas (a cola em cima, as folhas de baixo à vista) e
+   a de cima, escrita. A frase à direita, no papel claro da tinta. */
+.rs-na-mesa {
+  display: grid;
+  align-content: center;
+  padding-block: clamp(5rem, 3rem + 6vw, 8.5rem);
+  box-shadow:
+    inset 0 3px 0 rgb(255 255 255 / 0.08),
+    inset 0 -4px 0 rgb(0 0 0 / 0.3);
+}
+.rs-na-mesa-grade {
+  display: grid;
+  gap: 3.5rem;
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .rs-na-mesa-grade {
+    grid-template-columns: minmax(0, 28rem) minmax(0, 1fr);
+    gap: 6rem;
+  }
+}
+.rs-na-mesa .rs-texto-lide {
+  margin-top: 1.5rem;
+  max-width: 34ch;
+  color: rgb(248 244 236 / 0.86);
+}
+/* O bloco de comandas: as folhas de baixo (as bordas que sobram) e a cola no alto. */
+.rs-bloco {
+  position: relative;
+  rotate: -4deg;
+  filter: drop-shadow(2px 3px 2px rgb(10 6 2 / 0.35)) drop-shadow(18px 30px 30px rgb(10 6 2 / 0.5));
+}
+.rs-bloco::before,
+.rs-bloco::after {
+  content: "";
+  position: absolute;
+  inset: 0.6rem -0.2rem -0.5rem 0.3rem;
+  z-index: -1;
+  border-radius: 0.15rem;
+  background: #e9e3d4;
+}
+.rs-bloco::after {
+  inset: 1.1rem -0.4rem -0.95rem 0.55rem;
+  background: #ddd6c4;
+}
+.rs-comanda {
+  --rs-linha: 2.4rem;
+  position: relative;
+  border-radius: 0.15rem;
+  padding: 2.6rem 1.9rem 2rem;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(var(--rs-linha) - 1px), rgb(44 101 79 / 0.2) calc(var(--rs-linha) - 1px) var(--rs-linha)) 0 5.6rem / 100% calc(100% - 7rem) no-repeat,
+    var(--rs-grao),
+    linear-gradient(175deg, #fdfcf7, #f4f0e5);
+  color: var(--foreground);
+}
+/* A cola do bloco, no alto da folha. */
+.rs-comanda::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 0.85rem;
+  border-radius: 0.15rem 0.15rem 0 0;
+  background: linear-gradient(180deg, #7b3a2a, #5e2a1e);
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.25);
+}
+.rs-comanda-cabeca {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 2px solid var(--rs-verde);
+  padding-bottom: 0.6rem;
+}
+.rs-comanda-titulo {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+.rs-comanda-casa {
+  font-size: var(--rs-pe);
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.rs-comanda-passo {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr);
+  min-height: calc(var(--rs-linha) * 2);
+  align-content: start;
+  padding-top: 0.6rem;
+}
+.rs-comanda-passo svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.2rem;
+  fill: none;
+  stroke: var(--rs-verde);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rs-comanda-passo strong {
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+.rs-comanda-passo span {
+  display: block;
+  font-size: var(--rs-nota);
+  font-style: italic;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+/* ---------- 4 · a semana na parede ---------- */
+.rs-parede {
+  background:
+    var(--rs-veio) 0 0 / 1800px 320px,
+    linear-gradient(180deg, #7b5034, #573620);
+  padding-top: 1rem;
+}
+.rs-parede-lousa {
+  position: relative;
+  isolation: isolate;
+  background:
+    var(--rs-apagador) center / cover no-repeat,
+    var(--rs-lousa);
+  box-shadow: inset 0 0 70px rgb(0 0 0 / 0.55);
+  color: var(--rs-giz);
+}
+.rs-parede-lousa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--rs-po);
+  opacity: 0.7;
+}
+.rs-parede-miolo {
+  padding-block: clamp(4.5rem, 3rem + 5vw, 7.5rem);
+}
+.rs-parede-cabeca {
+  text-align: center;
+}
+.rs-parede-dias {
+  display: grid;
+  gap: 2.5rem 2rem;
+  margin-block: 3.5rem 3rem;
+}
+@media (min-width: 640px) {
+  .rs-parede-dias {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1100px) {
+  .rs-parede-dias {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+.rs-dia {
+  position: relative;
+  border-top: 1px dashed rgb(236 232 220 / 0.24);
+  padding-top: 1rem;
+}
+.rs-dia .rs-tique {
+  left: auto;
+  right: 0;
+  top: 1.1rem;
+  stroke: var(--rs-giz-amarelo);
+}
+.rs-dia-nome {
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--rs-giz-apagado);
+}
+.rs-dia[data-hoje] .rs-dia-nome {
+  color: var(--rs-giz-amarelo);
+}
+.rs-dia-prato {
+  margin-top: 0.35rem;
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(1.75rem, 1.3rem + 0.9vw, 2.25rem);
+  line-height: 1.02;
+}
+.rs-dia-preco {
+  margin-top: 0.8rem;
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.6rem;
+  font-variant-numeric: normal;
+  line-height: 1;
+  color: var(--rs-giz-amarelo);
+}
+.rs-dia-porcao {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: var(--font-rs-texto), serif;
+  font-size: 0.9rem;
+  color: var(--rs-giz-apagado);
+}
+.rs-volta-de-giz {
+  position: absolute;
+  top: -0.6rem;
+  left: -1rem;
+  width: calc(100% + 2rem);
+  height: calc(100% + 1.6rem);
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--rs-giz-amarelo);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  filter: url(#giz-do-salao);
+}
+.rs-calha-da-parede {
+  margin: 0;
+  height: 1.5rem;
+  border-radius: 0;
+}
+.rs-calha-da-parede .rs-calha-giz {
+  left: auto;
+  right: max(12rem, calc(50% - 39rem + 12rem));
+}
+.rs-calha-da-parede .rs-calha-giz[data-cor="amarelo"] {
+  right: max(16.5rem, calc(50% - 39rem + 16.5rem));
+}
+.rs-calha-da-parede .rs-calha-apagador {
+  left: auto;
+  right: max(3rem, calc(50% - 39rem + 3rem));
+}
+
+/* ---------- 4 · a parede de azulejo branco ----------
+   A cozinha de azulejo branco, de peças de 12 rem. O painel da casa (o desenho inteiro em nove peças) sangra pela
+   direita, alto; o título na fileira do meio, à esquerda; na fileira de baixo, os quatro azulejos pintados à mão, na
+   grade da parede (cada um é uma peça); embaixo de cada um, o motivo. */
+.rs-avisos {
+  /* O painel sobe meia peça acima da cena: o recorte é nos dois sentidos. */
+  overflow: clip;
+  padding-block: 0 clamp(4rem, 3rem + 3vw, 6rem);
+}
+.rs-avisos-grade {
+  position: relative;
+}
+.rs-avisos-titulo {
+  display: flex;
+  min-height: 12rem;
+  max-width: 11ch;
+  align-items: flex-end;
+  padding-block: clamp(4rem, 3rem + 3vw, 6rem) 1.5rem;
+  color: var(--rs-verde-fundo);
+}
+.rs-painel {
+  display: none;
+}
+.rs-azulejos {
+  display: grid;
+  gap: 2rem 1.5rem;
+  margin-top: 1rem;
+}
+@media (min-width: 640px) {
+  .rs-azulejos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* Na mesa larga, tudo na grade da parede: o título na segunda fileira, os quatro azulejos na terceira, o painel nas
+   três primeiras, da coluna do meio para a direita. */
+@media (min-width: 1200px) {
+  .rs-avisos-grade {
+    max-width: none;
+    width: calc(4 * var(--rs-peca));
+    margin-inline: 0;
+    margin-left: calc(50% - 3 * var(--rs-peca));
+    padding-inline: 0;
+  }
+  .rs-avisos-titulo {
+    height: calc(2 * var(--rs-peca) + var(--rs-subida));
+    min-height: 0;
+    padding-block: 0 1.75rem;
+  }
+  .rs-painel {
+    position: absolute;
+    top: var(--rs-subida);
+    left: calc(50% + var(--rs-peca));
+    z-index: -1;
+    display: block;
+    width: calc(3 * var(--rs-peca));
+    height: calc(3 * var(--rs-peca));
+    background:
+      var(--rs-relevo-claro) 0 0 / var(--rs-peca) var(--rs-peca),
+      linear-gradient(90deg, #d6cfc0 2px, transparent 2px) 0 0 / var(--rs-peca) var(--rs-peca),
+      linear-gradient(180deg, #d6cfc0 2px, transparent 2px) 0 0 / var(--rs-peca) var(--rs-peca),
+      var(--rs-painel) 0 0 / 100% 100% no-repeat,
+      #f4f1e9;
+  }
+  .rs-azulejos {
+    grid-template-columns: repeat(4, var(--rs-peca));
+    gap: 0;
+    margin-top: 0;
+  }
+  /* A peça dentro do rejunte da parede. */
+  .rs-azulejo-pintado {
+    padding: 2px 0 0 2px;
+  }
+}
+.rs-azulejo-pintado {
+  perspective: 900px;
+}
+/* O azulejo pintado: o branco do vidrado, o desenho da casa a pincel, o aviso pintado no meio; a peça assentada na
+   parede (o rejunte em volta, o relevo, a sombra curta). Sob a mão, inclina de leve e o brilho do vidrado a segue. */
+.rs-azulejo-peca {
+  position: relative;
+  display: grid;
+  aspect-ratio: 1;
+  max-width: 18rem;
+  place-content: center;
+  overflow: hidden;
+  background:
+    var(--rs-pintado) center / 100% 100% no-repeat,
+    var(--rs-relevo-claro),
+    linear-gradient(160deg, #fdfcf6, #efebe0);
+  box-shadow:
+    0 0 0 2px #d6cfc0,
+    inset 0 0 0 1px rgb(255 255 255 / 0.7),
+    2px 3px 3px rgb(60 50 30 / 0.12);
+  padding: 22%;
+  color: var(--rs-verde-fundo);
+  text-align: center;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 480ms var(--rs-saida);
+}
+@media (min-width: 1200px) {
+  .rs-azulejo-peca {
+    width: calc(var(--rs-peca) - 2px);
+    max-width: none;
+    padding: 19%;
+  }
+}
+[data-sob] > .rs-azulejo-peca {
+  transition-duration: 120ms;
+}
+/* O brilho do vidrado, onde o ponteiro está. */
+.rs-azulejo-peca::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(10rem 8rem at var(--lx, 22%) var(--ly, 12%), rgb(255 255 255 / 0.85), transparent 65%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.rs-azulejo-fato {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(1.25rem, 1.05rem + 0.5vw, 1.5rem);
+  line-height: 1.08;
+}
+.rs-azulejo-motivo {
+  margin-top: 1rem;
+  padding-inline: 0.9rem;
+  font-size: var(--rs-nota);
+  line-height: 1.5;
+  color: var(--foreground);
+}
+
+/* ---------- 6 · a porta: o endereço, o guardanapo e a plaquinha ----------
+   O papel do balcão; o endereço em cartaz; o guardanapo com o mapa do bairro a caneta, deitado e girado; a plaquinha
+   esmaltada do horário por cima da quina dele, como se tivesse sido posta ali. Ao entrar, o guardanapo aproxima. */
+.rs-fachada {
+  display: grid;
+  align-content: center;
+  padding-block: clamp(5rem, 3rem + 6vw, 8.5rem);
+}
+.rs-fachada-grade {
+  display: grid;
+  gap: 2.5rem;
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .rs-fachada-grade {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    column-gap: 0;
+  }
+  .rs-endereco-cartaz {
+    grid-column: 1 / -1;
+  }
+  .rs-fachada .rs-guardanapo {
+    max-width: 36rem;
+  }
+  .rs-fachada .rs-esmaltada {
+    z-index: 1;
+    max-width: 24rem;
+    margin: 6rem 0 0 -5rem;
+    rotate: 2deg;
+  }
+}
+.rs-endereco-cartaz {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(2.75rem, 1.2rem + 4.4vw, 5.25rem);
+  font-style: normal;
+  line-height: 0.95;
+  letter-spacing: -0.024em;
+}
+.rs-endereco-cartaz span {
+  display: block;
+}
+.rs-endereco-cartaz small {
+  display: block;
+  margin-top: 0.9rem;
+  font-family: var(--font-rs-texto), serif;
+  font-size: var(--rs-lide);
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+/* A plaquinha esmaltada verde, com o horário: o esmalte com o fio branco, os dois parafusos, o lascado. */
+.rs-esmaltada {
+  position: relative;
+  border-radius: 0.9rem;
+  background:
+    radial-gradient(120% 70% at 30% -10%, rgb(255 255 255 / 0.3), transparent 55%),
+    linear-gradient(180deg, #2f6c55, var(--rs-verde-fundo));
+  box-shadow:
+    inset 0 0 0 4px var(--rs-verde-fundo),
+    inset 0 0 0 6px #f6f3ea,
+    inset 0 -6px 12px rgb(0 0 0 / 0.25),
+    var(--rs-sombra-peca);
+  padding: 2rem 2rem 1.6rem;
+  color: var(--rs-vidrado);
+}
+.rs-esmaltada::before,
+.rs-esmaltada::after {
+  content: "";
+  position: absolute;
+  top: 0.7rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e7e2d6, #77705f 60%);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.25),
+    1px 1px 1px rgb(0 0 0 / 0.3);
+}
+.rs-esmaltada::before {
+  left: 0.8rem;
+}
+.rs-esmaltada::after {
+  right: 0.8rem;
+}
+.rs-esmaltada-titulo {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.6rem;
+  text-align: center;
+}
+.rs-esmaltada dl {
+  margin-top: 0.75rem;
+}
+.rs-esmaltada dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  border-top: 1px solid rgb(246 243 234 / 0.3);
+  padding-block: 0.45rem;
+}
+.rs-esmaltada dt {
+  font-style: italic;
+}
+.rs-esmaltada-nota {
+  margin-top: 0.6rem;
+  font-size: var(--rs-pe);
+  font-style: italic;
+  text-align: center;
+}
+
+/* ---------- 7 · o cavalete na calçada (a chamada) ----------
+   A calçada de pedra portuguesa de ponta a ponta; o cavalete em A de pé nela, visto de três quartos, com a frase a
+   giz; as ações na soleira de pedra lisa da porta, embaixo. */
+.rs-calcada {
+  display: grid;
+  align-content: end;
+  padding-top: clamp(5rem, 3rem + 5vw, 8rem);
+  background:
+    linear-gradient(160deg, rgb(255 250 236 / 0.24), rgb(255 250 236 / 0) 55%),
+    var(--rs-calcada) 0 0 / 30rem 15rem;
+}
+.rs-cavalete {
+  position: relative;
+  width: min(100%, 50rem);
+  margin-inline: auto;
+  padding-bottom: 4rem;
+  perspective: 1300px;
+  text-align: center;
+}
+.rs-cavalete-tampo {
+  position: relative;
+  z-index: 1;
+  border-radius: 0.7rem;
+  padding: 1.1rem;
+  background:
+    var(--rs-veio) 0 0 / 1800px 320px,
+    linear-gradient(160deg, #9a6a43, #7b5034 50%, #61402a);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    var(--rs-extrusao),
+    var(--rs-sombra-peca);
+  transform-origin: 50% 100%;
+  transform: rotateX(calc(9deg + var(--rx, 0deg))) rotateY(calc(-12deg + var(--ry, 0deg)));
+  transition: transform 520ms var(--rs-saida);
+}
+/* As costas do A, abertas para trás: aparecem do lado direito, mais escuras, na sombra do tampo. */
+.rs-cavalete-costas {
+  position: absolute;
+  top: 1.4rem;
+  right: -2.4rem;
+  bottom: 5.2rem;
+  left: 9%;
+  border-radius: 0.7rem;
+  background:
+    var(--rs-veio) 0 0 / 1800px 320px,
+    linear-gradient(160deg, #5a3a22, #3a2414);
+  box-shadow: 18px 26px 40px -16px rgb(10 12 10 / 0.6);
+  transform: rotateY(-12deg) skewY(-2.5deg);
+}
+.rs-cavalete[data-sob] .rs-cavalete-tampo {
+  transition-duration: 140ms;
+}
+/* A dobradiça no alto e as quatro pernas do A: as da frente, à vista, e as de trás, mais escuras, abertas. */
+.rs-cavalete-dobradica {
+  position: absolute;
+  top: -0.55rem;
+  left: 50%;
+  z-index: 2;
+  width: 3.5rem;
+  height: 1rem;
+  margin-left: -1.75rem;
+  border-radius: 0.3rem;
+  background: linear-gradient(180deg, #c9c3b5, #7d776a);
+  box-shadow: 1px 2px 3px rgb(0 0 0 / 0.35);
+}
+.rs-cavalete-perna {
+  position: absolute;
+  bottom: 0;
+  width: 1rem;
+  height: 5rem;
+  border-radius: 0 0 0.3rem 0.3rem;
+  background:
+    var(--rs-veio) 0 0 / 1800px 320px,
+    linear-gradient(90deg, #6a442a, #8a5d3c);
+  box-shadow: 6px 10px 14px -6px rgb(0 0 0 / 0.5);
+}
+.rs-cavalete-perna[data-lado="esquerda"] {
+  left: 6%;
+  rotate: 9deg;
+}
+.rs-cavalete-perna[data-lado="direita"] {
+  right: 6%;
+  rotate: -9deg;
+}
+.rs-cavalete-perna[data-lado="atras-esquerda"],
+.rs-cavalete-perna[data-lado="atras-direita"] {
+  z-index: -1;
+  height: 4.5rem;
+  bottom: 0.9rem;
+  filter: brightness(0.6);
+}
+.rs-cavalete-perna[data-lado="atras-esquerda"] {
+  left: 13%;
+  rotate: -14deg;
+}
+.rs-cavalete-perna[data-lado="atras-direita"] {
+  right: 13%;
+  rotate: 14deg;
+}
+.rs-cavalete-lousa {
+  padding: clamp(2.25rem, 1.4rem + 2.4vw, 3.5rem) clamp(1.5rem, 1rem + 2vw, 3.5rem) clamp(2rem, 1.4rem + 2vw, 2.75rem);
+}
+.rs-cavalete-titulo {
+  font-size: clamp(2.6rem, 1.2rem + 3.8vw, 4.75rem);
+  line-height: 0.98;
+  color: var(--rs-giz);
+}
+.rs-cavalete-texto {
+  margin: 1.25rem auto 0;
+  max-width: 34ch;
+  color: var(--rs-giz);
+}
+/* A soleira da porta: a pedra lisa, clara, com o degrau; as ações em cima dela. */
+.rs-soleira {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.65) 0 2px, rgb(255 255 255 / 0) 2px),
+    var(--rs-grao),
+    linear-gradient(178deg, #eeeae1, #e2ddd1);
+  box-shadow: 0 -10px 18px -10px rgb(20 22 20 / 0.45);
+  padding-block: 1.75rem 2rem;
+}
+.rs-soleira-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem 1.75rem;
+}
+
+/* ---------- o barrado e o rodapé de madeira ---------- */
+.rs-barrado-azulejo {
+  height: 7.5rem;
+  background:
+    linear-gradient(180deg, rgb(22 34 28 / 0) 60%, rgb(22 34 28 / 0.25)),
+    var(--rs-relevo) 0 0 / 7.5rem 7.5rem,
+    var(--rs-azulejo-branco) 0 0 / 7.5rem 7.5rem;
+}
+.rs-barrado-madeira {
+  background:
+    var(--rs-fibra) 0 0 / 600px 200px,
+    linear-gradient(180deg, #4e311c, #3a2414);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.18);
+  padding-block: 2.25rem 2rem;
+  color: #f8f4ec;
+}
+.rs-barrado-nome {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(2rem, 1.6rem + 1vw, 2.5rem);
+  line-height: 1;
+}
+.rs-barrado-casa {
+  max-width: 70ch;
+  margin-top: 0.6rem;
+}
+.rs-barrado-linha {
+  margin-top: 0.6rem;
+  font-size: var(--rs-nota);
+  color: rgb(248 244 236 / 0.86);
+}
+.rs-barrado-paginas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin-top: 0.75rem;
+  font-size: var(--rs-nota);
+}
+.rs-barrado :focus-visible {
+  outline-color: #f8f4ec;
+}
+.rs-barrado-fim {
+  background: #3e2616;
+  color: rgb(248 244 236 / 0.82);
+  font-size: var(--rs-pe);
+}
+.rs-barrado-fim-linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-block: 0.75rem;
+}
+.rs-barrado-fim-linha p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1.25rem;
+}
+.rs-barrado-fim .rs-pontilhado-claro {
+  font-weight: 400;
+}
+
+/* ---------- as páginas internas: cada uma abre na sua peça ----------
+   Nenhuma abre com o mesmo bloco: o título impresso no alto do cardápio; escrito a caneta no alto da folha de pedido;
+   a giz na lousa grande da cozinha; na etiqueta da capa do caderno; na placa de rua da esquina. */
+.rs-abertura {
+  padding-block: clamp(2.75rem, 1.5rem + 3vw, 4.5rem) clamp(4rem, 3rem + 3vw, 6rem);
+}
+.rs-mesa .rs-texto-lide,
+.rs-balcao-verde .rs-texto-lide {
+  color: rgb(248 244 236 / 0.88);
+}
+
+/* O cardápio de três folhas, de pé na mesa: as folhas dos lados ficam um pouco dobradas; ao abrir a página, elas se
+   desdobram (o momento desta página). */
+.rs-triptico {
+  display: grid;
+  gap: 1.25rem;
+  perspective: 2200px;
+}
+@media (min-width: 1200px) {
+  .rs-triptico {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+  }
+}
+.rs-folha-do-cardapio {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background:
+    var(--rs-grao),
+    linear-gradient(180deg, #fdfcf7, #f3eee2);
+  box-shadow: var(--rs-sombra-peca);
+  padding: clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  color: var(--foreground);
+}
+@media (min-width: 1200px) {
+  .rs-folha-do-cardapio:first-child {
+    border-radius: 0.5rem 0 0 0.5rem;
+    transform-origin: right center;
+    transform: rotateY(10deg);
+    background:
+      linear-gradient(90deg, rgb(31 38 34 / 0.06), transparent 30%),
+      var(--rs-grao),
+      linear-gradient(180deg, #fdfcf7, #f3eee2);
+  }
+  .rs-folha-do-cardapio:nth-child(2) {
+    z-index: 1;
+  }
+  .rs-folha-do-cardapio:last-child {
+    border-radius: 0 0.5rem 0.5rem 0;
+    transform-origin: left center;
+    transform: rotateY(-10deg);
+    background:
+      linear-gradient(270deg, rgb(31 38 34 / 0.08), transparent 30%),
+      var(--rs-grao),
+      linear-gradient(180deg, #fdfcf7, #f3eee2);
+  }
+}
+/* O nome longo, na folha estreita: sem o pontilhado (que viraria toco), o preço alinhado à primeira linha. */
+@media (min-width: 1200px) {
+  .rs-triptico .rs-prato-linha[data-longo] {
+    align-items: first baseline;
+    justify-content: space-between;
+  }
+  .rs-triptico .rs-prato-linha[data-longo] .rs-prato-pontos {
+    display: none;
+  }
+}
+.rs-folha-grupo + .rs-folha-grupo {
+  margin-top: 2.75rem;
+}
+.rs-folha-grupo h2 {
+  border-bottom: 3px double var(--foreground);
+  padding-bottom: 0.5rem;
+  font-size: clamp(2rem, 1.5rem + 1.2vw, 2.75rem);
+  line-height: 1;
+}
+.rs-folha-grupo ul {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 1.15rem;
+}
+/* O alto da primeira folha: o cardápio impresso, com o nome da casa, o título e o fio duplo. */
+.rs-cardapio-cabeca {
+  margin-bottom: 2.25rem;
+  border-bottom: 3px double var(--foreground);
+  padding-bottom: 1.25rem;
+  text-align: center;
+}
+.rs-cardapio-casa {
+  font-size: var(--rs-nota);
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.rs-cardapio-titulo {
+  margin-top: 0.35rem;
+  font-size: clamp(3rem, 2rem + 2.6vw, 4.75rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.rs-cardapio-lide {
+  margin: 0.9rem auto 0;
+  max-width: 30ch;
+  font-size: var(--rs-nota);
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+/* O prato de hoje, no pé da folha do meio, e a nota do trigo, no pé da última. */
+.rs-folha-do-dia {
+  margin-top: auto;
+  border-top: 1px solid var(--foreground);
+  padding-top: 1.25rem;
+}
+.rs-folha-grupo:has(+ .rs-folha-do-dia) {
+  margin-bottom: 2.75rem;
+}
+.rs-folha-do-dia h2 {
+  font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2rem);
+  line-height: 1;
+}
+.rs-folha-do-dia-quando {
+  margin-block: 0.3rem 0.75rem;
+  font-size: var(--rs-nota);
+  font-style: italic;
+  color: var(--rs-verde);
+}
+.rs-folha-pe {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: auto;
+  padding-top: 2.75rem;
+}
+.rs-folha-nota {
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
+  font-size: var(--rs-nota);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* O pedido, no balcão de azulejo verde: a folha de pedido (o alto escrito a caneta, a lista embaixo) e, por cima da
+   borda dela, o bloco de comandas, que se destaca ao abrir a página. */
+.rs-pedido-cabeca,
+.rs-montador-folha,
+.rs-pedido-sem-script {
+  background:
+    var(--rs-grao),
+    #fbf9f3;
+  color: var(--foreground);
+  padding-inline: clamp(1.5rem, 1rem + 2vw, 3rem);
+}
+.rs-pedido-cabeca {
+  border-radius: 0.5rem 0.5rem 0 0;
+  box-shadow: var(--rs-sombra-peca);
+  /* A sombra fica nos lados e em cima: embaixo, a folha continua. */
+  clip-path: inset(-6rem -6rem 0 -6rem);
+  padding-block: clamp(2rem, 1.5rem + 2vw, 3.25rem) 1.25rem;
+}
+.rs-pedido-titulo {
+  max-width: 14ch;
+  font-size: clamp(3rem, 1.8rem + 3.4vw, 5.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  color: var(--rs-caneta);
+  rotate: -1.2deg;
+}
+.rs-pedido-lide {
+  margin-top: 1.1rem;
+  max-width: 46ch;
+  border-bottom: 2px solid var(--rs-verde);
+  padding-bottom: 1.25rem;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.rs-pedido-sem-script {
+  display: grid;
+  gap: 1rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  box-shadow: var(--rs-sombra-peca);
+  padding-block: 1.5rem 2.5rem;
+}
+.rs-montador {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .rs-pedido-cabeca,
+  .rs-pedido-sem-script {
+    margin-right: 25rem;
+  }
+  .rs-montador {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 25rem);
+    align-items: start;
+    gap: 0;
+  }
+  /* O bloco sobe ao lado do alto da folha e fica por cima da borda dela. */
+  .rs-montador .rs-bloco {
+    margin-left: -2.5rem;
+    margin-top: -12rem;
+  }
+}
+.rs-montador-folha {
+  border-radius: 0 0 0.5rem 0.5rem;
+  box-shadow: var(--rs-sombra-peca);
+  clip-path: inset(0 -6rem -6rem -6rem);
+  padding-block: 0.5rem clamp(1.5rem, 1rem + 2vw, 3rem);
+}
+@media (min-width: 1024px) {
+  .rs-montador-folha {
+    padding-right: 4.5rem;
+  }
+}
+.rs-montador-grupo + .rs-montador-grupo {
+  margin-top: 3rem;
+}
+.rs-montador-grupo h2 {
+  border-bottom: 3px double var(--foreground);
+  padding-bottom: 0.45rem;
+  font-size: 2.25rem;
+  line-height: 1;
+}
+.rs-montador-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1.25rem;
+  border-bottom: 1px dashed var(--border);
+  padding-block: 1rem;
+}
+.rs-montador-item:last-child {
+  border-bottom: 0;
+}
+.rs-montador-item[data-escolhido] .rs-prato-nome {
+  color: var(--rs-verde);
+}
+/* A contagem a caneta, na margem da folha: o menos e o mais escritos, e o número a caneta, circulado quando há. */
+.rs-contador {
+  display: inline-flex;
+  align-items: center;
+  color: var(--rs-caneta);
+}
+.rs-contador button {
+  position: relative;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(38 55 79 / 0.28);
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.85rem;
+  line-height: 1;
+  color: var(--rs-caneta);
+  transition: transform 110ms ease-out;
+}
+/* Sob a mão, a volta de caneta em torno do sinal. */
+.rs-contador button::before {
+  content: "";
+  position: absolute;
+  inset: 0.3rem;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M27 5C14 2 4 11 6 22s16 15 25 9 7-21-6-25' fill='none' stroke='%2326374f' stroke-width='1.6' stroke-linecap='round'/></svg>") center / 100% 100% no-repeat;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+@media (hover: hover) and (pointer: fine) {
+  .rs-contador button:hover:not(:disabled)::before {
+    opacity: 1;
+  }
+}
+.rs-contador button:active:not(:disabled) {
+  transform: scale(0.9);
+}
+.rs-contador button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+.rs-contador output {
+  display: grid;
+  min-width: 2rem;
+  height: 2rem;
+  place-items: center;
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  /* O zero, a caneta fraca (5,4:1 no papel); o número escolhido, a caneta cheia. */
+  color: #5d6879;
+}
+[data-escolhido] .rs-contador output {
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><path d='M26 4C12 1 3 10 5 21s15 16 25 10 8-22-7-26' fill='none' stroke='%2326374f' stroke-width='1.8' stroke-linecap='round'/></svg>") center / 100% 100% no-repeat;
+  color: var(--rs-caneta);
+}
+/* No pedido, o bloco fica reto (os campos não giram); só as folhas de baixo saem do esquadro. */
+.rs-montador .rs-bloco {
+  rotate: none;
+}
+.rs-montador .rs-bloco::before {
+  rotate: 1.2deg;
+}
+.rs-montador .rs-bloco::after {
+  rotate: -0.9deg;
+}
+@media (min-width: 1024px) {
+  .rs-montador .rs-bloco {
+    position: sticky;
+    top: calc(var(--rs-topo) + 1.5rem);
+  }
+}
+.rs-comanda-linhas li {
+  display: flex;
+  min-height: var(--rs-linha);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.35rem;
+  font-style: italic;
+}
+.rs-comanda-vazio {
+  min-height: calc(var(--rs-linha) * 2);
+  padding-top: 0.6rem;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.rs-comanda-rotulo {
+  font-size: var(--rs-nota);
+  font-weight: 700;
+}
+.rs-escolhas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.rs-escolhas label {
+  position: relative;
+  display: inline-flex;
+}
+.rs-escolhas input {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+/* As escolhas da comanda impressa: o quadradinho do bloco, e o tique a caneta no escolhido. */
+.rs-escolhas span {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding-right: 0.75rem;
+  font-size: var(--rs-nota);
+}
+.rs-escolhas span::before {
+  content: "";
+  flex: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px rgb(31 38 34 / 0.7);
+}
+.rs-escolhas input:checked + span {
+  color: var(--rs-caneta);
+}
+.rs-escolhas input:checked + span::before {
+  background: radial-gradient(circle, var(--rs-caneta) 0 0.3rem, transparent 0.32rem);
+}
+.rs-escolhas input:focus-visible + span {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+/* Os campos da comanda: a linha da folha, sem a caixa do sistema; o que se escolhe sai a caneta; a seta desenhada. */
+.rs-campo {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  appearance: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: inset 0 -1.5px 0 rgb(31 38 34 / 0.55);
+  padding: 0.45rem 0.15rem;
+  font-size: 1.0625rem;
+  font-style: italic;
+  color: var(--rs-caneta);
+}
+select.rs-campo {
+  padding-right: 1.75rem;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%2326374f' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>") right 0.25rem center / 0.75rem no-repeat;
+}
+.rs-campo:focus-visible {
+  outline-offset: 2px;
+}
+textarea.rs-campo {
+  resize: none;
+}
+.rs-contas {
+  margin-top: 1.25rem;
+  border-top: 2px solid var(--rs-verde);
+  padding-top: 0.8rem;
+  font-size: var(--rs-nota);
+}
+.rs-contas > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.rs-contas-total {
+  margin-top: 0.4rem;
+  align-items: baseline;
+}
+.rs-contas-total dt {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.6rem;
+}
+.rs-contas-total dd {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+/* O que falta para o mínimo: anotado a caneta na comanda, embaixo do total. */
+.rs-aviso-do-minimo {
+  margin-top: 0.6rem;
+  font-size: var(--rs-nota);
+  font-style: italic;
+  font-weight: 700;
+  color: var(--accent);
+}
+/* O envio sem item, ou abaixo do mínimo: o motivo está escrito acima; o botão fica legível, sem o esmalte. */
+.rs-agata[aria-disabled="true"] {
+  cursor: not-allowed;
+  border-color: rgb(31 38 34 / 0.25);
+  background: #e6e2d8;
+  box-shadow: none;
+  color: var(--muted-foreground);
+}
+.rs-agata[aria-disabled="true"]::after {
+  display: none;
+}
+.rs-total-tique {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rs-total-tique {
+    animation: rs-assenta 240ms var(--rs-saida);
+  }
+  .rs-comanda-linhas li {
+    animation: rs-escrita 260ms var(--rs-saida);
+  }
+}
+@keyframes rs-assenta {
+  from {
+    opacity: 0.4;
+    transform: translateY(-5px);
+  }
+}
+@keyframes rs-escrita {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+}
+.rs-tabela-de-fretes {
+  margin-top: 1.25rem;
+}
+.rs-tabela-de-fretes li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-block: 0.45rem;
+}
+.rs-tabela-de-fretes small {
+  font-size: var(--rs-pe);
+  color: var(--muted-foreground);
+}
+.rs-folha-grupo-titulo {
+  font-family: var(--font-rs-titulo), serif;
+  font-size: clamp(2rem, 1.5rem + 1.2vw, 2.75rem);
+  line-height: 1;
+}
+
+/* A cozinha: a parede de azulejo verde de cima a baixo; a lousa grande com a página escrita a giz; os pregos (as
+   setas da galeria) e as seis lousas da semana, penduradas; a fila abre no dia de hoje. */
+.rs-cozinha {
+  padding-bottom: 1rem;
+  box-shadow: inset 0 -18px 30px -24px rgb(10 24 18 / 0.5);
+}
+.rs-cozinha-lousa {
+  --rx0: 1deg;
+  --ry0: -4deg;
+  max-width: 50rem;
+}
+.rs-cozinha-lousa-miolo {
+  padding: clamp(2rem, 1.4rem + 2vw, 3.25rem) clamp(1.5rem, 1rem + 2.5vw, 3.5rem) clamp(2.25rem, 1.6rem + 2vw, 3rem);
+}
+.rs-cozinha-titulo {
+  font-size: var(--rs-cena);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--rs-giz);
+}
+.rs-cozinha-lide {
+  margin-top: 1.25rem;
+  max-width: 40ch;
+  font-size: var(--rs-lide);
+  line-height: 1.45;
+  color: var(--rs-giz);
+}
+.rs-fila-de-lousas {
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0.5rem clamp(1.25rem, 0.6rem + 3vw, 3rem) 3rem;
+  scroll-padding-inline: clamp(1.25rem, 0.6rem + 3vw, 3rem);
+}
+.rs-fila-de-lousas::-webkit-scrollbar {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rs-fila-de-lousas {
+    scroll-behavior: smooth;
+  }
+}
+.rs-fila-de-lousas > li {
+  flex: none;
+  width: min(80vw, 22rem);
+  scroll-snap-align: start;
+}
+.rs-fila-de-lousas .rs-lousa {
+  min-height: 15rem;
+  padding: 1.75rem 1.6rem 2.25rem;
+}
+.rs-fila-de-lousas [data-hoje] .rs-quadro-frente {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    0 0 0 3px var(--rs-giz-amarelo),
+    var(--rs-extrusao),
+    var(--rs-sombra-peca);
+}
+/* As setas da galeria são os pregos da parede: a cabeça de metal, a sombra na parede. */
+.rs-setas-da-fila {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+}
+.rs-setas-da-fila > div {
+  gap: 0.9rem;
+}
+.rs-setas-da-fila button {
+  width: 3rem;
+  height: 3rem;
+  margin: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #f1ece2, #a39b8c 52%, #57524a 100%);
+  box-shadow:
+    inset 0 -2px 3px rgb(0 0 0 / 0.3),
+    4px 5px 5px rgb(10 24 18 / 0.5);
+  color: #22302a;
+  transition: filter 160ms ease-out;
+}
+.rs-setas-da-fila button:hover:not([aria-disabled]) {
+  background: radial-gradient(circle at 36% 30%, #fffaf0, #b3ab9c 52%, #5d5850 100%);
+  color: #22302a;
+}
+.rs-setas-da-fila button[aria-disabled] {
+  opacity: 0.5;
+}
+.rs-setas-da-fila button:focus-visible {
+  outline-color: #f8f4ec;
+}
+/* O fim da cozinha, no papel: a frase e o pedido. */
+.rs-cozinha-fim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-block: clamp(4rem, 3rem + 3vw, 6rem);
+}
+.rs-cozinha-fim h2 {
+  max-width: 14ch;
+}
+.rs-cozinha-fim-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+}
+.rs-lousinha-dia {
+  font-style: italic;
+  color: var(--rs-giz-amarelo);
+}
+.rs-lousinha-prato {
+  margin-top: 0.4rem;
+  font-family: var(--font-rs-titulo), serif;
+  font-size: 1.6rem;
+  line-height: 1.08;
+}
+.rs-lousinha-preco {
+  margin-top: 0.6rem;
+  color: var(--rs-giz-amarelo);
+}
+.rs-lousinha-preco small {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--rs-giz-apagado);
+}
+
+/* Encomendas: o caderninho de encomendas, de espiral em cima, aberto no papel do balcão. A capa verde, virada para
+   cima da espiral, com a etiqueta escrita a caneta (o título da página); a espiral; a folha pautada, com a margem
+   vermelha, e as duas encomendas lado a lado. Ao abrir a página, a capa assenta. */
+.rs-caderno {
+  max-width: 66rem;
+  margin-inline: auto;
+  perspective: 2000px;
+}
+.rs-caderno-capa {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 0.6rem 0.6rem 0.25rem 0.25rem;
+  background:
+    var(--rs-grao),
+    linear-gradient(170deg, #3a7a60, var(--rs-verde) 45%, var(--rs-verde-fundo));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    inset 0 -12px 18px -12px rgb(0 0 0 / 0.4),
+    var(--rs-sombra-peca);
+  padding: clamp(2rem, 1.5rem + 2vw, 3.5rem) 1.25rem clamp(2.5rem, 1.75rem + 2vw, 3.5rem);
+  transform-origin: 50% 100%;
+}
+/* A etiqueta colada na capa: o papel com o fio vermelho impresso, e o que se escreveu nela a caneta. */
+.rs-etiqueta {
+  max-width: 36rem;
+  border-radius: 0.35rem;
+  background:
+    var(--rs-grao),
+    #fbf9f3;
+  box-shadow:
+    inset 0 0 0 6px #fbf9f3,
+    inset 0 0 0 7px rgb(163 52 40 / 0.5),
+    2px 3px 6px rgb(0 0 0 / 0.28);
+  padding: 1.75rem clamp(1.25rem, 1rem + 2vw, 2.5rem) 1.6rem;
+  color: var(--foreground);
+  text-align: center;
+  rotate: -1deg;
+}
+.rs-etiqueta-titulo {
+  font-size: clamp(2.5rem, 1.5rem + 2.8vw, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  color: var(--rs-caneta);
+}
+.rs-etiqueta-lide {
+  margin: 1rem auto 0;
+  max-width: 44ch;
+  font-size: var(--rs-nota);
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+/* A espiral: os anéis de arame que passam pelos furos da capa e da folha. */
+.rs-espiral {
+  position: relative;
+  z-index: 2;
+  display: block;
+  height: 1.8rem;
+  margin: -0.9rem 1.25rem;
+  background: radial-gradient(ellipse 0.38rem 0.85rem at 50% 50%, transparent 52%, #6f695d 58%, #d2ccbe 70%, #8a8478 78%, transparent 82%) 0 0 / 1.5rem 1.8rem repeat-x;
+}
+.rs-caderno-folha {
+  --rs-pauta: 2.2rem;
+  --rs-margem-do-caderno: 3.6rem;
+  display: grid;
+  border-radius: 0.25rem 0.25rem 0.5rem 0.5rem;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(var(--rs-pauta) - 1px), rgb(44 101 79 / 0.16) calc(var(--rs-pauta) - 1px) var(--rs-pauta)) 0 2.75rem / 100% calc(100% - 3.25rem) no-repeat,
+    linear-gradient(90deg, transparent var(--rs-margem-do-caderno), rgb(163 52 40 / 0.35) var(--rs-margem-do-caderno), rgb(163 52 40 / 0.35) calc(var(--rs-margem-do-caderno) + 1px), transparent calc(var(--rs-margem-do-caderno) + 1px)),
+    var(--rs-grao),
+    #fdfcf7;
+  box-shadow: var(--rs-sombra-peca);
+  padding: 2.75rem 2.25rem 2.5rem calc(var(--rs-margem-do-caderno) + 1rem);
+  color: var(--foreground);
+}
+.rs-caderno-pagina {
+  min-width: 0;
+}
+@media (min-width: 1024px) {
+  .rs-caderno-folha {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .rs-caderno-pagina:first-child {
+    padding-right: 2.75rem;
+  }
+  .rs-caderno-pagina + .rs-caderno-pagina {
+    border-left: 1px dashed rgb(31 38 34 / 0.22);
+    padding-left: 2.75rem;
+  }
+}
+@media (max-width: 1023px) {
+  .rs-caderno-pagina + .rs-caderno-pagina {
+    margin-top: 2.5rem;
+  }
+}
+@media (max-width: 639px) {
+  .rs-caderno-folha {
+    --rs-margem-do-caderno: 1.9rem;
+    padding-right: 1.25rem;
+  }
+}
+.rs-caderno-pagina h2 {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.rs-caderno-pagina > p {
+  margin-top: 1rem;
+  line-height: var(--rs-pauta);
+}
+.rs-marmitas {
+  margin-block: 1rem 2rem;
+}
+.rs-marmitas li {
+  display: flex;
+  min-height: var(--rs-pauta);
+  align-items: flex-end;
+  gap: 1rem;
+  padding-bottom: 0.3rem;
+}
+.rs-marmitas li span:first-child {
+  width: 5.5rem;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.rs-marmitas li span:last-child {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.rs-recado {
+  border-radius: 0.4rem;
+  background: rgb(255 255 255 / 0.75);
+  box-shadow: inset 0 0 0 1px var(--border);
+  padding: 0.9rem 1rem;
+  font-size: var(--rs-nota);
+  font-style: italic;
+}
+
+/* Onde: a esquina. A parede caiada, com a placa de rua esmaltada presa nela (o título da página); embaixo, a calçada
+   de pedra portuguesa, com a sombra do pé da parede. O guardanapo com o bairro a caneta vem depois. */
+.rs-esquina {
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem) clamp(9rem, 7rem + 5vw, 12rem);
+  background:
+    linear-gradient(180deg, transparent calc(100% - 6rem), rgb(20 22 20 / 0.22) calc(100% - 6rem), rgb(20 22 20 / 0) calc(100% - 5rem)),
+    var(--rs-grao) top / 160px 160px,
+    linear-gradient(180deg, #f1ede3, #e8e2d5) top / 100% calc(100% - 6rem) no-repeat,
+    var(--rs-calcada) left bottom / 30rem 15rem;
+}
+.rs-esquina-miolo {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+.rs-esquina-lide {
+  margin-top: 2.25rem;
+  max-width: 40ch;
+}
+/* A placa de rua, esmaltada: o verde com o fio branco; em cima, o título da página; o nome da rua e o bairro. */
+.rs-placa-de-rua {
+  display: inline-grid;
+  border-radius: 0.7rem;
+  background:
+    radial-gradient(120% 70% at 30% -10%, rgb(255 255 255 / 0.28), transparent 55%),
+    linear-gradient(180deg, #2f6c55, var(--rs-verde-fundo));
+  box-shadow:
+    inset 0 0 0 5px var(--rs-verde-fundo),
+    inset 0 0 0 8px #f6f3ea,
+    inset 0 -6px 12px rgb(0 0 0 / 0.25),
+    var(--rs-sombra-peca);
+  padding: 1.6rem 3rem 1.4rem;
+  color: var(--rs-vidrado);
+  text-align: center;
+}
+.rs-placa-de-rua strong {
+  font-family: var(--font-rs-titulo), serif;
+  font-weight: 400;
+  font-size: clamp(1.9rem, 0.9rem + 4.2vw, 4.5rem);
+  line-height: 1;
+}
+@media (max-width: 479px) {
+  .rs-placa-de-rua {
+    padding-inline: 1.5rem;
+  }
+}
+.rs-placa-de-rua span {
+  margin-top: 0.4rem;
+  font-family: var(--font-rs-texto), serif;
+  font-size: var(--rs-nota);
+  font-style: italic;
+}
+.rs-placa-de-rua .rs-placa-rotulo {
+  margin: 0 0 0.6rem;
+  border-bottom: 1px solid rgb(246 243 234 / 0.4);
+  padding-bottom: 0.5rem;
+  font-size: var(--rs-lide);
+}
+.rs-onde-grade {
+  display: grid;
+  gap: 3.5rem;
+  padding-block: clamp(3.5rem, 2.5rem + 3vw, 5rem);
+}
+@media (min-width: 1024px) {
+  .rs-onde-grade {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    align-items: start;
+    gap: 4.5rem;
+  }
+}
+/* O guardanapo: o papel fino, a borda gofrada, as dobras em quatro; o mapa do bairro a caneta, com o traço tremido. */
+.rs-guardanapo {
+  position: relative;
+  overflow: hidden;
+  rotate: -3deg;
+  border-radius: 0.2rem;
+  background:
+    linear-gradient(90deg, transparent 49.7%, rgb(31 38 34 / 0.07) 50%, transparent 50.3%),
+    linear-gradient(180deg, transparent 49.7%, rgb(31 38 34 / 0.07) 50%, transparent 50.3%),
+    radial-gradient(circle, rgb(31 38 34 / 0.12) 1.1px, transparent 1.4px) 0 0 / 0.75rem 0.75rem,
+    #fbfaf6;
+  box-shadow:
+    1px 1px 2px rgb(31 38 34 / 0.12),
+    14px 20px 34px -18px rgb(31 38 34 / 0.45);
+  padding: 2.1rem;
+}
+.rs-guardanapo-miolo {
+  overflow: hidden;
+  background: #fbfaf6;
+}
+.rs-guardanapo-miolo > figure {
+  transition: transform 850ms var(--rs-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rs-guardanapo:hover .rs-guardanapo-miolo > figure {
+    transform: scale(1.03);
+  }
+}
+.rs-guardanapo svg path {
+  stroke: var(--rs-caneta);
+}
+.rs-guardanapo svg g {
+  filter: url(#caneta-do-salao);
+}
+.rs-guardanapo figcaption {
+  margin-top: 0.75rem;
+  font-size: var(--rs-pe);
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+.rs-guardanapo-que-abre {
+  position: relative;
+  perspective: 1800px;
+}
+.rs-guardanapo-dobra {
+  position: absolute;
+  inset: 0 0 50% 0;
+  z-index: 2;
+  background:
+    radial-gradient(circle, rgb(31 38 34 / 0.12) 1.1px, transparent 1.4px) 0 0 / 0.75rem 0.75rem,
+    #f7f5ef;
+  transform-origin: bottom center;
+  transform: rotateX(-180deg);
+  backface-visibility: hidden;
+  pointer-events: none;
+}
+
+/* As páginas legais: sóbrias. */
+.rs-folha-legal {
+  padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem) 5rem;
+}
+.rs-folha-legal-abertura {
+  margin-top: 1.75rem;
+  max-width: 50ch;
+  font-size: var(--rs-lide);
+  color: var(--muted-foreground);
+}
+.rs-folha-legal-bloco {
+  max-width: 62ch;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1.5rem;
+}
+.rs-folha-legal-bloco h2 {
+  font-size: 1.75rem;
+}
+.rs-folha-legal-bloco p,
+.rs-folha-legal-bloco ul {
+  margin-top: 0.6rem;
+}
+.rs-folha-legal-bloco ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.rs-folha-legal-data {
+  margin-top: 2.5rem;
+  font-size: var(--rs-nota);
+  color: var(--muted-foreground);
+}
+.js .rs-sem-script,
+html:not(.js) .rs-com-script {
+  display: none;
+}
+
+/* A porta de vidro nas telas estreitas: o nome menor, sem a linha de baixo, a plaquinha mais curta (a porta cabe em
+   320 px). O passe do celular refaz a porta inteira. */
+@media (max-width: 1023px) {
+  .rs-bloco {
+    rotate: -1.5deg;
+  }
+}
+@media (max-width: 479px) {
+  .rs-porta-vidro {
+    column-gap: 0.75rem;
+  }
+  .rs-porta-letreiro {
+    font-size: 1.35rem;
+  }
+  .rs-porta-descricao,
+  .rs-plaquinha-linha {
+    display: none;
+  }
+  .rs-plaquinha {
+    width: 4.2rem;
+  }
+  .rs-plaquinha-face {
+    font-size: 0.85rem;
+  }
+  .rs-porta-direita {
+    gap: 0.25rem;
+  }
+}
+
+/* ---------- os momentos: a entrada da capa, a cena de cada parte, a abertura de cada página ----------
+   Cada cena tem o seu, e nenhuma o de outra (09-movimento.md, seção 13; a marca M1). A entrada da capa, só na
+   primeira abertura (recarregar não repete: .ja-aberto). Nada passa do destino. */
+/* A mão no giz: cada palavra com a sua inclinação e a sua linha de base (a página dá --g e --y). */
+.rs-palavra-de-giz {
+  position: relative;
+  display: inline-block;
+  rotate: var(--g, 0deg);
+  translate: 0 var(--y, 0);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* 1 · A capa: a lousa assenta no prego, e o giz escreve o título, palavra por palavra (a faixa da cor da lousa sai
+     de cima de cada palavra); o prato de hoje aparece depois. Até 600 ms. */
+  html:not(.ja-aberto) .rs-capa .rs-pendurada {
+    animation: rs-assenta-no-prego 460ms var(--rs-saida) both;
+  }
+  html:not(.ja-aberto) .rs-palavra-de-giz::after {
+    content: "";
+    position: absolute;
+    inset: -0.08em -0.06em -0.18em;
+    background: var(--rs-lousa);
+    transform-origin: right center;
+    animation: rs-giz-escreve 190ms cubic-bezier(0.4, 0, 0.6, 1) both;
+    animation-delay: calc(120ms + var(--p, 0) * 58ms);
+  }
+  html:not(.ja-aberto) .rs-capa-hoje,
+  html:not(.ja-aberto) .rs-capa-pe,
+  html:not(.ja-aberto) .rs-capa-acao {
+    animation: rs-aparece 320ms ease-out 300ms both;
+  }
+
+  /* 2 · O cartaz: a palavra entra pela esquerda, e os pratos assentam um a um. */
+  [data-cena="cardapio"] .rs-palavra-gigante {
+    transition:
+      opacity 420ms ease-out,
+      transform 700ms var(--rs-saida);
+  }
+  [data-cena="cardapio"][data-espera] .rs-palavra-gigante {
+    opacity: 0;
+    transform: translateX(-4rem);
+  }
+  [data-cena="cardapio"] .rs-prato-cartaz {
+    transition: opacity 360ms ease-out;
+    transition-delay: calc(240ms + var(--ordem, 0) * 70ms);
+  }
+  [data-cena="cardapio"][data-espera] .rs-prato-cartaz {
+    opacity: 0;
+  }
+
+  /* 3 · A comanda: a folha de cima desce no bloco e assenta; os passos se escrevem em seguida. */
+  [data-cena="comanda"] .rs-bloco {
+    transition:
+      transform 700ms var(--rs-saida),
+      opacity 300ms ease-out;
+  }
+  [data-cena="comanda"][data-espera] .rs-bloco {
+    opacity: 0;
+    transform: translateY(-3.5rem) rotate(-3deg);
+  }
+  [data-cena="comanda"] .rs-comanda-passo {
+    transition:
+      opacity 280ms ease-out,
+      transform 360ms var(--rs-saida);
+    transition-delay: calc(500ms + var(--ordem, 0) * 140ms);
+  }
+  [data-cena="comanda"][data-espera] .rs-comanda-passo {
+    opacity: 0;
+    transform: translateX(-0.75rem);
+  }
+
+  /* 4 · A semana: os dias se escrevem um a um; depois, a volta a giz em torno de hoje. */
+  [data-cena="semana"] .rs-dia {
+    transition: opacity 360ms ease-out;
+    transition-delay: calc(140ms + var(--ordem, 0) * 110ms);
+  }
+  [data-cena="semana"][data-espera] .rs-dia {
+    opacity: 0;
+  }
+  [data-cena="semana"] .rs-volta-de-giz {
+    transform-origin: 50% 50%;
+    transition:
+      opacity 300ms ease-out 900ms,
+      transform 520ms var(--rs-saida) 900ms;
+  }
+  [data-cena="semana"][data-espera] .rs-volta-de-giz {
+    opacity: 0;
+    transform: scale(0.88) rotate(-4deg);
+  }
+
+  /* 5 · Os azulejos: assentados no balcão um a um, em escada. */
+  [data-cena="azulejo"] .rs-azulejo-pintado {
+    transition:
+      opacity 360ms ease-out,
+      transform 560ms var(--rs-saida);
+    transition-delay: calc(120ms + var(--ordem, 0) * 120ms);
+  }
+  [data-cena="azulejo"][data-espera] .rs-azulejo-pintado {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  /* 6 · A porta: o guardanapo aproxima (a mão que o traz para perto); a plaquinha do horário é posta por cima. */
+  [data-cena="porta"] .rs-guardanapo-miolo > figure {
+    transition: transform 900ms var(--rs-saida);
+  }
+  [data-cena="porta"][data-espera] .rs-guardanapo-miolo > figure {
+    transform: scale(0.9);
+  }
+  [data-cena="porta"] .rs-esmaltada {
+    transition:
+      opacity 360ms ease-out 360ms,
+      transform 520ms var(--rs-saida) 360ms;
+  }
+  [data-cena="porta"][data-espera] .rs-esmaltada {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+
+  /* 7 · A calçada: o cavalete é armado na calçada (a lousa sobe da posição deitada). */
+  [data-cena="calcada"] .rs-cavalete-tampo {
+    transition: transform 700ms var(--rs-saida);
+  }
+  [data-cena="calcada"][data-espera] .rs-cavalete-tampo {
+    transform: rotateX(62deg);
+  }
+
+  /* As páginas: o cardápio se desdobra; o bloco de comandas desce; as lousas são penduradas; o caderninho abre; o
+     guardanapo se abre. Cada página, o dela, a cada visita. */
+  .rs-triptico .rs-folha-do-cardapio:first-child {
+    animation: rs-desdobra-esquerda 680ms var(--rs-saida) 80ms both;
+  }
+  .rs-triptico .rs-folha-do-cardapio:last-child {
+    animation: rs-desdobra-direita 680ms var(--rs-saida) 80ms both;
+  }
+  .rs-montador .rs-bloco {
+    animation: rs-destaca 560ms var(--rs-saida) 100ms both;
+  }
+  .rs-fila-de-lousas > li {
+    animation: rs-pendura-sem-quique 520ms var(--rs-saida) both;
+    animation-delay: calc(80ms + var(--ordem, 0) * 70ms);
+  }
+  .rs-caderno-capa {
+    animation: rs-capa-assenta 640ms var(--rs-saida) 80ms both;
+  }
+  .rs-guardanapo-dobra {
+    animation: rs-guardanapo-abre 680ms var(--rs-saida) 120ms both;
+  }
+}
+@keyframes rs-assenta-no-prego {
+  from {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+}
+@keyframes rs-giz-escreve {
+  to {
+    transform: scaleX(0);
+  }
+}
+@keyframes rs-aparece {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rs-desdobra-esquerda {
+  from {
+    transform: rotateY(80deg);
+  }
+}
+@keyframes rs-desdobra-direita {
+  from {
+    transform: rotateY(-80deg);
+  }
+}
+@keyframes rs-destaca {
+  from {
+    opacity: 0;
+    transform: translateY(-2.5rem) rotate(-3deg);
+  }
+}
+@keyframes rs-pendura-sem-quique {
+  from {
+    opacity: 0;
+    transform: translateY(-1.25rem) rotate(-1.5deg);
+  }
+}
+@keyframes rs-capa-assenta {
+  from {
+    transform: rotateX(28deg) translateY(-0.5rem);
+  }
+}
+@keyframes rs-guardanapo-abre {
+  from {
+    transform: rotateX(0deg);
+  }
+}
+
+/* A troca de página, só neste site: 140 ms a saída, 260 ms a entrada (na mesa; mais curta no celular). */
+html:has([data-demo="restaurante"])::view-transition-old(.pagina-sai) {
+  animation-duration: 140ms;
+}
+html:has([data-demo="restaurante"])::view-transition-new(.pagina-entra) {
+  animation-duration: 260ms;
+  animation-delay: 70ms;
+}
+@media (max-width: 1023px) {
+  html:has([data-demo="restaurante"])::view-transition-new(.pagina-entra) {
+    animation-duration: 210ms;
+    animation-delay: 50ms;
+  }
+}
+
+/* ========== o passe do celular (14.10.2026) ==========
+   Tudo abaixo vale só abaixo de 1024 px: a mesa (aprovada no passe dela) não muda. Cada momento da mesa chega ao
+   toque mais leve no gesto, nunca mais pobre (identidade, "O premium no celular"; 09-movimento.md, seção 11). */
+
+/* A porta numa linha: o nome, a plaquinha, a pausa e a lousinha do menu; as páginas vão para o menu de tela cheia. A
+   altura da porta é a do recuo do conteúdo (--rs-topo): sem a faixa de papel morta entre a porta e a capa. */
+.rs-porta-menu {
+  display: none;
+}
+@media (max-width: 1023px) {
+  html:has([data-demo="restaurante"]) {
+    --rs-topo: 4.75rem;
+  }
+  .rs-porta-vidro {
+    grid-template-areas: "nome direita";
+    height: var(--rs-topo);
+  }
+  .rs-porta-paginas {
+    display: none;
+  }
+  /* A lousinha pendurada na porta: o quadro-verde no caixilho, com três riscos de giz e a palavra. */
+  .rs-porta-menu {
+    display: inline-flex;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border-radius: 0.3rem;
+    background:
+      var(--rs-po),
+      var(--rs-lousa);
+    box-shadow:
+      0 0 0 3px var(--rs-madeira),
+      inset 0 0 12px rgb(0 0 0 / 0.55),
+      2px 3px 5px 3px rgb(31 38 34 / 0.28);
+    padding-inline: 0.7rem 0.8rem;
+    color: var(--rs-giz);
+    font-size: var(--rs-nota);
+    font-style: italic;
+    transition: transform 110ms ease-out;
+  }
+  .rs-porta-menu svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: none;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+  }
+  .rs-porta-menu:active {
+    transform: scale(0.97);
+  }
+  .rs-porta-menu:focus-visible {
+    outline-offset: 5px;
+  }
+  .rs-porta-direita {
+    gap: 0.6rem;
+  }
+}
+@media (max-width: 479px) {
+  html:has([data-demo="restaurante"]) {
+    --rs-topo: 4rem;
+  }
+}
+/* Em 320 px, o nome, a plaquinha, a pausa e o menu cabem numa linha: o nome e a plaquinha um pouco menores. */
+@media (max-width: 359px) {
+  .rs-porta-letreiro {
+    font-size: 1.15rem;
+  }
+  .rs-plaquinha {
+    width: 3.75rem;
+  }
+  .rs-plaquinha-face {
+    font-size: 0.78rem;
+  }
+  .rs-porta-direita {
+    gap: 0.4rem;
+  }
+}
+/* Abaixo de 480 px, a lousinha leva só os riscos (a palavra fica para o leitor de tela): o nome cabe numa linha. */
+@media (max-width: 479px) {
+  .rs-porta-menu {
+    padding-inline: 0;
+  }
+  .rs-porta-menu-palavra {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* O menu de tela cheia: a lousa do salão, inteira, no caixilho de madeira. As páginas escritas a giz, a de agora
+   sublinhada a giz amarelo; embaixo, o prato de hoje, o estado ao vivo e a ação, ao alcance do polegar. Entra em
+   240 ms (a lousa assenta), sai em 160 ms; com movimento reduzido, só a opacidade. */
+.rs-menu {
+  display: none;
+}
+/* O menu cobre a tela inteira: o fundo do diálogo fica transparente (escurecido, ele saltava no fim da saída). */
+.rs-menu::backdrop {
+  background: transparent;
+}
+html:has(.rs-menu[open]) {
+  overflow: hidden;
+}
+@media (max-width: 1023px) {
+  /* O leiaute fica no menu, aberto ou não: na saída (160 ms, ainda à vista), ele não volta ao diálogo do sistema. */
+  .rs-menu[open] {
+    display: flex;
+  }
+  .rs-menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background:
+      var(--rs-veio) 0 0 / 1800px 320px,
+      linear-gradient(160deg, #8f5f3b, #6e4528 50%, #573620);
+    padding: 0.6rem;
+    color: var(--rs-giz);
+  }
+  .rs-menu-lousa {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    min-height: 100%;
+    flex: 1;
+    flex-direction: column;
+    border-radius: 0.4rem;
+    background:
+      var(--rs-apagador) center / cover no-repeat,
+      radial-gradient(65% 55% at 30% 25%, rgb(236 232 220 / 0.07), transparent 70%),
+      var(--rs-lousa);
+    box-shadow:
+      inset 0 0 46px rgb(0 0 0 / 0.5),
+      inset 0 2px 5px rgb(0 0 0 / 0.55);
+    padding: 0 clamp(1.1rem, 0.4rem + 3vw, 2.4rem) max(1.4rem, env(safe-area-inset-bottom));
+  }
+  .rs-menu-lousa::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--rs-po);
+    opacity: 0.7;
+  }
+  .rs-menu :focus-visible {
+    outline-color: var(--rs-giz-amarelo);
+  }
+  /* O alto da lousa repete a porta (o nome e, no lugar da lousinha, o fechar). */
+  .rs-menu-cabeca {
+    display: flex;
+    min-height: calc(var(--rs-topo) - 0.6rem);
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .rs-menu-nome {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    font-family: var(--font-rs-titulo), serif;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--rs-giz);
+  }
+  .rs-menu-fechar {
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    margin-right: -0.4rem;
+    border-radius: 50%;
+    color: var(--rs-giz);
+    transition: transform 110ms ease-out;
+  }
+  .rs-menu-fechar svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+  }
+  .rs-menu-fechar:active {
+    transform: scale(0.94);
+  }
+  .rs-menu-paginas {
+    margin-top: clamp(1rem, 4svh, 2.5rem);
+  }
+  .rs-menu-paginas li + li {
+    border-top: 1px dashed rgb(236 232 220 / 0.22);
+  }
+  .rs-menu-pagina {
+    position: relative;
+    display: flex;
+    min-height: 3.75rem;
+    align-items: center;
+    font-family: var(--font-rs-titulo), serif;
+    font-size: clamp(2.1rem, 1.5rem + 2.6vw, 2.75rem);
+    line-height: 1.1;
+    color: var(--rs-giz);
+  }
+  .rs-menu-pagina span {
+    position: relative;
+    display: inline-block;
+  }
+  /* A página de agora: o risco de giz amarelo embaixo da palavra; no toque, o risco se escreve na tocada. */
+  .rs-menu-pagina span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.32em;
+    height: 0.45rem;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 8' preserveAspectRatio='none'><path d='M1 5.2C18 3 34 6.4 52 4.4S84 2.6 99 4.8' fill='none' stroke='%23e2bf5c' stroke-width='2.6' stroke-linecap='round'/></svg>") center / 100% 100% no-repeat;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 160ms var(--rs-saida);
+  }
+  .rs-menu-pagina[aria-current] span::after,
+  .rs-menu-pagina:active span::after {
+    transform: scaleX(1);
+  }
+  .rs-menu-pagina[aria-current="page"] {
+    color: var(--rs-giz-amarelo);
+  }
+  .rs-menu-pe {
+    display: grid;
+    gap: 0.6rem;
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+  .rs-menu-hoje {
+    border-top: 1px dashed rgb(236 232 220 / 0.3);
+    padding-top: 1rem;
+    font-family: var(--font-rs-titulo), serif;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+  .rs-menu-hoje span {
+    font-family: var(--font-rs-texto), serif;
+    font-size: var(--rs-nota);
+    font-style: italic;
+    color: var(--rs-giz-amarelo);
+  }
+  .rs-menu-estado {
+    font-size: var(--rs-nota);
+    font-style: italic;
+    color: var(--rs-giz-apagado);
+  }
+  .rs-menu-acao {
+    margin-top: 0.75rem;
+    width: 100%;
+  }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .rs-menu {
+    opacity: 0;
+    transition:
+      opacity 160ms ease-out,
+      display 160ms allow-discrete,
+      overlay 160ms allow-discrete;
+  }
+  .rs-menu[open] {
+    opacity: 1;
+    transition-duration: 220ms;
+  }
+  .rs-menu-lousa {
+    transform: translateY(-0.6rem);
+    transition: transform 240ms var(--rs-saida);
+  }
+  .rs-menu[open] .rs-menu-lousa {
+    transform: none;
+  }
+  @starting-style {
+    .rs-menu[open] {
+      opacity: 0;
+    }
+    .rs-menu[open] .rs-menu-lousa {
+      transform: translateY(-0.6rem);
+    }
+  }
+}
+
+/* 1 · A capa no celular: a lousa pendurada quase de borda a borda, o título a giz em duas linhas, do maior tamanho que
+   cabe; embaixo, a linha do hoje (o dia e o preço, com o pontilhado do quadro), o prato e, ao lado dele, a panela a
+   giz com o vapor (a comida da mesa, que no celular faltava); o lugar numa linha; a ação de pé na calha, até 60% da
+   primeira tela. */
+@media (max-width: 1023px) {
+  .rs-capa {
+    min-height: 0;
+    align-content: start;
+    padding-block: 0.6rem 3rem;
+  }
+  .rs-capa > .rs-largura {
+    padding-inline: 0.85rem;
+  }
+  .rs-capa .rs-pendurada {
+    --rx0: 1.5deg;
+    --ry0: 5deg;
+    padding-top: 2.2rem;
+  }
+  .rs-capa .rs-barbante {
+    height: 2rem;
+  }
+  .rs-capa-lousa {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "titulo titulo" "dia preco" "prato panela" "pe pe";
+    column-gap: 0;
+    padding: 1.4rem 1.15rem 3.6rem;
+  }
+  .rs-capa-titulo {
+    grid-area: titulo;
+    font-size: min(5.5rem, calc((100vw - 5.6rem) / 5.75));
+  }
+  .rs-capa-hoje {
+    display: contents;
+  }
+  .rs-capa-dia,
+  .rs-capa-preco {
+    margin-top: 1.1rem;
+    border-top: 1px dashed rgb(236 232 220 / 0.3);
+    padding-top: 0.7rem;
+  }
+  .rs-capa-dia {
+    grid-area: dia;
+    align-self: end;
+  }
+  .rs-capa-preco {
+    grid-area: preco;
+    margin-left: 0;
+    padding-left: 0.6rem;
+    font-size: clamp(1.75rem, 1.2rem + 2.4vw, 2.6rem);
+  }
+  .rs-capa-prato {
+    grid-area: prato;
+    align-self: center;
+    margin-top: 0.3rem;
+    font-size: clamp(1.45rem, 1.05rem + 1.8vw, 2.3rem);
+    line-height: 1.08;
+  }
+  .rs-panela {
+    grid-area: panela;
+    display: block;
+    width: clamp(4.25rem, 2.6rem + 7vw, 7rem);
+    align-self: end;
+    margin-left: 0.75rem;
+    overflow: visible;
+    fill: none;
+    stroke: var(--rs-giz);
+    stroke-width: 7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .rs-capa-pe {
+    grid-area: pe;
+    margin-top: 0.7rem;
+    font-size: var(--rs-nota);
+    font-style: italic;
+    color: var(--rs-giz-apagado);
+  }
+  .rs-capa-acao {
+    right: 50%;
+    translate: 50% 0;
+    white-space: nowrap;
+  }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  /* A linha do hoje é um contêiner sem caixa no celular: a entrada vai para as partes dela. */
+  html:not(.ja-aberto) :is(.rs-capa-dia, .rs-capa-prato, .rs-capa-preco, .rs-panela) {
+    animation: rs-aparece 320ms ease-out 300ms both;
+  }
+  /* O giz escreve: no celular, sem a faixa da cor da lousa por cima de cada palavra (com a CPU 4×, as faixas se viam
+     como blocos chapados sobre o pó do quadro). A palavra sai do rastro do apagador (o giz fraco) e o giz a reforça,
+     uma depois da outra; o título nunca parte do zero (o LCP). */
+  html:not(.ja-aberto) .rs-palavra-de-giz::after {
+    content: none;
+  }
+  html:not(.ja-aberto) .rs-palavra-de-giz {
+    animation: rs-giz-reforca 240ms ease-out both;
+    animation-delay: calc(100ms + var(--p, 0) * 60ms);
+  }
+}
+@keyframes rs-giz-reforca {
+  from {
+    opacity: 0.16;
+  }
+}
+
+/* 2 · Os pratos em cartaz, em 320 px: o nome um pouco menor, para o prato caber numa linha com o preço. */
+@media (max-width: 359px) {
+  .rs-prato-cartaz-nome {
+    font-size: 1.5rem;
+  }
+}
+
+/* 3 · A semana no celular: o quadro de cardápio da parede, como se escreve a giz, um dia por linha (o dia, o prato,
+   o pontilhado de giz até o preço, a porção embaixo); a volta a giz em torno da linha de hoje. Cabe numa tela, em vez
+   de seis blocos empilhados. */
+@media (max-width: 639px) {
+  .rs-parede-dias {
+    gap: 0;
+    margin-block: 2.25rem 1.75rem;
+  }
+  .rs-dia {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: baseline;
+    column-gap: 0.6rem;
+    padding-block: 0.8rem 0.85rem;
+  }
+  .rs-dia:last-child {
+    border-bottom: 1px dashed rgb(236 232 220 / 0.24);
+  }
+  .rs-dia-nome {
+    grid-column: 1 / -1;
+    font-size: var(--rs-nota);
+    line-height: 1.3;
+  }
+  .rs-dia-prato {
+    display: flex;
+    align-items: baseline;
+    margin-top: 0.1rem;
+    font-size: 1.6rem;
+    line-height: 1.12;
+  }
+  .rs-dia-prato::after {
+    content: "";
+    flex: 1 0 1.25rem;
+    margin-left: 0.55rem;
+    border-bottom: 2px dotted rgb(236 232 220 / 0.32);
+  }
+  .rs-dia-preco {
+    margin-top: 0;
+    font-size: 1.5rem;
+    text-align: right;
+  }
+  .rs-dia-porcao {
+    margin-top: 0.2rem;
+    font-size: var(--rs-pe);
+  }
+  /* A volta a giz se fecha para dentro no canto de baixo: a linha de hoje ganha folga para a porção não encostar. */
+  .rs-dia[data-hoje] {
+    padding: 1rem 0.75rem 1.45rem;
+  }
+  .rs-dia .rs-volta-de-giz {
+    top: 0.2rem;
+    left: -0.2rem;
+    width: calc(100% + 0.4rem);
+    height: calc(100% - 0.35rem);
+  }
+}
+
+/* 4 · O azulejo pintado no celular: os quatro azulejos em painel, dois a dois, encostados como na parede e na grade
+   dela (a peça da parede passa a ter a largura de meia tela); o aviso pintado em cada um, o motivo embaixo. O título
+   fica na fileira de cima, encostado no painel. */
+@media (max-width: 639px) {
+  .rs-parede-branca {
+    --rs-peca: calc(50vw - clamp(1.25rem, 0.6rem + 3vw, 3rem));
+  }
+  .rs-avisos-titulo {
+    height: calc(var(--rs-peca) * 1.5);
+    min-height: 0;
+    padding-block: 0 1.25rem;
+  }
+  .rs-azulejos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 0;
+  }
+  .rs-azulejo-pintado {
+    padding: 2px 0 0 2px;
+  }
+  .rs-azulejo-peca {
+    width: 100%;
+    max-width: none;
+    padding: 15% 17%;
+  }
+  .rs-azulejo-fato {
+    font-size: clamp(1rem, 0.7rem + 1.5vw, 1.2rem);
+    line-height: 1.12;
+  }
+  .rs-azulejo-motivo {
+    margin-top: 0.75rem;
+    padding-inline: 0.35rem 0.6rem;
+    padding-bottom: 1.5rem;
+    font-size: var(--rs-pe);
+    line-height: 1.45;
+  }
+}
+
+/* 5 · A comanda no celular: o título da cena e o lide antes do bloco; a ação depois dele, como na leitura da mesa. */
+@media (max-width: 1023px) {
+  .rs-na-mesa-grade {
+    gap: 0;
+  }
+  .rs-na-mesa-grade > div:last-child {
+    display: contents;
+  }
+  .rs-na-mesa-grade > div:last-child > h2 {
+    order: -3;
+  }
+  .rs-na-mesa-grade > div:last-child > p {
+    order: -2;
+  }
+  .rs-na-mesa-grade > .rs-bloco {
+    order: -1;
+    width: 100%;
+    max-width: 30rem;
+    margin-top: 3rem;
+  }
+  .rs-na-mesa-grade > div:last-child > .rs-agata {
+    justify-self: start;
+    margin-top: 3rem;
+  }
+}
+
+/* 6 · A porta no celular: o vínculo do endereço numa linha própria, com o pontilhado do texto (quebra sem riscar a
+   palavra); a plaquinha do horário posta por cima da quina do guardanapo, como na mesa. */
+@media (max-width: 1023px) {
+  .rs-endereco-cartaz .rs-pontilhado {
+    display: flex;
+    width: fit-content;
+    margin-top: 0.2rem;
+    padding-block: 0.4rem;
+    background: none;
+    font-size: var(--rs-corpo);
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 0.14em;
+    text-underline-offset: 0.32em;
+  }
+  .rs-endereco-cartaz .rs-pontilhado::after {
+    content: none;
+  }
+  /* Por cima da quina do guardanapo, mas abaixo do crédito do mapa: com -4,5rem, a plaquinha cobria a segunda linha
+     ("OpenStreetMap."), e o crédito é obrigatório pela ODbL (14/10). */
+  .rs-fachada .rs-esmaltada {
+    z-index: 1;
+    width: min(100%, 21rem);
+    margin: -2.5rem 0 0 auto;
+    rotate: 2deg;
+  }
+  .rs-fachada .rs-guardanapo {
+    margin-right: 1.25rem;
+  }
+}
+
+/* O rodapé: os vínculos das páginas com 44 px de largura também (o "Onde" tinha 42). */
+@media (max-width: 1023px) {
+  .rs-barrado-paginas a {
+    min-width: 2.75rem;
+  }
+}
+
+/* O pedido no celular: o nome do prato, o pontilhado e o preço na largura inteira da folha (na coluna estreita ao lado
+   do contador, o nome quebrava palavra por palavra); embaixo, o detalhe e, à direita dele, a contagem a caneta. */
+.rs-tira-da-comanda {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .rs-montador-item {
+    grid-template-areas: "linha linha" "detalhe contador";
+    align-items: start;
+    row-gap: 0.2rem;
+    column-gap: 1rem;
+  }
+  .rs-montador-item > div:first-child {
+    display: contents;
+  }
+  .rs-montador-item .rs-prato-linha {
+    grid-area: linha;
+  }
+  .rs-montador-item .rs-prato-detalhe {
+    grid-area: detalhe;
+    margin-top: 0.15rem;
+  }
+  .rs-montador-item .rs-contador {
+    grid-area: contador;
+    margin-right: -0.35rem;
+  }
+  .rs-montador-grupo h2 {
+    font-size: 2rem;
+  }
+  /* No tablet, a comanda do pedido no tamanho de um talão, e não na largura da folha. */
+  .rs-montador .rs-bloco {
+    width: 100%;
+    max-width: 32rem;
+    justify-self: center;
+  }
+
+  /* A tira da comanda, presa embaixo: a borda de cima é a cola vermelha do bloco; o papel, o total a tinta e o
+     "conferir" no verde da casa. Sobe da borda da tela com o primeiro item; desce quando a comanda está à vista. */
+  .rs-tira-da-comanda {
+    position: fixed;
+    inset: auto 0.6rem max(0.6rem, env(safe-area-inset-bottom));
+    z-index: 40;
+    display: flex;
+    min-height: 3.75rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-radius: 0.2rem 0.2rem 0.5rem 0.5rem;
+    background:
+      linear-gradient(180deg, #7b3a2a 0 0.45rem, transparent 0.45rem),
+      var(--rs-grao),
+      linear-gradient(175deg, #fdfcf7, #f1ece0);
+    box-shadow:
+      0 1px 2px rgb(10 6 2 / 0.25),
+      0 14px 30px -8px rgb(10 6 2 / 0.55);
+    padding: 0.85rem 1rem 0.5rem 1.1rem;
+    color: var(--foreground);
+    visibility: hidden;
+    transform: translateY(calc(100% + 1.5rem));
+    transition:
+      transform 220ms var(--rs-saida),
+      visibility 0s linear 220ms;
+  }
+  .rs-tira-da-comanda[data-visivel] {
+    visibility: visible;
+    transform: none;
+    transition:
+      transform 300ms var(--rs-saida),
+      visibility 0s;
+  }
+  .rs-tira-da-comanda:active {
+    transform: scale(0.985);
+  }
+  .rs-tira-conta {
+    display: grid;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  .rs-tira-titulo {
+    font-family: var(--font-rs-titulo), serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+  }
+  .rs-tira-conferir {
+    border-bottom: 2px solid var(--rs-verde);
+    padding-bottom: 0.1rem;
+    font-size: var(--rs-nota);
+    font-weight: 700;
+    color: var(--rs-verde-fundo);
+    white-space: nowrap;
+  }
+  .rs-tira-da-comanda:focus-visible {
+    outline-offset: 3px;
+  }
+  /* Com a tira à vista, o fim da folha não fica embaixo dela. */
+  .rs-montador:has(.rs-tira-da-comanda[data-visivel]) {
+    padding-bottom: 5rem;
+  }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .rs-tira-da-comanda {
+    transition: none;
+  }
+}
+
+/* O cardápio no celular: as três folhas uma embaixo da outra. A primeira fica de pé na mesa ao abrir a página (sem o
+   giro em torno do próprio centro, que lia como um cartão virando); a segunda e a terceira estão dobradas para cima e
+   se desdobram para baixo, presas na dobra, quando chegam à tela. O tique do prato fica dentro do papel. */
+@media (max-width: 1023px) {
+  .rs-folha-do-cardapio .rs-tique {
+    left: -1.45rem;
+  }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .rs-triptico .rs-folha-do-cardapio:first-child {
+    transform-origin: 50% 100%;
+    animation: rs-folha-de-pe 560ms var(--rs-saida) 60ms both;
+  }
+  .rs-triptico .rs-folha-do-cardapio:last-child {
+    animation: none;
+  }
+  .rs-triptico [data-cena="folha"] {
+    transform-origin: 50% 0;
+    transition: transform 640ms var(--rs-saida);
+  }
+  .rs-triptico [data-cena="folha"][data-espera] {
+    transform: perspective(1400px) rotateX(-58deg);
+  }
+}
+@keyframes rs-folha-de-pe {
+  from {
+    transform: perspective(1400px) rotateX(8deg) translateY(0.75rem);
+  }
+}
+
+/* A cozinha e o pedido no celular: o momento de cada página nasce abaixo da dobra, e acontece quando chega à tela (e
+   não na carga, sem ninguém ver): as lousas da semana são penduradas uma a uma; a comanda se destaca do bloco. */
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .rs-fila-de-lousas > li {
+    animation: none;
+    transition:
+      opacity 360ms ease-out,
+      transform 520ms var(--rs-saida);
+    transition-delay: calc(80ms + var(--ordem, 0) * 70ms);
+  }
+  [data-cena="fila"][data-espera] > li {
+    opacity: 0;
+    transform: translateY(-1.25rem) rotate(-1.5deg);
+  }
+  .rs-montador .rs-bloco {
+    animation: none;
+    transition:
+      opacity 300ms ease-out,
+      transform 560ms var(--rs-saida);
+  }
+  .rs-montador .rs-bloco[data-espera] {
+    opacity: 0;
+    transform: translateY(-2.5rem) rotate(-3deg);
+  }
+}
+
+/* Encomendas no celular: o dia e a marmita na mesma linha da pauta (o prato longo quebra embaixo dele, não o dia); as
+   ações do caderno na largura da folha, com o rótulo numa linha a 390 px. */
+@media (max-width: 639px) {
+  .rs-encomendas > .rs-largura {
+    padding-inline: 0.75rem;
+  }
+  .rs-caderno-folha {
+    padding-left: calc(var(--rs-margem-do-caderno) + 0.8rem);
+    padding-right: 1rem;
+  }
+  .rs-marmitas li {
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-block: 0.35rem 0.15rem;
+  }
+  .rs-marmitas li span:first-child {
+    flex: none;
+    width: 4.6rem;
+  }
+  .rs-marmitas li span:last-child {
+    line-height: 1.3;
+  }
+  .rs-caderno-pagina .rs-agata {
+    width: 100%;
+    gap: 0.5rem;
+    padding-inline: 0.7rem;
+    font-size: var(--rs-nota);
+  }
+  .rs-caderno-pagina .flex:has(> .rs-agata) {
+    display: grid;
+  }
+}
+
+/* Onde no celular: a placa de rua, que é o título, do maior tamanho que cabe numa linha; nos bairros, o tempo de
+   entrega embaixo do nome (antes, "30 / a 40 min" quebrava no meio). */
+@media (max-width: 1023px) {
+  .rs-placa-de-rua strong {
+    font-size: min(4.5rem, calc((100vw - 9.5rem) / 7.7));
+  }
+  .rs-tabela-de-fretes small {
+    display: block;
+  }
+}
+@media (max-width: 479px) {
+  .rs-placa-de-rua strong {
+    font-size: calc((100vw - 6rem) / 7.7);
+  }
+}
+
+/* O toque: o que a mesa faz sob o ponteiro, o celular faz sob o dedo (identidade, "O vocabulário de interação").
+   A ação: o esmalte acende e a borda escurece (com a compressão de 0,97, que já existe); o vínculo: o traço cheio por
+   cima dos pontos; o item de lista: o tique no tocado; a contagem: a volta de caneta; o prego da galeria: a cabeça que
+   brilha. */
+@media (hover: none) {
+  .rs-agata:active:not([aria-disabled="true"]) {
+    border-color: #0f2a1f;
+    background:
+      radial-gradient(120% 100% at 50% -10%, #ffffff, rgb(255 255 255 / 0) 70%),
+      linear-gradient(180deg, #ffffff, #f1eee5);
+    color: var(--rs-verde-fundo);
+    transition-duration: 120ms;
+  }
+  .rs-agata:active:not([aria-disabled="true"])::after {
+    transform: translateX(130%) skewX(-16deg);
+  }
+  :is(.rs-pontilhado, .rs-pontilhado-claro):active::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+    transition-duration: 120ms;
+  }
+  .rs-risco-de-giz:active {
+    background-size: 100% 0.62rem;
+  }
+  [data-tocado] .rs-tique {
+    opacity: 1;
+    transform: none;
+  }
+  .rs-prato-cartaz[data-tocado] .rs-prato-cartaz-preco {
+    color: var(--rs-verde);
+  }
+  .rs-contador button:active:not(:disabled)::before {
+    opacity: 1;
+    transition-duration: 0ms;
+  }
+  .rs-setas-da-fila button:active:not([aria-disabled]) {
+    background: radial-gradient(circle at 36% 30%, #fffaf0, #b3ab9c 52%, #5d5850 100%);
+  }
+}
+/* O tique, no celular: na margem da página (no recuo da largura), à esquerda do prato e do dia. */
+@media (max-width: 1023px) {
+  :is(.rs-prato-cartaz, .rs-dia) .rs-tique {
+    left: -1.2rem;
+    right: auto;
+    width: 1rem;
+    height: 1rem;
+  }
+  .rs-prato-cartaz .rs-tique {
+    top: 1.2rem;
+  }
+  .rs-dia .rs-tique {
+    top: 2.05rem;
+  }
+  .rs-dia[data-hoje] .rs-tique {
+    left: -0.55rem;
+  }
+}
+
+/* As larguras estreitas (320 a 359 px): o que a 390 cabe e a 320 não. */
+@media (max-width: 1023px) {
+  /* A grade da porta com a coluna explícita: sem ela, a coluna crescia até o nome da rua (que não quebra) e cortava o
+     endereço, o vínculo e a plaquinha à direita a 320 px (07-composicao.md, seção 2). O nome da rua, do tamanho que
+     cabe numa linha. */
+  .rs-fachada-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rs-endereco-cartaz {
+    font-size: min(clamp(2.75rem, 1.2rem + 4.4vw, 5.25rem), calc((100vw - 2.7rem) / 7.6));
+  }
+}
+@media (max-width: 639px) {
+  /* O pedido: a folha e a comanda mais largas (o recuo da página menor), e o detalhe do prato com mais linha. */
+  .rs-pedido > .rs-largura {
+    padding-inline: 0.75rem;
+  }
+  .rs-pedido-cabeca,
+  .rs-montador-folha,
+  .rs-pedido-sem-script {
+    padding-inline: 1.15rem;
+  }
+  .rs-comanda {
+    padding-inline: 1.3rem;
+  }
+  .rs-comanda .rs-agata {
+    padding-inline: 1rem;
+  }
+}
+@media (max-width: 359px) {
+  .rs-porta-letreiro {
+    font-size: 1.08rem;
+    white-space: nowrap;
+  }
+  .rs-capa-dia {
+    font-size: 1.1rem;
+  }
+  .rs-capa-preco {
+    font-size: 1.6rem;
+  }
+  .rs-comanda-titulo {
+    font-size: 1.45rem;
+  }
+  .rs-agata-grande {
+    padding-inline: 1.3rem;
+    font-size: 1.0625rem;
+  }
+  .rs-comanda .rs-agata,
+  .rs-risco-de-giz {
+    font-size: var(--rs-nota);
+  }
+  .rs-endereco-cartaz .rs-pontilhado {
+    font-size: 0.875rem;
+  }
+  .rs-esmaltada {
+    padding-inline: 1.25rem;
+  }
+  /* No pedido, a contagem desce para baixo do detalhe, à direita: o detalhe usa a largura da folha. */
+  .rs-montador-item {
+    grid-template-areas: "linha linha" "detalhe detalhe" ". contador";
+  }
+}

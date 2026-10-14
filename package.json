@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "postbuild": "node ferramentas/preparar-standalone.mjs",
-    "start": "next start"
+    "start": "next start",
+    "regua": "node ferramentas/regua/regua.mjs",
+    "anti-ia": "impeccable detect"
   },
   "dependencies": {
+    "@amineyarman/kinesis": "2.0.0",
     "@base-ui/react": "^1.8.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
@@ -23,6 +26,9 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "impeccable": "4.1.0",
+    "perfect-freehand": "1.2.3",
+    "playwright": "^1.64.0",
     "shadcn": "^4.21.0",
     "tailwindcss": "^4",
     "typescript": "^5"

@@ -1,0 +1,1181 @@
+/* Banho e Tosa São Francisco · Início (app/demos/petshop/page.tsx): as seis cenas da página inicial (identidade, seção
+   4.12; lapidada nas rodadas 1 e 2). Só o que é desta página; os tokens, as matérias e as peças comuns ficam em
+   petshop.css (o contrato da fundação). Prefixo bt-.
+
+   O valor vira a cada cena: a frente do cartão (o único cartão deitado no balcão de tinta), o preço (a tinta), o
+   atendimento (a cartolina de ponta a ponta, com o cartão de entrega), fora da tabela (a tinta), quando e onde (a
+   cartolina, com o verso deitado nela), a mensagem (a tinta) e a linha de baixo (a cartolina). As cenas de tinta são o
+   próprio balcão: a luz da porta cai nelas.
+
+   A revelação, uma por cena (contra a marca M1; o mecanismo é o data-bt-revela da ilha do balcão): o estado final é
+   o normal, e a pose de antes só existe com [data-bt-espera] e com o movimento livre. Sem script e com movimento
+   reduzido, tudo à vista e no lugar. Só transform e opacity. */
+
+/* ---------- 1 · a frente do cartão ----------
+   O cartão sangra em cima e à esquerda (identidade, seção 4.12, cena 1), como um cartão de visita visto de perto sobre o
+   balcão: à direita, o balcão na margem da página; embaixo, o balcão fundo (um terço da tela), onde se veem a quina de
+   faca, a espessura da pilha de cartões, a sombra e a luz da porta que passou do cartão. A largura é a que o nome a 128
+   px pede ("São Francisco", 1.271 px, de x = 64 a 1.335).
+   Lapidação, rodada 3 (o crítico: "página amarela com moldura roxa em L", o cartão em 76% da tela): o cartão ficou mais
+   baixo (o balcão em quase um terço da tela, e não num quinto; o conteúdo do cartão, mais junto); a faca cresceu com a
+   escala (a 1.376 px de largura, o cartão de verdade tem a quina de uns 4% da largura; 28 px é a faca dos cartões
+   pequenos); a pilha tem a espessura de sete cartões (35 px), as bordas na sombra; a sombra do sol é curta e quase nítida
+   perto da pilha (a luz dura da manhã), e corta a luz da porta no balcão, que ficou mais clara. A retícula do pé saiu
+   (não estava na identidade e era o ponto de quadrinho, da família do pontilhado já usado). A inclinação gira em volta
+   do carimbo (o pivô): a peça inclina sob a mão, e a ação não anda (09-movimento.md, seção 13.1). */
+.bt-capa {
+  --bt-capa-pe: clamp(6rem, 30svh, 17rem);
+  --bt-capa-sobra: max(0px, (100vw - 90rem) / 2);
+  --bt-capa-faca: 2.75rem;
+  /* O centro do carimbo no cartão: a coluna da direita (o recuo e meio carimbo, 347 × 82 px) e a primeira linha. */
+  --bt-capa-pivo: calc(100% - var(--bt-recuo) - 10.85rem) calc(var(--bt-tira-altura) + 1.5rem + 2.56rem);
+  padding: 0 calc(var(--bt-capa-sobra) + var(--bt-margem)) var(--bt-capa-pe) 0;
+}
+.bt-capa-pilha {
+  border-radius: 0 0 var(--bt-capa-faca) 0;
+  perspective: 1100px;
+  perspective-origin: var(--bt-capa-pivo);
+}
+/* O corte do cartão é borda de verdade (lapidação, rodada 2), na cor da espessura da cartolina, só nos lados da sombra:
+   fica de pé no teste da troca de pele e nas cores forçadas. */
+.bt-capa-cartao {
+  min-height: calc(100svh - var(--bt-capa-pe));
+  container-type: inline-size;
+  transform-origin: var(--bt-capa-pivo);
+  border: solid #b0941f;
+  border-width: 0 1px 1.5px 0;
+  border-radius: 0 0 var(--bt-capa-faca) 0;
+  box-shadow: 0 1px 1px rgb(80 60 0 / 0.4);
+}
+/* A espessura da pilha: sete cartões debaixo do de cima, cada um com a borda de 4 px na cor do papel virado para longe
+   da luz (na sombra, mais funda embaixo) e o fio do vão entre eles, e um descasamento de 1 a 2 px, como em toda pilha de
+   verdade: na quina, as curvas de faca se separam uma da outra. Para baixo e um pouco para a direita (a câmera está à
+   frente e à direita); nunca uma sombra dura deslocada (os vãos e o papel quebram o chapado). */
+.bt-capa-pilha::before {
+  background: #c4a733;
+  box-shadow:
+    1px 4px 0 #dcc041,
+    1px 5px 0 #9a7f22,
+    2px 9px 0 #d5b93d,
+    2px 10px 0 #937920,
+    1px 14px 0 #ceb23a,
+    1px 15px 0 #8b721d,
+    3px 19px 0 #c6aa36,
+    3px 20px 0 #846b1b,
+    2px 24px 0 #bea232,
+    2px 25px 0 #7c6418,
+    4px 29px 0 #b69a2e,
+    4px 30px 0 #745d16,
+    3px 34px 0 #ae922b,
+    3px 35px 0 #3a2c07;
+}
+/* A sombra que a pilha joga no balcão: o contato rente à última folha; a sombra do sol, curta e quase nítida (a luz
+   dura da manhã, com a penumbra curta); e a queda longa e macia. Ela corta a luz da porta no balcão (é a luz cortada que
+   mostra a altura). */
+.bt-capa-pilha::after {
+  box-shadow:
+    2px 38px 2px 0 rgb(8 1 14 / 0.8),
+    12px 64px 5px -3px rgb(8 1 14 / 0.62),
+    26px 96px 36px -6px rgb(8 1 14 / 0.42),
+    44px 140px 110px rgb(8 1 14 / 0.32);
+}
+/* Os dados nos cantos e o nome no meio, como no cartão de visita: o carimbo no canto de cima, o nome e, logo abaixo
+   dele, o que a casa faz e a amostra do preço; no pé, o endereço, o horário e o contato. Em cima à esquerda, só o papel
+   e a luz da porta (rodada 3: o lide de três linhas logo acima do nome ocupava o lugar de um sobretítulo, e "Banho"
+   aparecia quatro vezes na primeira tela). A coluna é a da página (90 rem no máximo, 64 px de margem), medida a partir da
+   borda da tela. */
+.bt-capa-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0.5rem, 0.5fr) auto auto auto minmax(1.25rem, 1fr) auto;
+  column-gap: 3rem;
+  min-height: inherit;
+  padding: calc(var(--bt-tira-altura) + 1.5rem) var(--bt-recuo) 0 calc(var(--bt-capa-sobra) + var(--bt-margem));
+}
+.bt-capa-carimbo {
+  grid-area: 1 / 2;
+  justify-self: end;
+  align-self: start;
+}
+.bt-capa-titulo {
+  grid-area: 3 / 1 / 4 / -1;
+}
+.bt-capa-linha {
+  display: block;
+}
+.bt-capa-lide {
+  grid-area: 4 / 1 / 5 / -1;
+  margin-top: 1.25rem;
+}
+.bt-capa-amostra {
+  grid-area: 5 / 1 / 6 / -1;
+  margin-top: 0.375rem;
+}
+.bt-capa-pe {
+  grid-area: 7 / 1 / 8 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.75rem 3rem;
+  padding-bottom: 2rem;
+}
+.bt-capa-contato {
+  max-width: 34ch;
+  text-align: end;
+}
+/* A entrada, uma vez por visita, em quatro tempos e até 560 ms: o cartão pousa no balcão (desce 14 px, 0 a 420 ms), a
+   pilha sai de baixo dele até a espessura (60 a 460 ms) e a sombra cresce no balcão (60 a 460 ms); a luz chega (0 a 320
+   ms, no cartão e no balcão; a LuzDaPorta); o carimbo bate (220 a 560 ms; rodada 3: na rodada 2, esmaecia): a borracha
+   chega maior, com o ar embaixo, toca o papel de uma vez (a tinta aparece em 60 ms), assenta e a tinta seca some do
+   papel (petshop.css, bt-carimbo-bate). Sem passar do destino. O nome e o lide estão legíveis desde o primeiro quadro (o
+   LCP): o cartão anda inteiro, sem apagar. A pilha anda por transform, porque a inclinação (o Kinesis) escreve rotate e
+   translate no cartão. "backwards", e não "both": depois da entrada, o :active do carimbo volta a mandar na escala. */
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .bt-capa-pilha {
+    animation: bt-capa-pousa 420ms var(--bt-entrada) backwards;
+  }
+  html:not(.ja-aberto) .bt-capa-pilha::before {
+    animation: bt-capa-espessura 400ms var(--bt-entrada) 60ms backwards;
+  }
+  html:not(.ja-aberto) .bt-capa-pilha::after {
+    animation: bt-capa-sombra 400ms var(--bt-entrada) 60ms backwards;
+  }
+  html:not(.ja-aberto) .bt-capa-carimbo {
+    animation: bt-carimbo-bate 340ms var(--bt-entrada) 220ms backwards;
+  }
+  html:not(.ja-aberto) .bt-capa-carimbo .bt-carimbo-ar {
+    animation: bt-carimbo-ar-desce 300ms var(--bt-entrada) 220ms backwards;
+  }
+  html:not(.ja-aberto) .bt-capa-carimbo .bt-carimbo-seca {
+    animation: bt-carimbo-tinta-pega 300ms var(--bt-estado) 260ms backwards;
+  }
+}
+@keyframes bt-capa-pousa {
+  from {
+    transform: translateY(-0.875rem);
+  }
+}
+@keyframes bt-capa-espessura {
+  from {
+    transform: translateY(-1.75rem);
+  }
+}
+@keyframes bt-capa-sombra {
+  from {
+    opacity: 0;
+    transform: translate(-1rem, -1.5rem);
+  }
+}
+
+/* A frente do cartão no celular (o passe do celular, 14.10.2026; no lugar da correção provisória da porta da mesa). O
+   mesmo cartão, que sangra em cima e à esquerda, na proporção que o texto pede numa coluna: o carimbo no canto de cima, à
+   direita; o nome em quatro linhas, na largura 125, no maior corpo em que "Francisco" (7,05 em) enche a coluna (48 px a
+   390, 39 px a 320, 96 px a 768; nunca acima dos 128 px da mesa); logo abaixo, o que a casa faz e a amostra do preço; no pé, o endereço,
+   o horário e o contato na letra miúda do pé de um cartão de visita (a nota, 14 px). O cartão termina a três quartos da
+   primeira tela: embaixo, a quina de faca, a espessura da pilha, a sombra e a luz no balcão ficam à vista (o cartão como
+   objeto, e não uma página amarela com uma tira roxa ao lado). No balcão, à direita, a pausa da luz, perto do que ela
+   para. */
+.bt-capa-pausa {
+  display: none;
+}
+@media (max-width: 1023.98px) {
+  /* O balcão da capa e o da cena 2 emendam sem degrau: a capa sem a queda da luz da sala (a luz dela é a da porta), e a
+     queda da cena 2 começa transparente no alto (a 390 px, as duas quedas se cortavam numa linha clara, rente à pausa). */
+  .bt-capa {
+    background: var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam), var(--bt-campo-tinta);
+  }
+  .bt-capa + .bt-preco {
+    background:
+      var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam),
+      linear-gradient(162deg, transparent, rgb(150 96 170 / 0.16) 16%, rgb(150 96 170 / 0.04) 40%, transparent 55%, rgb(8 1 14 / 0.18)),
+      var(--bt-campo-tinta);
+  }
+  .bt-capa {
+    --bt-capa-pe: 6.5rem;
+    --bt-capa-faca: 2.25rem;
+    --bt-capa-pivo: calc(100% - var(--bt-recuo) - 7.5rem) calc(var(--bt-tira-altura) + 2.75rem);
+  }
+  /* No celular, o texto decide a altura (o cartão passa de 80% da tela menos o balcão); no tablet, o cartão chega a
+     ela, com o pé embaixo, e não fica em menos de metade da primeira tela. */
+  .bt-capa-cartao {
+    min-height: calc(80svh - var(--bt-capa-pe));
+  }
+  .bt-capa-grade {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto 1fr;
+    padding: calc(var(--bt-tira-altura) + 0.75rem) var(--bt-recuo) 0 var(--bt-margem);
+  }
+  .bt-capa-grade > * {
+    grid-area: auto;
+  }
+  /* A altura das quatro linhas fica reservada: se a Anybody chega depois da primeira pintura (swap), a letra de reserva
+     quebra o nome em duas ou três linhas, e o cartão encolhia e crescia de novo, empurrando a página inteira. */
+  .bt-capa-titulo {
+    min-height: calc(4 * 0.92em);
+    margin-top: 1.375rem;
+    font-size: min(8rem, calc((100cqi - var(--bt-margem) - var(--bt-recuo)) / 7.15));
+  }
+  .bt-capa-lide {
+    margin-top: 1rem;
+  }
+  .bt-capa-amostra {
+    margin-top: 0.5rem;
+  }
+  .bt-capa-pe {
+    align-self: end;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.125rem;
+    margin-top: 1.5rem;
+    padding-bottom: 1.375rem;
+    font-size: var(--bt-nota);
+    line-height: 1.45;
+  }
+  .bt-capa-contato {
+    max-width: none;
+    text-align: start;
+  }
+  .bt-capa-pausa {
+    position: absolute;
+    right: var(--bt-margem);
+    bottom: 1rem;
+    z-index: 1;
+    display: inline-flex;
+    color: var(--bt-clara);
+  }
+  /* A pausa do balcão leva o rótulo à vista (a da tira, na mesa estreita, fica só com o desenho). */
+  .bt-capa-pausa .bt-pausa-rotulo {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+  }
+}
+
+/* ---------- 2 · o preço no chapado ----------
+   A lista no chapado, como aprovada (identidade, seções 4.3 e 4.12; lapidação, rodada 3: a escada da rodada 2, com os
+   preços em x 136, 380 e 748, tirava do tutor a comparação numa coluna e caía na marca L2, com a legenda a 18 px). O
+   título no alto, à esquerda, e a referência embaixo dele; a lista de ponta a ponta: o porte a 36 px e, embaixo, o peso
+   e o tempo a 24 px, na cartolina clara; à direita, o preço vazado a 102 px, alinhado pelo tnum, com o "R$" e os
+   centavos pequenos e altos, como na etiqueta de balcão; um fio da clara entre as linhas (sem pontilhado nem filete
+   duplo). Uma régua de leitura nas três linhas. A revelação é o rolo de tinta (abaixo). */
+.bt-preco {
+  display: grid;
+  align-content: center;
+  min-height: 92svh;
+  padding-block: 5rem 4.5rem;
+}
+.bt-preco-cabeca {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 1.5rem 4rem;
+}
+.bt-preco-titulo {
+  max-width: 13ch;
+}
+.bt-preco-cabeca .bt-destaque {
+  max-width: 26ch;
+  text-align: end;
+  text-wrap: balance;
+}
+.bt-preco-peca {
+  margin-top: 3.5rem;
+}
+/* O rolo corre para fora da coluna: a régua corta o que passa da borda só no eixo x, com folga para a régua de acetato,
+   que passa da tabela. */
+.bt-preco-regua {
+  overflow-x: clip;
+  overflow-clip-margin: 0.75rem;
+}
+.bt-preco-lista {
+  display: grid;
+  border-bottom: 1px solid var(--bt-fio);
+}
+.bt-preco-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 3rem;
+  padding-block: 1.375rem 1.25rem;
+  border-top: 1px solid var(--bt-fio);
+}
+.bt-preco-porte {
+  --bt-largura: 100%;
+  display: block;
+}
+.bt-preco-lista .bt-preco-faixa {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: var(--bt-destaque);
+  line-height: 1.3;
+  color: var(--bt-corpo-cor);
+}
+.bt-preco-lista .bt-preco-valor {
+  color: var(--bt-cartolina);
+  text-align: end;
+  white-space: nowrap;
+}
+/* A etiqueta: o símbolo e os centavos a 40% do número, com o alto na altura das maiúsculas dele. */
+:is(.bt-preco-moeda, .bt-preco-centavos) {
+  font-size: 0.4em;
+  font-stretch: 100%;
+  font-weight: 700;
+  vertical-align: 1.05em;
+}
+.bt-preco-moeda {
+  margin-right: 0.15em;
+}
+.bt-preco-nota {
+  margin-top: 2rem;
+}
+/* O vínculo sozinho na linha não tem a exceção do texto corrido: o alvo vai a 44 px, sem mudar o lugar do texto. */
+.bt-preco-nota .bt-vinculo {
+  display: inline-block;
+  padding-block: 0.6875rem;
+}
+/* O rolo de tinta (lapidação, rodada 3: na rodada 2, uma faixa de uva sobre a uva, que só se via pelo filete, e com a
+   metáfora ao contrário: o rolo tirava a tinta para mostrar o papel). Antes da passada, a lista é o papel nu (a
+   cartolina, com a fibra); o rolo vem da esquerda e deixa a tinta atrás dele, com os preços vazados (o papel que a tinta
+   não cobre): a folha de papel nu corre para a direita e sai da coluna (transform, 520 ms, uma vez), e a borda da frente
+   dela é o rolo (a tinta úmida, funda, com o brilho da luz). Sem script e com movimento reduzido, o rolo já passou. */
+.bt-preco-rolo {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, #1d0627 0 0.375rem, rgb(252 243 159 / 0.55) 0.375rem 0.5rem, rgb(48 16 63 / 0.35) 0.5rem 0.875rem, transparent 1.5rem),
+    var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam),
+    var(--bt-cartolina);
+  transform: translateX(calc(100% + 1rem));
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bt-preco-rolo {
+    transition: transform 520ms var(--bt-entrada);
+  }
+  [data-bt-espera] .bt-preco-rolo {
+    transform: none;
+    transition: none;
+  }
+}
+/* No celular (o passe do celular): o título e a referência numa coluna; em cada linha, o porte e o preço lado a lado,
+   na altura do número, e o peso e o tempo embaixo, de ponta a ponta (antes, numa coluna de 180 px, em três linhas). O
+   dt é uma grade nas colunas da linha (subgrid), e o preço fica por cima da segunda coluna dela. */
+@media (max-width: 1023.98px) {
+  .bt-preco {
+    padding-block: 2.5rem 4rem;
+  }
+  .bt-preco-cabeca {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .bt-preco-cabeca .bt-destaque {
+    text-align: start;
+  }
+  .bt-preco-peca {
+    margin-top: 2.25rem;
+  }
+  .bt-preco-linha {
+    align-items: start;
+    column-gap: 1rem;
+    padding-block: 1.125rem 1.25rem;
+  }
+  .bt-preco-linha > dt {
+    display: grid;
+    grid-area: 1 / 1 / 2 / -1;
+    grid-template-columns: subgrid;
+    grid-template-rows: calc(var(--bt-numero) * 0.9) auto;
+  }
+  .bt-preco-linha .bt-preco-porte {
+    align-self: end;
+  }
+  .bt-preco-lista .bt-preco-faixa {
+    grid-column: 1 / -1;
+    margin-top: 0.625rem;
+  }
+  .bt-preco-linha > dd {
+    grid-area: 1 / 2;
+  }
+}
+/* Até 359 px, o porte a 22 px: a 320, "Grande" e "R$ 110,00" se encostavam. */
+@media (max-width: 359.98px) {
+  .bt-preco-lista .bt-preco-porte {
+    font-size: 1.375rem;
+  }
+}
+
+/* ---------- 3 · do pente à entrega ----------
+   A cartolina de ponta a ponta. Lapidação, rodada 3 (o crítico: "um gráfico de Gantt", com os blocos de 210 px quase
+   vazios e o trecho de 5 minutos sem nome; a cena com 128 vh): o título numa linha, o trato a 36 px na voz do texto e o
+   exemplo embaixo dele; a linha do atendimento como no roteiro aprovado (identidade, seção 4.12, cena 3): uma faixa de
+   trechos chapados, cada um da largura dos minutos dele (a grade é a tabela: 10, 25, 35, 15 e 5), separados pelo corte
+   do papel, com os minutos vazados no corpo dos números da casa; os rótulos (a hora, a etapa, o que se faz) se alternam
+   em cima e embaixo da faixa, cada um correndo até onde começa o próximo do mesmo lado. O último (a entrega) fica
+   embaixo, colado no cartão de entrega, que pende do último trecho e passa da borda da cena, deitado sobre a tinta da
+   cena 4 (a borda reta entre as cenas some sob ele). */
+.bt-atendimento {
+  z-index: 2; /* o cartão de entrega passa por cima da cena 4 */
+  overflow: clip visible; /* passa por baixo, para a cena 4; nunca para o lado */
+  padding-block: 7.5rem 0;
+}
+.bt-atendimento-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  grid-template-areas:
+    "titulo titulo"
+    "trato exemplo"
+    "linha linha"
+    ". entrega";
+  align-items: end;
+  column-gap: 4rem;
+}
+.bt-atendimento-titulo {
+  grid-area: titulo;
+}
+.bt-atendimento-trato {
+  grid-area: trato;
+  max-width: 30ch;
+  margin-top: 1.75rem;
+  font-size: var(--bt-subtitulo);
+  line-height: 1.22;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+.bt-atendimento-exemplo {
+  grid-area: exemplo;
+  justify-self: end;
+  max-width: 24ch;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+  text-align: end;
+  text-wrap: balance;
+}
+.bt-linha {
+  grid-area: linha;
+  container-type: inline-size;
+  display: grid;
+  grid-template-columns: var(--bt-trechos);
+  grid-template-rows: auto auto auto;
+  column-gap: 4px;
+  margin: 3.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bt-linha-etapa {
+  position: relative;
+  display: grid;
+  grid-row: 1 / 4;
+  grid-template-rows: subgrid;
+  grid-template-columns: minmax(0, 1fr); /* a coluna é a dos minutos: o rótulo passa dela, o trecho não */
+  min-width: 0;
+}
+/* O rótulo, fora da coluna: corre para a direita até onde começa o próximo do mesmo lado (--ate, em minutos da tabela),
+   com 1,5 rem de folga; o da entrega, o último, se alinha pelo fim. */
+.bt-linha-rotulo {
+  width: max-content;
+  max-width: min(27rem, calc(var(--ate) * 100cqw / 90 - 1.5rem));
+  padding-inline: 0.125rem;
+}
+.bt-linha-etapa[data-lado="cima"] .bt-linha-rotulo {
+  grid-row: 1;
+  align-self: end;
+  padding-bottom: 1rem;
+}
+.bt-linha-etapa[data-lado="baixo"] .bt-linha-rotulo {
+  grid-row: 3;
+  align-self: start;
+  padding-top: 1rem;
+}
+/* O último rótulo (a entrega) se alinha pelo fim da linha: posto na área da grade (a linha de baixo, a coluna do
+   trecho), corre para a esquerda. */
+.bt-linha-etapa:last-child .bt-linha-rotulo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  max-width: min(20rem, calc(25 * 100cqw / 90));
+  text-align: end;
+}
+.bt-linha .bt-linha-nome {
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-size: var(--bt-destaque);
+  line-height: 1.2;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+.bt-linha-oque {
+  margin-top: 0.25rem;
+  max-width: 34ch;
+  text-wrap: balance;
+}
+.bt-linha-etapa:last-child .bt-linha-oque {
+  margin-left: auto;
+}
+/* O trecho: a tinta chapada, da altura de uma faixa impressa, com a hora em que a etapa começa no alto e os minutos
+   vazados embaixo (a cartolina, no corpo da casa), o "min" na clara, sob o número (rodada 3: ao lado do número, o "min"
+   saía do trecho de 10 minutos e não cabia no de 5; a hora, que ficava no rótulo, passou para o trecho, e o trecho deixa
+   de ser um bloco vazio com o texto num canto). A borda do trecho é estrutura: fica de pé sem a pele e nas cores
+   forçadas. */
+.bt-linha-trecho {
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-height: 13.5rem;
+  padding: 0.75rem 0.5rem 0.625rem;
+  border: 1px solid var(--bt-uva);
+  background: var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam), var(--bt-uva);
+  color: var(--bt-cartolina);
+  white-space: nowrap;
+  transform-origin: 0 50%;
+}
+/* A hora na voz do texto, na clara (a letra miúda na tinta; o canário fica para os minutos): o carimbo de data do
+   relógio de ponto, e não um segundo número de exibição em cada trecho. */
+.bt-linha .bt-linha-hora {
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 600;
+  font-size: var(--bt-corpo);
+  line-height: 1.2;
+  color: var(--bt-clara);
+}
+.bt-linha .bt-linha-minutos {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: clamp(2.5rem, 3.9vw, 3.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--bt-cartolina);
+}
+.bt-linha-min {
+  margin-top: 0.25rem;
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 600;
+  font-stretch: 100%;
+  font-size: var(--bt-nota);
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--bt-clara);
+}
+/* A linha do atendimento no celular e no tablet (o passe do celular; abaixo da mesa, os rótulos alternados não cabem): de pé, como a fita de uma régua do tempo, cada trecho na altura dos minutos dele (9 px por minuto: 1 h 30 em
+   810 px: o tempo ganha um comprimento), um embaixo do outro, com o corte do papel entre eles; a hora no alto do
+   trecho e os minutos no pé, vazados; o nome e o que se faz ao lado, no alto do trecho. O trecho curto (5 min, 45 px)
+   leva a hora e os minutos numa linha só. O rótulo que é mais alto que o trecho (a entrega, a última) passa da linha. */
+@media (max-width: 1023.98px) {
+  .bt-linha {
+    --bt-linha-u: 0.5625rem;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    grid-template-rows: none;
+    column-gap: 1rem;
+    row-gap: 4px;
+    margin-top: 2.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .bt-linha-etapa {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    grid-template-columns: subgrid;
+    grid-template-rows: none;
+    height: calc(var(--min) * var(--bt-linha-u));
+  }
+  .bt-linha-trecho {
+    grid-column: 1;
+    grid-row: 1;
+    min-height: 0;
+    padding: 0.5rem 0.625rem 0.5rem;
+    transform-origin: 50% 0;
+  }
+  .bt-linha .bt-linha-minutos {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.3125rem;
+    font-size: 2.5rem;
+  }
+  .bt-linha .bt-linha-min {
+    margin-top: 0;
+  }
+  .bt-linha-etapa[data-curto] .bt-linha-trecho {
+    flex-direction: row;
+    align-items: center;
+    padding-block: 0.25rem;
+  }
+  .bt-linha-etapa[data-curto] .bt-linha-minutos {
+    font-size: 1.75rem;
+  }
+  .bt-linha .bt-linha-etapa[data-lado] .bt-linha-rotulo {
+    position: static;
+    grid-column: 2;
+    grid-row: 1;
+    align-self: start;
+    width: auto;
+    max-width: none;
+    padding: 0.375rem 0 0;
+    text-align: start;
+  }
+  .bt-linha .bt-linha-nome {
+    font-size: var(--bt-corpo);
+  }
+  .bt-linha-oque {
+    font-size: var(--bt-nota);
+    line-height: 1.45;
+  }
+  .bt-linha-etapa:last-child .bt-linha-oque {
+    margin-left: 0;
+  }
+}
+/* No tablet, a fita mais larga e o rótulo no corpo da mesa: a 768 px, a linha ocupava um terço da largura, com a letra
+   miúda do celular. */
+@media (min-width: 600px) and (max-width: 1023.98px) {
+  .bt-linha {
+    --bt-linha-u: 0.625rem;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    column-gap: 1.5rem;
+  }
+  .bt-linha .bt-linha-nome {
+    font-size: var(--bt-destaque);
+  }
+  .bt-linha-oque {
+    font-size: var(--bt-corpo);
+  }
+}
+/* Até 359 px, a fita mais estreita e o minuto mais alto (10 px): o rótulo de quatro linhas cabe no trecho dele. */
+@media (max-width: 359.98px) {
+  .bt-linha {
+    --bt-linha-u: 0.625rem;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    column-gap: 0.75rem;
+  }
+}
+/* Os trechos se imprimem da esquerda: a tinta pega (opacidade) e o trecho assenta na largura (scaleX de 0,9 a 1), 60
+   ms entre eles; o último termina em 500 ms. */
+@media (prefers-reduced-motion: no-preference) {
+  .bt-linha-trecho {
+    transition:
+      opacity 260ms var(--bt-entrada) calc(var(--i) * 60ms),
+      transform 260ms var(--bt-entrada) calc(var(--i) * 60ms);
+  }
+  [data-bt-espera] .bt-linha-trecho {
+    opacity: 0;
+    transform: scaleX(0.9);
+    transition: none;
+  }
+}
+/* De pé, os trechos se imprimem de cima: a tinta pega e o trecho assenta na altura (scaleY de 0,9 a 1, origem no alto). */
+@media (max-width: 1023.98px) and (prefers-reduced-motion: no-preference) {
+  [data-bt-espera] .bt-linha-trecho {
+    transform: scaleY(0.9);
+  }
+}
+/* O cartão de entrega, abaixo do fim da linha e alinhado por ele, fica deitado sobre a borda da cena 4, metade na
+   cartolina e metade na tinta (lapidação, rodada 3: logo embaixo dos rótulos, o cartão não deixava papel limpo no pé da
+   cena, e a virada de valor entre a linha chapada e a tinta da cena 4 não se lia). */
+.bt-atendimento-entrega {
+  grid-area: entrega;
+  justify-self: end;
+  align-self: start;
+  margin: 8.25rem 0 -12rem;
+  perspective-origin: 100% 0;
+}
+.bt-atendimento-entrega-peca {
+  transform-origin: 100% 0;
+}
+/* No celular e no tablet: a cena começa mais perto do preço; o título, o trato, o exemplo, a linha e o cartão de entrega
+   numa coluna, o exemplo alinhado à esquerda, como o resto (à direita, numa coluna de 120 px, ele quebrava a cada duas
+   palavras). O cartão de entrega pende do fim da linha e deita sobre a cena 4, como na mesa; no celular, de ponta a ponta
+   da coluna. */
+@media (max-width: 1023.98px) {
+  .bt-atendimento {
+    padding-top: 4.5rem;
+  }
+  .bt-atendimento-grade {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "titulo" "trato" "exemplo" "linha" "entrega";
+  }
+  .bt-atendimento-trato {
+    margin-top: 1.25rem;
+    line-height: 1.32;
+  }
+  .bt-atendimento-exemplo {
+    justify-self: start;
+    max-width: 32ch;
+    margin-top: 1rem;
+    text-align: start;
+  }
+}
+@media (max-width: 767.98px) {
+  .bt-atendimento-entrega {
+    justify-self: stretch;
+  }
+  .bt-entrega {
+    width: 100%;
+  }
+}
+
+/* O cartão de entrega (components/demos/petshop/cartao-de-entrega.tsx): o cartão pequeno, na cartolina clara (o papel na
+   luz), com a faca miúda nas quatro quinas, o corte e a sombra da tinta, de cima e da esquerda. Lapidação, rodada 3 (o
+   crítico: "um formulário de interface"): os campos em linha, como no bloco impresso da gráfica (o rótulo e o fio que
+   corre até a borda, o valor carimbado em cima do fio), e a marca da casa batida embaixo, na borracha cheia, com o nome
+   vazado e o grão da falha. Tudo na uva: o violeta é só da ação. */
+.bt-entrega {
+  width: min(25rem, 100%);
+  margin: 0;
+  padding: 1.25rem 1.5rem 1.375rem;
+  border-radius: var(--bt-faca-miuda);
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-clara);
+  color: var(--bt-uva);
+  box-shadow: var(--bt-corte), var(--bt-sombra-impresso), 18px 40px 60px -10px rgb(18 4 26 / 0.45);
+}
+.bt-entrega-nome {
+  padding-bottom: 0.625rem;
+  border-bottom: 2px solid var(--bt-uva);
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: var(--bt-destaque);
+  line-height: 1.1;
+}
+.bt-entrega-campos {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0.75rem 0 0;
+}
+.bt-entrega-campo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: 0.625rem;
+}
+.bt-entrega-campos dt {
+  font-size: var(--bt-nota);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.bt-entrega-campos dd {
+  min-height: 2.25rem;
+  margin: 0;
+  padding: 0 0 0.125rem 0.25rem;
+  border-bottom: 1px solid rgb(48 16 63 / 0.5);
+}
+/* O carimbado: a tinta da casa, na gótica do carimbo de data (a Overpass forte), com o ganho de ponto (a tinta que se
+   espalha um pouco no papel) e a falha nas fibras (onde a fibra da cartolina não pega a tinta: a máscara é a própria
+   fibra, recortada da letra). */
+.bt-entrega-carimbado {
+  display: inline-block;
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 700;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+  color: var(--bt-uva);
+  text-shadow: 0 0 0.6px rgb(48 16 63 / 0.7);
+  -webkit-mask: linear-gradient(#000 0 0), var(--bt-fibra-img) 0 0 / 160px 160px;
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0), var(--bt-fibra-img) 0 0 / 160px 160px;
+  mask-composite: exclude;
+}
+/* A marca da casa batida no cartão: a borracha cheia, na uva, com o quadrado e o nome vazados na clara (a letra miúda na
+   tinta vai na clara). Reta: o giro é só da ação. */
+.bt-entrega-marca {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  margin: 1.125rem 0 0 auto;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--bt-canto-carimbo);
+  background: var(--bt-uva);
+  color: var(--bt-clara);
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-size: var(--bt-nota);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.bt-entrega-quadrado {
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: none;
+  background: var(--bt-clara);
+}
+
+/* ---------- 4 · fora da tabela ----------
+   O descanso, só tipografia (identidade, seção 4.12, cena 4): o título no corpo dos números, em duas linhas, na coluna
+   dele; as quatro ausências empilhadas na outra, cada uma a 36 px (a Anybody estreita), com a razão embaixo, no corpo.
+   Sem fio e sem régua (lapidação, rodada 2: a lista de linhas com fio repetia a da cena 2). */
+.bt-fora {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  padding-block: 14rem 9rem; /* em cima, o cartão de entrega da cena 3; embaixo, o verso da cena 5: os dois deitados na tinta */
+}
+.bt-fora-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: center;
+  gap: 3rem 4rem;
+}
+.bt-fora-titulo {
+  max-width: 7ch;
+  font-size: var(--bt-numero);
+  line-height: 0.92;
+}
+.bt-fora-lista {
+  display: grid;
+  gap: 2.5rem;
+}
+.bt-fora-item dt {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-size: var(--bt-subtitulo);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.bt-fora-item dd {
+  max-width: 50ch;
+  margin: 0.5rem 0 0;
+  text-wrap: balance;
+}
+@media (max-width: 1023.98px) {
+  .bt-fora-grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+  .bt-fora-lista {
+    gap: 2rem;
+  }
+}
+
+/* ---------- 5 · quando e onde ----------
+   A cartolina de ponta a ponta, e nela o verso do cartão, inteiro (lapidação, rodada 3; o crítico: o título de exibição
+   à esquerda, o endereço, o vínculo e o mapa à direita eram a abertura de Onde da odontologia, e o horário, uma caixa no
+   canto do mapa, lida como legenda): o cartão de gráfica virado, com as quatro quinas de faca, o corte e a sombra, na
+   cartolina clara (o papel na luz). Nele, como se imprime o verso de um cartão: o mapinho dos bairros do leva e traz na
+   margem do papel, à esquerda (a baía do lado da borda); à direita, o título, o horário impresso (o bloco chapado de
+   tinta, sem moldura e sem giro, a 24 px, como pede a identidade), o endereço e a linha do leva e traz. O verso fica
+   deitado sobre a borda da cena 4: a parte de cima dele sobre a tinta, o resto sobre a cartolina, e a borda reta entre as
+   cenas some sob ele. Inclina sob a mão. Onde mostra o mapa de perto, sem os bairros. */
+.bt-quando {
+  z-index: 2; /* o verso passa por cima da cena 4 */
+  overflow: clip visible;
+  padding-block: 0 14.5rem; /* embaixo, a cartolina limpa que fecha a virada de valor da cena */
+}
+.bt-quando-mesa {
+  margin-top: -6rem;
+  perspective-origin: 50% 0;
+}
+.bt-quando-verso {
+  --bt-mapa-papel: var(--bt-clara);
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  column-gap: clamp(2rem, 4.2vw, 3.75rem);
+  padding: 1.125rem clamp(1.5rem, 3.3vw, 3rem) 1.125rem 1.125rem;
+  border-radius: var(--bt-faca);
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-clara);
+  box-shadow: var(--bt-corte), var(--bt-sombra-impresso), 22px 48px 80px -12px rgb(18 4 26 / 0.5);
+  transform-origin: 50% 0;
+}
+/* Na mesa, o mapa à esquerda e o texto à direita (no DOM, o texto vem antes: a ordem da leitura no celular). */
+@media (min-width: 1024px) {
+  .bt-quando-mapa-coluna {
+    grid-area: 1 / 1;
+  }
+  .bt-quando-texto {
+    grid-area: 1 / 2;
+  }
+}
+/* O mapinho na altura do verso, com a margem do papel em volta (a baía nunca encosta na borda do cartão, que fica sobre a
+   tinta da cena 4), o crédito e a linha do leva e traz embaixo. */
+.bt-quando-mapa-coluna {
+  display: flex;
+  flex-direction: column;
+}
+.bt-quando-mapa {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: clip;
+  border-radius: calc(var(--bt-faca) - 1.125rem);
+}
+.bt-quando-mapa .bt-mapa-desenho {
+  flex: 1 1 0;
+  min-height: 28rem;
+}
+.bt-quando-mapa .bt-mapa-credito {
+  padding: 0.5rem 0.25rem 0;
+}
+.bt-quando-texto {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  padding-block: 2.25rem 1rem;
+}
+.bt-quando-titulo {
+  max-width: 7ch;
+}
+.bt-horario {
+  width: fit-content;
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem 1.125rem;
+  border-radius: var(--bt-canto-impresso);
+  box-shadow: var(--bt-sombra-impresso);
+}
+.bt-horario dl {
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 2rem;
+}
+.bt-horario-linha {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+  padding-block: 0.3125rem;
+}
+.bt-horario-linha :is(dt, dd) {
+  font-size: var(--bt-destaque);
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.bt-horario-linha dt {
+  font-weight: 700;
+  color: var(--bt-cartolina);
+}
+.bt-horario .bt-horario-linha dd {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  color: var(--bt-cartolina);
+}
+.bt-horario .bt-horario-fechado dd {
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 400;
+  color: var(--bt-corpo-cor);
+}
+.bt-horario-feriados {
+  margin-top: 0.5rem;
+  font-size: var(--bt-nota);
+}
+.bt-quando-endereco {
+  max-width: 30ch;
+  margin-top: 1.75rem;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+}
+/* O fio vai na largura do mapa; o texto para 4ch antes (a 1440 px, a coluna dava 84 caracteres por linha, e o teto é 80). */
+.bt-quando-leva {
+  max-width: 58ch;
+  margin-top: 0.875rem;
+  padding: 0.875rem 4ch 0.25rem 0.25rem;
+  border-top: 1px solid var(--bt-fio);
+  text-wrap: pretty;
+}
+/* O horário assenta: desce 8 px até o lugar, uma vez (300 ms). */
+@media (prefers-reduced-motion: no-preference) {
+  .bt-horario {
+    transition: transform 300ms var(--bt-entrada);
+  }
+  .bt-horario[data-bt-espera] {
+    transform: translateY(-0.5rem);
+    transition: none;
+  }
+}
+/* O verso no celular (o passe do celular): numa coluna, na ordem da leitura, o título, o horário impresso, o endereço e,
+   embaixo, o mapinho na margem do papel, com a linha do leva e traz. O horário ocupa a largura do verso, com o dia que
+   pode quebrar e a hora que não quebra (antes, a hora e o endereço passavam da borda do verso, cortados). O mapinho num
+   quadro quase quadrado (1,05), em que os quatro bairros cabem (o desenho, cortado pelos lados, mostra de x = 175 a
+   1.225), com o nome dos bairros no corpo em que a placa se lê no celular (16 px a 390, nunca abaixo de 14) e o de Vital
+   Brazil e Santa Rosa em duas linhas, longe do de Icaraí. O dia sai da placa (com ele, as placas de Icaraí e de Vital
+   Brazil se encostavam a 390 px) e vai para o texto do leva e traz, agrupado como na tabela (page.tsx). */
+@media (max-width: 1023.98px) {
+  .bt-quando-verso {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0.75rem;
+  }
+  .bt-quando-texto {
+    justify-items: stretch;
+    padding: 1.5rem 0.5rem 2rem;
+  }
+  .bt-horario {
+    width: auto;
+    max-width: 28rem;
+    margin-top: 1.5rem;
+    padding: 1rem 1.125rem 0.875rem;
+  }
+  .bt-horario dl {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+  }
+  .bt-horario-linha :is(dt, dd) {
+    font-size: var(--bt-destaque);
+  }
+  .bt-horario-linha dt {
+    white-space: normal;
+  }
+  .bt-quando-endereco {
+    margin-top: 1.5rem;
+    font-size: var(--bt-corpo);
+    line-height: 1.5;
+  }
+  .bt-quando-mapa .bt-mapa-desenho {
+    flex: none;
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1.05;
+  }
+  .bt-quando-mapa {
+    border-radius: calc(var(--bt-faca) - 0.75rem);
+  }
+  .bt-quando-leva {
+    max-width: none;
+    padding: 0.875rem 0.25rem 0.5rem;
+  }
+}
+/* Até 359 px, o horário no corpo do texto: a 320, "Segunda e domingo" quebrava em três linhas. */
+@media (max-width: 359.98px) {
+  .bt-horario-linha :is(dt, dd) {
+    font-size: var(--bt-corpo);
+  }
+}
+/* No tablet, o mapinho na proporção da mesa (1,4): os rótulos e os dias cabem nas placas, como lá. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .bt-quando-mapa .bt-mapa-desenho {
+    aspect-ratio: 1.4;
+  }
+}
+@media (max-width: 767.98px) {
+  .bt-quando-mapa .bt-mapa-bairro {
+    font-size: 51px;
+  }
+  .bt-quando-mapa .bt-mapa-dia,
+  .bt-quando-leva-mapa {
+    display: none;
+  }
+  .bt-quando-mapa .bt-mapa-linha-uma {
+    display: none;
+  }
+  .bt-quando-mapa .bt-mapa-linha-duas {
+    display: inline;
+  }
+}
+@media (max-width: 359.98px) {
+  .bt-quando-mapa .bt-mapa-bairro {
+    font-size: 56px;
+  }
+}
+/* Os dias do leva e traz em texto: só no celular (na mesa e no tablet, estão nas placas do mapinho). */
+@media (min-width: 768px) {
+  .bt-quando-leva-dias {
+    display: none;
+  }
+}
+
+/* ---------- 6 · a mensagem pronta ----------
+   A mensagem impressa como a casa imprime os seus papéis. Lapidação, rodada 3: o título numa linha, de ponta a ponta, no
+   alto (a cena deixa de dividir a tela em duas colunas desde o alto, como as outras); embaixo, na coluna larga, a
+   mensagem a 36 px na voz do texto, com cada lacuna em fio de tinta clara, para preencher; na estreita, a condição do nó
+   (antes da ação), o carimbo claro, que bate uma vez ao entrar na tela, e o prazo de resposta. */
+.bt-mensagem {
+  display: grid;
+  align-content: center;
+  min-height: 80svh; /* a cena mais curta da página (a identidade: 80 vh) */
+  padding-block: 6rem 5.5rem;
+}
+.bt-mensagem-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(min-content, 5fr); /* a coluna do carimbo nunca menor que ele (a 1024 px, ele saía da tela) */
+  grid-template-areas:
+    "titulo titulo"
+    "texto assina";
+  align-items: end;
+  gap: 3.5rem 5rem;
+}
+.bt-mensagem-titulo {
+  grid-area: titulo;
+}
+.bt-mensagem-texto {
+  grid-area: texto;
+  max-width: 34ch;
+  font-size: var(--bt-subtitulo);
+  line-height: 1.45;
+}
+/* A lacuna: o fio impresso, na largura de uma palavra, na linha de base. */
+.bt-lacuna {
+  display: inline-block;
+  width: 3.25em;
+  height: 0.9em;
+  margin-inline: 0.12em;
+  border-bottom: 0.06em solid currentColor;
+  vertical-align: baseline;
+}
+.bt-mensagem-assina {
+  grid-area: assina;
+  display: grid;
+  justify-items: start;
+  align-content: end;
+  gap: 1.75rem;
+}
+.bt-mensagem-no {
+  max-width: 30ch;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.bt-mensagem-batida {
+  width: fit-content;
+}
+.bt-mensagem-prazo {
+  max-width: 30ch;
+  text-wrap: balance;
+}
+/* No celular (o passe do celular): uma coluna, o título, a mensagem e, embaixo, a condição do nó, o carimbo claro e o
+   prazo, com a ação no alcance do polegar; a mensagem no corpo do subtítulo (26 px) e a lacuna um pouco mais curta. */
+@media (max-width: 1023.98px) {
+  .bt-mensagem {
+    padding-block: 4.5rem 4.5rem;
+  }
+  .bt-mensagem-grade {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "titulo" "texto" "assina";
+    gap: 2rem;
+  }
+  .bt-mensagem-texto {
+    line-height: 1.4;
+  }
+  .bt-lacuna {
+    width: 2.75em;
+  }
+  .bt-mensagem-assina {
+    gap: 1.5rem;
+    margin-top: 0.5rem;
+  }
+}
+/* O carimbo claro bate uma vez, ao entrar na tela, como o da capa: chega maior, toca o papel de uma vez, assenta, e a
+   tinta seca some. */
+@media (prefers-reduced-motion: no-preference) {
+  .bt-mensagem-batida {
+    transition:
+      opacity 60ms linear 80ms,
+      transform 340ms var(--bt-entrada) 80ms;
+  }
+  .bt-mensagem-batida .bt-carimbo-seca {
+    transition: opacity 300ms var(--bt-estado) 140ms;
+  }
+  .bt-mensagem-batida[data-bt-espera] {
+    opacity: 0;
+    transform: scale(1.05);
+    transition: none;
+  }
+  .bt-mensagem-batida[data-bt-espera] .bt-carimbo-seca {
+    opacity: 1;
+    transition: none;
+  }
+}

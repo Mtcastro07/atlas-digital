@@ -32,7 +32,9 @@ const palavrasDoTitulo = capa.titulo.split(" ");
  */
 export function Capa() {
   return (
-    <Secao id="inicio" tom="escuro" className="flex min-h-[calc(100svh-72px)] items-center overflow-hidden">
+    // No celular, 208 px de folga embaixo (contra 96 em cima) sobem o bloco 56 px, ao centro óptico: a ação principal
+    // termina antes de 60% da primeira tela a 390 × 844 (até 14/10, em 66%; 07-composicao.md).
+    <Secao id="inicio" tom="escuro" className="flex min-h-[calc(100svh-72px)] items-center overflow-hidden max-md:pb-52">
       <div className="relative w-full">
         <Envelope className="mov-anteparo z-[1] text-center">
           <h1 className="mx-auto max-w-[13ch] text-display">

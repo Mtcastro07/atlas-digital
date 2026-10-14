@@ -1,0 +1,1596 @@
+/* Banho e Tosa São Francisco (plano Essencial), prefixo bt-: a folha comum do site, carregada só pelo layout dele
+   (app/demos/petshop/layout.tsx). A identidade "O cartão do balcão" (registros/demos/pet-shop/identidade.md, aprovada
+   em 13.10.2026): a casa imprime tudo numa cartolina amarela, numa tinta só (a uva), e carimba à mão o que faz (o
+   violeta do carimbo, só onde a mão age). As cenas claras são a cartolina; as escuras, o chapado da tinta.
+
+   Aqui ficam os tokens, a escala, as matérias (a fibra, o cartão com a faca e a pilha, a sombra longa, o chapado), as
+   peças que se repetem (o carimbo, o vínculo impresso, o impresso com relevo e verniz, a régua de leitura, a luz da
+   porta), a tira de cima, a linha de baixo (o rodapé), a transição de página e as regras de movimento reduzido e de
+   cores forçadas. O que é de uma página só fica na folha dela: inicio.css, servicos.css, onde.css, legal.css.
+
+   Movimento do Essencial, com o toque Atlas (producao/esteira/09-movimento.md, seção 4): só transform e opacity (a
+   cor do sublinhado e do rebaixo do vínculo muda em 150 ms, sem deslocar nada); nunca transition: all; nada passa do
+   destino; com movimento reduzido, nada se desloca; o hover só com ponteiro fino. */
+
+[data-demo="petshop"] {
+  /* As cores (OKLCH → hex; contraste pela fórmula da WCAG 2.2, sobre o hex; identidade, seção 4.4). */
+  --bt-cartolina: #f9e151; /* oklch(0.905 0.160 100): a cartolina canário, tingida na massa; o fundo e o campo */
+  --bt-uva: #30103f; /* oklch(0.25 0.09 313): a tinta, uma só. Na cartolina, 12,52:1 */
+  --bt-reticula: #634474; /* oklch(0.44 0.085 313): o secundário na cartolina, 6,10:1 (só nota e rótulo; nunca corpo) */
+  --bt-carimbo: #5f2c96; /* oklch(0.42 0.165 302): a ação, o foco, o item atual. A cartolina nele: 6,96:1 */
+  --bt-carimbo-batido: #481776; /* o carimbo sob a mão (L − 0,08): a cartolina nele, 9,59:1 */
+  --bt-carimbo-claro: #c4a7f0; /* oklch(0.78 0.105 302): a ação e o foco na tinta. A uva nele: 7,97:1 */
+  --bt-carimbo-claro-batido: #aa8fd5; /* o carimbo claro sob a mão (L − 0,08): a uva nele, 5,98:1 */
+  --bt-clara: #fcf39f; /* oklch(0.952 0.105 103): a luz da porta; o corpo vazado na tinta (14,52:1 com a uva) */
+  --bt-marcador: #d6c8fa; /* oklch(0.86 0.07 298): o marca-texto (uma vez) e a seleção. A uva nele: 10,62:1 */
+  --bt-fibra: #edd34f; /* oklch(0.865 0.150 98): as fibras, matéria, nunca texto. A uva no pior ponto: 11,03:1 */
+  /* Proibido: o violeta do carimbo sobre a uva (1,80:1). Na cena de tinta, os tokens trocam (.bt-tinta). */
+
+  /* A luz da porta no campo (lapidação, rodada 1): o mesmo matiz, o L mais alto do lado da porta (a esquerda) e mais
+     baixo do lado de lá. A cartolina de 0,935 a 0,89 (a cor da marca, 0,905, a um terço do caminho) e a uva de 0,29 a
+     0,225: o campo deixa de ser dois valores chapados, sem sair das faixas da estratégia (a cartolina acima de 0,85, a
+     uva abaixo de 0,4). Só no eixo x: duas cenas de tinta seguidas emendam sem degrau. */
+  --bt-campo-claro: linear-gradient(90deg in oklch, oklch(0.935 0.145 101), oklch(0.905 0.16 100) 34%, oklch(0.89 0.158 98));
+  --bt-campo-tinta: linear-gradient(90deg in oklch, oklch(0.29 0.098 313), oklch(0.25 0.09 313) 40%, oklch(0.225 0.082 313));
+  /* A queda da luz da sala na tinta (rodada 3): mais clara no alto, do lado da porta, e mais funda embaixo, à direita,
+     em vez do sol de borda dura nas cenas 2 e 6 (três retângulos iguais no mesmo canto, que liam como painel). */
+  --bt-queda-tinta: linear-gradient(162deg, rgb(150 96 170 / 0.16), rgb(150 96 170 / 0.04) 38%, transparent 55%, rgb(8 1 14 / 0.18));
+  /* A luz da porta, por sobreposição (overlay): leva a cartolina a #fcf375 (no cartão da capa, por baixo da tinta). */
+  --bt-sol: #bfccb9;
+
+  /* Os tokens por função, no vocabulário do shadcn (as peças da base que os leem). */
+  --background: var(--bt-cartolina);
+  --foreground: var(--bt-uva);
+  --card: var(--bt-clara);
+  --card-foreground: var(--bt-uva);
+  --muted: var(--bt-fibra);
+  --muted-foreground: var(--bt-reticula);
+  --primary: var(--bt-carimbo);
+  --primary-foreground: var(--bt-cartolina);
+  --secondary: var(--bt-uva);
+  --secondary-foreground: var(--bt-cartolina);
+  --accent: var(--bt-carimbo);
+  --border: rgb(48 16 63 / 0.12);
+  --input: rgb(48 16 63 / 0.4);
+  --ring: var(--bt-carimbo);
+
+  /* As matérias, geradas UMA vez (a fibra: gerar-fibra-r2.mjs, na pasta de trabalho da construção, com a dose da
+     lapidação, rodada 2; a falha do carimbo: gerar-falha.mjs, com o perfect-freehand 1.2.3, só na máquina; a retícula do
+     pé do cartão da capa: gerar-reticula.mjs, em inicio.css). Por url(), nunca por data URI. */
+  --bt-fibra-img: url("/demos/petshop/fibra.svg");
+  --bt-fibra-tinta-img: url("/demos/petshop/fibra-tinta.svg");
+  --bt-fibra-tam: 320px 320px;
+
+  /* A forma (seção 4.8): a faca do cartão, o carimbo, o horário impresso, a régua. O balcão: a tinta que aparece em
+     volta do cartão da capa e dos dois lados da tira, 40 px na mesa; o recuo do texto dentro de um cartão é a margem da
+     página menos o balcão, para tudo cair na mesma coluna de 64 px. */
+  --bt-faca: 28px;
+  --bt-faca-miuda: 12px; /* o cartão de entrega e a tira: a faca do cartão pequeno */
+  --bt-canto-carimbo: 10px;
+  --bt-canto-impresso: 6px;
+  --bt-canto-regua: 4px;
+  --bt-margem: clamp(1rem, 4.44vw, 4rem);
+  --bt-balcao: clamp(1rem, 2.78vw, 2.5rem);
+  --bt-recuo: max(0.75rem, calc(var(--bt-margem) - var(--bt-balcao)));
+
+  /* Uma luz só, a da porta: de cima e da esquerda. As sombras, tingidas da uva, com o y maior que o x; nunca animadas,
+     nunca duras e deslocadas (a guarda contra o neobrutalismo). */
+  --bt-sombra-longa:
+    0 1px 0 rgb(255 252 214 / 0.6) inset, 1px 2px 2px rgb(18 4 26 / 0.35), 4px 10px 18px rgb(18 4 26 / 0.35), 12px 26px 48px rgb(18 4 26 / 0.4);
+  --bt-sombra-impresso: 1px 2px 2px rgb(48 16 63 / 0.3), 3px 7px 12px -2px rgb(48 16 63 / 0.24), 6px 14px 28px rgb(48 16 63 / 0.28);
+  --bt-sombra-carimbo: 0 1px 1px rgb(48 16 63 / 0.18), 1px 3px 4px -1px rgb(48 16 63 / 0.22), 2px 6px 10px -4px rgb(48 16 63 / 0.35);
+  /* O corte do cartão: a espessura da cartolina na borda de baixo e da direita, do lado da sombra. */
+  --bt-corte: inset -1px -1.5px 0 rgb(150 118 18 / 0.55);
+
+  /* Os tempos e as curvas (09-movimento.md, seções 2 e 3): um token por curva, num lugar só. */
+  --bt-estado: cubic-bezier(0.2, 0, 0, 1);
+  --bt-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --bt-saida: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --bt-toque: 120ms;
+  --bt-mao: 180ms; /* o hover */
+  --bt-mao-sai: 135ms; /* a saída do hover, 25% mais curta */
+  --bt-vinculo: 150ms;
+
+  /* A escala na mesa (sete degraus; seção 4.5): vizinhos a 1,25× ou mais; a capa a 128/18 = 7,1. */
+  --bt-nota: 0.875rem; /* 14 px */
+  --bt-corpo: clamp(1.0625rem, 1.25vw, 1.125rem); /* 17 a 18 px */
+  --bt-destaque: clamp(1.25rem, 1.7vw, 1.5rem); /* 20 a 24 px */
+  --bt-subtitulo: clamp(1.625rem, 2.5vw, 2.25rem); /* 26 a 36 px */
+  --bt-titulo: clamp(2.625rem, 5.56vw, 5rem); /* 42 a 80 px */
+  --bt-numero: clamp(3rem, 7.1vw, 6.375rem); /* 48 a 102 px */
+  --bt-display: clamp(3.5rem, 8.9vw, 8rem); /* 56 a 128 px */
+
+  font-family: var(--font-bt-texto), system-ui, sans-serif;
+  font-size: var(--bt-corpo);
+  line-height: 1.55;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-synthesis-weight: none;
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-cartolina);
+  color: var(--bt-uva);
+  caret-color: var(--bt-carimbo);
+  accent-color: var(--bt-carimbo);
+  -webkit-tap-highlight-color: transparent;
+}
+/* No celular estreito (até 389 px), o título e o número encolhem com a tela, para a palavra mais longa caber na coluna
+   sem partir ("Acréscimos" mede 8,45 em na largura 125; "Serviços", 6,32 em): a 320 px, 34 e 45 px; de 390 px em
+   diante, a escala da identidade (42 e 48 px no mínimo). */
+@media (max-width: 389.98px) {
+  [data-demo="petshop"] {
+    --bt-titulo: min(2.625rem, (100vw - 2 * var(--bt-margem)) / 8.5);
+    --bt-numero: min(3rem, (100vw - 2 * var(--bt-margem)) / 6.4);
+  }
+}
+/* O contexto da superfície: na cartolina (a raiz, a cena clara e o cartão, que volta à cartolina mesmo dentro de uma
+   cena de tinta) e na tinta (.bt-tinta, que troca cada um, mais abaixo). */
+[data-demo="petshop"],
+.bt-cartolina,
+.bt-cartao {
+  --ring: var(--bt-carimbo);
+  --bt-papel: var(--bt-cartolina); /* a cor que aparece onde falta tinta (a falha do carimbo) */
+  --bt-corpo-cor: var(--bt-uva);
+  --bt-titulo-cor: var(--bt-uva);
+  --bt-secundario: var(--bt-reticula);
+  --bt-acao: var(--bt-carimbo);
+  --bt-acao-batida: var(--bt-carimbo-batido);
+  --bt-acao-rotulo: var(--bt-cartolina);
+  --bt-acao-filete: rgb(232 222 255 / 0.62); /* o filete da tinta úmida na borda de cima, sob a mão (fora do rótulo) */
+  --bt-acao-falha: url("/demos/petshop/falha-capa.svg"); /* a máscara da falha, no tamanho do carimbo da superfície */
+  --bt-acao-seca: url("/demos/petshop/falha-capa-entrada.svg"); /* o grão da tinta que ainda não pegou (a entrada) */
+  --bt-acao-sombra: var(--bt-sombra-carimbo);
+  --bt-sublinhado: rgb(48 16 63 / 0.35);
+  --bt-sublinhado-mao: var(--bt-carimbo);
+  --bt-rebaixo: #fffdf0; /* a parede de baixo do sulco, na luz (a letra que afunda no cartão) */
+  --bt-rebaixo-sombra: rgb(48 16 63 / 0.45); /* a parede de cima, na sombra */
+  --bt-fio: rgb(48 16 63 / 0.12); /* os fios de tabela: não são limite de controle */
+  --bt-verniz: #8a6aa0; /* o miolo do reflexo no verniz da tinta uva: 3,4:1 contra a cartolina (o texto grande pede 3:1) */
+  --bt-verniz-halo: #5e3f74; /* o halo do reflexo: 6,5:1 */
+  --bt-relevo-luz: var(--bt-clara);
+  --bt-relevo-sombra: #d8bd38;
+  /* A régua de leitura na cartolina (lapidação, rodada 2): o violeta a 10% sobre o amarelo virava cáqui. O acetato é
+     plástico claro: acende o papel embaixo dele (a clara), com as bordas e a graduação impressas no violeta. */
+  --bt-acetato: rgb(255 251 214 / 0.62);
+  --bt-acetato-borda: rgb(95 44 150 / 0.42);
+}
+/* O documento: a cartolina na sobra da rolagem; a barra de rolagem da uva sobre a cartolina (sem calha reservada); a
+   altura da tira (a ilha da tira mede a de verdade e a escreve aqui) para o recuo das âncoras. */
+html:has([data-demo="petshop"]) {
+  --bt-tira-altura: 6.5rem;
+  background: #f9e151;
+  color-scheme: light;
+  scroll-padding-top: var(--bt-tira-altura);
+  scrollbar-color: #30103f #f9e151;
+}
+/* Sem scrollbar-gutter: stable (lapidação, rodada 1): toda página do site rola, então a barra já ocupa o lugar dela;
+   a calha reservada só pintava uma faixa de cartolina de 15 px ao lado das cenas de tinta, cortando a sangria. */
+@media (min-width: 1024px) {
+  html:has([data-demo="petshop"]) {
+    --bt-tira-altura: 4rem;
+  }
+}
+[data-demo="petshop"] ::selection {
+  background: var(--bt-marcador);
+  color: var(--bt-uva);
+}
+/* O foco: o contorno de corte, 2 px afastado 3 px, concêntrico ao canto da peça (acompanha o giro do carimbo). */
+[data-demo="petshop"] :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+[data-demo="petshop"] :is(h1, h2, h3) {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: var(--bt-largura, 125%);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+/* Sem especificidade (:where): o text-wrap: balance de cada peça vence (rodada 3: o "pretty" daqui vencia o "balance"
+   declarado nas classes, e sobravam as viúvas que o crítico contou). Também nas células e nos itens de lista: "17h" e
+   "xampu." sozinhos na última linha das tabelas de Serviços. */
+:where([data-demo="petshop"]) :is(p, li, td, th, dd, address) {
+  text-wrap: pretty;
+}
+[data-demo="petshop"] strong {
+  font-weight: 700;
+}
+.bt-conteudo:focus-visible {
+  outline: none;
+}
+
+/* ---------- o leiaute ----------
+   A coluna de 1440 px, com a margem de 64 px na mesa (16 px a 360 px); à esquerda, sempre. Cada cena se isola e corta o
+   que passa da margem (a sangria não estica a página para o lado). */
+.bt-largura {
+  width: 100%;
+  max-width: 90rem;
+  margin-inline: auto;
+  padding-inline: var(--bt-margem);
+}
+.bt-cena {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
+}
+/* Dentro de um cartão, a coluna recua o balcão: o texto cai na mesma linha de 64 px das cenas, em qualquer largura. (Na
+   rodada 1, toda cena clara era um cartão sobre o balcão, .bt-mesa; na rodada 2, as cenas claras voltaram a ser a
+   cartolina de ponta a ponta, e o cartão deitado no balcão é só o da capa.) */
+.bt-cartao .bt-largura {
+  max-width: calc(90rem - 2 * var(--bt-balcao));
+  padding-inline: var(--bt-recuo);
+}
+/* As duas superfícies. A cartolina com as fibras de 50 a 80%; o chapado da tinta com as fibras de 3 a 6% (a uva nunca
+   lisa; lapidação, rodada 2: na dose da identidade, 25 a 40% e 7%, a fibra sumia na cartolina e se lia na uva).
+   As duas com a luz da porta no campo (--bt-campo-*). Na tinta: os títulos e os números na cartolina (12,5:1); o corpo
+   e a nota na cartolina clara (14,5:1); a ação, o foco e o vínculo trocam para o carimbo claro. */
+.bt-cartolina {
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-campo-claro);
+  color: var(--bt-uva);
+}
+.bt-tinta {
+  --bt-papel: var(--bt-uva);
+  --bt-corpo-cor: var(--bt-clara);
+  --bt-titulo-cor: var(--bt-cartolina);
+  --bt-secundario: var(--bt-clara);
+  --bt-acao: var(--bt-carimbo-claro);
+  --bt-acao-batida: var(--bt-carimbo-claro-batido);
+  --bt-acao-rotulo: var(--bt-uva);
+  --bt-acao-filete: rgb(255 252 230 / 0.75);
+  --bt-acao-falha: url("/demos/petshop/falha-claro.svg");
+  --bt-acao-seca: url("/demos/petshop/falha-claro-entrada.svg");
+  --bt-acao-sombra: 0 1px 1px rgb(0 0 0 / 0.3), 2px 6px 12px -4px rgb(0 0 0 / 0.5);
+  --ring: var(--bt-carimbo-claro);
+  --bt-sublinhado: rgb(252 243 159 / 0.45);
+  --bt-sublinhado-mao: var(--bt-carimbo-claro);
+  --bt-rebaixo: rgb(252 243 159 / 0.38);
+  --bt-rebaixo-sombra: rgb(8 1 14 / 0.85);
+  --bt-fio: rgb(252 243 159 / 0.22);
+  --bt-verniz: #fffbe0;
+  --bt-verniz-halo: #fdf6b8;
+  --bt-relevo-luz: rgb(252 243 159 / 0.55);
+  --bt-relevo-sombra: #12041a;
+  --bt-acetato: rgb(196 167 240 / 0.14);
+  --bt-acetato-borda: rgb(196 167 240 / 0.42);
+  background: var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam), var(--bt-queda-tinta), var(--bt-campo-tinta);
+  color: var(--bt-clara);
+}
+/* O canário vazado na tinta só a 24 px ou mais (identidade, seções 4.2 e 4.11: o canário como acento miúdo sobre a uva
+   é a marca C2): os títulos, os números e o que a página puser a 24 px ou mais. Todo o resto, o rótulo, o cabeçalho de
+   tabela, a nota, vai na cartolina clara (rodada 3: 32 textos miúdos em canário, contados pelo crítico). */
+.bt-tinta :is(h1, h2, h3, .bt-display, .bt-titulo, .bt-numero, .bt-subtitulo) {
+  color: var(--bt-titulo-cor);
+}
+.bt-tinta :is(p, li, dd, td, address, .bt-corpo, .bt-nota) {
+  color: var(--bt-corpo-cor);
+}
+
+/* O sol da porta nas cenas 2 e 6 (a mancha parada, rodadas 1 e 2) saiu na rodada 3: a mesma forma, no mesmo canto, em
+   três cenas, de borda dura, lia como painel desalinhado e não como sol. A luz da porta é uma só, na capa (identidade,
+   seção 3, referência 5); nas cenas de tinta, a luz da sala cai em queda macia (--bt-queda-tinta). */
+
+/* ---------- a escala ----------
+   A Anybody na exibição (largura 125 no nome e nos títulos; --bt-largura: 100% nos rótulos e no horário, sempre em caixa
+   normal), com −0,01 em; a Overpass no texto. */
+:is(.bt-display, .bt-titulo, .bt-numero, .bt-subtitulo) {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: var(--bt-largura, 125%);
+  letter-spacing: -0.01em;
+}
+.bt-display {
+  font-size: var(--bt-display);
+  line-height: 0.92;
+}
+.bt-titulo {
+  font-size: var(--bt-titulo);
+  line-height: 0.98;
+}
+.bt-numero {
+  font-size: var(--bt-numero);
+  line-height: 0.9;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.bt-subtitulo {
+  font-size: var(--bt-subtitulo);
+  line-height: 1.05;
+}
+.bt-destaque {
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+}
+.bt-corpo {
+  font-size: var(--bt-corpo);
+  line-height: 1.55;
+}
+.bt-nota {
+  font-size: var(--bt-nota);
+  line-height: 1.45;
+}
+.bt-secundario {
+  color: var(--bt-secundario);
+}
+
+/* ---------- o cartão: a faca, o corte, a pilha e a sombra longa ----------
+   O cartão é a cartolina com o canto de faca de 28 px em toda quina que se vê (na capa, que sangra só em cima, por
+   baixo da tira, as duas de baixo; nas cenas claras, as quatro), o corte (a espessura do papel na borda do lado da
+   sombra) e a sombra longa sobre o balcão. A luz da porta, quando há, vai por cima de tudo o que está nele (.bt-luz). */
+.bt-cartao {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  border-end-start-radius: var(--bt-faca);
+  border-end-end-radius: var(--bt-faca);
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-campo-claro);
+  color: var(--bt-uva);
+  box-shadow: var(--bt-corte), var(--bt-sombra-longa);
+}
+/* Com a luz da porta, a luz acende só o papel (lapidação, rodada 2): ela fica por baixo do que está impresso, e a fibra
+   vai por cima dela, com a tinta. Por cima da letra, a sobreposição deixava o nome em duas cores, uva e malva, e lia
+   como texto em degradê (C5). */
+.bt-cartao:has(> .bt-luz) {
+  background: var(--bt-campo-claro);
+}
+.bt-cartao:has(> .bt-luz) > :not(.bt-luz) {
+  position: relative;
+  z-index: 1;
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam);
+}
+/* A pilha de cartões debaixo do cartão da capa (lapidação, rodada 2). Antes, duas folhas chapadas e deslocadas, que
+   liam como sombra dura (o neobrutalismo). Agora é a espessura da pilha vista de frente: as bordas de seis cartões, uma
+   embaixo da outra, cada uma com o fio escuro do vão entre elas, na cor do papel virado para longe da luz (mais funda
+   embaixo), e um descasamento de 1 px, como em toda pilha de verdade. É desenho de borda, sem desfoque, numa direção só
+   (para baixo: a câmera está um pouco à frente). A sombra que a pilha joga no balcão é outra camada (::after), longa,
+   tingida, de cima e da esquerda, e passa por cima da luz da porta no balcão (o que a corta é o que mostra a altura). */
+.bt-pilha {
+  position: relative;
+  isolation: isolate;
+}
+.bt-pilha::before,
+.bt-pilha::after {
+  content: "";
+  position: absolute;
+  inset: -2rem 0 0; /* sangram em cima, como o cartão: a borda de cima nunca aparece */
+  border-radius: inherit;
+  pointer-events: none;
+}
+.bt-pilha::before {
+  z-index: -1;
+  background: #c9ad36;
+  box-shadow:
+    0 2px 0 #e7cb46,
+    0 3px 0 #a98d27,
+    1px 5px 0 #e0c443,
+    1px 6px 0 #a08524,
+    0 8px 0 #d9bd3f,
+    0 9px 0 #977c21,
+    -1px 11px 0 #d1b53b,
+    -1px 12px 0 #8e741e,
+    0 14px 0 #c8ac37,
+    0 15px 0 #6f5815;
+}
+.bt-pilha::after {
+  z-index: -2;
+  box-shadow:
+    0 16px 6px -2px rgb(8 1 14 / 0.6),
+    6px 30px 40px rgb(8 1 14 / 0.55),
+    18px 64px 110px rgb(8 1 14 / 0.5);
+}
+/* A mesa da peça que inclina (o cartão da capa, o verso com o mapinho, o cartão de entrega): a perspectiva no pai da
+   peça, nunca no main nem no body (ela vira o bloco de contenção do que é fixo). A origem (perspective-origin no pai,
+   transform-origin na peça) vai no canto que sangra, posta pela página; quem corta o que passa da margem é a cena
+   (.bt-cena). A 1.400 px (lapidação, rodada 2: a 2.400 px, a inclinação aprovada de até 1,5° não se via; o ângulo não
+   muda, só a distância do olho). */
+.bt-perspectiva {
+  perspective: 1400px;
+}
+
+/* ---------- o carimbo da casa (a ação) ----------
+   Borracha inteira entintada, canto de 10 px, o rótulo vazado na cor do papel, a falha de pressão só na borda (nunca sob
+   o rótulo nem sob o glifo: a máscara fica a menos de 6 px da borda, e o recuo do rótulo é de 12 px ou mais), sem
+   moldura dupla. O único giro do site: −2°. A falha é grão (lapidação, rodada 3: os traços compridos ao longo da borda
+   liam como fita adesiva rasgada): pontos e mordidas miúdas, quase todos embaixo e à direita, o lado longe da mão
+   (gerar-falha-r3.mjs, na pasta de trabalho da construção). Sob a mão, a tinta assenta (180 ms; saída em 135), num
+   evento só: a borracha desce até o papel (a sombra do ar some e fica só a do contato), a falha fecha pela metade (a
+   borracha continua borracha: apagada de vez, a ação virava um retângulo liso, o botão genérico; rodada 3), o batido
+   (L − 0,08) sobe por cima, e o filete de tinta úmida acende no alto, na borda que dá para a porta (identidade, seção
+   4.7). O botão não anda nem cresce. No toque, 0,97 em 120 ms. Na tinta, o carimbo claro com o rótulo em uva
+   (.bt-tinta troca os tokens; a máscara é a falha-claro). */
+.bt-carimbo {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-height: 2.75rem;
+  padding: 1.125rem 1.875rem 1rem;
+  border-radius: var(--bt-canto-carimbo);
+  background: var(--bt-acao);
+  color: var(--bt-acao-rotulo);
+  text-decoration: none;
+  rotate: -2deg;
+  box-shadow: 0 1px 1px rgb(18 4 26 / 0.3);
+  transition: scale var(--bt-toque) var(--bt-estado);
+}
+.bt-carimbo-miudo {
+  --bt-acao-falha: url("/demos/petshop/falha-tira.svg");
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  padding: 0.375rem 0.875rem;
+}
+.bt-carimbo-batido,
+.bt-carimbo-ar,
+.bt-carimbo-seca,
+.bt-carimbo::before,
+.bt-carimbo::after {
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+}
+/* O ar entre a borracha e o papel: a sombra longa do carimbo em repouso, que some quando ele desce. */
+.bt-carimbo-ar {
+  inset: 0;
+  z-index: -2;
+  box-shadow: var(--bt-acao-sombra);
+  transition: opacity var(--bt-mao-sai) var(--bt-saida);
+}
+/* O batido: a mesma borracha, mais funda, que sobe por opacidade. */
+.bt-carimbo-batido {
+  inset: 0;
+  z-index: -1;
+  background: var(--bt-acao-batida);
+  opacity: 0;
+  transition: opacity var(--bt-mao-sai) var(--bt-saida);
+}
+/* A tinta seca: o grão do papel pela borracha inteira, onde a tinta ainda não pegou. Só existe na entrada (a capa e a
+   cena 6 do Início): o carimbo bate com ela e ela some enquanto a borracha assenta (só opacidade). Em repouso, apagada. */
+.bt-carimbo-seca {
+  inset: 0;
+  background: var(--bt-papel);
+  -webkit-mask: var(--bt-acao-seca) 0 0 / 100% 100% no-repeat;
+  mask: var(--bt-acao-seca) 0 0 / 100% 100% no-repeat;
+  opacity: 0;
+}
+/* A tinta úmida: o filete de luz na borda de cima da borracha (a que dá para a porta) e, na de baixo, a tinta que
+   escorre e assenta no papel. Parado; acende por opacidade. */
+.bt-carimbo::before {
+  content: "";
+  inset: 0;
+  box-shadow:
+    inset 0 2px 0 var(--bt-acao-filete),
+    inset 0 -2px 1px rgb(18 4 26 / 0.28);
+  opacity: 0;
+  transition: opacity var(--bt-mao-sai) var(--bt-saida);
+}
+/* A falha de pressão: o papel que aparece na borda onde a borracha não pegou (máscara só alfa; a cor é o token). */
+.bt-carimbo::after {
+  content: "";
+  inset: 0;
+  background: var(--bt-papel);
+  -webkit-mask: var(--bt-acao-falha) 0 0 / 100% 100% no-repeat;
+  mask: var(--bt-acao-falha) 0 0 / 100% 100% no-repeat;
+  transition: opacity var(--bt-mao-sai) var(--bt-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bt-carimbo:hover .bt-carimbo-batido,
+  .bt-carimbo:hover::before {
+    opacity: 1;
+    transition: opacity var(--bt-mao) var(--bt-estado);
+  }
+  .bt-carimbo:hover .bt-carimbo-ar {
+    opacity: 0;
+    transition: opacity var(--bt-mao) var(--bt-estado);
+  }
+  .bt-carimbo:hover::after {
+    opacity: 0.55;
+    transition: opacity var(--bt-mao) var(--bt-estado);
+  }
+}
+/* O foco: o estado final (a tinta assentada) mais o contorno de corte. */
+.bt-carimbo:focus-visible .bt-carimbo-batido,
+.bt-carimbo:focus-visible::before {
+  opacity: 1;
+}
+.bt-carimbo:focus-visible .bt-carimbo-ar {
+  opacity: 0;
+}
+.bt-carimbo:focus-visible::after {
+  opacity: 0.55;
+}
+.bt-carimbo:active {
+  scale: 0.97;
+}
+.bt-carimbo:active .bt-carimbo-batido {
+  opacity: 1;
+}
+.bt-carimbo:active .bt-carimbo-ar {
+  opacity: 0;
+}
+.bt-carimbo:active::after {
+  opacity: 0.55;
+}
+/* A batida (a entrada do carimbo da capa e do carimbo claro da cena 6; quem a dispara é a folha da página): a borracha
+   chega de cima, maior e com o ar embaixo, e toca o papel de uma vez (a tinta aparece em 60 ms, não esmaece); depois
+   assenta (a escala volta a 1, sem passar dela) e a tinta seca some do papel. */
+@keyframes bt-carimbo-bate {
+  0% {
+    opacity: 0;
+    scale: 1.05;
+  }
+  18% {
+    opacity: 1;
+  }
+}
+@keyframes bt-carimbo-ar-desce {
+  from {
+    opacity: 1;
+    transform: translate(0.375rem, 0.75rem) scale(1.04);
+  }
+}
+@keyframes bt-carimbo-tinta-pega {
+  from {
+    opacity: 1;
+  }
+}
+.bt-carimbo-icone {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+.bt-carimbo-rotulo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.bt-carimbo-acao {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: 1.625rem;
+  line-height: 1.05;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+}
+.bt-carimbo-canal {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.bt-carimbo-miudo .bt-carimbo-rotulo {
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.375rem;
+}
+.bt-carimbo-miudo .bt-carimbo-acao {
+  font-size: 1rem;
+}
+.bt-carimbo-miudo .bt-carimbo-canal {
+  font-size: var(--bt-nota); /* 14 px: o menor degrau da escala (rodada 3: estava a 13) */
+  font-weight: 600;
+}
+/* No celular, o carimbo cabe na coluna (antes, o claro da cena 6 passava da tela, cortado): a ação a 22 px, e, se ainda
+   não couber, ela quebra em duas linhas equilibradas, sem sair da coluna ("Abrir o / WhatsApp" a 320 px). */
+@media (max-width: 1023.98px) {
+  .bt-carimbo:not(.bt-carimbo-miudo) {
+    gap: 0.75rem;
+    max-width: 100%;
+    padding: 0.9375rem 1.25rem 0.8125rem;
+  }
+  .bt-carimbo:not(.bt-carimbo-miudo) .bt-carimbo-acao {
+    font-size: 1.375rem;
+    white-space: normal;
+    text-wrap: balance;
+  }
+}
+/* Até 359 px, a ação a 20 px: "Pedir horário" fica numa linha a 320 px (a 22 px, quebrava em duas). */
+@media (max-width: 359.98px) {
+  .bt-carimbo:not(.bt-carimbo-miudo) {
+    padding-inline: 1rem;
+  }
+  .bt-carimbo:not(.bt-carimbo-miudo) .bt-carimbo-acao {
+    font-size: 1.25rem;
+  }
+}
+/* A mesa estreita (1024 a 1099 px): o canal desce para baixo da ação no carimbo da tira. Com a Anybody, a tira não cabia
+   numa linha (972 px de conteúdo em 933 úteis a 1024) e quebrava em duas quando a fonte chegava, empurrando a página 20 px
+   (CLS 0,018 na porta da mesa); com o canal embaixo, a tira cabe numa linha, com a fonte de reserva e com a Anybody. */
+@media (min-width: 1024px) and (max-width: 1099.98px) {
+  .bt-carimbo-miudo .bt-carimbo-rotulo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
+}
+
+/* ---------- o vínculo impresso ----------
+   O sublinhado na tinta a 35%, afastado 0,28 em. Sob a mão, o rebaixo: a letra afunda no cartão (identidade, seção
+   4.7). A luz vem de cima e da esquerda, então a parede de baixo da letra afundada acende (a cópia da palavra 1 px
+   abaixo, na luz) e a de cima cai na sombra; o sublinhado passa ao violeta e encosta na letra, em 150 ms. A cópia é a
+   sombra de texto, e não um elemento: ela acompanha o vínculo partido em duas linhas e guarda a exceção do alvo de toque
+   do texto corrido. Na rodada 2, o sulco era uma sombra na caixa inteira, que lia como anel de foco (rodada 3): agora
+   só a letra muda. Nada anda. */
+.bt-vinculo {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.28em;
+  text-decoration-color: var(--bt-sublinhado);
+  text-shadow: 0 1px 0 transparent, 0 -1px 0 transparent;
+  transition:
+    text-decoration-color var(--bt-mao-sai) var(--bt-saida),
+    text-shadow var(--bt-mao-sai) var(--bt-saida);
+}
+/* O estado (a espessura e o afastamento trocam sem transição: não é movimento, é o rebaixo). */
+.bt-vinculo:is(:active, :focus-visible) {
+  text-decoration-color: var(--bt-sublinhado-mao);
+  text-decoration-thickness: 0.1em;
+  text-underline-offset: 0.2em;
+  text-shadow: 0 1px 0 var(--bt-rebaixo), 0 -1px 0 var(--bt-rebaixo-sombra);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bt-vinculo:hover {
+    text-decoration-color: var(--bt-sublinhado-mao);
+    text-decoration-thickness: 0.1em;
+    text-underline-offset: 0.2em;
+    text-shadow: 0 1px 0 var(--bt-rebaixo), 0 -1px 0 var(--bt-rebaixo-sombra);
+    transition-duration: var(--bt-vinculo);
+    transition-timing-function: var(--bt-estado);
+  }
+}
+.bt-vinculo-icone {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: none;
+  vertical-align: -0.375rem;
+  margin-right: 0.5rem;
+}
+
+/* ---------- o impresso: o relevo registrado e o verniz ----------
+   O nome e os números. Duas cópias decorativas (aria-hidden, data-nosnippet, sem seleção) por trás da tinta: a clara a
+   −1 px e a escura a +1,5 px, com a opacidade cruzada pela direção da luz (--bt-lx: em repouso, a da porta; sob a mão,
+   puxada para o ponteiro). Por cima, a cópia do verniz: o reflexo da porta no verniz brilhante (as duas vidraças a
+   108°, de bordas nítidas, a cor chapada, sem degradê), que corre com o ponteiro e só existe dentro da letra, apagado
+   em repouso. A cor do reflexo é medida: na cartolina, #5a3d70, 6,9:1 contra o papel; dentro da luz da porta, que a
+   clareia por sobreposição, 4,4:1 contra o papel aceso (lapidação, rodada 1: o #6a4c80 dava 3,2:1 ali); na tinta, o
+   reflexo clareia o número. O ponteiro e o "sob a mão" vêm do Kinesis
+   (--k-pointer-x/y, --k-progress; a ilha do balcão), com reserva para quando não há script: o verniz apagado e o relevo
+   na pose da porta. */
+.bt-impresso {
+  --bt-porta-x: 0.42;
+  --bt-vx: clamp(0, var(--k-pointer-x, 0.5), 1);
+  --bt-vy: clamp(0, var(--k-pointer-y, 0.5), 1);
+  --bt-lx: calc(var(--bt-porta-x) + (var(--bt-vx) - var(--bt-porta-x)) * var(--k-progress, 0));
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+}
+.bt-impresso-tinta {
+  display: block;
+}
+.bt-impresso-luz,
+.bt-impresso-sombra,
+.bt-impresso-verniz {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+}
+.bt-impresso-luz,
+.bt-impresso-sombra {
+  z-index: -1;
+}
+/* O relevo (lapidação, rodada 3): o cartão gravado a seco, com a letra um pouco acima do papel. A luz da porta acende a
+   parede de cima e da esquerda (a cópia clara) e a de baixo e da direita fica na sombra (a cópia escura), as duas
+   coladas na letra e macias: na rodada 2, a 1,8 e 2,8 px e de borda dura, a cópia amarela deslocada lia como registro
+   errado de impressão. Agora a −0,008 em e +0,012 em (1 e 1,5 px no nome, como na identidade), com 0,6 px de desfoque
+   (o filtro é parado: não anima). A escura é a cartolina funda, não a tinta: nunca uma sombra dura. */
+.bt-impresso-luz {
+  color: var(--bt-relevo-luz);
+  translate: -0.008em -0.008em;
+  filter: blur(0.6px);
+  opacity: calc(1.2 - var(--bt-lx) * 0.9);
+}
+.bt-impresso-sombra {
+  color: var(--bt-relevo-sombra);
+  translate: 0.012em 0.012em;
+  filter: blur(0.6px);
+  opacity: calc(0.45 + var(--bt-lx) * 0.55);
+}
+/* O verniz (lapidação, rodada 3): o reflexo de uma luz só no verniz localizado, no ponto do ponteiro. Na rodada 2, a
+   elipse de 0,78 × 0,4 em virava uma mancha clara na palavra; o brilho de um verniz é estreito: um risco de luz deitado,
+   de 0,62 × 0,055 em (o miolo), num halo pouco mais alto (0,9 × 0,13 em), em dois degraus chapados, sem degradê. Só
+   existe dentro da letra e só sob a mão; clareia a tinta (na cartolina, #8a6aa0, 3,4:1 contra o papel; o texto grande
+   pede 3:1). */
+.bt-impresso-verniz {
+  --bt-verniz-x: calc(var(--bt-vx) * 100%);
+  --bt-verniz-y: calc(var(--bt-vy) * 100%);
+  color: transparent;
+  background:
+    radial-gradient(ellipse 0.62em 0.055em at var(--bt-verniz-x) var(--bt-verniz-y), var(--bt-verniz) 0 94%, transparent 100%),
+    radial-gradient(ellipse 0.9em 0.13em at var(--bt-verniz-x) var(--bt-verniz-y), var(--bt-verniz-halo) 0 96%, transparent 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  opacity: var(--k-progress, 0);
+}
+
+/* ---------- a peça que responde à mão (o Kinesis 2.0.0; a ilha do balcão) ----------
+   [data-bt-peca]: o cartão da capa, o mapinho, a lista de preços. Sob o ponteiro fino, a reação (o "sob a mão", que
+   acende o verniz); o rastreio do ponteiro no invólucro do que é envernizado. [data-bt-peca="inclina"]: a inclinação
+   plana de até 1,5° (aprovada em 13.10.2026): 1,06° por eixo, porque na quina os dois eixos somam (1,5/√2). A mola é a do
+   pacote em repouso (smooth, ζ 0,997: não passa do destino). Nada de transition em rotate, translate ou no verniz: quem
+   anda é a mola. Com movimento reduzido, a peça não inclina e a luz fica na pose média. */
+@media (hover: hover) and (pointer: fine) {
+  [data-demo="petshop"] [data-bt-peca] {
+    --k-when: hover;
+  }
+  [data-demo="petshop"] [data-bt-peca] .bt-impresso {
+    --k-track: pointer;
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-demo="petshop"] [data-bt-peca="inclina"] {
+    --k-tilt: 1.06deg;
+  }
+}
+/* No toque (sem ponteiro que paire; a ilha do balcão escreve --bt-toque-x/y e data-bt-tocada por 400 ms): a peça assenta
+   sob o dedo, o ponto tocado desce até 1,06° por eixo (1,5° na quina), em 120 ms, e volta em 160 ms; o verniz acende no
+   ponto tocado e apaga em 160 ms. Sem giroscópio. Com movimento reduzido, nada inclina, e o verniz acende parado, na
+   pose média. */
+@media (hover: none) {
+  [data-demo="petshop"] [data-bt-peca] :is(.bt-impresso-verniz, .bt-impresso-luz, .bt-impresso-sombra) {
+    transition: opacity 160ms var(--bt-estado);
+  }
+}
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  /* O pivô no meio da peça (o dedo afunda o lado dele, e o oposto sobe); na mesa, o pivô é o do Kinesis. */
+  [data-demo="petshop"] [data-bt-peca="inclina"] {
+    --bt-toque-giro: 0deg;
+    transform-origin: 50% 50%;
+    transform: rotateX(calc((0.5 - var(--bt-toque-y, 0.5)) * var(--bt-toque-giro))) rotateY(calc((var(--bt-toque-x, 0.5) - 0.5) * var(--bt-toque-giro)));
+    transition: transform 160ms var(--bt-estado);
+  }
+  [data-demo="petshop"] [data-bt-peca="inclina"][data-bt-tocada] {
+    --bt-toque-giro: 2.12deg;
+    transition-duration: var(--bt-toque);
+  }
+}
+
+/* ---------- a régua de leitura ----------
+   O dedo do atendente na tabela: uma faixa de acetato (o violeta a 10%, bordas de 1 px, canto de 4 px) desliza até a
+   linha sob o ponteiro, por transform, em 180 ms; uma por tabela; só realça. A ilha do balcão escreve a altura e a
+   posição da linha (--bt-acetato-y, --bt-acetato-altura) e data-bt-acetato: "pousa" (a primeira linha, ou o toque: sem
+   deslizar) ou "desliza". Com movimento reduzido, sem a faixa: a linha sob o ponteiro ganha o fundo do acetato. */
+.bt-regua {
+  position: relative;
+  isolation: isolate;
+}
+/* A régua de acetato é peça: passa da tabela dos dois lados (0,75 rem), traz a graduação impressa na borda de cima (o
+   traço a cada 8 px, o longo a cada 40) e flutua sobre o papel (a sombra curta, de cima e da esquerda). */
+.bt-acetato {
+  position: absolute;
+  top: 0;
+  left: -0.75rem;
+  right: -0.75rem;
+  z-index: -1;
+  height: var(--bt-acetato-altura, 0);
+  transform: translateY(var(--bt-acetato-y, 0));
+  border-block: 1px solid var(--bt-acetato-borda);
+  border-radius: var(--bt-canto-regua);
+  background:
+    repeating-linear-gradient(90deg, var(--bt-acetato-borda) 0 1px, transparent 1px 40px) 0.75rem 0 / 100% 0.625rem no-repeat,
+    repeating-linear-gradient(90deg, var(--bt-acetato-borda) 0 1px, transparent 1px 8px) 0.75rem 0 / 100% 0.3125rem no-repeat,
+    var(--bt-acetato);
+  box-shadow: 1px 3px 6px -3px rgb(18 4 26 / 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--bt-mao-sai) var(--bt-saida);
+}
+/* Na linha do tempo (data-bt-regua="x"), a régua fica de pé: corre de etapa em etapa, com a graduação na borda
+   esquerda; a ilha do balcão escreve --bt-acetato-x e --bt-acetato-largura. */
+.bt-regua[data-bt-regua="x"] > .bt-acetato {
+  top: -0.75rem;
+  bottom: -0.75rem;
+  left: 0;
+  right: auto;
+  width: var(--bt-acetato-largura, 0);
+  height: auto;
+  transform: translateX(var(--bt-acetato-x, 0));
+  border-block: 0;
+  border-inline: 1px solid var(--bt-acetato-borda);
+  background:
+    repeating-linear-gradient(180deg, var(--bt-acetato-borda) 0 1px, transparent 1px 40px) 0 0.75rem / 0.625rem 100% no-repeat,
+    repeating-linear-gradient(180deg, var(--bt-acetato-borda) 0 1px, transparent 1px 8px) 0 0.75rem / 0.3125rem 100% no-repeat,
+    var(--bt-acetato);
+}
+.bt-regua[data-bt-acetato] > .bt-acetato {
+  opacity: 1;
+  transition: opacity var(--bt-vinculo) var(--bt-estado);
+}
+.bt-regua[data-bt-acetato="desliza"] > .bt-acetato {
+  transition:
+    opacity var(--bt-vinculo) var(--bt-estado),
+    transform var(--bt-mao) var(--bt-estado);
+}
+
+/* ---------- a luz da manhã pela porta (a assinatura em movimento da capa) ----------
+   A luz do sol que entra pela porta de vidro e cai no cartão: a mancha do batente com as duas vidraças e a travessa
+   entre elas (a forma diz de onde ela vem), sem branco, sem halo, sem órbita. Por baixo do que está impresso no cartão
+   (lapidação, rodada 2), por sobreposição (--bt-sol): o papel acende para #fcf375, e a tinta não muda (por cima dela, o
+   nome ficava em duas cores e lia como texto em degradê). Dois elementos aninhados, uma máscara e uma animação cada (não
+   disputam o mesmo transform):
+   - .bt-luz: as vidraças, a travessa e a queda de baixo (a rampa de 16 paradas), e a entrada "a luz chega" (0 a 320
+     ms, translateX e opacidade, uma vez por visita);
+   - .bt-luz-batente: as duas bordas do batente, a 108° (de cima e da esquerda; longe dos 100° de outros sites), a de
+     cá nítida (1,2 cqw de penumbra) e a de lá mais larga (2,6), e a deriva só no eixo x, num ciclo de ida e volta de 36
+     s ([data-ambiente]: só com script, parada fora da tela e com a pausa da tira). A deriva vai a 8 cqw para cada lado
+     (lapidação, rodada 2: a 3 cqw, cerca de 3 px/s, a luz parecia parada; agora, cerca de 13 px/s, a manhã andando).
+   A mesma luz cai no balcão em volta do cartão (.bt-luz-balcao): mais adiante, porque o balcão está mais baixo que o
+   cartão, e cortada pela sombra dele. As posições estão em cqw (a largura do cartão, quando ele é contêiner; senão, a
+   da tela). Sem script e com movimento reduzido, a luz fica parada na pose. */
+.bt-luz {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  mix-blend-mode: overlay;
+  opacity: 0.92;
+  pointer-events: none;
+  /* Origem: easing gradients (MIT, © 2017–2018 Andreas Larsen), easing-coordinates@2.0.2, ease-in-out com 16 paradas;
+     gerado em 13.10.2026. Licença em LICENCA-easing-gradients.txt. A travessa (de 30 a 34%) entrou na lapidação. */
+  -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0) 0%, rgb(0 0 0) 29.6%, rgb(0 0 0 / 0) 30.4%, rgb(0 0 0 / 0) 33.2%, rgb(0 0 0) 34%, rgb(0 0 0 / 1) 62%, rgb(0 0 0 / 0.987) 65.07%, rgb(0 0 0 / 0.951) 67.91%, rgb(0 0 0 / 0.896) 70.55%, rgb(0 0 0 / 0.825) 73.04%, rgb(0 0 0 / 0.741) 75.4%, rgb(0 0 0 / 0.648) 77.67%, rgb(0 0 0 / 0.55) 79.9%, rgb(0 0 0 / 0.45) 82.1%, rgb(0 0 0 / 0.352) 84.33%, rgb(0 0 0 / 0.259) 86.6%, rgb(0 0 0 / 0.175) 88.96%, rgb(0 0 0 / 0.104) 91.45%, rgb(0 0 0 / 0.049) 94.09%, rgb(0 0 0 / 0.013) 96.93%, rgb(0 0 0 / 0) 100%);
+  mask-image: linear-gradient(180deg, rgb(0 0 0) 0%, rgb(0 0 0) 29.6%, rgb(0 0 0 / 0) 30.4%, rgb(0 0 0 / 0) 33.2%, rgb(0 0 0) 34%, rgb(0 0 0 / 1) 62%, rgb(0 0 0 / 0.987) 65.07%, rgb(0 0 0 / 0.951) 67.91%, rgb(0 0 0 / 0.896) 70.55%, rgb(0 0 0 / 0.825) 73.04%, rgb(0 0 0 / 0.741) 75.4%, rgb(0 0 0 / 0.648) 77.67%, rgb(0 0 0 / 0.55) 79.9%, rgb(0 0 0 / 0.45) 82.1%, rgb(0 0 0 / 0.352) 84.33%, rgb(0 0 0 / 0.259) 86.6%, rgb(0 0 0 / 0.175) 88.96%, rgb(0 0 0 / 0.104) 91.45%, rgb(0 0 0 / 0.049) 94.09%, rgb(0 0 0 / 0.013) 96.93%, rgb(0 0 0 / 0) 100%);
+}
+.bt-luz-batente {
+  position: absolute;
+  inset: -10% -100%;
+  background: var(--bt-sol);
+  -webkit-mask-image: linear-gradient(108deg, transparent calc(50% - 13.6cqw), rgb(0 0 0 / 0.15) calc(50% - 13.3cqw), rgb(0 0 0 / 0.5) calc(50% - 13cqw), rgb(0 0 0 / 0.85) calc(50% - 12.7cqw), #000 calc(50% - 12.4cqw), #000 calc(50% + 4.8cqw), rgb(0 0 0 / 0.85) calc(50% + 5.45cqw), rgb(0 0 0 / 0.5) calc(50% + 6.1cqw), rgb(0 0 0 / 0.15) calc(50% + 6.75cqw), transparent calc(50% + 7.4cqw));
+  mask-image: linear-gradient(108deg, transparent calc(50% - 13.6cqw), rgb(0 0 0 / 0.15) calc(50% - 13.3cqw), rgb(0 0 0 / 0.5) calc(50% - 13cqw), rgb(0 0 0 / 0.85) calc(50% - 12.7cqw), #000 calc(50% - 12.4cqw), #000 calc(50% + 4.8cqw), rgb(0 0 0 / 0.85) calc(50% + 5.45cqw), rgb(0 0 0 / 0.5) calc(50% + 6.1cqw), rgb(0 0 0 / 0.15) calc(50% + 6.75cqw), transparent calc(50% + 7.4cqw));
+}
+/* No balcão: por baixo da pilha, 2,5 cqw adiante e sem a queda de baixo (só o pé do balcão aparece). Na uva, a luz é o
+   que deixa ver a sombra que o cartão joga no balcão (lapidação, rodadas 2 e 3): por tela (screen), e não por
+   sobreposição, ela leva a tinta de L 0,25 a cerca de 0,47, e a sombra do sol (L 0,15) corta a mancha com nitidez; a
+   0,31, como na rodada 2, a sombra era uva sobre uva. */
+.bt-luz-balcao {
+  z-index: 0;
+  translate: 2.5cqw 0;
+  opacity: 1;
+  mix-blend-mode: screen;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.bt-luz-balcao .bt-luz-batente {
+  background: #5a3a6a;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .bt-luz {
+    animation: bt-luz-chega 320ms var(--bt-entrada) both;
+  }
+  .js .bt-luz-batente[data-visivel] {
+    animation: bt-luz-deriva 36s linear infinite;
+  }
+  html.ambiente-pausado .bt-luz-batente,
+  .bt-luz-batente[data-fora] {
+    animation-play-state: paused;
+  }
+}
+@keyframes bt-luz-chega {
+  from {
+    opacity: 0;
+    transform: translateX(-4cqw);
+  }
+}
+/* Da pose, para a esquerda, para a direita e de volta: a curva desacelera só nos extremos (nunca no meio do caminho)
+   e nunca passa do destino. */
+@keyframes bt-luz-deriva {
+  0% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.58, 1);
+  }
+  25% {
+    transform: translateX(-8cqw);
+    animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  }
+  75% {
+    transform: translateX(8cqw);
+    animation-timing-function: cubic-bezier(0.42, 0, 1, 1);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+/* ---------- o mapinho do verso (components/demos/petshop/mapa.tsx) ----------
+   Numa tinta só, sobre o papel da superfície (--bt-mapa-papel: a cartolina; a página troca se puser o mapa noutro
+   papel): a baía em chapado, as avenidas num traço cheio e as ruas em fio de ponta reta, ambos na tinta (lapidação,
+   rodada 3: a avenida com contorno e o rótulo com halo eram o estilo do mapa de serviço, e não o de uma gráfica de uma
+   tinta só), a casa como o quadrado de tinta (a uva, como na aba e no rodapé: o violeta é só da ação), os bairros em placa
+   de tinta, com a letra vazada na clara, e o dia do leva e traz. O tamanho e o corte (preserveAspectRatio slice, o
+   recorte) são da página: o desenho ocupa a caixa. Os traços não escalam com o recorte (vector-effect): a página põe a
+   espessura em px. */
+.bt-mapa {
+  --bt-mapa-papel: var(--bt-cartolina);
+  --bt-mapa-rua: 1.25px;
+  --bt-mapa-avenida: 4px;
+  position: relative;
+  margin: 0;
+}
+/* A fibra da tinta sobre a baía (a uva nunca lisa): uma camada sobre o mapa inteiro, que só se vê na água; na terra,
+   a fibra clara sobre a cartolina não muda nada. Por cima do desenho, sem pegar o ponteiro. */
+.bt-mapa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam);
+  pointer-events: none;
+}
+.bt-mapa-desenho {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.bt-mapa-agua {
+  fill: var(--bt-uva);
+}
+.bt-mapa-rua,
+.bt-mapa-avenida-borda {
+  fill: none;
+  stroke: var(--bt-uva);
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.bt-mapa-rua {
+  stroke-width: var(--bt-mapa-rua);
+  stroke-linecap: butt;
+  stroke-opacity: 0.72;
+}
+.bt-mapa-avenida-borda {
+  stroke-width: var(--bt-mapa-avenida);
+  stroke-linecap: round;
+}
+.bt-mapa-avenida {
+  display: none;
+}
+.bt-mapa-casa {
+  fill: var(--bt-uva);
+  stroke: var(--bt-mapa-papel);
+  stroke-width: 5;
+  paint-order: stroke;
+}
+.bt-mapa-placa {
+  flood-color: var(--bt-uva);
+}
+.bt-mapa-bairro {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-size: 30px;
+  fill: var(--bt-clara);
+}
+.bt-mapa-dia {
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 600;
+  font-size: 24px;
+}
+/* O rótulo longo ("Vital Brazil e Santa Rosa") tem a versão de uma linha (a da mesa) e a de duas (a do celular, onde
+   o rótulo sobe de corpo e, numa linha, encostaria no de Icaraí); a página escolhe qual mostra. */
+.bt-mapa-linha-duas {
+  display: none;
+}
+.bt-mapa-credito {
+  font-size: var(--bt-nota);
+  line-height: 1.45;
+}
+
+/* A primeira seção das páginas internas começa abaixo da tira (a capa do Início, não: o cartão passa por baixo dela). */
+.bt-abaixo-da-tira {
+  padding-top: var(--bt-tira-altura);
+}
+
+/* ---------- a tira de cima do cartão (o cabeçalho; a ilha da tira) ----------
+   A tira de cima do cartão, de ponta a ponta (lapidação, rodada 3: recuada 40 px dos dois lados, com as quinas
+   arredondadas, lia como a barra flutuante genérica): a cartolina opaca (nada de vidro: nenhuma camada real por trás),
+   com a fibra e, embaixo, o corte do papel (a espessura da cartolina, 1,5 px); rolada, a sombra longa sobre o que passa
+   embaixo. Com o nome em Anybody 125 de 16 px, as páginas (a atual com o quadrado de tinta violeta; nas outras, sob a mão,
+   a batida a seco: o quadrado em relevo, sem tinta), a pausa e a ação. Recolhe ao descer e volta ao subir (320 ms;
+   responde à direção, não segue a rolagem; volta com o foco). No alto da capa ([data-bt-capa] na página e a tira ainda
+   sem data-bt-rolada), o papel da tira some e a tira é o alto do próprio cartão, com a luz passando. A ação da tira só
+   aparece quando o carimbo da capa sai da tela (data-bt-acao-a-vista); nas outras páginas, sempre. Sem script, tudo à
+   vista e opaco. */
+.bt-tira {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  color: var(--bt-uva);
+  transition: translate 320ms var(--bt-estado);
+}
+.bt-tira::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-campo-claro);
+  box-shadow: inset 0 -1.5px 0 rgb(150 118 18 / 0.55);
+  pointer-events: none;
+  transition: opacity var(--bt-mao) var(--bt-estado);
+}
+.js [data-demo="petshop"]:has([data-bt-capa]) .bt-tira:not([data-bt-rolada])::before {
+  opacity: 0;
+}
+.bt-tira[data-bt-rolada]::before {
+  box-shadow: inset 0 -1.5px 0 rgb(150 118 18 / 0.55), 0 1px 2px rgb(18 4 26 / 0.25), 2px 8px 18px -6px rgb(18 4 26 / 0.45);
+}
+.bt-tira[data-bt-recolhida]:not(:focus-within) {
+  translate: 0 calc(-100% - 1.5rem);
+}
+.bt-tira-linha {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 2.5rem;
+  max-width: 90rem;
+  min-height: 4rem;
+  margin-inline: auto;
+  padding-inline: var(--bt-margem);
+}
+.bt-tira-nome {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: 1rem;
+  line-height: 1.1;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.bt-tira-paginas ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.875rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bt-tira-pagina {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+}
+/* O quadrado de 10 px antes do rótulo: tinta violeta no item atual (e o rótulo violeta, 16 px em 700); nos outros,
+   reservado e vazio. */
+.bt-tira-quadrado {
+  position: relative;
+  width: 0.625rem;
+  height: 0.625rem;
+  flex: none;
+  border-radius: 1px;
+}
+.bt-tira-quadrado::before,
+.bt-tira-quadrado::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+}
+/* A tinta. */
+.bt-tira-quadrado::before {
+  background: var(--bt-carimbo);
+}
+/* A batida a seco: o papel em relevo, a luz da porta na quina de cima e da esquerda. */
+.bt-tira-quadrado::after {
+  box-shadow:
+    inset 1px 1px 0 var(--bt-clara),
+    inset -1px -1px 0 rgb(48 16 63 / 0.32);
+  transition: opacity var(--bt-mao-sai) var(--bt-saida);
+}
+.bt-tira-pagina[aria-current="page"] {
+  color: var(--bt-carimbo);
+  font-weight: 700;
+}
+.bt-tira-pagina[aria-current="page"] .bt-tira-quadrado::before {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .bt-tira-pagina:not([aria-current="page"]):hover .bt-tira-quadrado::after {
+    opacity: 1;
+    transition: opacity var(--bt-vinculo) var(--bt-estado);
+  }
+}
+.bt-tira-pagina:not([aria-current="page"]):active .bt-tira-quadrado::after {
+  opacity: 1;
+}
+/* A pausa: "Pausar o movimento", com aria-pressed (o rótulo fica fixo; o desenho troca: os dois traços, o triângulo).
+   Só existe onde algo se move sem parar ([data-ambiente]) e com script; com movimento reduzido, não há o que pausar.
+   O lugar fica reservado, para a tira não pular entre as páginas. Fica do lado da ação, longe das páginas, na nota e no
+   secundário (lapidação, rodada 2: na fila das páginas, lia como uma quarta página). */
+.bt-pausa {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 600 var(--bt-nota)/1 var(--font-bt-texto), system-ui, sans-serif;
+  color: var(--bt-reticula);
+  cursor: pointer;
+}
+.bt-pausa svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: none;
+  fill: currentColor;
+}
+html:not(.js) .bt-pausa,
+[data-demo="petshop"]:not(:has([data-ambiente])) .bt-pausa {
+  visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bt-pausa {
+    visibility: hidden;
+  }
+}
+.bt-tira-acao {
+  display: inline-flex;
+  transition:
+    opacity var(--bt-mao-sai) var(--bt-saida),
+    visibility 0s linear var(--bt-mao-sai);
+}
+.js [data-demo="petshop"]:has([data-bt-carimbo-da-capa]) .bt-tira:not([data-bt-acao-a-vista]) .bt-tira-acao {
+  opacity: 0;
+  visibility: hidden;
+}
+.bt-tira[data-bt-acao-a-vista] .bt-tira-acao {
+  transition: opacity var(--bt-mao) var(--bt-estado);
+}
+/* A mesa estreita (1024 a 1359 px): a tira cabe numa linha. A pausa fica só com o desenho (o rótulo continua no nome
+   acessível; o alvo, de 44 px); abaixo de 1220 px, o nome na largura 100. */
+@media (max-width: 1359.98px) {
+  .bt-pausa {
+    justify-content: center;
+    min-width: 2.75rem;
+  }
+  .bt-pausa-rotulo {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .bt-tira-linha {
+    gap: 0 clamp(1rem, 2.4vw, 2.5rem);
+  }
+  .bt-tira-paginas ul {
+    gap: 0 clamp(1rem, 1.8vw, 1.875rem);
+  }
+}
+@media (max-width: 1219.98px) {
+  .bt-tira-nome {
+    font-size: 0.9375rem;
+    font-stretch: 100%;
+  }
+}
+/* ---------- a tira no celular (o passe do celular, 14.10.2026) ----------
+   Abaixo da mesa, a tira é uma linha só, de 60 px (antes, de 108 a 320 px, em duas a quatro linhas): o nome em duas
+   linhas, na largura 100; o carimbo miúdo, só com a ação ("Pedir horário": o glifo do WhatsApp diz o canal, que fica no
+   nome acessível); e o índice, que abre o menu (o cartão do índice, abaixo). As páginas vão para o menu; a pausa, para o
+   balcão da capa, perto da luz que ela para (inicio.css). Recolhe e volta como na mesa. */
+.bt-tira-indice {
+  display: none;
+}
+@media (max-width: 1023.98px) {
+  html:has([data-demo="petshop"]) {
+    --bt-tira-altura: 3.75rem;
+  }
+  .bt-tira-linha {
+    flex-wrap: nowrap;
+    gap: 0 0.5rem;
+    min-height: 3.75rem;
+    padding-block: 0.5rem;
+  }
+  /* O nome em duas linhas, pela quebra marcada (tira.tsx, NomeEmDuas), e não pela largura. */
+  .bt-tira-nome,
+  .bt-menu-nome {
+    white-space: pre-line;
+  }
+  .bt-tira-nome {
+    margin-right: auto;
+    font-size: 0.9375rem;
+    font-stretch: 100%;
+    line-height: 1.1;
+  }
+  .bt-tira-paginas,
+  .bt-tira-linha > .bt-pausa {
+    display: none;
+  }
+  .bt-tira .bt-carimbo-miudo {
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    padding: 0.375rem 0.75rem;
+  }
+  .bt-tira .bt-carimbo-miudo .bt-carimbo-icone {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+  .bt-tira .bt-carimbo-miudo .bt-carimbo-acao {
+    font-size: 0.9375rem;
+    font-stretch: 100%;
+  }
+  .bt-tira .bt-carimbo-miudo .bt-carimbo-canal {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* O índice: o desenho da lista da tira, o quadrado de tinta violeta na primeira linha e as outras reservadas. */
+  .bt-tira-indice {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: var(--bt-uva);
+  }
+  .bt-tira-indice svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+  .bt-tira-indice .bt-tira-indice-tinta {
+    fill: var(--bt-carimbo);
+  }
+}
+/* Até 389 px, o nome e a ação a 14 px; até 359 px, a ação em duas linhas ("Pedir / horário"): a linha cabe a 320 px. */
+@media (max-width: 389.98px) {
+  .bt-tira-nome,
+  .bt-menu-nome,
+  .bt-tira .bt-carimbo-miudo .bt-carimbo-acao {
+    font-size: var(--bt-nota);
+  }
+  .bt-tira-linha {
+    column-gap: 0.375rem;
+  }
+  .bt-tira .bt-carimbo-miudo {
+    padding-inline: 0.625rem;
+  }
+}
+@media (max-width: 359.98px) {
+  .bt-tira .bt-carimbo-miudo .bt-carimbo-acao {
+    white-space: normal;
+    max-width: 4.5em;
+  }
+}
+
+/* ---------- o menu do celular: o cartão do índice (a ilha da tira, MenuDoCartao) ----------
+   Um <dialog> modal em tela cheia: o balcão de tinta (com a fibra e a queda da luz) e, deitado nele, um cartão que sangra
+   em cima e à esquerda, como o da capa, com a faca embaixo à direita e a sombra longa. No alto do cartão, a mesma linha
+   da tira (o nome e, no lugar do índice, o fechar); depois, as páginas em exibição, a Anybody 125 a 42 px, cada uma com
+   o quadrado da tira (a atual com a tinta violeta e o rótulo em violeta; sob o dedo, a batida a seco); embaixo, o carimbo
+   e o horário. Tocar no balcão fecha. Sem script, o mesmo menu aparece por :target. Nunca na mesa. */
+.bt-menu {
+  display: none;
+}
+@media (max-width: 1023.98px) {
+  html:has(.bt-menu[open]) {
+    overflow: hidden;
+  }
+  .bt-menu[open],
+  .bt-menu:target {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0 var(--bt-margem) 2.5rem 0;
+    border: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam), var(--bt-queda-tinta), var(--bt-campo-tinta);
+    color: var(--bt-clara);
+  }
+  .bt-menu::backdrop {
+    background: transparent;
+  }
+  /* O cartão do índice, deitado sobre a pilha como o da capa: a espessura de três cartões (as bordas na sombra, com o fio
+     do vão) e a sombra que eles jogam no balcão. */
+  .bt-menu-cartao {
+    padding: 0 var(--bt-recuo) 2.25rem var(--bt-margem);
+    border-radius: 0 0 2.25rem 0;
+    background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-campo-claro);
+    color: var(--bt-uva);
+    box-shadow:
+      var(--bt-corte),
+      1px 4px 0 #dcc041,
+      1px 5px 0 #9a7f22,
+      2px 9px 0 #d5b93d,
+      2px 10px 0 #937920,
+      1px 14px 0 #ceb23a,
+      1px 15px 0 #3a2c07,
+      2px 22px 3px rgb(8 1 14 / 0.7),
+      12px 44px 40px -6px rgb(8 1 14 / 0.45);
+  }
+  .bt-menu-topo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    min-height: 3.75rem;
+    padding-block: 0.5rem;
+  }
+  .bt-menu-nome {
+    font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+    font-weight: 800;
+    font-stretch: 100%;
+    font-size: 0.9375rem;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .bt-menu-fechar {
+    display: inline-grid;
+    flex: none;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-right: calc(-1 * var(--bt-recuo));
+    color: var(--bt-uva);
+  }
+  .bt-menu-fechar svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    fill: currentColor;
+  }
+  .bt-menu-paginas {
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+    border-bottom: 1px solid var(--bt-fio);
+  }
+  .bt-menu-paginas li {
+    border-top: 1px solid var(--bt-fio);
+  }
+  .bt-menu-pagina {
+    display: flex;
+    align-items: baseline;
+    gap: 0.875rem;
+    padding-block: 0.875rem 0.75rem;
+    color: inherit;
+    text-decoration: none;
+    font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+    font-weight: 800;
+    font-stretch: 125%;
+    font-size: var(--bt-titulo);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .bt-menu-pagina .bt-tira-quadrado {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  .bt-menu-pagina[aria-current="page"] {
+    color: var(--bt-carimbo);
+  }
+  .bt-menu-pagina[aria-current="page"] .bt-tira-quadrado::before,
+  .bt-menu-pagina:not([aria-current="page"]):active .bt-tira-quadrado::after {
+    opacity: 1;
+  }
+  .bt-menu-acao {
+    display: grid;
+    justify-items: start;
+    gap: 1.25rem;
+    margin-top: 2.25rem;
+  }
+  .bt-menu-pe {
+    max-width: 34ch;
+    color: var(--bt-reticula);
+  }
+}
+@media (min-width: 1024px) {
+  .bt-menu {
+    display: none !important; /* o :target sem script nunca abre o menu na mesa */
+  }
+}
+
+/* ---------- a linha de baixo do cartão (o rodapé) ----------
+   O pé do último cartão da página (identidade, seção 4.12: a cartolina, a borda do cartão, a nota de 14 px). Lapidação,
+   rodada 3: na rodada 2, a cartolina de ponta a ponta, sem a borda do cartão, com o texto na metade esquerda e 800 px
+   de papel vazio à direita. Agora é o cartão que sangra pelos lados e por baixo, com a borda de cima à vista: as duas
+   quinas de faca recortadas contra a tinta (a da cena 6 do Início e de Onde, ou uma faixa do balcão, quando a página
+   acaba na cartolina). O texto no corpo da nota, em duas medidas lado a lado, à esquerda: a casa (o nome na letra da
+   tira, com o quadrado de tinta, em uva; o endereço e o telefone) e o aviso (o selo de ficção e o crédito, na retícula,
+   6,1:1; os avisos). Embaixo, o papel limpo do pé do cartão (é ele que fecha a última virada de valor da página). Sem
+   colofão, sem o nome em cartaz. */
+.bt-rodape {
+  padding: 2.5rem 0 0;
+  font-size: var(--bt-nota);
+  line-height: 1.6;
+}
+/* Sobre a cena de tinta (o Início e Onde), o balcão já está em cima: o cartão encosta nela. */
+.bt-tinta + .bt-rodape,
+main:has(> div > :last-child.bt-tinta) + .bt-rodape {
+  padding-top: 0;
+}
+.bt-rodape-cartao {
+  border-radius: var(--bt-faca) var(--bt-faca) 0 0;
+  box-shadow: inset 0 1px 0 rgb(255 252 214 / 0.7);
+}
+.bt-rodape-cartao > .bt-largura {
+  max-width: 90rem;
+  padding-inline: var(--bt-margem);
+}
+.bt-rodape-linha {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  align-items: start;
+  gap: 1rem 4rem;
+  padding-block: 2.75rem 12rem;
+}
+.bt-rodape-linha p {
+  max-width: 58ch;
+}
+.bt-rodape .bt-rodape-casa p:not(.bt-rodape-nome),
+.bt-rodape .bt-rodape-aviso p {
+  color: var(--bt-reticula);
+}
+.bt-rodape-nome {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+/* A marca da casa: o quadrado chapado de tinta, como o da aba e o do mapinho, impresso na uva (o violeta é da mão). */
+.bt-rodape-marca {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex: none;
+  border-radius: 1px;
+  background: var(--bt-uva);
+}
+.bt-rodape-avisos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1.75rem;
+  margin-top: 0.25rem;
+}
+.bt-rodape-avisos .bt-vinculo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+@media (max-width: 1023.98px) {
+  .bt-rodape-linha {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- a troca de página: o cartão desliza no balcão ----------
+   A receita do kit (09-movimento.md, seção 8), no eixo x: a página que sai se apaga em 150 ms, andando pouco; a que
+   chega entra da direita, 60 px em 400 ms, depois de 210 ms. A tira tem nome de transição próprio e fica parada. Com
+   movimento reduzido, 0 s (app/movimento.css); a camada por cima não pega o ponteiro (idem). */
+::view-transition-old(.bt-troca-sai) {
+  animation: 150ms var(--bt-saida, cubic-bezier(0.3, 0, 0.8, 0.15)) both bt-troca-sai;
+}
+::view-transition-new(.bt-troca-entra) {
+  animation: 400ms var(--bt-entrada, cubic-bezier(0.05, 0.7, 0.1, 1)) 210ms both bt-troca-entra;
+}
+::view-transition-group(bt-tira) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(bt-tira) {
+  display: none;
+}
+::view-transition-new(bt-tira) {
+  animation: none;
+}
+@keyframes bt-troca-sai {
+  to {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+@keyframes bt-troca-entra {
+  from {
+    opacity: 0;
+    transform: translateX(60px);
+  }
+}
+/* No celular, a mesma troca em até 300 ms (09-movimento.md, seção 11): a saída em 100 ms; a chegada em 220 ms, depois de
+   80 ms, de 32 px (60 px eram um sexto da tela). */
+@media (max-width: 1023.98px) {
+  ::view-transition-old(.bt-troca-sai) {
+    animation-duration: 100ms;
+  }
+  ::view-transition-new(.bt-troca-entra) {
+    animation: 220ms var(--bt-entrada, cubic-bezier(0.05, 0.7, 0.1, 1)) 80ms both bt-troca-entra-celular;
+  }
+}
+@keyframes bt-troca-entra-celular {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+/* ---------- movimento reduzido ----------
+   Nada se desloca: as trocas de tinta, o rebaixo e a régua ficam instantâneos; a régua vira o fundo da linha; a luz
+   do verniz fica na pose média. */
+@media (prefers-reduced-motion: reduce) {
+  [data-demo="petshop"] *,
+  [data-demo="petshop"] *::before,
+  [data-demo="petshop"] *::after {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+  .bt-impresso {
+    --bt-vx: 0.5;
+    --bt-vy: 0.5;
+  }
+  .bt-acetato {
+    display: none;
+  }
+  .bt-regua [data-bt-linha]:hover {
+    background: var(--bt-acetato);
+  }
+  .bt-tira[data-bt-recolhida] {
+    translate: none;
+  }
+}
+
+/* ---------- cores forçadas ----------
+   Sem as matérias (a fibra, a luz, as cópias do relevo, a falha, o acetato): o carimbo ganha a borda do sistema, e o
+   texto e o foco ficam com as cores do sistema. */
+@media (forced-colors: active) {
+  .bt-carimbo {
+    border: 2px solid ButtonText;
+  }
+  .bt-carimbo::before,
+  .bt-carimbo::after,
+  .bt-carimbo-batido,
+  .bt-luz,
+  .bt-impresso-luz,
+  .bt-impresso-sombra,
+  .bt-impresso-verniz,
+  .bt-acetato,
+  .bt-pilha::before,
+  .bt-pilha::after {
+    display: none;
+  }
+  .bt-tira::before {
+    background: Canvas;
+    opacity: 1 !important;
+  }
+  .bt-tira-quadrado::before {
+    background: Highlight;
+  }
+  [data-demo="petshop"] :focus-visible {
+    outline-color: Highlight;
+  }
+}

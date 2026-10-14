@@ -126,12 +126,14 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
 
   return (
     // A faixa do <header> é transparente e não recebe o ponteiro: o que se
-    // vê é a pílula de vidro dentro dela (secoes/cabecalho.tsx).
+    // vê é a pílula de vidro dentro dela (secoes/cabecalho.tsx). Recolhido,
+    // sobe a própria altura e mais 2 rem: a sombra da pílula desce até 30 px
+    // abaixo da faixa e ficava no topo da tela (14/10).
     <header
       ref={cabecalho}
       data-fundo="escuro"
       data-recolhido={recolhido || undefined}
-      className="pointer-events-none sticky top-0 z-40 transition-transform duration-300 ease-atlas max-lg:data-recolhido:[&:not(:has(:focus-visible))]:-translate-y-full"
+      className="pointer-events-none sticky top-0 z-40 transition-transform duration-300 ease-atlas max-lg:data-recolhido:[&:not(:has(:focus-visible))]:-translate-y-[calc(100%+2rem)]"
     >
       {children}
     </header>

@@ -11,7 +11,7 @@ export const metadata = metadadosDaPagina("planos");
 /**
  * Planos: a abertura é a escada de preços (três degraus, o preço de
  * criação em cada um); depois, os planos com o que cada um inclui, a
- * escada dos três sites de demonstração (o simulador abre o site vivo,
+ * escada dos sites de demonstração, até quatro por plano (o simulador abre o site vivo,
  * com as páginas dele) e a condição dos três primeiros contratos.
  */
 export default function PaginaDosPlanos() {

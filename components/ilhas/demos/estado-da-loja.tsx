@@ -73,17 +73,25 @@ export function EstadoDaLoja({ status, expediente, horaDoCorte }: Pick<Site, "st
 /**
  * O marcador de "agora" na linha do dia do caminhão (página Entrega): a
  * posição da hora de Niterói entre a abertura e o fechamento do balcão.
- * Fora do expediente, não aparece.
+ * A linha é a de um dia útil (7h às 18h, com o caminhão e o corte): fora do
+ * expediente, e no sábado e no domingo, não aparece. Até 07/10, aparecia no
+ * sábado sobre a linha de segunda a sexta, e até as 18h, depois de a loja
+ * fechar às 13h.
  */
 export function MarcadorDoAgora({ abre, fecha, rotulo }: { abre: number; fecha: number; rotulo: string }) {
   const agora = useAgora();
   if (!agora) return null;
   const horas = agora.getHours() + agora.getMinutes() / 60;
-  if (horas < abre || horas > fecha || agora.getDay() === 0) return null;
+  const dia = agora.getDay();
+  if (horas < abre || horas > fecha || dia === 0 || dia === 6) return null;
   const posicao = ((horas - abre) / (fecha - abre)) * 100;
+  // A linha fica na hora exata; o rótulo desliza em proporção — alinhado à
+  // esquerda na abertura, centrado no meio do dia, à direita no fechamento.
+  // Centrado sempre (até 08/10), perto das pontas metade dele saía da tela
+  // no celular (régua, bloco 1, às 7h31).
   return (
-    <span aria-hidden="true" className="absolute -top-3 bottom-0 flex flex-col items-center" style={{ left: `${posicao}%`, translate: "-50% 0" }}>
-      <span className="dp-codigo rounded-sm bg-primary px-1.5 py-0.5 text-[10.5px] text-primary-foreground">
+    <span aria-hidden="true" className="absolute -top-3 bottom-0 flex w-px flex-col items-start" style={{ left: `${posicao}%` }}>
+      <span className="dp-codigo rounded-sm bg-primary px-1.5 py-0.5 text-[10.5px] whitespace-nowrap text-primary-foreground" style={{ translate: `-${posicao}% 0` }}>
         {rotulo} · {agora.getHours()}h{String(agora.getMinutes()).padStart(2, "0")}
       </span>
       <span className="w-px flex-1 bg-primary" />

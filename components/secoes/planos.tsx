@@ -56,8 +56,8 @@ export function Planos() {
                       <span data-tom={site.tom} className="vd-previa relative block aspect-[16/8] overflow-hidden rounded-lg border border-border">
                         {/* 360 px na tela comum (a imagem mede até 216 px no cartão), 720 px na densa. */}
                         <img
-                          src={`/simulador/${plano.id}-computador-360.webp`}
-                          srcSet={`/simulador/${plano.id}-computador-360.webp 360w, /simulador/${plano.id}-computador.webp 720w`}
+                          src={`/simulador/${site.id}-computador-360.webp`}
+                          srcSet={`/simulador/${site.id}-computador-360.webp 360w, /simulador/${site.id}-computador.webp 720w`}
                           sizes="(min-width: 1024px) 216px, 86vw"
                           alt=""
                           width={720}

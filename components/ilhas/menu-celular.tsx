@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { IconeMenu } from "@/components/icones";
@@ -21,14 +20,17 @@ type Item = { id: string; rotulo: string; caminho: string };
 // painel de verdade com a entrada dele (desce do topo e se acende), e a
 // abertura se repetiria. Se o código não chegar, o toque faz o que faz sem
 // script: leva ao índice do rodapé. Até 03/10, o toque ficava sem resposta.
-let painelPronto = false;
+// O painel carregado fica numa variável e monta direto, sem next/dynamic: o
+// lazy suspendia a primeira abertura, e o React segura a revelação de um
+// Suspense (até 300 ms, mais o lote da renderização) — o painel aparecia
+// ~600 ms depois do toque, mesmo com o código já baixado (14/10).
+let PainelMenu: typeof import("@/components/ilhas/painel-menu").default | null = null;
 const importarPainel = () =>
   import("@/components/ilhas/painel-menu").then((modulo) => {
-    painelPronto = true;
+    PainelMenu = modulo.default;
     return modulo;
   });
 const preCarregar = () => void importarPainel().catch(() => undefined);
-const PainelMenu = dynamic(importarPainel, { ssr: false });
 
 /**
  * Gatilho do menu no celular. É um vínculo para o índice do rodapé
@@ -57,7 +59,7 @@ export function MenuCelular({ itens, marca }: { itens: Item[]; marca?: React.Rea
         onFocus={preCarregar}
         onClick={(evento) => {
           evento.preventDefault();
-          if (painelPronto) return abrir();
+          if (PainelMenu) return abrir();
           setEsperando(true);
           importarPainel().then(
             () => {
@@ -76,7 +78,7 @@ export function MenuCelular({ itens, marca }: { itens: Item[]; marca?: React.Rea
         {/* Esperando o painel: as barras do Spell UI no lugar do ícone (03/10). */}
         {esperando ? <BarsSpinner tamanho={18} className="mx-px" /> : <IconeMenu className="size-5" />}
       </a>
-      {montado && <PainelMenu aberto={aberto} aoMudar={setAberto} itens={itens} marca={marca} />}
+      {montado && PainelMenu && <PainelMenu aberto={aberto} aoMudar={setAberto} itens={itens} marca={marca} />}
     </>
   );
 }

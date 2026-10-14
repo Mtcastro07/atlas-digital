@@ -1,0 +1,3326 @@
+/* Odontologia Boa Viagem (plano Completo), prefixo od-, refeita do zero pelo padrão Atlas em 09.10.2026
+   (registros/demos/odontologia/identidade.md, seção 9; producao/esteira/19-o-padrao-atlas.md).
+
+   O mundo: o prontuário aberto sob o refletor. A ficha clínica de papel, o grafite, o lápis vermelho que marca o que
+   se vai tratar e a arcada de cerâmica (WebGL, um palco só) que a luz percorre. O cabeçalho é a borda da pasta com as
+   abas; a ação é a peça de cerâmica; o vínculo é o traço do lápis; o rodapé é o pé do receituário.
+
+   A cor: a folha clara extrema. O papel domina, em escala de cartaz e peso leve (Red Hat Display 300), com o grão e o
+   relevo da cerâmica; um bloco de cor forte, a chamada no vermelho do lápis, de ponta a ponta.
+
+   As camadas: o fundo de cada cena (o papel, a cerâmica clara, a parede de porcelanato, o vermelho), por cima dele o
+   palco da arcada (o canvas preso à tela, z-index 1) e, por cima do palco, o texto e as peças de cada cena (z-index
+   2). Por isso nenhuma cena cria contexto de empilhamento (nada de isolation, transform ou opacity na seção): o
+   movimento fica nas peças.
+
+   Movimento do Completo, sereno: a entrada da capa (o título se compõe, o refletor acende), a cena da rolagem (o
+   percurso), a viagem da arcada entre as cenas e entre as páginas, o momento de cada cena e de cada página, a
+   cerâmica que responde à mão, os números que contam, o ambiente pausável (a luz que atravessa a placa do horário).
+   Nenhuma curva passa do destino; com movimento reduzido, nada se desloca. */
+
+[data-demo="odontologia"] {
+  /* As cores por função (contraste pela fórmula da WCAG 2.2, conferido pela régua). */
+  --background: #f7f6f2; /* o papel da ficha */
+  --foreground: #2b2826; /* o grafite: 13,8:1 no papel */
+  --card: #fdfcf9;
+  --card-foreground: #2b2826;
+  --muted: #eeece6;
+  --muted-foreground: #5c5650; /* o aço: 6,5:1 no papel, 5,2:1 na cerâmica média */
+  --primary: #2b2826;
+  --primary-foreground: #fbfaf6;
+  --accent: #a32319; /* o lápis vermelho: 6,9:1 no papel */
+  --marcador: #f6d9d4; /* o marcador da linha: a tinta por cima, 11:1 */
+  --border: rgb(43 40 38 / 0.16);
+  --input: rgb(43 40 38 / 0.45);
+  --ring: #a32319;
+
+  --od-ceramica-clara: #e0dbd0; /* a cerâmica clara, o tom mais fundo do papel (medido com o grão: ΔL 0,04 ou mais) */
+  --od-ceramica-media: #cfc8ba; /* a parede de porcelanato, o meio-tom (L 0,835): o grafite nela, 8,8:1 */
+  --od-pasta: #e1dbcd; /* a pasta de arquivo */
+  --od-aba: #d4cdbc;
+  --od-saida: cubic-bezier(0.2, 0.9, 0.25, 1);
+
+  /* A escala: o corpo de 17 a 18 px; a exibição em peso leve, de cartaz. A capa a 7 vezes o corpo. */
+  --od-corpo: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
+  --od-nota: 0.9375rem;
+  --od-miudo: 0.8125rem;
+  --od-lide: clamp(1.1875rem, 1.05rem + 0.45vw, 1.4375rem);
+  --od-cartaz: clamp(3.5rem, 0.5rem + 8.2vw, 8.25rem);
+  --od-grande: clamp(3.5rem, 1rem + 6.8vw, 7rem);
+  --od-cena: clamp(2.9rem, 1rem + 5.1vw, 6rem);
+  --od-endereco: clamp(2.4rem, 1rem + 3.7vw, 4.5rem);
+
+  /* O grão do papel e o vidrado da cerâmica, desenhados uma vez. */
+  --od-grao: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='f'><feTurbulence type='turbulence' baseFrequency='.78' numOctaves='3' seed='11' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .17 0 0 0 0 .16 0 0 0 0 .15 0 0 0 -.9 .62'/></filter><rect width='100%' height='100%' filter='url(%23f)' opacity='.16'/></svg>");
+  --od-vidrado: radial-gradient(130% 90% at 18% 0%, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0) 55%), radial-gradient(90% 70% at 100% 100%, rgb(43 40 38 / 0.06), transparent 70%);
+  --od-traco: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'><path d='M2 6.5C30 4.2 52 7.6 84 5.4s58-2 82 .4 22-.6 32-.9' fill='none' stroke='%23a32319' stroke-width='2.4' stroke-linecap='round'/></svg>");
+  --od-traco-claro: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'><path d='M2 6.5C30 4.2 52 7.6 84 5.4s58-2 82 .4 22-.6 32-.9' fill='none' stroke='%23fbfaf6' stroke-width='2.4' stroke-linecap='round'/></svg>");
+
+  font-family: var(--font-od-texto), "Segoe UI", system-ui, sans-serif;
+  font-size: var(--od-corpo);
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+  background: var(--od-grao), var(--background);
+  color: var(--foreground);
+  accent-color: var(--accent);
+}
+/* A altura da pasta presa no alto: o recuo do conteúdo e o da rolagem até uma âncora. */
+html:has([data-demo="odontologia"]) {
+  --od-topo: 7.5rem;
+  background: #f7f6f2;
+  color-scheme: light;
+  scroll-padding-top: var(--od-topo);
+}
+@media (min-width: 1024px) {
+  html:has([data-demo="odontologia"]) {
+    --od-topo: 5.25rem;
+  }
+}
+/* O "Ir para o conteúdo" (do layout raiz), na peça de cerâmica da clínica. */
+body:has([data-demo="odontologia"]) > a[href="#conteudo"] {
+  border: 1px solid rgb(43 40 38 / 0.25);
+  background: #fdfcf9;
+  color: #2b2826;
+  font-family: var(--font-od-texto), system-ui, sans-serif;
+  font-weight: 600;
+}
+[data-demo="odontologia"] ::selection {
+  background: var(--marcador);
+  color: var(--foreground);
+}
+/* Sem especificidade (:where): a classe de cada título decide o peso e o tamanho. */
+:where([data-demo="odontologia"]) :where(h1, h2, h3) {
+  font-family: var(--font-od-titulo), var(--font-od-texto), sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+[data-demo="odontologia"] p {
+  text-wrap: pretty;
+}
+[data-demo="odontologia"] :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.od-conteudo {
+  padding-top: var(--od-topo);
+}
+.od-conteudo:focus-visible {
+  outline: none;
+}
+.od-largura {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 0.5rem + 3.2vw, 3rem);
+}
+/* As cenas: o fundo embaixo, o palco no meio, o conteúdo por cima. */
+.od-cena {
+  position: relative;
+  overflow-x: clip;
+}
+.od-cena > *,
+.od-receituario > * {
+  position: relative;
+  z-index: 2;
+}
+@media (min-width: 1024px) {
+  .od-cena {
+    min-height: 84svh;
+  }
+}
+.od-titulo-de-cena {
+  font-size: var(--od-cena);
+  font-weight: 300;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+}
+.od-titulo-grande {
+  font-size: var(--od-grande);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+.od-lide {
+  margin-top: 1.25rem;
+  max-width: 42ch;
+  font-size: var(--od-lide);
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+
+/* ---------- o palco da arcada e as âncoras ---------- */
+.od-palco {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.od-ancora {
+  pointer-events: none;
+}
+/* A reserva: o mapa em traço, à vista sem script, sem WebGL e até o palco acender. */
+.od-reserva {
+  transition: opacity 600ms ease-out;
+}
+html[data-palco]:not([data-sem-ceramica]) .od-reserva {
+  opacity: 0;
+}
+
+/* ---------- a pasta: o cabeçalho com as abas ---------- */
+.od-pasta {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  background:
+    var(--od-grao),
+    linear-gradient(180deg, #e6e0d3, var(--od-pasta));
+  box-shadow:
+    inset 0 -1px 0 rgb(43 40 38 / 0.2),
+    0 10px 22px -18px rgb(43 40 38 / 0.45);
+}
+/* A pasta troca de tinta com a cena que está embaixo dela (o grafite da capa, o vermelho da chamada): a ilha do
+   consultório põe data-tinta na raiz; as camadas acendem por opacidade. */
+.od-pasta::before,
+.od-pasta::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease-out;
+}
+.od-pasta::before {
+  background:
+    var(--od-grao),
+    linear-gradient(180deg, #2e2a27, #211f1d);
+}
+.od-pasta::after {
+  background:
+    var(--od-grao),
+    linear-gradient(180deg, #b02a20, #921f17);
+}
+html[data-tinta="escura"] .od-pasta::before,
+html[data-tinta="vermelha"] .od-pasta::after {
+  opacity: 1;
+}
+html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta {
+  --foreground: #f3f1ec;
+  --muted-foreground: #cfc8bf;
+  --card: transparent;
+  color: var(--foreground);
+  box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.35);
+}
+html[data-tinta="escura"] .od-aba:not([aria-current]) {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.04));
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.12);
+}
+html[data-tinta="vermelha"] .od-aba:not([aria-current]) {
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.06));
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.18);
+}
+/* A aba aberta tem a cor da cena de cima da página (o grafite, na página que abre no escuro). */
+html[data-tinta="escura"] .od-aba[aria-current] {
+  background: #262321;
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.1);
+}
+html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta :focus-visible {
+  outline-color: #f3f1ec;
+}
+.od-pasta-miolo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 1.5rem;
+  min-height: 4.25rem;
+}
+.od-pasta-nome {
+  display: flex;
+  min-height: 2.75rem;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 0.6rem;
+}
+.od-pasta-monograma {
+  width: 2.5rem;
+  height: 2.5rem;
+  flex: none;
+}
+.od-pasta-clinica {
+  display: block;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.od-pasta-registro {
+  display: block;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--muted-foreground);
+}
+.od-pasta-responsavel {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .od-pasta-responsavel {
+    display: inline;
+  }
+}
+/* As abas: a de agora tem a cor da folha e se emenda com ela (cobre o fio da borda da pasta). */
+.od-abas {
+  display: flex;
+  order: 3;
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-top: 0.35rem;
+}
+/* No celular, as cinco abas cabem na largura (de 360 px para cima): a letra e o recuo mais justos. */
+@media (max-width: 639px) {
+  .od-abas .od-aba {
+    flex: 1 1 auto;
+    justify-content: center;
+    clip-path: polygon(0.3rem 0, calc(100% - 0.3rem) 0, 100% 100%, 0 100%);
+    padding-inline: 0.45rem;
+    font-size: 0.8125rem;
+  }
+  .od-abas .od-aba + .od-aba {
+    margin-left: -0.15rem;
+  }
+}
+/* A aba da pasta de arquivo: o recorte em trapézio, as abas encavaladas uma na outra. */
+.od-aba {
+  position: relative;
+  display: inline-flex;
+  min-height: 2.75rem;
+  flex: none;
+  align-items: center;
+  clip-path: polygon(0.7rem 0, calc(100% - 0.7rem) 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.4), rgb(255 255 255 / 0) 60%),
+    var(--od-aba);
+  box-shadow:
+    inset 1px 1px 0 rgb(255 255 255 / 0.5),
+    inset -1px 0 0 rgb(43 40 38 / 0.12);
+  padding: 0.5rem 1.3rem 0.45rem;
+  font-size: var(--od-nota);
+  font-weight: 600;
+  color: var(--foreground);
+  white-space: nowrap;
+  transition: translate 180ms var(--od-saida);
+}
+.od-aba[aria-current] {
+  z-index: 1;
+  translate: 0 1px;
+  background: var(--background);
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.8);
+}
+.od-aba + .od-aba {
+  margin-left: -0.35rem;
+}
+/* O recorte corta os cantos de cima: o contorno do foco fica para dentro dele. */
+.od-aba:focus-visible {
+  outline-offset: -9px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .od-aba:not([aria-current]):hover {
+    z-index: 1;
+    translate: 0 -3px;
+  }
+}
+@media (min-width: 1024px) {
+  .od-pasta-miolo {
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    min-height: 5.25rem;
+  }
+  /* O nome cede o espaço; as abas nunca encolhem (nada delas fica cortado). */
+  .od-pasta-nome {
+    flex: 1 1 0;
+    align-self: center;
+  }
+  .od-abas {
+    order: 0;
+    flex: none;
+    width: auto;
+    margin-inline: 0;
+    padding-top: 0;
+    overflow: visible;
+  }
+  .od-pasta-direita {
+    align-self: center;
+  }
+}
+.od-pasta-direita {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.6rem;
+}
+.od-pasta-acao {
+  white-space: nowrap;
+}
+.od-pasta-acao[aria-current] {
+  visibility: hidden;
+}
+@media (max-width: 639px) {
+  .od-pasta-acao {
+    display: none;
+  }
+}
+/* O interruptor do refletor: a placa de interruptor com a tecla de balanço. Ligado (o ambiente correndo), a tecla
+   baixa em cima, e a luz piloto acesa; pausado, a tecla vira e a luz apaga. O nome para o leitor de tela é o do
+   botão (o controle de movimento). */
+.od-interruptor {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 3.1rem;
+  border-radius: 0.45rem;
+  background: linear-gradient(180deg, #fbfaf6, #e9e5dc);
+  box-shadow:
+    inset 0 0 0 1px rgb(43 40 38 / 0.2),
+    0 2px 3px rgb(43 40 38 / 0.2);
+}
+.od-interruptor button {
+  position: relative;
+  width: 1.5rem;
+  height: 2.75rem;
+  border-radius: 0.3rem;
+  background: linear-gradient(180deg, #d9d3c7 0 50%, #fdfcf8 50% 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(43 40 38 / 0.25),
+    inset 0 -2px 0 rgb(43 40 38 / 0.1);
+}
+.od-interruptor button:hover {
+  background: linear-gradient(180deg, #d2ccc0 0 50%, #ffffff 50% 100%);
+}
+.od-interruptor button svg {
+  display: none;
+}
+.od-interruptor button::after {
+  content: "";
+  position: absolute;
+  top: 0.35rem;
+  left: 50%;
+  width: 0.36rem;
+  height: 0.36rem;
+  margin-left: -0.18rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 6px rgb(163 35 25 / 0.7);
+}
+.od-interruptor button[aria-pressed="true"] {
+  background: linear-gradient(180deg, #fdfcf8 0 50%, #d9d3c7 50% 100%);
+}
+.od-interruptor button[aria-pressed="true"]::after {
+  background: #b3aca2;
+  box-shadow: none;
+}
+
+/* ---------- a ação: a peça de cerâmica ----------
+   A pílula vidrada, em relevo. Sob o ponteiro, a luz do refletor acende por dentro e o reflexo do esmalte cruza uma
+   vez; a peça não anda. Ao pressionar, 0,97. */
+@layer components {
+  .od-ceramica {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    min-height: 3.125rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    overflow: hidden;
+    border-radius: 0.55rem;
+    background:
+      radial-gradient(140% 120% at 50% -30%, #ffffff, rgb(255 255 255 / 0) 62%),
+      linear-gradient(180deg, #fdfcf8, #e9e5dc);
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      inset 0 -3px 6px rgb(43 40 38 / 0.12),
+      inset 0 0 0 1px rgb(43 40 38 / 0.2),
+      0 1px 1px rgb(43 40 38 / 0.18),
+      0 10px 18px -10px rgb(43 40 38 / 0.45);
+    padding: 0.55rem 1.5rem;
+    /* A tinta da peça é sempre o grafite: a cerâmica é clara em qualquer cena (também na capa escura). */
+    color: #2b2826;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 110ms ease-out;
+  }
+  /* A luz por dentro: o halo morno do refletor, aceso sob a mão. */
+  .od-ceramica::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(70% 140% at 50% 60%, rgb(255 214 178 / 1), rgb(255 226 196 / 0) 72%);
+    opacity: 0;
+    transition: opacity 260ms ease-out;
+  }
+  .od-ceramica-icone {
+    width: 1.2rem;
+    height: 1.2rem;
+    flex: none;
+    color: var(--accent);
+  }
+  .od-ceramica-grande {
+    min-height: 3.75rem;
+    padding: 0.75rem 2rem;
+    font-size: 1.125rem;
+  }
+  .od-ceramica-miuda {
+    min-height: 2.75rem;
+    padding-inline: 1.15rem;
+    font-size: var(--od-nota);
+  }
+  .od-ceramica-fosca {
+    background: rgb(253 252 248 / 0.7);
+    box-shadow: inset 0 0 0 1px rgb(43 40 38 / 0.3);
+  }
+  .od-ceramica:active {
+    transform: scale(0.97);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .od-ceramica:hover::before {
+    opacity: 1;
+  }
+  .od-ceramica:hover {
+    box-shadow:
+      inset 0 1px 0 #ffffff,
+      inset 0 -3px 6px rgb(43 40 38 / 0.08),
+      inset 0 0 0 1px rgb(163 35 25 / 0.55),
+      0 1px 1px rgb(43 40 38 / 0.18),
+      0 10px 18px -10px rgb(43 40 38 / 0.45);
+  }
+}
+
+.od-ceramica[aria-disabled="true"] {
+  cursor: not-allowed;
+  background: #ebe8e1;
+  box-shadow: inset 0 0 0 1px rgb(43 40 38 / 0.25);
+  color: var(--muted-foreground);
+}
+.od-ceramica[aria-disabled="true"]::before {
+  display: none;
+}
+
+/* ---------- o vínculo: o traço do lápis ----------
+   O fio claro embaixo diz que é vínculo; sob o ponteiro, o traço irregular do lápis se desenha da esquerda para a
+   direita, e na saída se recolhe para a direita. */
+.od-lapis,
+.od-lapis-claro {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  background:
+    var(--od-traco) right calc(100% - 0.45rem) / 0% 0.55em no-repeat,
+    linear-gradient(rgb(163 35 25 / 0.55), rgb(163 35 25 / 0.55)) left calc(100% - 0.62rem) / 100% 1px no-repeat;
+  color: var(--foreground);
+  font-weight: 600;
+  transition: background-size 360ms var(--od-saida);
+}
+/* No escuro e no vermelho: a letra no papel, o traço claro. */
+.od-lapis-claro {
+  background:
+    var(--od-traco-claro) right calc(100% - 0.45rem) / 0% 0.55em no-repeat,
+    linear-gradient(rgb(251 250 246 / 0.55), rgb(251 250 246 / 0.55)) left calc(100% - 0.62rem) / 100% 1px no-repeat;
+  color: #fbfaf6;
+}
+@media (hover: hover) and (pointer: fine) {
+  :is(.od-lapis, .od-lapis-claro):hover {
+    background-position:
+      left calc(100% - 0.45rem),
+      left calc(100% - 0.62rem);
+    background-size:
+      100% 0.55em,
+      100% 1px;
+  }
+}
+:is(.od-lapis, .od-lapis-claro):focus-visible {
+  background-size:
+    100% 0.55em,
+    100% 1px;
+  transition: none;
+}
+
+/* ---------- o estado ao vivo ---------- */
+.od-estado {
+  display: grid;
+  gap: 0.15rem;
+  font-size: var(--od-nota);
+}
+.od-estado-linha {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 600;
+}
+/* O ponto de lápis: cheio, aberto; vazado, fechado. */
+.od-estado-linha::before {
+  content: "";
+  width: 0.6rem;
+  height: 0.6rem;
+  flex: none;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--foreground);
+}
+.od-estado[data-aberto="true"] .od-estado-linha::before {
+  background: var(--accent);
+  box-shadow: none;
+}
+.od-estado-urgencia {
+  padding-left: 1.15rem;
+  color: var(--muted-foreground);
+}
+
+/* ---------- o pé do receituário ----------
+   O bloco da clínica: o cabeçalho impresso (o monograma, a clínica, o registro) e a letra miúda do endereço e do
+   horário; as páginas; a linha da assinatura, à direita, com o carimbo em tinta vermelha, um pouco torto. */
+.od-receituario {
+  position: relative;
+  background: var(--od-grao), var(--background);
+  padding-block: 2.75rem 2rem;
+  font-size: var(--od-nota);
+}
+/* O fio duplo do bloco, na grade do conteúdo (não na margem da largura). */
+.od-receituario-folha {
+  position: relative;
+  padding-top: 1.75rem;
+}
+.od-receituario-folha::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: clamp(1.25rem, 0.5rem + 3.2vw, 3rem);
+  left: clamp(1.25rem, 0.5rem + 3.2vw, 3rem);
+  border-top: 3px double rgb(43 40 38 / 0.6);
+}
+.od-receituario-cabeca {
+  display: grid;
+  gap: 1rem 3rem;
+}
+@media (min-width: 1024px) {
+  .od-receituario-cabeca {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+  }
+}
+.od-receituario-clinica {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.od-receituario-clinica strong {
+  display: block;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.15;
+}
+.od-receituario-monograma {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+}
+.od-receituario-miudo {
+  max-width: 70ch;
+  font-size: var(--od-miudo);
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+.od-receituario-miudo .od-lapis {
+  display: inline;
+  min-height: 0;
+  background-position:
+    right 100%,
+    left 100%;
+  font-size: inherit;
+}
+.od-receituario-paginas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin-top: 1rem;
+}
+.od-receituario-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 1rem 2rem;
+  margin-top: 1rem;
+}
+.od-assinatura {
+  display: grid;
+  width: min(100%, 26rem);
+  justify-items: center;
+  text-align: center;
+}
+.od-assinatura-linha {
+  width: 100%;
+  height: 1px;
+  margin-bottom: 0.55rem;
+  background: var(--foreground);
+}
+/* O carimbo da clínica: a tinta vermelha, falhada, um pouco torta. */
+.od-carimbo {
+  width: 11rem;
+  height: auto;
+  flex: none;
+  rotate: -4deg;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  opacity: 0.82;
+  filter: url(#lapis-da-clinica);
+}
+.od-carimbo .od-carimbo-fio {
+  stroke-width: 0.8;
+}
+.od-carimbo text {
+  fill: var(--accent);
+  stroke: none;
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.od-carimbo .od-carimbo-nome {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+.od-receituario-fim {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 2rem;
+  margin-top: 1.25rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  font-size: var(--od-miudo);
+  color: var(--muted-foreground);
+}
+.od-receituario-legais {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 1.25rem;
+}
+.od-receituario-legais .od-lapis {
+  font-weight: 400;
+}
+
+/* ---------- 1 · a arcada na luz (a capa) ----------
+   O consultório escuro, sob o refletor: o grafite de ponta a ponta, e a placa de cerâmica acesa à direita, inteira. O
+   refletor ([data-refletor]: o motor leva --refletor-x e --refletor-y) acende o cone morno no escuro e segue o
+   ponteiro. O título, em peso leve e escala de cartaz, atravessa a placa por diferença: claro sobre o grafite, escuro
+   sobre a cerâmica. */
+.od-capa {
+  --foreground: #f3f1ec;
+  --muted-foreground: #bdb6ad; /* 8,1:1 no grafite */
+  display: grid;
+  min-height: max(44rem, calc(100svh - var(--od-topo)));
+  align-items: center;
+  background:
+    var(--od-grao),
+    radial-gradient(70% 90% at 78% 8%, #3d3834, rgb(61 56 52 / 0) 70%),
+    linear-gradient(180deg, #262321, #1c1a19);
+  padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  color: var(--foreground);
+}
+.od-capa :focus-visible {
+  outline-color: #f3f1ec;
+}
+.od-capa ::selection {
+  background: #f3f1ec;
+  color: #1c1a19;
+}
+/* O cone do refletor no escuro: morno, aceso na entrada, e onde o ponteiro está. */
+.od-capa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* O cone: a luz que desce do alto, à direita, e a poça morna onde o refletor está. */
+  background:
+    radial-gradient(30rem 24rem at var(--refletor-x, 74%) var(--refletor-y, 38%), rgb(255 236 210 / 0.34), rgb(255 236 210 / 0) 68%),
+    linear-gradient(200deg, rgb(255 240 220 / 0.16) 0%, rgb(255 240 220 / 0) 46%);
+  opacity: 0;
+  transition: opacity 900ms ease-out;
+  pointer-events: none;
+}
+.od-capa[data-refletor-aceso]::before {
+  opacity: 1;
+}
+.od-capa-grade {
+  position: relative;
+}
+.od-capa-texto {
+  position: relative;
+  max-width: 62rem;
+}
+/* Na capa, o bloco do texto não forma contexto de empilhamento (o z-index fica em cada peça, não no bloco): só assim
+   o título, que mistura por diferença, alcança o palco embaixo. Sobre o grafite, o papel; sobre a cerâmica da placa,
+   quase preto: o título atravessa a placa e continua legível. */
+.od-capa > .od-largura {
+  z-index: auto;
+}
+.od-capa-texto > * {
+  position: relative;
+  z-index: 2;
+}
+.od-capa-titulo {
+  font-size: var(--od-cartaz);
+  color: #f3f1ec;
+}
+/* Só com o palco aceso (o motor põe data-palco na raiz): sem ele, não há placa a atravessar. */
+html[data-palco] .od-capa-titulo {
+  color: #ffffff;
+  mix-blend-mode: difference;
+}
+.od-capa-frase {
+  display: block;
+  font-size: var(--od-cartaz);
+  font-weight: 300;
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+}
+.od-palavra {
+  display: inline-block;
+}
+.od-capa-lugar {
+  display: block;
+  margin-top: 1.25rem;
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: var(--od-lide);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.od-capa-lide {
+  margin-top: 1.1rem;
+  max-width: 34ch;
+  font-size: var(--od-lide);
+  line-height: 1.45;
+  color: var(--muted-foreground);
+}
+/* A ação e, embaixo, o telefone: a coluna do texto não chega à placa. */
+.od-capa-acoes {
+  display: flex;
+  align-items: center;
+  margin-top: 1.75rem;
+}
+.od-capa-estado {
+  margin-top: 1.25rem;
+  min-height: 3.2em;
+}
+.od-capa .od-estado[data-aberto="true"] .od-estado-linha::before {
+  background: #e9897c;
+}
+/* A âncora da capa: a placa inteira, à direita, na coluna (nada sangra para fora da tela). Abaixo de 1024 px, ela
+   vem depois do texto, na largura toda (nunca embaixo das letras claras); o passe do celular a reorganiza. */
+.od-ancora-da-capa {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: min(44vw, 39rem);
+  aspect-ratio: 1.08;
+  translate: 0 -50%;
+}
+@media (max-width: 1023px) {
+  .od-capa-grade {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 2rem;
+  }
+  .od-ancora-da-capa {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 100%;
+    translate: none;
+  }
+}
+
+/* ---------- 2 · percorra a boca ----------
+   A cerâmica clara; a placa presa à esquerda (a âncora num palco preso), e os quatro passos descem à direita, cada um
+   com o nome da região em cartaz; o do meio da tela ganha o traço do lápis. */
+.od-percurso {
+  background:
+    radial-gradient(90% 60% at 80% 0%, rgb(255 255 255 / 0.28), rgb(255 255 255 / 0) 60%),
+    var(--od-ceramica-clara);
+  padding-block: clamp(5rem, 3rem + 6vw, 8.5rem) clamp(3rem, 2rem + 3vw, 5rem);
+}
+.od-percurso-grade {
+  display: grid;
+  gap: 2rem;
+}
+.od-percurso-palco {
+  position: sticky;
+  top: calc(var(--od-topo) + 1rem);
+  height: 44svh;
+}
+/* O texto à esquerda, a placa presa à direita (o mesmo lado da capa). */
+@media (min-width: 1024px) {
+  .od-percurso-palco {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .od-percurso-texto {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+.od-ancora-do-percurso {
+  width: 100%;
+  height: 100%;
+}
+@media (min-width: 1024px) {
+  .od-percurso-grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+    gap: 4rem;
+  }
+  .od-percurso-palco {
+    top: calc(var(--od-topo) + 8svh);
+    height: 66svh;
+  }
+}
+.od-passos {
+  margin-top: 3rem;
+}
+.od-passo {
+  display: grid;
+  min-height: 46svh;
+  align-content: center;
+  border-top: 1px solid var(--border);
+  padding-block: 2.5rem;
+}
+.od-passo-nome {
+  position: relative;
+  justify-self: start;
+  font-size: var(--od-cena);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+/* O lápis passa embaixo da região de agora. */
+.od-passo-nome::after {
+  content: "";
+  position: absolute;
+  left: -0.1em;
+  right: -0.1em;
+  bottom: -0.18em;
+  height: 0.16em;
+  background: var(--od-traco) left center / 0% 100% no-repeat;
+  transition: background-size 620ms var(--od-saida);
+}
+.od-passo[data-agora] .od-passo-nome::after {
+  background-size: 100% 100%;
+}
+.od-passo-frase {
+  margin-top: 1.5rem;
+  max-width: 44ch;
+}
+/* Os dentes da região, na numeração FDI, em cartaz: o número como imagem, gravado em grafite claro. */
+.od-passo-dentes {
+  order: -1;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(2.6rem, 1.4rem + 3.4vw, 5.25rem);
+  font-weight: 200;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: #7a736b; /* 3,9:1 na cerâmica clara, letra grande */
+}
+.od-passo-tratamentos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5rem;
+  margin-top: 0.75rem;
+}
+
+/* ---------- 3 · a ficha de tratamentos ----------
+   O papel; a ficha pautada de ponta a ponta, com a placa pequena e deitada na margem. A linha sob o ponteiro: o
+   marcador passa, a região acende na placa, a miniatura do mapa vem junto do ponteiro. */
+.od-ficha-cena {
+  padding-block: clamp(5rem, 3rem + 6vw, 9rem);
+}
+.od-ficha-grade {
+  display: grid;
+  gap: 2.5rem;
+}
+.od-ficha-margem {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .od-ficha-grade {
+    grid-template-columns: minmax(0, 1fr) 19rem;
+    column-gap: 3rem;
+  }
+  .od-ficha-cabeca {
+    grid-column: 1 / -1;
+  }
+  .od-ficha-margem {
+    display: block;
+    grid-column: 2;
+    grid-row: 2 / span 2;
+  }
+  .od-ficha,
+  .od-ficha-pe {
+    grid-column: 1;
+  }
+}
+.od-ancora-da-ficha {
+  position: sticky;
+  top: calc(var(--od-topo) + 3rem);
+  width: 100%;
+  aspect-ratio: 1.1;
+}
+.od-ficha {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 2px solid var(--foreground);
+}
+.od-ficha th,
+.od-ficha td {
+  border-bottom: 1px solid var(--border);
+  padding: 1.15rem 1rem 1.15rem 0;
+  text-align: left;
+  vertical-align: baseline;
+}
+.od-ficha thead th {
+  padding-block: 0.7rem;
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: var(--od-miudo);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--muted-foreground);
+}
+/* As aspas de repetição da ficha à mão, a grafite, sob o começo da linha de cima. */
+.od-ficha-idem {
+  display: inline-block;
+  padding-left: 1.5rem;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--muted-foreground);
+}
+/* Na linha escolhida, a luz morna do refletor acende, e o lápis risca a margem. */
+.od-ficha tbody > tr > * {
+  transition: background-color 260ms ease-out;
+}
+.od-ficha tbody > tr > :first-child {
+  transition:
+    background-color 260ms ease-out,
+    box-shadow 200ms ease-out;
+}
+.od-ficha tbody > tr[data-marcada] > * {
+  background-color: rgb(255 232 208 / 0.8);
+}
+.od-ficha tbody > tr[data-marcada] > :first-child {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.od-ficha-nome {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.od-ficha-dentes {
+  display: block;
+  font-size: var(--od-miudo);
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+.od-ficha-numero {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 1.85rem;
+  font-weight: 300;
+  line-height: 1;
+}
+.od-ficha-pe {
+  margin-top: 0.5rem;
+}
+@media (max-width: 767px) {
+  .od-ficha thead {
+    display: none;
+  }
+  .od-ficha tr {
+    display: grid;
+    border-bottom: 1px solid var(--border);
+    padding-block: 0.75rem;
+  }
+  .od-ficha th,
+  .od-ficha td {
+    border: 0;
+    padding: 0.15rem 0;
+  }
+}
+/* A miniatura: o mapa dos dentes pequeno, junto do ponteiro, com a região da linha. */
+.od-miniatura {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  width: 11.5rem;
+  border-radius: 0.9rem;
+  background: var(--od-grao), var(--card);
+  box-shadow:
+    inset 0 0 0 1px var(--border),
+    0 18px 30px -18px rgb(43 40 38 / 0.5);
+  padding: 0.6rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease-out;
+}
+.od-miniatura[data-mostra] {
+  opacity: 1;
+}
+.od-miniatura .od-faixa-passo {
+  opacity: 0;
+}
+.od-miniatura[data-ativas~="frente-superior"] [data-regiao="frente-superior"],
+.od-miniatura[data-ativas~="fundo-superior"] [data-regiao="fundo-superior"],
+.od-miniatura[data-ativas~="frente-inferior"] [data-regiao="frente-inferior"],
+.od-miniatura[data-ativas~="fundo-inferior"] [data-regiao="fundo-inferior"] {
+  opacity: 1;
+}
+
+/* ---------- 4 · os cartões de retorno ----------
+   A cerâmica média; a fila de cartões de cerâmica, que desliza de lado e sangra até a borda; o número grande conta. */
+/* Na cerâmica média, o aço mais escuro (5,3:1). */
+.od-cartoes,
+.od-porta,
+.od-onde,
+.od-avaliacao {
+  --muted-foreground: #4f4a45;
+}
+/* As cenas escuras das internas (a página de Tratamentos, a abertura da Equipe): o grafite do consultório, a letra no
+   papel, o filete claro. As peças de papel e de cerâmica por cima voltam à tinta delas. */
+.od-prontuario,
+.od-equipe {
+  --foreground: #f3f1ec;
+  --muted-foreground: #c6bfb5; /* 8,6:1 no grafite */
+  --border: rgb(243 241 236 / 0.2);
+  color: var(--foreground);
+}
+.od-prontuario :focus-visible,
+.od-equipe :focus-visible {
+  outline-color: #f3f1ec;
+}
+.od-cartao,
+.od-placa {
+  --foreground: #2b2826;
+  --muted-foreground: #5c5650;
+  --border: rgb(43 40 38 / 0.16);
+  color: var(--foreground);
+}
+/* Os cartões, na cerâmica médio-clara (#d9d3c7, do roteiro): a folha clara continua a dominar. */
+.od-cartoes {
+  background:
+    radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.32), rgb(255 255 255 / 0) 55%),
+    #d9d3c7;
+  padding-block: clamp(5rem, 3rem + 6vw, 8.5rem);
+}
+.od-cartoes-cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.od-botoes-da-fila > div {
+  gap: 0.75rem;
+}
+.od-botoes-da-fila button {
+  width: 3.25rem;
+  height: 3.25rem;
+  margin: 0;
+  border: 0;
+  border-radius: 0.45rem;
+  background:
+    radial-gradient(120% 120% at 30% 20%, #ffffff, rgb(255 255 255 / 0) 60%),
+    linear-gradient(180deg, #fbfaf6, #e4e0d6);
+  box-shadow:
+    inset 0 0 0 1px rgb(43 40 38 / 0.2),
+    0 6px 12px -6px rgb(43 40 38 / 0.45);
+  color: var(--foreground);
+}
+.od-botoes-da-fila button:hover:not([aria-disabled]) {
+  background:
+    radial-gradient(60% 70% at 50% 55%, rgb(255 236 214 / 0.95), rgb(255 236 214 / 0) 75%),
+    linear-gradient(180deg, #fdfcf8, #ebe7de);
+  color: var(--accent);
+}
+.od-botoes-da-fila button[aria-disabled] {
+  opacity: 0.45;
+}
+.od-fila {
+  --od-respiro: max(clamp(1.25rem, 0.5rem + 3.2vw, 3rem), calc((100vw - 76rem) / 2 + clamp(1.25rem, 0.5rem + 3.2vw, 3rem)));
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--od-respiro);
+  scrollbar-width: none;
+  padding: 1rem var(--od-respiro) 2.5rem;
+  perspective: 1400px;
+}
+.od-fila::-webkit-scrollbar {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-fila {
+    scroll-behavior: smooth;
+  }
+}
+/* O cartão de retorno: o cartão de papel da clínica, impresso no alto, com o picote do bloco à esquerda (os furos) e
+   as linhas pautadas das sessões; inclina sob a mão, e a luz do refletor passa nele. */
+.od-cartao {
+  position: relative;
+  display: flex;
+  width: min(84vw, 21rem);
+  flex: none;
+  flex-direction: column;
+  scroll-snap-align: start;
+  border-radius: 0.35rem;
+  background:
+    radial-gradient(circle at 0.55rem 50%, #d9d3c7 0.22rem, transparent 0.25rem) 0 0 / 1.1rem 0.95rem repeat-y,
+    linear-gradient(90deg, transparent 1.1rem, rgb(43 40 38 / 0.18) 1.1rem calc(1.1rem + 1px), transparent calc(1.1rem + 1px)),
+    var(--od-grao),
+    #fbfaf5;
+  box-shadow:
+    0 1px 1px rgb(43 40 38 / 0.12),
+    0 22px 30px -22px rgb(43 40 38 / 0.55);
+  padding: 1.25rem 1.4rem 1.1rem 2.1rem;
+  transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transition: transform 520ms var(--od-saida);
+}
+.od-cartao[data-sob-a-luz] {
+  transition-duration: 140ms;
+}
+/* A aresta de luz: o refletor na borda vidrada, onde o ponteiro está. */
+.od-cartao::after,
+.od-placa::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(16rem 12rem at var(--luz-x, 20%) var(--luz-y, 0%), rgb(255 255 255 / 0.85), rgb(255 255 255 / 0) 60%);
+  mix-blend-mode: soft-light;
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 220ms ease-out;
+}
+:is(.od-cartao, .od-placa)[data-sob-a-luz]::after {
+  opacity: 1;
+}
+.od-cartao-nome {
+  font-size: 1.5rem;
+  line-height: 1.12;
+}
+.od-cartao-frase {
+  margin-top: 0.4rem;
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+.od-cartao-numero {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  font-size: var(--od-nota);
+  font-weight: 600;
+}
+.od-cartao-numero > :first-child {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 4.75rem;
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+.od-cartao-sessoes {
+  margin-top: 1rem;
+  font-size: var(--od-nota);
+}
+.od-cartao-sessoes > li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-block: 0.55rem;
+}
+.od-cartao-sessoes > li > :first-child {
+  font-weight: 600;
+}
+.od-cartao-depois {
+  flex-basis: 100%;
+  margin-top: 0.3rem;
+  border-top: 1px dashed var(--border);
+  padding-top: 0.3rem;
+  color: var(--muted-foreground);
+}
+.od-cartao-pe {
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+/* ---------- 5 · o termo ----------
+   O papel; as cláusulas do que não se faz aqui, cada uma com o "Nenhum" em cartaz, que o lápis circula ao entrar. */
+.od-termo {
+  padding-block: clamp(5rem, 3rem + 6vw, 9rem);
+}
+.od-clausulas {
+  margin-top: 3rem;
+  counter-reset: clausula;
+}
+.od-clausula {
+  display: grid;
+  gap: 0.75rem 3rem;
+  border-top: 1px solid var(--foreground);
+  padding-block: 2rem 2.25rem;
+}
+@media (min-width: 1024px) {
+  .od-clausula {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    align-items: baseline;
+  }
+}
+.od-clausula-fato {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.od-nenhum {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+  margin-right: 0.15em;
+  font-size: var(--od-cena);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+/* Sob a mão, o lápis passa de novo: o segundo traço, logo abaixo do primeiro. */
+.od-nenhum::before {
+  content: "";
+  position: absolute;
+  right: 0.1em;
+  bottom: -0.1em;
+  left: 0.06em;
+  height: 0.1em;
+  background: var(--od-traco) left center / 100% 100% no-repeat;
+  scale: 0 1;
+  transform-origin: left center;
+  transition: scale 420ms var(--od-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .od-clausula:hover .od-nenhum::before {
+    scale: 1 1;
+  }
+}
+.od-sublinha {
+  position: absolute;
+  left: -0.04em;
+  right: -0.04em;
+  bottom: 0.02em;
+  height: 0.12em;
+  background: var(--od-traco) left center / 100% 100% no-repeat;
+  transform-origin: left center;
+}
+.od-clausula-motivo {
+  max-width: 44ch;
+  color: var(--muted-foreground);
+}
+
+/* ---------- 6 · a porta da clínica ----------
+   A parede de porcelanato (as placas grandes, o rejunte fino); o endereço em cartaz; as placas de cerâmica de quem
+   atende e a do horário, com a luz que a atravessa; o bairro a lápis. */
+/* A parede da recepção: a cerâmica lisa, médio-clara, um tom acima do porcelanato das internas (L 0,87; ΔL 0,08 para
+   o termo), com a luz da janela que entra em diagonal (sem as juntas, que liam como grade de leiaute). */
+.od-porta {
+  background:
+    linear-gradient(115deg, rgb(255 255 255 / 0) 18%, rgb(255 252 244 / 0.4) 30%, rgb(255 252 244 / 0) 44%, rgb(255 252 244 / 0) 52%, rgb(255 252 244 / 0.28) 60%, rgb(255 252 244 / 0) 72%),
+    radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.32), rgb(255 255 255 / 0) 55%),
+    var(--od-grao),
+    #dbd5c9;
+  padding-block: clamp(5rem, 3rem + 6vw, 8.5rem);
+}
+.od-porta-grade {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .od-porta-grade {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    column-gap: 4rem;
+    align-items: start;
+  }
+  .od-placas {
+    grid-row: span 2;
+  }
+}
+.od-porta-endereco address {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: var(--od-endereco);
+  font-style: normal;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.od-porta-endereco address span {
+  display: block;
+  text-wrap: balance;
+}
+/* O CEP numa linha só (o celular o partia em "24210-" e "320"): em linha, sem virar bloco como as linhas do endereço, e
+   sem quebra (o text-wrap: balance de cima também reinicia o modo de quebra e desfazia o whitespace-nowrap da camada). */
+.od-porta-endereco small > span {
+  display: inline;
+  white-space: nowrap;
+}
+.od-porta-endereco small {
+  display: block;
+  margin-top: 0.8rem;
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: var(--od-lide);
+  letter-spacing: 0;
+}
+.od-porta-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1.5rem;
+}
+.od-placas {
+  display: grid;
+  gap: 1rem;
+  perspective: 1200px;
+}
+/* A placa de cerâmica: a peça grossa, com o bisel claro em cima e escuro embaixo, a letra gravada (funda: a luz na
+   borda de baixo do traço). */
+.od-placa {
+  position: relative;
+  border-radius: 0.5rem;
+  background:
+    radial-gradient(120% 90% at 22% 0%, rgb(255 255 255 / 0.9), rgb(255 255 255 / 0) 55%),
+    linear-gradient(170deg, #f8f5ee, #e7e2d7);
+  box-shadow:
+    inset 0 2px 0 #ffffff,
+    inset 0 -3px 0 rgb(43 40 38 / 0.14),
+    inset 2px 0 0 rgb(255 255 255 / 0.7),
+    inset -2px 0 0 rgb(43 40 38 / 0.08),
+    0 2px 2px rgb(43 40 38 / 0.18),
+    0 18px 26px -18px rgb(43 40 38 / 0.55);
+  padding: 1.25rem 1.4rem;
+  transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transition: transform 520ms var(--od-saida);
+}
+.od-placa[data-sob-a-luz] {
+  transition-duration: 140ms;
+}
+.od-placa-nome {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(1.35rem, 1.15rem + 0.5vw, 1.65rem);
+  font-weight: 500;
+  line-height: 1.15;
+  /* Gravada: a sombra em cima, a luz embaixo do traço. */
+  text-shadow:
+    0 -1px 0 rgb(43 40 38 / 0.28),
+    0 1px 0 rgb(255 255 255 / 0.9);
+}
+.od-placa-cro {
+  margin-top: 0.35rem;
+  font-size: var(--od-nota);
+}
+.od-placa-titulo {
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+/* A placa do horário: maior, com a luz do refletor que a atravessa devagar (o ambiente). */
+.od-placa-horario {
+  overflow: hidden;
+  padding: 1.6rem 1.75rem;
+}
+.od-placa-luz {
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgb(255 250 238 / 0.85), transparent);
+  pointer-events: none;
+  translate: -120% 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-placa-luz {
+    animation: od-atravessa 11s ease-in-out infinite;
+  }
+  .od-placa-luz[data-fora],
+  html.ambiente-pausado .od-placa-luz {
+    animation-play-state: paused;
+  }
+}
+@keyframes od-atravessa {
+  0%,
+  35% {
+    translate: -120% 0;
+  }
+  80%,
+  100% {
+    translate: 330% 0;
+  }
+}
+.od-placa-rotulo {
+  position: relative;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.od-placa-dias {
+  position: relative;
+  display: grid;
+  margin-top: 0.75rem;
+  font-size: var(--od-nota);
+}
+.od-placa-dias > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-block: 0.5rem;
+}
+.od-placa-dias dt {
+  color: var(--muted-foreground);
+}
+.od-placa-nota {
+  position: relative;
+  margin-top: 0.4rem;
+  font-size: var(--od-miudo);
+  color: var(--muted-foreground);
+}
+.od-placa-estado {
+  position: relative;
+  margin-top: 1rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
+}
+/* O bairro a lápis: o traço do grafite, a clínica circulada; sob o ponteiro, aproxima 3%. */
+.od-bairro {
+  overflow: hidden;
+  padding: 1rem;
+}
+.od-bairro svg > g {
+  filter: url(#lapis-da-clinica);
+}
+.od-bairro svg > g path[stroke] {
+  stroke: #3d3935;
+  stroke-width: 2.4px;
+  stroke-opacity: 0.75;
+}
+.od-bairro svg > g path[fill]:not([fill="none"]) {
+  fill: rgb(61 57 53 / 0.08);
+}
+.od-bairro svg {
+  transition: transform 800ms var(--od-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .od-bairro:hover svg {
+    transform: scale(1.03);
+  }
+}
+.od-bairro figcaption {
+  font-size: var(--od-miudo);
+}
+
+/* ---------- 7 · a avaliação marcada (a chamada) ----------
+   O vermelho do lápis de ponta a ponta; o título no papel; a peça de cerâmica; a placa de volta à luz, à direita. */
+.od-chamada {
+  display: grid;
+  min-height: max(40rem, calc(116svh - var(--od-topo)));
+  align-content: center;
+  background:
+    var(--od-grao),
+    radial-gradient(70% 90% at 22% 40%, rgb(255 210 190 / 0.18), transparent 70%),
+    var(--accent);
+  color: #fbfaf6;
+  padding-block: clamp(5rem, 3rem + 6vw, 8.5rem);
+}
+.od-chamada :focus-visible {
+  outline-color: #fbfaf6;
+}
+.od-chamada-grade {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+}
+@media (min-width: 1024px) {
+  .od-chamada-grade {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .od-ancora-da-chamada {
+    order: -1;
+  }
+}
+.od-chamada-titulo {
+  font-size: var(--od-grande);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+}
+.od-chamada-lide {
+  margin-top: 1.75rem;
+  max-width: 40ch;
+  font-size: var(--od-lide);
+  line-height: 1.45;
+}
+.od-chamada-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.75rem;
+  margin-top: 2.5rem;
+}
+.od-ancora-da-chamada {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+/* ---------- a troca de página e os momentos ----------
+   A página que chega assenta (só o conteúdo: a seção não cria contexto, o palco fica entre o fundo e o texto). A
+   capa, na primeira abertura: o título se compõe, palavra por palavra, em até 600 ms. Abaixo da dobra, cada cena tem o
+   seu momento, uma vez. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Sem reter o fim (nada de "both"): a animação acabada não deixa contexto de empilhamento no bloco. */
+  .od-troca > :first-child > .od-largura {
+    animation: od-assenta 560ms var(--od-saida);
+  }
+  html:not(.ja-aberto) .od-capa .od-palavra {
+    animation: od-compoe 460ms var(--od-saida) both;
+    animation-delay: calc(60ms + var(--i, 0) * 32ms);
+  }
+  html:not(.ja-aberto) :is(.od-capa-lide, .od-capa-acoes, .od-capa-estado) {
+    animation: od-aparece 380ms ease-out 260ms both;
+  }
+
+  /* 2 · Os passos chegam de baixo, um depois do outro. */
+  .od-percurso[data-aguarda] .od-passo {
+    opacity: 0;
+    translate: 0 2rem;
+  }
+  .od-percurso .od-passo {
+    transition:
+      opacity 420ms ease-out,
+      translate 620ms var(--od-saida);
+  }
+  /* 3 · A pauta da ficha se risca, linha por linha. */
+  .od-ficha-cena[data-aguarda] .od-ficha tbody tr {
+    opacity: 0;
+  }
+  .od-ficha-cena .od-ficha tbody tr {
+    transition: opacity 360ms ease-out;
+  }
+  .od-ficha-cena .od-ficha tbody tr:nth-child(2) {
+    transition-delay: 70ms;
+  }
+  .od-ficha-cena .od-ficha tbody tr:nth-child(3) {
+    transition-delay: 140ms;
+  }
+  .od-ficha-cena .od-ficha tbody tr:nth-child(4) {
+    transition-delay: 210ms;
+  }
+  .od-ficha-cena .od-ficha tbody tr:nth-child(5) {
+    transition-delay: 280ms;
+  }
+  .od-ficha-cena .od-ficha tbody tr:nth-child(6) {
+    transition-delay: 350ms;
+  }
+  /* 4 · Os cartões assentam na fila, em cascata. */
+  .od-cartoes[data-aguarda] .od-cartao {
+    opacity: 0;
+    translate: 3rem 0;
+  }
+  .od-cartoes .od-cartao {
+    transition:
+      opacity 400ms ease-out,
+      translate 700ms var(--od-saida),
+      transform 520ms var(--od-saida);
+    transition-delay: calc(var(--i, 0) * 80ms), calc(var(--i, 0) * 80ms), 0ms;
+  }
+  /* 5 · O lápis circula cada "Nenhum", um depois do outro. */
+  .od-termo[data-aguarda] .od-sublinha {
+    scale: 0 1;
+  }
+  .od-termo .od-sublinha {
+    transition: scale 680ms var(--od-saida) 200ms;
+  }
+  .od-termo .od-clausula:nth-child(2) .od-sublinha {
+    transition-delay: 380ms;
+  }
+  .od-termo .od-clausula:nth-child(3) .od-sublinha {
+    transition-delay: 560ms;
+  }
+  .od-termo .od-clausula:nth-child(4) .od-sublinha {
+    transition-delay: 740ms;
+  }
+  /* 6 · As placas são postas na parede, uma a uma. */
+  .od-porta[data-aguarda] :is(.od-placa-de-nome, .od-placa-horario) {
+    opacity: 0;
+    translate: 0 -1rem;
+  }
+  .od-porta :is(.od-placa-de-nome, .od-placa-horario) {
+    transition:
+      opacity 360ms ease-out,
+      translate 560ms var(--od-saida),
+      transform 520ms var(--od-saida);
+  }
+  .od-porta .od-placa-de-nome:nth-child(2) {
+    transition-delay: 90ms, 90ms, 0ms;
+  }
+  .od-porta .od-placa-de-nome:nth-child(3) {
+    transition-delay: 180ms, 180ms, 0ms;
+  }
+  .od-porta .od-placa-horario {
+    transition-delay: 300ms, 300ms, 0ms;
+  }
+  /* 7 · O título da chamada sobe do vermelho. */
+  .od-chamada[data-aguarda] .od-chamada-texto {
+    opacity: 0;
+    translate: 0 2.5rem;
+  }
+  .od-chamada .od-chamada-texto {
+    transition:
+      opacity 420ms ease-out,
+      translate 700ms var(--od-saida);
+  }
+}
+@keyframes od-assenta {
+  from {
+    translate: 0 0.75rem;
+  }
+}
+@keyframes od-compoe {
+  from {
+    opacity: 0;
+    translate: 0 0.3em;
+  }
+}
+@keyframes od-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- o mapa dos dentes (a reserva e o controle) ----------
+   O traço da ficha clínica: o dente em papel com o contorno de grafite, os sulcos, a numeração FDI; a região circulada
+   a lápis (o marcador e o traço vermelho). */
+.od-dente {
+  fill: var(--card);
+  stroke: var(--foreground);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.od-sulco {
+  fill: none;
+  stroke: var(--muted-foreground);
+  stroke-width: 0.8;
+  stroke-linecap: round;
+}
+.od-numero {
+  fill: var(--muted-foreground);
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.od-legenda-do-mapa {
+  fill: var(--muted-foreground);
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.od-faixa {
+  fill: var(--marcador);
+  fill-opacity: 0.78;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.od-faixa-passo {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-faixa-entra {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: od-circula 340ms var(--od-saida) both;
+  }
+}
+@keyframes od-circula {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+}
+/* A área de toque de cada região, por cima do desenho (ou da placa): sob o ponteiro, a sombra do marcador. */
+.od-area {
+  fill: var(--marcador);
+  fill-opacity: 0;
+  cursor: pointer;
+  transition: fill-opacity 150ms ease-out;
+}
+@media (hover: hover) {
+  .od-area:hover {
+    fill-opacity: 0.45;
+  }
+}
+/* Com o palco de pé, a âncora fixa mostra a placa de cerâmica: do mapa, ficam só as áreas de toque. */
+html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sulco, .od-numero, .od-legenda-do-mapa, .od-faixa) {
+  opacity: 0;
+}
+
+/* ---------- a escolha (a região, o atendimento) ---------- */
+.od-escolha {
+  display: grid;
+  min-width: 0;
+  gap: 0.9rem;
+}
+.od-escolha-legenda {
+  margin-bottom: 0.2rem;
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: var(--od-nota);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+.od-escolha-ajuda {
+  max-width: 46ch;
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+.od-folha-do-mapa {
+  max-width: 32rem;
+  border-top: 2px solid var(--foreground);
+  border-bottom: 1px solid var(--border);
+}
+.od-folha-cabeca {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.5rem;
+  font-size: var(--od-miudo);
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+.od-ancora-fixa {
+  pointer-events: auto;
+  /* A folga em cima: a placa, quase plana, não sobe por cima do cabeçalho do mapa. */
+  padding: 1.75rem 0.25rem 1.25rem;
+}
+.od-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.od-opcoes-em-duas {
+  display: grid;
+  gap: 0.35rem 1.5rem;
+}
+@media (min-width: 640px) {
+  .od-opcoes-em-duas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+/* A opção da ficha: o círculo vazado; a escolhida, a etiqueta de papel com o ponto a lápis. */
+@layer components {
+  .od-opcao {
+    position: relative;
+    display: inline-flex;
+    min-height: 2.75rem;
+    cursor: pointer;
+    align-items: center;
+    gap: 0.6rem;
+    border-radius: 999px;
+    padding: 0.35rem 0.95rem 0.35rem 0.6rem;
+    font-size: var(--od-nota);
+    font-weight: 600;
+    transition: background-color 160ms ease-out;
+  }
+  .od-opcao::before {
+    content: "";
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: none;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1.5px var(--foreground);
+  }
+  .od-opcao-larga {
+    width: 100%;
+  }
+  :checked + .od-opcao {
+    background: #fdfcf8;
+    box-shadow:
+      inset 0 0 0 1px rgb(43 40 38 / 0.22),
+      0 2px 4px -2px rgb(43 40 38 / 0.35);
+    color: #2b2826;
+  }
+  :checked + .od-opcao::before {
+    background: radial-gradient(circle, var(--accent) 0 0.28rem, transparent 0.3rem);
+    box-shadow: inset 0 0 0 1.5px var(--accent);
+  }
+  :focus-visible + .od-opcao {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+@media (hover: hover) {
+  :not(:checked) + .od-opcao:hover {
+    background: color-mix(in srgb, currentColor 8%, transparent);
+  }
+}
+.od-sem-script {
+  display: grid;
+  max-width: 52ch;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+.js .od-sem-script {
+  display: none;
+}
+
+/* ---------- o prontuário (Tratamentos) ----------
+   A pasta: a borda de cartão da pasta em volta (o fundo da cena), a etiqueta com o título; a ficha dentro. Ao abrir a
+   página, a capa da pasta gira e mostra a ficha (o momento desta página). */
+.od-prontuario {
+  overflow: clip;
+  background:
+    radial-gradient(60% 70% at 30% 0%, rgb(255 240 220 / 0.12), rgb(255 240 220 / 0) 70%),
+    var(--od-grao),
+    linear-gradient(180deg, #262321, #1d1b1a);
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem) clamp(4rem, 3rem + 3vw, 6rem);
+}
+/* No grafite, o círculo vazado em papel (a escolhida volta ao lápis, na etiqueta clara). */
+.od-prontuario :not(:checked) + .od-opcao::before {
+  box-shadow: inset 0 0 0 1.5px #f3f1ec;
+}
+.od-prontuario-etiqueta {
+  max-width: 54rem;
+  margin-bottom: clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+.od-prontuario-capa {
+  display: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-prontuario-capa {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: block;
+    background:
+      var(--od-grao),
+      linear-gradient(160deg, #e9e3d6, #d8d1c1);
+    box-shadow: inset -1px 0 0 rgb(43 40 38 / 0.25);
+    transform-origin: left center;
+    animation: od-pasta-abre 900ms var(--od-saida) 120ms both;
+    pointer-events: none;
+  }
+}
+@keyframes od-pasta-abre {
+  from {
+    transform: perspective(2400px) rotateY(0deg);
+  }
+  to {
+    transform: perspective(2400px) rotateY(-96deg);
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+.od-plano {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .od-plano {
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    align-items: start;
+    gap: 4rem;
+  }
+}
+.od-plano[data-regiao="frente-superior"] [data-regioes]:not([data-regioes~="frente-superior"]),
+.od-plano[data-regiao="fundo-superior"] [data-regioes]:not([data-regioes~="fundo-superior"]),
+.od-plano[data-regiao="frente-inferior"] [data-regioes]:not([data-regioes~="frente-inferior"]),
+.od-plano[data-regiao="fundo-inferior"] [data-regioes]:not([data-regioes~="fundo-inferior"]) {
+  display: none;
+}
+.od-plano-contagem {
+  margin-bottom: 0.75rem;
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+.od-plano-lista {
+  border-top: 2px solid var(--foreground);
+}
+.od-plano-linha {
+  display: grid;
+  gap: 0.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-block: 1.25rem;
+}
+@media (min-width: 768px) {
+  .od-plano-linha {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 12rem);
+  }
+}
+.od-plano-nome {
+  font-size: clamp(1.35rem, 1.15rem + 0.5vw, 1.7rem);
+}
+.od-plano-nome .od-lapis {
+  color: var(--foreground);
+  font-weight: 500;
+}
+.od-plano-frase {
+  margin-top: 0.15rem;
+}
+.od-plano-regioes {
+  margin-top: 0.2rem;
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+.od-plano-sessoes {
+  font-weight: 600;
+}
+.od-plano-numero {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 2.4rem;
+  font-weight: 300;
+  line-height: 1;
+}
+.od-plano-intervalo {
+  display: block;
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+.od-plano-seguir {
+  margin-top: 1rem;
+}
+
+/* ---------- a ressalva e os outros ---------- */
+.od-ressalva {
+  border-top: 2px solid var(--foreground);
+  padding-block: 2rem 4rem;
+}
+.od-ressalva > p {
+  max-width: 58ch;
+}
+.od-ressalva-nota {
+  margin-top: 0.4rem;
+  color: var(--muted-foreground);
+}
+.od-ressalva-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.75rem;
+  margin-top: 1.75rem;
+}
+.od-outros {
+  padding-bottom: 4rem;
+}
+.od-outros ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.75rem;
+}
+
+/* ---------- um tratamento ---------- */
+.od-tratamento {
+  padding-block: clamp(2.5rem, 2rem + 2vw, 4rem) clamp(3rem, 2rem + 3vw, 5rem);
+}
+.od-tratamento-grade {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .od-tratamento-grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 24rem);
+    align-items: center;
+    gap: 4rem;
+  }
+}
+.od-tratamento-titulo {
+  margin-top: 1rem;
+}
+.od-tratamento-nome {
+  display: block;
+  font-size: var(--od-grande);
+  font-weight: 300;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+.od-tratamento-tempo {
+  display: block;
+  margin-top: 1rem;
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--muted-foreground);
+}
+.od-tratamento-margem {
+  display: grid;
+  gap: 1rem;
+}
+.od-ancora-do-tratamento {
+  width: 100%;
+  aspect-ratio: 1.1;
+}
+.od-tratamento-onde {
+  font-size: var(--od-nota);
+}
+.od-tratamento-onde span {
+  display: block;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+.od-placa-rotulo-miudo {
+  margin-bottom: 0.35rem;
+  font-family: var(--font-od-texto), sans-serif;
+  font-size: var(--od-miudo);
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+/* A evolução clínica: a sessão, o dia e a duração, na linha do tempo da ficha. */
+.od-evolucao {
+  padding-block: 2rem 3.5rem;
+}
+.od-evolucao-lista {
+  max-width: 44rem;
+  margin-top: 2rem;
+  border-top: 2px solid var(--foreground);
+}
+.od-evolucao-lista > li {
+  border-bottom: 1px solid var(--border);
+  padding-block: 1rem;
+}
+.od-evolucao-sessao {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.od-evolucao-sessao span {
+  color: var(--muted-foreground);
+}
+.od-evolucao-faz {
+  margin-top: 0.3rem;
+  max-width: 56ch;
+}
+.od-evolucao-depois {
+  margin-top: 0.6rem;
+  font-size: var(--od-nota);
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+.od-evolucao-cuidados-titulo {
+  margin-top: 3rem;
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.25rem);
+  font-weight: 400;
+}
+.od-evolucao-cuidados {
+  margin-top: 0.8rem;
+  max-width: 48ch;
+}
+/* A linha do tempo: as sessões na régua dos dias, cada uma uma peça de cerâmica; o traço do lápis se desenha. */
+.od-linha {
+  margin-top: 2rem;
+}
+.od-linha-regua {
+  position: relative;
+  height: 9rem;
+  margin-inline: 5.25rem;
+}
+.od-linha-traco,
+.od-linha-ciclo {
+  position: absolute;
+  top: 4.25rem;
+  height: 2px;
+  border-radius: 2px;
+}
+.od-linha-traco {
+  left: 0;
+  background: var(--accent);
+  transform-origin: left center;
+}
+.od-linha-ciclo {
+  right: 0;
+  background: repeating-linear-gradient(90deg, var(--accent) 0 6px, transparent 6px 12px);
+  -webkit-mask-image: linear-gradient(90deg, #000 30%, transparent);
+  mask-image: linear-gradient(90deg, #000 30%, transparent);
+}
+.od-linha-intervalo {
+  position: absolute;
+  top: 0.5rem;
+  translate: -50% 0;
+  color: var(--accent);
+  font-size: var(--od-nota);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.od-linha-marco {
+  position: absolute;
+  top: 3rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  translate: -50% 0;
+}
+.od-linha-peca {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  border-radius: 999px;
+  background:
+    var(--od-vidrado),
+    linear-gradient(170deg, #fffefb, #f1eee7);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    inset 0 0 0 1px rgb(43 40 38 / 0.12),
+    0 10px 20px -12px rgb(43 40 38 / 0.4);
+  padding: 0.55rem 1.1rem;
+  font-size: var(--od-nota);
+  white-space: nowrap;
+}
+.od-linha-peca > span {
+  color: var(--muted-foreground);
+}
+.od-linha-dia {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-linha-traco {
+    animation: od-risca 1100ms var(--od-saida) 450ms both;
+  }
+  .od-linha-marco,
+  .od-linha-intervalo {
+    animation: od-aparece 380ms ease-out both;
+    animation-delay: calc(500ms + var(--i, 0) * 200ms);
+  }
+}
+@keyframes od-risca {
+  from {
+    scale: 0 1;
+  }
+}
+
+/* ---------- a avaliação: o cartão de consulta ---------- */
+.od-avaliacao {
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem);
+}
+.od-avaliacao-cartao {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+}
+.od-pedido {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .od-pedido {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 25rem);
+    align-items: start;
+    gap: 4rem;
+  }
+}
+.od-pedido-campos {
+  display: grid;
+  min-width: 0;
+  gap: 3rem;
+}
+.od-nota-a-lapis {
+  max-width: 52ch;
+  font-weight: 600;
+  color: var(--accent);
+}
+.od-pedido-linhas {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 640px) {
+  .od-pedido-linhas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.od-linha-do-cartao {
+  display: grid;
+  gap: 0.35rem;
+}
+/* O campo da ficha: a linha escrita, sem a caixa; a seta desenhada a grafite. */
+.od-linha-escrita {
+  width: 100%;
+  min-height: 2.75rem;
+  appearance: none;
+  border-radius: 0;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%232b2826' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") right 0.25rem center / 0.75rem no-repeat;
+  box-shadow: inset 0 -1.5px 0 var(--foreground);
+  padding: 0.4rem 1.75rem 0.4rem 0.1rem;
+  font-size: 1rem;
+  color: var(--foreground);
+}
+/* O cartão de consulta: o cartão pautado, a mensagem escrita nele, a margem vermelha. */
+.od-cartao-de-consulta {
+  border-radius: 0.6rem;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(1.75rem - 1px), rgb(43 40 38 / 0.1) calc(1.75rem - 1px) 1.75rem) 0 3.6rem / 100% calc(100% - 7.5rem) no-repeat,
+    linear-gradient(90deg, transparent 2.4rem, rgb(163 35 25 / 0.45) 2.4rem calc(2.4rem + 1px), transparent calc(2.4rem + 1px)),
+    var(--od-grao),
+    var(--card);
+  box-shadow:
+    inset 0 0 0 1px rgb(43 40 38 / 0.1),
+    0 2px 2px rgb(43 40 38 / 0.08),
+    0 26px 40px -26px rgb(43 40 38 / 0.5);
+  padding: 1.5rem 1.5rem 1.5rem 3.2rem;
+}
+@media (min-width: 1024px) {
+  .od-cartao-de-consulta {
+    position: sticky;
+    top: calc(var(--od-topo) + 1.5rem);
+  }
+}
+.od-cartao-de-consulta-titulo {
+  font-size: 1.35rem;
+}
+.od-cartao-de-consulta-texto {
+  min-height: calc(1.75rem * 6);
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.75rem;
+}
+.od-cartao-de-consulta-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+/* Os campos numerados da ficha (o que acontece na avaliação). */
+.od-campos-da-ficha {
+  padding-block: clamp(3.5rem, 2.5rem + 3vw, 6rem);
+}
+.od-campos {
+  display: grid;
+  margin-top: 2.25rem;
+  border-top: 2px solid var(--foreground);
+}
+@media (min-width: 900px) {
+  .od-campos {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .od-campo + .od-campo {
+    border-left: 1px solid var(--border);
+  }
+}
+.od-campo {
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.25rem 1.25rem 0;
+}
+@media (min-width: 900px) {
+  .od-campo + .od-campo {
+    padding-left: 1.25rem;
+  }
+}
+.od-campo-numero {
+  display: block;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--muted-foreground);
+}
+.od-campo p {
+  margin-top: 0.6rem;
+}
+.od-campos-pe {
+  margin-top: 1.25rem;
+  max-width: 54ch;
+  color: var(--muted-foreground);
+}
+.od-campos-pe strong {
+  color: var(--foreground);
+}
+
+/* ---------- a equipe: as placas acesas uma a uma ---------- */
+.od-equipe {
+  background:
+    radial-gradient(70% 80% at 50% 0%, rgb(255 240 220 / 0.14), rgb(255 240 220 / 0) 70%),
+    var(--od-grao),
+    linear-gradient(180deg, #262321, #1d1b1a);
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem) clamp(4rem, 3rem + 3vw, 6rem);
+}
+/* O corredor: uma porta por linha, a placa à esquerda e a ficha na parede, à direita. */
+.od-equipe-portas {
+  margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
+  border-top: 1px solid var(--border);
+  perspective: 1400px;
+}
+.od-equipe-portas > li {
+  display: grid;
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-block: clamp(1.75rem, 1.25rem + 1.5vw, 2.75rem);
+}
+@media (min-width: 900px) {
+  .od-equipe-portas > li {
+    grid-template-columns: minmax(0, 23rem) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(2.5rem, 1rem + 4vw, 5rem);
+  }
+}
+.od-equipe .od-placa {
+  max-width: 23rem;
+  padding: 1.5rem 1.6rem 1.4rem;
+}
+.od-equipe .od-placa-nome {
+  font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2.1rem);
+}
+.od-sala-titulo {
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.6rem);
+  font-weight: 300;
+  line-height: 1.25;
+}
+.od-sala-ficha {
+  display: grid;
+  gap: 1rem 3rem;
+  margin-top: 1.25rem;
+  font-size: var(--od-nota);
+}
+@media (min-width: 1200px) {
+  .od-sala-ficha {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+.od-sala-ficha dt {
+  font-weight: 700;
+}
+.od-sala-ficha dd {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+}
+.od-sala-ficha li + li {
+  margin-top: 0.35rem;
+}
+.od-equipe-nota {
+  max-width: 62ch;
+  margin-top: 1.5rem;
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* O refletor acende cada placa, uma depois da outra: a luz morna passa por ela. */
+  .od-placa-acesa::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(70% 90% at 50% 40%, rgb(255 236 214 / 0.9), rgb(255 236 214 / 0) 70%);
+    opacity: 0;
+    pointer-events: none;
+    animation: od-acende 1400ms ease-in-out both;
+    animation-delay: calc(250ms + var(--i, 0) * 380ms);
+  }
+}
+@keyframes od-acende {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.od-clinica {
+  padding-block: 2rem 4rem;
+}
+.od-clinica-itens {
+  display: grid;
+  gap: 0 3rem;
+  margin-top: 2rem;
+}
+@media (min-width: 900px) {
+  .od-clinica-itens {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.od-clinica-itens > div {
+  border-top: 1px solid var(--border);
+  padding-block: 1rem;
+}
+.od-clinica-itens dt {
+  font-weight: 700;
+}
+.od-clinica-itens dd {
+  color: var(--muted-foreground);
+}
+.od-clinica-acao {
+  margin-top: 2.5rem;
+}
+
+/* ---------- as guias: as perguntas como campos da ficha ---------- */
+.od-guias {
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem);
+}
+.od-guias-grade {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .od-guias-grade {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 4rem;
+  }
+}
+.od-perguntas {
+  margin-top: 0.6rem;
+  border-top: 2px solid var(--foreground);
+}
+.od-pergunta {
+  border-bottom: 1px solid var(--border);
+}
+.od-pergunta summary {
+  display: grid;
+  min-height: 3.5rem;
+  cursor: pointer;
+  grid-template-columns: minmax(0, 1fr) 1.5rem;
+  align-items: center;
+  gap: 1rem;
+  padding-block: 0.85rem;
+  list-style: none;
+}
+.od-pergunta summary::-webkit-details-marker {
+  display: none;
+}
+.od-pergunta-texto {
+  font-weight: 600;
+}
+/* Na margem direita da linha: a casa vazia da ficha, a grafite, na fechada; o tique a lápis por cima, na aberta. */
+.od-tique-de-lapis {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+}
+.od-tique-de-lapis svg {
+  width: 1.3rem;
+  height: 1.3rem;
+  overflow: visible;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.od-tique-de-lapis path {
+  transform-origin: center;
+  transition:
+    opacity 200ms ease-out,
+    scale 320ms var(--od-saida);
+}
+.od-tique-fechado {
+  stroke: var(--muted-foreground);
+  stroke-width: 1.6;
+}
+.od-tique-aberto {
+  opacity: 0;
+  scale: 0.6;
+}
+.od-pergunta[open] .od-tique-aberto {
+  opacity: 1;
+  scale: 1;
+}
+.od-pergunta summary:hover .od-tique-fechado {
+  stroke: var(--foreground);
+}
+.od-pergunta-resposta {
+  max-width: 60ch;
+  padding: 0 2.5rem 1.25rem 0;
+  color: var(--muted-foreground);
+}
+/* O que levar: a nota da ficha sob a abertura, com o mesmo fio das perguntas. */
+.od-levar {
+  max-width: 48ch;
+  margin-top: clamp(2rem, 1.5rem + 1.5vw, 3rem);
+}
+.od-levar h2 {
+  border-bottom: 2px solid var(--foreground);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+.od-levar-duracao {
+  margin-top: 0.75rem;
+  color: var(--muted-foreground);
+}
+.od-cuidados {
+  padding-block: 2rem 4rem;
+}
+.od-cuidados-lista {
+  display: grid;
+  gap: 0 3rem;
+  margin-top: 2rem;
+}
+@media (min-width: 900px) {
+  .od-cuidados-lista {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.od-cuidados-lista > div {
+  border-top: 1px solid var(--border);
+  padding-block: 1rem;
+}
+.od-cuidados-lista dd {
+  color: var(--muted-foreground);
+}
+
+/* ---------- onde: o bairro a lápis ---------- */
+.od-onde,
+.od-avaliacao {
+  background:
+    radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.3), rgb(255 255 255 / 0) 55%),
+    var(--od-ceramica-media);
+}
+.od-onde {
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem);
+}
+.od-onde-grade {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .od-onde-grade {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: 3.5rem;
+  }
+}
+.od-onde-endereco {
+  margin-top: 2rem;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(1.6rem, 1.3rem + 1vw, 2.25rem);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.2;
+}
+.od-onde-endereco span {
+  display: block;
+}
+.od-bairro-grande {
+  position: relative;
+}
+/* A clínica marcada com o xis do lápis vermelho, como na ficha, ao abrir a página. */
+.od-bairro-volta {
+  position: absolute;
+  inset: 1rem 1rem 2.6rem;
+  width: calc(100% - 2rem);
+  height: calc(100% - 3.6rem);
+  overflow: visible;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-bairro-volta {
+    transform-origin: 52% 50%;
+    animation: od-volta 900ms var(--od-saida) 400ms both;
+  }
+}
+@keyframes od-volta {
+  from {
+    opacity: 0;
+    scale: 0.7;
+  }
+}
+.od-onde-horario {
+  display: grid;
+  gap: 3rem;
+  padding-block: 2rem 4rem;
+}
+@media (min-width: 1024px) {
+  .od-onde-horario {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 4rem;
+  }
+}
+.od-onde-placa {
+  max-width: 34rem;
+  margin-top: 1.5rem;
+}
+.od-onde-acesso {
+  margin-bottom: 2rem;
+}
+.od-onde-acesso li {
+  border-top: 1px solid var(--border);
+  padding-block: 0.7rem;
+}
+.od-onde-prazo {
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+
+/* ---------- as páginas legais: o verso da ficha ---------- */
+.od-legal {
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem) 4rem;
+}
+.od-legal-abertura {
+  display: grid;
+  max-width: 46ch;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  font-size: var(--od-lide);
+  color: var(--muted-foreground);
+}
+.od-legal-blocos {
+  max-width: 54ch;
+  margin-top: 3rem;
+}
+.od-legal-blocos section {
+  border-top: 1px solid var(--border);
+  padding-block: 1.5rem;
+}
+.od-legal-blocos h2 {
+  font-size: 1.35rem;
+}
+.od-legal-blocos p,
+.od-legal-blocos ul {
+  margin-top: 0.6rem;
+}
+.od-legal-blocos ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.od-legal-data {
+  font-size: var(--od-nota);
+  color: var(--muted-foreground);
+}
+
+/* ---------- o passe do celular (14.10.2026) ----------
+   Só abaixo de 1024 px: a mesa fica como foi aprovada. A pasta entra no fluxo, presa ao alto (sem a faixa de papel
+   entre ela e a primeira cena, que agora ela lê); no celular, numa linha, com as páginas no índice do prontuário; a
+   placa atrás do título, na primeira tela; o percurso com a placa presa na faixa de cima e os passos empilhados
+   embaixo dela, como folhas da ficha (o texto nunca passa sobre a placa); a miniatura na linha da ficha; a linha do
+   tempo em coluna; os alvos de 44 px. Registro: registros/demos/odontologia/lapidacao.md, "Passe do celular". */
+.od-so-no-celular,
+.od-ficha-mini,
+.od-indice-gatilho {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .od-so-na-mesa {
+    display: none;
+  }
+  .od-so-no-celular {
+    display: block;
+  }
+
+  /* A pasta no fluxo, presa ao alto: a primeira cena começa logo embaixo dela, e a tinta a lê. */
+  html:has([data-demo="odontologia"]) {
+    --od-topo: 6.8rem; /* a pasta de duas linhas, de 640 a 1023 px (medida: 108,8 px) */
+  }
+  .od-pasta {
+    position: sticky;
+  }
+  .od-conteudo {
+    padding-top: 0;
+  }
+
+  /* O interruptor do refletor: o alvo de 44 × 44 px; a tecla de balanço desenhada no meio dele. */
+  .od-interruptor button,
+  .od-interruptor button:hover {
+    width: 2.75rem;
+    background: none;
+    box-shadow: none;
+  }
+  .od-interruptor button::before {
+    content: "";
+    position: absolute;
+    inset: 0 0.625rem;
+    border-radius: 0.3rem;
+    background: linear-gradient(180deg, #d9d3c7 0 50%, #fdfcf8 50% 100%);
+    box-shadow:
+      inset 0 0 0 1px rgb(43 40 38 / 0.25),
+      inset 0 -2px 0 rgb(43 40 38 / 0.1);
+  }
+  .od-interruptor button[aria-pressed="true"]::before {
+    background: linear-gradient(180deg, #fdfcf8 0 50%, #d9d3c7 50% 100%);
+  }
+  /* Sem o que pausar (sem script, com movimento reduzido), a placa do interruptor não fica vazia na pasta. */
+  .od-interruptor:has(button:disabled) {
+    visibility: hidden;
+  }
+
+  /* Os vínculos a lápis: nenhum alvo abaixo de 44 px de largura (Guias, Onde, Coroa). */
+  :is(.od-lapis, .od-lapis-claro) {
+    min-width: 2.75rem;
+    justify-content: center;
+  }
+
+  /* Sem os vãos grandes no fim das páginas: o pé mais perto do conteúdo; o vínculo da região, que só aparece com uma
+     região escolhida, não guarda o lugar dele (no celular, a lista filtrada já muda de altura). */
+  .od-receituario {
+    padding-top: 1.75rem;
+  }
+  .od-ressalva {
+    padding-bottom: 2.5rem;
+  }
+  .od-plano-seguir.invisible {
+    display: none;
+  }
+
+  /* A ação de cerâmica grande: na largura da coluna, ao alcance do polegar, numa linha só de 360 px para cima. */
+  .od-ceramica-grande {
+    width: 100%;
+    max-width: 26rem;
+    padding-inline: 1rem;
+    font-size: 1.0625rem;
+  }
+
+  /* 1 · A capa: a placa atrás do título, na primeira tela (o roteiro); a ação logo depois do título, até 60% da tela
+     (só a ordem visual: o foco e a leitura seguem o HTML); o lide e o estado embaixo. A caixa da placa tem a altura do
+     título: o lide e o estado, em letra clara, nunca passam sobre a cerâmica. */
+  .od-capa {
+    min-height: 0;
+    align-items: start;
+    padding-block: 1.25rem 3.25rem;
+  }
+  /* O refletor no toque: a luz desce sobre a placa e a poça morna fica embaixo dela, menor; o título, que atravessa a
+     placa por diferença, não cruza o fundo aceso (a meia-luz apagava a mistura: o pior trecho caía a 2,4:1). */
+  .od-capa::before {
+    background:
+      radial-gradient(15rem 9rem at var(--refletor-x, 62%) var(--refletor-y, 52%), rgb(255 236 210 / 0.3), rgb(255 236 210 / 0) 68%),
+      linear-gradient(200deg, rgb(255 240 220 / 0.07) 0%, rgb(255 240 220 / 0) 40%);
+  }
+  .od-capa-grade {
+    display: block;
+  }
+  .od-ancora-da-capa {
+    position: absolute;
+    top: 0;
+    right: max(0px, calc(clamp(1.25rem, 0.5rem + 3.2vw, 3rem) - 0.75rem));
+    width: min(92%, calc(var(--od-cartaz) * 5.1));
+    height: calc(var(--od-cartaz) * 4.3);
+    aspect-ratio: auto;
+    translate: none;
+  }
+  /* Sem a cerâmica (sem script ou sem WebGL), a reserva em traço fica de marca-d'água: o título, claro, continua legível. */
+  .od-ancora-da-capa .od-reserva {
+    opacity: 0.16;
+  }
+  .od-capa-texto {
+    display: flex;
+    flex-direction: column;
+  }
+  .od-capa-frase {
+    max-width: 7.2em;
+  }
+  .od-capa-titulo {
+    z-index: auto;
+    min-height: calc(var(--od-cartaz) * 4.3);
+  }
+  /* Só a frase atravessa a placa por diferença (ela forma a própria camada, no lugar do título inteiro); o lugar, em
+     letra de corpo, fica embaixo da placa, claro e sem mistura: sobre a borda da placa e sobre a poça de luz, a mistura
+     o apagava (medido: 2,1:1 no pior trecho, a 360 px). */
+  :is(.od-capa-frase, .od-capa-lugar) {
+    position: relative;
+    z-index: 2;
+  }
+  html[data-palco] .od-capa-titulo {
+    color: #f3f1ec;
+    mix-blend-mode: normal;
+  }
+  html[data-palco] .od-capa-frase {
+    color: #ffffff;
+    mix-blend-mode: difference;
+  }
+  /* A placa termina a 95% da caixa dela (4,3 vezes o título): o lugar começa logo abaixo, fora da cerâmica. */
+  .od-capa-lugar {
+    margin-top: 1.5rem;
+  }
+  .od-capa-acoes {
+    order: 1;
+    margin-top: 1.25rem;
+  }
+  .od-capa-lide {
+    order: 2;
+    margin-top: 1.5rem;
+  }
+  .od-capa-estado {
+    order: 3;
+  }
+
+  /* 2 · Percorra a boca: o título e o lide; embaixo, a faixa da placa e os passos. */
+  .od-percurso {
+    --od-faixa: clamp(14rem, 40svh, 24rem);
+    --od-passo: 18.5rem;
+    padding-block: clamp(4rem, 3rem + 4vw, 6rem) 0;
+  }
+  .od-percurso-grade {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .od-percurso-texto {
+    display: contents;
+  }
+  /* Na mesma coluna, de propósito: a faixa da placa e a lista dos passos ocupam a mesma linha da grade. */
+  :is(.od-percurso-palco, .od-percurso-texto > *) {
+    grid-column: 1;
+  }
+  .od-percurso-texto > h2 {
+    grid-row: 1;
+  }
+  .od-percurso-texto > .od-lide {
+    grid-row: 2;
+    margin-bottom: 1rem;
+  }
+  .od-percurso-palco {
+    position: relative;
+    top: auto;
+    grid-row: 3;
+    height: var(--od-faixa);
+    padding-block: 1.25rem;
+  }
+  .od-passos {
+    grid-row: 4;
+    margin-top: 0;
+  }
+  .od-passo {
+    min-height: 0;
+    padding-block: 1.75rem 2rem;
+  }
+  .od-passo-frase {
+    margin-top: 1rem;
+  }
+}
+/* A tela alta o bastante: a placa fica presa na faixa de cima, e cada passo sobe e se prende logo embaixo dela,
+   cobrindo o anterior (a folha nova da ficha sobre a velha). O texto nunca passa sobre a placa. Em tela baixa (até
+   41 rem: o celular deitado, o zoom de 200%), nada fica preso, e os passos viram lista (decisão de 08.10.2026). */
+@media (max-width: 1023px) and (min-height: 41.01rem) {
+  .od-percurso-palco {
+    position: sticky;
+    top: var(--od-topo);
+    grid-row: 3 / span 2;
+    align-self: start;
+    /* Solta-se junto com a pilha: a última folha não passa sobre a placa ao fim da cena. */
+    margin-bottom: var(--od-passo);
+  }
+  .od-passos {
+    padding-top: var(--od-faixa);
+  }
+  .od-passo {
+    position: sticky;
+    top: calc(var(--od-topo) + var(--od-faixa));
+    /* A mesma altura em todos (o seguinte cobre o anterior por inteiro), com folga para o texto mais longo. */
+    min-height: var(--od-passo);
+    align-content: start;
+    border-top: 0;
+    background: var(--od-ceramica-clara);
+    box-shadow:
+      inset 0 1px 0 rgb(43 40 38 / 0.16),
+      0 -16px 22px -20px rgb(43 40 38 / 0.5);
+  }
+  .od-passo:first-child {
+    box-shadow: inset 0 1px 0 rgb(43 40 38 / 0.16);
+  }
+}
+/* O celular de tela curta (até 700 px de altura: o iPhone SE, o Android compacto): o título um degrau menor (48 px), para
+   a ação caber nos 60% de cima da primeira tela; a placa e o lugar acompanham. */
+@media (max-width: 639px) and (max-height: 43.75rem) {
+  .od-capa {
+    --od-cartaz: 3rem;
+  }
+}
+/* No celular, a frase sempre em quatro linhas: a caixa da placa é medida por elas. */
+@media (max-width: 639px) {
+  .od-capa-frase {
+    max-width: 6.4em;
+  }
+}
+/* A 320 px, o telefone a lápis numa linha só (em duas, o fio do lápis cortava os algarismos da segunda). */
+@media (max-width: 359px) {
+  :is(.od-chamada-acoes, .od-onde-horario) a[href^="tel:"] {
+    font-size: 0.9375rem;
+  }
+}
+@media (max-width: 359px) and (min-height: 41.01rem) {
+  .od-percurso {
+    --od-passo: 21rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* 3 · A ficha: a miniatura do mapa fica na linha, ao lado do "Onde", com a região a lápis (no toque, não há ponteiro
+     que a leve); o nome do tratamento fica com a largura inteira. As linhas que repetem a de cima ficam com as aspas,
+     como na ficha à mão. */
+  .od-ficha tbody td:has(> .od-ficha-mini) {
+    position: relative;
+    min-height: 4.75rem;
+    padding-right: 5.75rem;
+  }
+  .od-ficha-mini {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    display: block;
+    width: 4.75rem;
+    translate: 0 -50%;
+  }
+  .od-ficha-mini :is(.od-numero, .od-legenda-do-mapa) {
+    display: none;
+  }
+  .od-ficha-mini :is(.od-dente, .od-faixa) {
+    vector-effect: non-scaling-stroke;
+  }
+  .od-ficha-mini .od-dente {
+    stroke-width: 0.9;
+  }
+  .od-ficha-mini .od-sulco {
+    display: none;
+  }
+  .od-ficha-mini .od-faixa {
+    stroke-width: 1.4;
+  }
+
+  /* 7 · A chamada: sem o vermelho vazio embaixo da placa. */
+  .od-chamada {
+    min-height: 0;
+    padding-block: clamp(4rem, 3rem + 4vw, 6rem) 2.5rem;
+  }
+  .od-chamada-grade {
+    gap: 1.5rem;
+  }
+  .od-ancora-da-chamada {
+    aspect-ratio: 1.3;
+  }
+
+  /* Um tratamento: a coluna da margem cabe na tela (a âncora, de proporção fixa, a alargava 10%, e a placa de quem
+     atende saía cortada na borda). */
+  .od-tratamento-margem {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* A linha do tempo em coluna, na ordem da leitura: o dia, a sessão de cerâmica, e entre elas o intervalo a lápis,
+     sobre o traço vermelho que desce (tracejado onde a sessão se repete). Desenha-se de cima para baixo ao entrar na
+     tela (a ilha do consultório acende a figura), em vez de correr na carga, fora da vista. */
+  .od-linha-regua {
+    display: flex;
+    height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-inline: 0;
+    padding-left: 2.25rem;
+  }
+  .od-linha-traco,
+  .od-linha-ciclo {
+    display: none;
+  }
+  .od-linha-marco,
+  .od-linha-intervalo {
+    position: relative;
+    top: auto;
+    left: auto !important; /* a posição na régua da mesa vem do servidor, no estilo do elemento */
+    translate: none;
+    animation: none;
+  }
+  .od-linha-marco {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-block: 0.3rem;
+  }
+  .od-linha-dia {
+    order: -1;
+    min-width: 4.25rem;
+    font-size: 1.5rem;
+  }
+  .od-linha-intervalo {
+    padding-block: 0.45rem;
+  }
+  /* O traço: um trecho por item, na mesma vertical; o ponto de lápis em cada sessão. */
+  :is(.od-linha-marco, .od-linha-intervalo)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(0.55rem - 2.25rem);
+    width: 2px;
+    background: var(--accent);
+  }
+  .od-linha-marco:first-of-type::after {
+    top: 50%;
+  }
+  .od-linha-marco:last-of-type:last-child::after {
+    bottom: 50%;
+  }
+  .od-linha-intervalo:last-child::after {
+    background: repeating-linear-gradient(180deg, var(--accent) 0 5px, transparent 5px 10px);
+    -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent);
+    mask-image: linear-gradient(180deg, #000 40%, transparent);
+  }
+  .od-linha-marco::before {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: calc(0.55rem + 1px - 2.25rem - 0.35rem);
+    width: 0.7rem;
+    height: 0.7rem;
+    margin-top: -0.35rem;
+    border-radius: 50%;
+    background: var(--background);
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+  .od-linha-marco:first-of-type::before {
+    background: var(--accent);
+  }
+}
+@media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+  .od-linha-regua {
+    clip-path: inset(-1rem -1rem -1rem -1rem);
+    transition: clip-path 1100ms var(--od-saida) 150ms;
+  }
+  .od-linha[data-aguarda] .od-linha-regua {
+    clip-path: inset(-1rem -1rem 100% -1rem);
+  }
+}
+
+/* O celular: a pasta numa linha (o nome, o interruptor e a aba "Páginas", que abre o índice do prontuário). Também
+   no celular deitado (até 30 rem de altura), onde as abas na faixa de baixo tomariam um terço da tela. */
+@media (max-width: 639px), (max-width: 1023px) and (max-height: 30rem) {
+  html:has([data-demo="odontologia"]) {
+    --od-topo: 4rem;
+  }
+  .od-pasta-miolo {
+    flex-wrap: nowrap;
+    align-items: stretch;
+    column-gap: 0.75rem;
+    min-height: 4rem;
+  }
+  .od-pasta-nome {
+    flex: 1 1 0;
+    gap: 0.6rem;
+    padding-block: 0.4rem;
+  }
+  .od-pasta-monograma {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+  .od-pasta-clinica {
+    font-size: 1rem;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .od-abas {
+    display: none;
+  }
+  .od-pasta-direita {
+    gap: 0.5rem;
+  }
+  .od-indice-gatilho {
+    display: inline-flex;
+    align-self: flex-end;
+    translate: 0 1px;
+    padding-inline: 0.95rem;
+  }
+  /* O pé: as páginas em duas linhas arrumadas (três e duas), sem a última sozinha. */
+  .od-receituario-paginas {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    justify-items: start;
+  }
+  /* Os outros tratamentos, um por linha, sem o vão grande antes do pé. */
+  .od-outros {
+    padding-bottom: 2.5rem;
+  }
+  .od-outros ul {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* O índice do prontuário: a pasta aberta em tela cheia. Em cima, a borda da pasta com a aba "Fechar" aberta, emendada
+   com a folha; na folha, as páginas, uma por linha, em exibição, e a aberta riscada a lápis; embaixo, a ação e a
+   identificação. As cores voltam às da folha (a pasta pode estar no grafite ou no vermelho). */
+.od-indice {
+  --foreground: #2b2826;
+  --muted-foreground: #5c5650;
+  --card: #fdfcf9;
+  --border: rgb(43 40 38 / 0.16);
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 0;
+  background: var(--od-grao), var(--background);
+  padding: 0;
+  color: var(--foreground);
+}
+.od-indice::backdrop {
+  background: rgb(28 26 25 / 0.5);
+}
+html:has(.od-indice[open]) {
+  overflow: hidden;
+}
+html .od-pasta .od-indice :focus-visible {
+  outline-color: var(--ring);
+}
+.od-indice-cabeca {
+  display: flex;
+  min-height: 4rem;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background:
+    var(--od-grao),
+    linear-gradient(180deg, #e6e0d3, var(--od-pasta));
+  box-shadow: inset 0 -1px 0 rgb(43 40 38 / 0.2);
+}
+.od-indice-cabeca .od-pasta-nome {
+  flex: 1 1 0;
+}
+html .od-indice .od-aba.od-indice-fechar {
+  z-index: 1;
+  align-self: flex-end;
+  translate: 0 1px;
+  background: var(--background);
+  box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.8);
+  padding-inline: 0.95rem;
+  cursor: pointer;
+}
+.od-indice[open] {
+  display: flex;
+  flex-direction: column;
+}
+/* A ação e a identificação no pé da folha, ao alcance do polegar. */
+.od-indice-folha {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: 2rem;
+  padding-block: 1.75rem 2rem;
+}
+.od-indice-abas {
+  border-top: 2px solid var(--foreground);
+}
+.od-indice-abas > li {
+  border-bottom: 1px solid var(--border);
+}
+.od-indice-aba {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: clamp(2.1rem, 1.4rem + 3.4vw, 2.75rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  transition: color 120ms ease-out;
+}
+.od-indice-aba:active {
+  color: var(--accent);
+}
+.od-indice-aba[aria-current] > span {
+  background: var(--od-traco) left bottom / 100% 0.2em no-repeat;
+  padding-bottom: 0.14em;
+}
+.od-indice-acao {
+  margin-top: auto;
+}
+.od-indice-registro {
+  font-size: var(--od-miudo);
+  color: var(--muted-foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* A pasta abre: a folha desce da borda dela, e as linhas assentam uma depois da outra (até 300 ms). */
+  .od-indice[open] {
+    transition: opacity 200ms ease-out;
+  }
+  @starting-style {
+    .od-indice[open] {
+      opacity: 0;
+    }
+  }
+  .od-indice[open] .od-indice-folha {
+    animation: od-folha-desce 300ms var(--od-saida);
+  }
+  .od-indice[open] .od-indice-abas > li {
+    animation: od-folha-desce 260ms var(--od-saida) both;
+    animation-delay: calc(30ms + var(--i, 0) * 28ms);
+  }
+}
+@keyframes od-folha-desce {
+  from {
+    opacity: 0;
+    translate: 0 -0.9rem;
+  }
+}
+
+/* No tablet (e no celular deitado), o título cabe em três linhas, e a placa fica à direita dele, sem passar sobre o
+   lugar: a caixa dela e o título mais baixos, o lugar logo embaixo da frase. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .od-ancora-da-capa {
+    height: calc(var(--od-cartaz) * 3.6);
+  }
+  .od-capa-titulo {
+    min-height: calc(var(--od-cartaz) * 3.6);
+  }
+  .od-capa-lugar {
+    margin-top: 1.25rem;
+  }
+}
+
+/* No toque (sem hover), cada papel responde no :active, em 120 ms (identidade, seção 9, o vocabulário de interação,
+   coluna "No toque"): a cerâmica acende por dentro (e comprime a 0,97, acima); o vínculo mostra o traço inteiro do
+   lápis; a cláusula do termo ganha o segundo traço; a aba tocada vem para a frente. */
+@media (hover: none) {
+  .od-ceramica:active::before {
+    opacity: 1;
+    transition-duration: 120ms;
+  }
+  :is(.od-lapis, .od-lapis-claro):active {
+    background-position:
+      left calc(100% - 0.45rem),
+      left calc(100% - 0.62rem);
+    background-size:
+      100% 0.55em,
+      100% 1px;
+    transition-duration: 120ms;
+  }
+  .od-clausula:active .od-nenhum::before {
+    scale: 1 1;
+    transition-duration: 200ms;
+  }
+  .od-aba:not([aria-current]):active {
+    z-index: 1;
+    translate: 0 -3px;
+    transition-duration: 120ms;
+  }
+}

@@ -18,7 +18,9 @@ type Props = {
   marca?: React.ReactNode;
 };
 
-const atraso = (ms: number) => ({ "--atraso": `${ms}ms` }) as React.CSSProperties;
+// A entrada das linhas é resposta a um toque, não abertura de página: 560 ms, e não os 1.100 ms do mov-entra, num
+// escalonamento de 30 ms; a última ação assenta em ~0,8 s (até 14/10, em ~1,5 s; 09-movimento.md, seção 11, item 2).
+const atraso = (ms: number) => ({ "--atraso": `${ms}ms`, animationDuration: "560ms" }) as React.CSSProperties;
 
 /**
  * Menu do celular: o vidro escuro desce do topo e cobre a tela inteira,
@@ -42,7 +44,7 @@ export default function PainelMenu({ aberto, aoMudar, itens, marca }: Props) {
       <SheetContent
         side="top"
         data-tom="escuro"
-        className="vd-vidro gap-0 border-x-0 border-t-0 px-0 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] duration-[450ms] ease-atlas data-[side=top]:h-dvh"
+        className="vd-vidro gap-0 border-x-0 border-t-0 px-0 pt-[max(0.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] duration-300 ease-atlas data-[side=top]:h-dvh"
       >
         <div className="flex min-h-15 items-center px-6" aria-hidden="true">
           {marca}
@@ -51,7 +53,7 @@ export default function PainelMenu({ aberto, aoMudar, itens, marca }: Props) {
         <nav aria-label="Menu" className="mt-4 flex-1 overflow-y-auto px-6 py-2">
           <ul className="border-t border-border">
             {paginas.map((item, i) => (
-              <li key={item.id} className="mov-entra border-b border-border" style={atraso(70 + i * 45)}>
+              <li key={item.id} className="mov-entra border-b border-border" style={atraso(40 + i * 30)}>
                 <Link
                   href={item.caminho}
                   // O início não é pré-buscado: a pré-busca traria as imagens da capa.
@@ -71,7 +73,7 @@ export default function PainelMenu({ aberto, aoMudar, itens, marca }: Props) {
         </nav>
         {/* As duas ações no tamanho comum (text-nota): no grande (text-corpo,
             03/10), "WhatsApp (21) 96801-4926" passava da largura a 320 px. */}
-        <div className="mov-entra grid gap-2 px-6 pt-6" style={atraso(70 + paginas.length * 45)}>
+        <div className="mov-entra grid gap-2 px-6 pt-6" style={atraso(40 + paginas.length * 30)}>
           <Link href={acaoOrcamento.destino} onClick={fechar} className={buttonVariants({ className: "w-full" })}>
             {acaoOrcamento.rotulo}
           </Link>

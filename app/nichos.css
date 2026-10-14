@@ -72,6 +72,60 @@
   --input: rgb(239 230 214 / 0.3);
   --ring: #dcbb7c;
 }
+[data-tom="odontologia"] {
+  /* O papel da ficha clínica, o grafite e o lápis vermelho (app/demos/odontologia/odontologia.css, desde 08/10). */
+  --background: #f6f5f1;
+  --foreground: #2b2826; /* 13,4:1 */
+  --deep: #ebe9e3;
+  --card: #fdfcf9;
+  --card-foreground: #2b2826;
+  --muted: #eeece6;
+  --muted-foreground: #625c56; /* 6,0:1 */
+  --primary: #2b2826;
+  --primary-foreground: #fbfaf6;
+  --secondary: #eeece6;
+  --secondary-foreground: #2b2826;
+  --accent: #a32319; /* 6,9:1 */
+  --border: rgb(43 40 38 / 0.16);
+  --input: rgb(43 40 38 / 0.45);
+  --ring: #a32319;
+}
+[data-tom="restaurante"] {
+  /* O papel do cardápio, a tinta verde quase preta e a lousa (app/demos/restaurante/restaurante.css, desde 09/10). */
+  --background: #f3efe6;
+  --foreground: #1f2622; /* 13,5:1 */
+  --deep: #e9e3d6;
+  --card: #fbf9f4;
+  --card-foreground: #1f2622;
+  --muted: #ebe6da;
+  --muted-foreground: #575a52; /* 6,1:1 */
+  --primary: #22302a;
+  --primary-foreground: #ece8dc;
+  --secondary: #ebe6da;
+  --secondary-foreground: #1f2622;
+  --accent: #6e4529; /* 7,2:1 */
+  --border: rgb(31 38 34 / 0.16);
+  --input: rgb(31 38 34 / 0.45);
+  --ring: #6e4529;
+}
+[data-tom="petshop"] {
+  /* A cartolina canário, a tinta uva e o violeta do carimbo (app/demos/petshop/petshop.css, desde 13/10). */
+  --background: #f9e151;
+  --foreground: #30103f; /* 12,5:1 */
+  --deep: #e8cd47;
+  --card: #fcf39f;
+  --card-foreground: #30103f; /* 14,5:1 */
+  --muted: #edd34f;
+  --muted-foreground: #634474; /* 6,1:1 */
+  --primary: #5f2c96;
+  --primary-foreground: #f9e151; /* 7,0:1 */
+  --secondary: #30103f;
+  --secondary-foreground: #f9e151; /* 12,5:1 */
+  --accent: #5f2c96; /* 7,0:1 */
+  --border: rgb(48 16 63 / 0.12);
+  --input: rgb(48 16 63 / 0.4);
+  --ring: #5f2c96;
+}
 /* Cores da marca de cada nicho (components/nichos/marcas.tsx): valem no
    tom do nicho e também em peça solta sobre outro tom (data-nicho: o
    cabeçalho de cada nicho na vitrine). */

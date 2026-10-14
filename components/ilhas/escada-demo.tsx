@@ -2,15 +2,21 @@
 
 import { stagger } from "motion";
 import { useAnimate } from "motion/react-mini";
-import { useState } from "react";
+import { Children, useState } from "react";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 type Nivel = { id: string; nome: string; nota: string };
+/** Um site do palco: o nicho (id), o plano a que pertence e o nome curto no seletor de nichos. */
+type SiteDoPalco = { id: string; plano: string; rotulo: string };
 
 type Props = {
   niveis: readonly Nivel[];
-  /** Os sites do palco, um por nível ([data-site="<nível>"]), desenhados no servidor (components/secoes/escada.tsx). */
+  /** Os sites, na mesma ordem dos filhos; o primeiro de cada plano entra em cena quando o plano é escolhido. */
+  sites: readonly SiteDoPalco[];
+  /** O nome do seletor de nichos, para o leitor de tela. */
+  rotuloDosNichos: string;
+  /** Os sites do palco, um por item de `sites`, desenhados no servidor (components/secoes/escada.tsx). */
   children: React.ReactNode;
 };
 
@@ -25,31 +31,41 @@ const PALAVRAS = "[data-palavra]";
 
 /**
  * Demonstrador da diferença entre os planos: o seletor dos três níveis
- * põe em cena o site daquele plano ([data-site], app/vidro.css mostra só o
- * do nível em data-nivel) e encena a entrada com a camada de movimento do
- * nível — só quando alguém escolhe (nada acontece sozinho com a rolagem).
- * A ilha não conhece o conteúdo do palco: encena o que estiver marcado
- * com data-parte (titulo, texto, bloco) e data-palavra, dentro do site em
- * cena. Sem script, os três sites aparecem um embaixo do outro.
+ * escolhe o plano, e o seletor de nichos, abaixo dele, o site daquele plano
+ * que entra em cena (desde 08/10: até quatro sites por plano, um nicho em
+ * cada; o seletor de nichos só aparece com mais de um). A troca é encenada
+ * com a camada de movimento do nível — só quando alguém escolhe (nada
+ * acontece sozinho com a rolagem). O site em cena leva data-em-cena; o
+ * resto fica oculto (app/vidro.css). A ilha não conhece o conteúdo do
+ * palco: encena o que estiver marcado com data-parte (titulo, texto, bloco)
+ * e data-palavra, dentro do site em cena. Sem script, todos os sites
+ * aparecem um embaixo do outro.
  */
-export function EscadaDemo({ niveis, children }: Props) {
+export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) {
   const [nivel, setNivel] = useState(niveis[0].id);
+  // O site escolhido em cada plano: começa no primeiro; voltar a um plano devolve o que estava nele.
+  const [escolha, setEscolha] = useState<Record<string, string>>(() =>
+    Object.fromEntries(niveis.map((n) => [n.id, sites.find((s) => s.plano === n.id)?.id ?? ""]))
+  );
   const [palco, animate] = useAnimate<HTMLDivElement>();
   const posicao = niveis.findIndex((n) => n.id === nivel);
   const nota = niveis[posicao]?.nota;
+  const doNivel = sites.filter((s) => s.plano === nivel);
+  const emCena = escolha[nivel];
+  const posicaoDoSite = doNivel.findIndex((s) => s.id === emCena);
 
-  function encenar(id: string) {
+  function encenar(nivelDaCena: string, site: string) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     // Só o site em cena; os outros estão ocultos.
-    const no = (seletor: string) => `[data-site="${id}"] :is(${seletor})`;
+    const no = (seletor: string) => `[data-site="${site}"] :is(${seletor})`;
     animate(no(PALAVRAS), { opacity: 1, transform: "none" }, { duration: 0 });
 
-    if (id === "essencial") {
+    if (nivelDaCena === "essencial") {
       animate(no(PARTES), { opacity: [0, 1], transform: "none" }, { duration: 0.4, ease: SUAVE });
       return;
     }
 
-    if (id === "profissional") {
+    if (nivelDaCena === "profissional") {
       animate(no(`${TITULO}, ${TEXTO}`), { opacity: [0, 1], transform: ["translateY(24px)", "none"] }, { duration: 0.7, ease: SUAVE, delay: stagger(0.05) });
       animate(no(BLOCOS), { opacity: [0, 1], transform: ["translateY(28px)", "none"] }, { duration: 0.7, ease: SUAVE, delay: 0.12 });
       return;
@@ -61,17 +77,23 @@ export function EscadaDemo({ niveis, children }: Props) {
     animate(no(BLOCOS), { opacity: [0, 1], transform: ["translateY(38px) scale(0.92)", "none"] }, { duration: 1.1, ease: MOLA, delay: 0.42 });
   }
 
-  function escolher(id: string | undefined) {
+  function escolherNivel(id: string | undefined) {
     if (!id || id === nivel) return;
     setNivel(id);
-    encenar(id);
+    encenar(id, escolha[id]);
+  }
+
+  function escolherSite(id: string | undefined) {
+    if (!id || id === emCena) return;
+    setEscolha((atual) => ({ ...atual, [nivel]: id }));
+    encenar(nivel, id);
   }
 
   return (
     <div className="mt-12">
       <ToggleGroup
         value={[nivel]}
-        onValueChange={(valor) => escolher(valor[0])}
+        onValueChange={(valor) => escolherNivel(valor[0])}
         aria-label="Plano"
         className="vd-vidro vd-segmento mx-auto grid w-full max-w-md auto-cols-fr grid-flow-col"
         style={{ "--n": niveis.length, "--i": posicao } as React.CSSProperties}
@@ -84,8 +106,32 @@ export function EscadaDemo({ niveis, children }: Props) {
         ))}
       </ToggleGroup>
 
+      {/* Os nichos do plano escolhido: só com mais de um site nele. A chave remonta o seletor a cada plano,
+          e o cursor nasce na posição certa, sem deslizar desde o nicho do plano anterior. */}
+      {doNivel.length > 1 && (
+        <ToggleGroup
+          key={nivel}
+          value={[emCena]}
+          onValueChange={(valor) => escolherSite(valor[0])}
+          aria-label={rotuloDosNichos}
+          className="vd-vidro vd-segmento mx-auto mt-4 grid w-full max-w-xl auto-cols-fr grid-flow-col"
+          style={{ "--n": doNivel.length, "--i": posicaoDoSite } as React.CSSProperties}
+        >
+          <span aria-hidden="true" className="vd-segmento-cursor" />
+          {doNivel.map((s) => (
+            <ToggleGroupItem key={s.id} value={s.id} variant="segmento">
+              {s.rotulo}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      )}
+
       <div ref={palco} data-palco-sites data-nivel={nivel} className="mt-8 overflow-hidden rounded-xl bg-card px-6 py-12 md:px-12 md:py-16">
-        {children}
+        {Children.toArray(children).map((filho, i) => (
+          <div key={sites[i].id} data-site={sites[i].id} data-plano={sites[i].plano} data-em-cena={sites[i].id === emCena || undefined}>
+            {filho}
+          </div>
+        ))}
       </div>
 
       <p className="mt-5 text-center text-nota text-muted-foreground" aria-live="polite">

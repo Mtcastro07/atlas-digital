@@ -41,7 +41,7 @@ export function Passos() {
             <li
               key={passo.titulo}
               style={{ top: topoDa(i) }}
-              className="sticky mb-4 origin-top rounded-[2rem] border border-border bg-card p-8 shadow-[0_26px_70px_rgb(4_14_28/0.42)] md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-12 md:p-10"
+              className="sticky mb-4 origin-top rounded-[2rem] border border-border bg-card p-8 shadow-[0_26px_70px_rgb(4_14_28/0.42)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-background after:opacity-[var(--apaga,0)] after:content-[''] md:grid md:grid-cols-[1fr_auto] md:items-end md:gap-12 md:p-10"
             >
               <div>
                 {/* Bronze claro (accent), o do texto pequeno no tom escuro: o da ação (primary), sobre o cartão, dava 4,49:1, abaixo dos 4,5:1 (até 03/10). */}

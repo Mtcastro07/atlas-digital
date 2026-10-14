@@ -3,6 +3,8 @@
 @import "./vidro.css";
 @import "./movimento.css";
 @import "./nichos.css";
+/* O kit de produção (producao/) mora na raiz, mas não é este site: as classes dele não entram na folha. */
+@source not "../producao";
 
 /* ============================================================
    ATLAS DIGITAL — folha global
@@ -22,7 +24,7 @@
      números, preços e monogramas; font-sub, Archivo — lide (300) e
      subtítulos h3 (500); font-sans, Inter — o texto, a interface e os
      rótulos. De 03 a 05/10, San Francisco e Inter (regra 1 das diretrizes). */
-  --font-sans: var(--font-texto);
+  --font-sans: var(--font-texto, system-ui), sans-serif;
   --font-display: var(--font-titulo);
   --font-sub: var(--font-subtitulo);
 
@@ -130,7 +132,10 @@
      acesa no hover e no foco e o orbe que segue o ponteiro (.vd-luz). */
   --aresta: rgb(243 239 236 / 0.1);
   --aresta-acesa: rgb(217 167 107 / 0.55);
-  --orbe: rgb(217 167 107 / 0.2);
+  /* O orbe: um cobre fundo, e não o bronze do vínculo. O bronze a 20% compunha com o navy um cinza azulado,
+     rgb(59 71 85), que lia como mancha, e não como luz (14/10); este dá ~rgb(70 66 62), quente, com o mesmo
+     brilho no centro: o lide (muted-foreground) fica em 4,55:1 sobre ele (antes, 4,63:1). */
+  --orbe: rgb(190 112 20 / 0.3);
   /* Vidro líquido (receita do plugin liquid-glass): a tinta é incolor — a
      cor vem de trás —, e o aro são três realces internos que leem como
      uma borda polida. */
@@ -221,9 +226,11 @@
   [tabindex="-1"]:focus {
     outline: none;
   }
-  /* Toda âncora reserva a altura do cabeçalho (72 px) e um respiro. */
-  [id] {
-    scroll-margin-top: 5rem;
+  /* A página reserva a altura do cabeçalho (72 px) e um respiro no alto de toda rolagem do navegador: a da âncora sem
+     script e a do foco do teclado (até 14/10, scroll-margin só nos [id], e o foco que subia com Shift+Tab ficava sob o
+     cabeçalho). A rolagem das âncoras com script calcula o destino sozinha (ilhas/ancoras.tsx). */
+  html {
+    scroll-padding-top: 5rem;
   }
   /* Títulos como no site de 28/08: h1 e h2 em Archivo Black, compactos;
      subtítulos h3 em Archivo Medium. O tamanho vem da escala (text-titulo,
@@ -273,4 +280,19 @@ section[data-tom="escuro"] + section[data-tom="escuro"],
 section[data-tom="claro"] + section[data-tom="claro"],
 section[data-tom="branco"] + section[data-tom="branco"] {
   padding-top: 0;
+}
+
+/* Sem barra de rolagem à vista abaixo de 1024 px, no Atlas e em todos os sites de nicho (pedido do usuário em 14/10): no
+   celular, a rolagem é o gesto. A barra só aparecia no navegador de computador estreito e no quadro de 390 px do
+   simulador, onde comia 15 px da direita de cada site. Vale para a página e para toda área que rola (o menu, as filas);
+   fora de camada e com !important, porque as folhas dos sites (petshop.css, scrollbar-color) carregam depois desta. */
+@media (max-width: 1023.98px) {
+  *,
+  ::before,
+  ::after {
+    scrollbar-width: none !important;
+  }
+  ::-webkit-scrollbar {
+    display: none !important;
+  }
 }

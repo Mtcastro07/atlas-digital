@@ -31,10 +31,11 @@ export default function PaginaDosValores() {
         <ul className="border-t-2 border-foreground lg:col-span-8">
           {consultas.itens.map((item, i) => (
             <li key={item.nome} data-revelar style={atraso(i * 110)} className="border-b border-border py-10">
-              <div className="flex items-baseline">
+              {/* No celular estreito, o preço desce para a linha de baixo, à direita, e o pontilhado fecha a de cima: até 07/10, "Acompanhamento" e o preço empurravam a página 50 px para o lado em 320 px. */}
+              <div className="flex flex-wrap items-baseline">
                 <h2 className="nt-exibicao text-[clamp(30px,3.1vw,46px)] leading-tight tracking-[-0.02em]">{item.nome}</h2>
                 <span aria-hidden="true" className="nt-pontilhado" />
-                <p className="nt-exibicao nt-numeros flex-none text-[clamp(44px,4.6vw,68px)] leading-none tracking-[-0.03em]">
+                <p className="nt-exibicao nt-numeros ml-auto flex-none text-[clamp(44px,4.6vw,68px)] leading-none tracking-[-0.03em]">
                   <span className="mr-1.5 align-[0.6em] text-[0.36em] tracking-normal">R$</span>
                   {item.preco}
                 </p>

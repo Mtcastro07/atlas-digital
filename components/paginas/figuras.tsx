@@ -22,13 +22,16 @@ export function ParedeDeBairros() {
     <figure>
       <p aria-label={rotulo} className="font-display tracking-titulo text-numero text-balance">
         {exemplos.map((exemplo, i) => (
-          <span key={exemplo.bairro}>
-            {/* Vínculo comum, não <Link>: o site de exemplo é outro site, e a pré-busca do Next traria as fontes dele para esta página. */}
-            <a href={exemplo.caminho} className="group relative -my-2 inline-block py-2 text-foreground no-underline transition-colors duration-300 hover:text-accent">
+          // No celular, um bairro por linha, com o nicho na linha de base dele, sem os separadores: em linha corrida, a quebra
+          // soltava o nicho do bairro (o sobrescrito subia para o meio das linhas) e começava linha com o separador (14/10).
+          <span key={exemplo.bairro} className="max-sm:block">
+            {/* Vínculo comum, não <Link>: o site de exemplo é outro site, e a pré-busca do Next traria as fontes dele para esta página.
+                Recuo de 10 px em cima e embaixo, compensado pela margem: o alvo passa de 44 px sem mudar a linha (até 07/10, 43 px no celular). */}
+            <a href={exemplo.caminho} className="group relative -my-2.5 inline-block py-2.5 text-foreground no-underline transition-colors duration-300 hover:text-accent">
               {exemplo.bairro}
-              <sup className="ml-1 align-[0.9em] text-rotulo font-semibold tracking-wider text-accent uppercase">{exemplo.nicho}</sup>
+              <sup className="ml-1 align-[0.9em] text-rotulo font-semibold tracking-wider text-accent uppercase max-sm:ml-2 max-sm:align-baseline">{exemplo.nicho}</sup>
             </a>
-            {i < exemplos.length - 1 && <span className="text-foreground/45"> · </span>}
+            {i < exemplos.length - 1 && <span className="text-foreground/45 max-sm:hidden"> · </span>}
           </span>
         ))}
       </p>

@@ -144,8 +144,9 @@
      No escuro, a borda é luz interna de 1 px, não sombra. Com .vd-luz,
      a aresta acende no hover e no foco do teclado, e um orbe de bronze
      segue o ponteiro (components/ilhas/luz-do-cursor.tsx; adaptado do
-     Magic Card, Magic UI, modo orb). O orbe se move só por transform. Sem
-     a ilha (sem script, toque ou movimento reduzido), só a aresta acende.
+     Magic Card, Magic UI, modo orb). O orbe se move só por transform. No
+     toque, os dois acendem no ponto tocado por 400 ms (desde 14/10). Sem
+     a ilha (sem script ou com movimento reduzido), só a aresta acende.
      O hover vale só onde há ponteiro: no toque, ficaria preso. */
   .vd-aresta {
     box-shadow: inset 0 0 0 1px var(--aresta);
@@ -192,6 +193,11 @@
       opacity: 1;
     }
   }
+  /* No toque, o equivalente: a aresta e o orbe acendem no ponto tocado por 400 ms (data-tocado, da mesma ilha). */
+  .vd-luz[data-tocado]::after,
+  .vd-luz[data-tocado] > .vd-orbe {
+    opacity: 1;
+  }
 
   /* ---------- brilho do botão principal ----------
      No hover, uma faixa de luz atravessa a pílula uma vez. A transição
@@ -213,6 +219,17 @@
     .vd-brilho:hover::after {
       transform: translateX(110%);
       transition: transform 900ms var(--ease-atlas);
+    }
+  }
+  /* No toque, o equivalente (desde 14/10): a faixa passa uma vez ao soltar o dedo (data-brilha, ilhas/luz-do-cursor.tsx). */
+  @media (hover: none) and (prefers-reduced-motion: no-preference) {
+    .vd-brilho[data-brilha]::after {
+      animation: vd-brilho-passa 700ms var(--ease-atlas) both;
+    }
+  }
+  @keyframes vd-brilho-passa {
+    to {
+      transform: translateX(110%);
     }
   }
 
@@ -647,15 +664,12 @@ header[data-fundo="misto"] .vd-barra {
 }
 
 /* ---------- os sites no palco da escada (components/secoes/escada.tsx) ----------
-   Com script, só o site do nível escolhido (data-nivel, ilha EscadaDemo)
-   fica em cena; sem script, os três aparecem um embaixo do outro. */
-.js [data-palco-sites] > [data-site] {
+   Com script, só o site escolhido do nível escolhido (data-em-cena, ilha
+   EscadaDemo) fica em cena; sem script, todos aparecem um embaixo do
+   outro. Desde 08/10, até quatro sites por plano: a ilha marca o site em
+   cena, em vez de o CSS casar o nível com o site. */
+.js [data-palco-sites] > [data-site]:not([data-em-cena]) {
   display: none;
-}
-.js [data-palco-sites][data-nivel="essencial"] > [data-site="essencial"],
-.js [data-palco-sites][data-nivel="profissional"] > [data-site="profissional"],
-.js [data-palco-sites][data-nivel="completo"] > [data-site="completo"] {
-  display: grid;
 }
 html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
   margin-top: 3rem;

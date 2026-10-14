@@ -18,9 +18,11 @@ export default function PaginaDoOrcamento() {
       <Abertura pagina="orcamento" titulo={orcamento.titulo} lide={orcamento.lide} />
 
       {/* O talão e a placa do horário com o mesmo recuo dos painéis do site, 28/40 px (até 03/10, a placa ficava em 28 px ao lado do talão em 40). O talão, com a sombra de 70 px a 50% (saiu em 03/10 pela regra 3 das Diretrizes de Design Premium e voltou no mesmo dia, a pedido do usuário: é parte da identidade do site). */}
-      <section aria-label={orcamento.talao} className={`${envelope} grid gap-12 py-16 pb-24 lg:grid-cols-12 lg:py-20`}>
+      {/* Uma coluna até o computador (grid-cols-1, minmax(0, 1fr)): sem ela, a coluna crescia até a largura mínima do conteúdo e empurrava o talão e a placa 3 px para fora da tela em 320 px (até 07/10). */}
+      <section aria-label={orcamento.talao} className={`${envelope} grid grid-cols-1 gap-12 py-16 pb-24 lg:grid-cols-12 lg:py-20`}>
         <div className="lg:col-span-8">
           <div className="dp-entra-pagina border border-foreground/25 bg-card shadow-[0_30px_70px_-40px_rgb(21_25_30/0.5)]">
+            {/* O código de barras, 112 px no celular e 144 px do tablet em diante: em 320 px, o de 144 px empurrava o talão 6 px para fora da tela (até 07/10). */}
             <div className="flex items-center justify-between gap-6 border-b-2 border-dashed border-foreground/40 px-7 py-5 md:px-10">
               <p>
                 <span className="dp-exibicao block text-[22px] leading-none">{orcamento.talao}</span>
@@ -28,7 +30,7 @@ export default function PaginaDoOrcamento() {
                   {site.codigo} · {orcamento.numero}
                 </span>
               </p>
-              <CodigoDeBarras texto={`${site.codigo}-${orcamento.numero.replace(/\D/g, "")}`} className="w-36 flex-none" />
+              <CodigoDeBarras texto={`${site.codigo}-${orcamento.numero.replace(/\D/g, "")}`} className="w-28 flex-none sm:w-36" />
             </div>
             <div className="p-7 md:p-10">
               <PedidoPorMensagem dados={orcamento} whatsapp={whatsappFicticio} />

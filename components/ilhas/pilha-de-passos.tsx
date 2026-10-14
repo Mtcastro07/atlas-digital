@@ -7,9 +7,9 @@ import { useEffect, useRef } from "react";
  * pedido do usuário em 03/10). O empilhamento em si é CSS: cada caixa é
  * `sticky`, um pouco mais abaixo que a anterior (secoes/passos.tsx). Esta
  * ilha faz o recuo em profundidade: enquanto a caixa seguinte cobre a
- * atual, a atual recua, inclina-se um pouco e se apaga — só transform e
- * opacity (o desfoque de 28/08 ficou de fora: filter custa um repinte por
- * quadro). É a exceção pedida à regra de nada acompanhar a rolagem nas
+ * atual, a atual recua, inclina-se um pouco e se apaga sob um véu opaco —
+ * só transform e a opacidade do véu (o desfoque de 28/08 ficou de fora:
+ * filter custa um repinte por quadro). É a exceção pedida à regra de nada acompanhar a rolagem nas
  * páginas do Atlas: o ouvinte de rolagem só existe enquanto a lista está
  * na tela, um quadro por movimento. Com movimento reduzido, nada recua, e
  * as caixas só se empilham. O desenho vem pronto do servidor, como children.
@@ -36,11 +36,12 @@ export function PilhaDePassos({ children, className }: { children: React.ReactNo
         const estilo = caixas[i].style;
         if (p === 0) {
           estilo.transform = "";
-          estilo.opacity = "";
+          estilo.removeProperty("--apaga");
           continue;
         }
         estilo.transform = `perspective(1400px) translate3d(0, ${(-16 * p).toFixed(1)}px, ${(-130 * p).toFixed(0)}px) rotateX(${(5 * p).toFixed(2)}deg)`;
-        estilo.opacity = (1 - 0.45 * p).toFixed(3);
+        // Apaga por um véu opaco por cima (secoes/passos.tsx), e não pela opacidade da caixa: translúcida, ela deixava ver o texto da caixa de baixo (14/10).
+        estilo.setProperty("--apaga", (0.45 * p).toFixed(3));
       }
     };
     const pedir = () => {

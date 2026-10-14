@@ -12,15 +12,17 @@ import { reais } from "@/lib/moeda";
 
 /**
  * "A distância não está na lista. Está na tela.": um site completo em cada
- * plano, no palco da escada. O seletor dos três níveis troca o site em
- * cena, e a troca é encenada com a camada de movimento de cada nível (ilha
- * EscadaDemo: no Essencial, tudo surge de uma vez; no Profissional, em
- * camadas; no Completo, o nome se compõe palavra a palavra e os blocos
- * assentam). Cada site traz o plano, o nome, o nicho, o resumo e a prévia
- * no computador e no celular (public/simulador/); "Abrir no simulador" e a
- * própria prévia abrem o site vivo num diálogo (ilha Simulador, à maneira
- * do Webild). Os três ficam desenhados aqui, no servidor: sem script,
- * aparecem um embaixo do outro, e os vínculos levam ao site em nova aba.
+ * nicho, agrupados por plano, no palco da escada (desde 08/10, até quatro
+ * por plano; antes, um). O seletor dos três níveis escolhe o plano, e o de
+ * nichos, o site dele em cena; a troca é encenada com a camada de
+ * movimento de cada nível (ilha EscadaDemo: no Essencial, tudo surge de
+ * uma vez; no Profissional, em camadas; no Completo, o nome se compõe
+ * palavra a palavra e os blocos assentam). Cada site traz o plano, o nome,
+ * o nicho, o resumo e a prévia no computador e no celular
+ * (public/simulador/<nicho>-*.webp); "Abrir no simulador" e a própria
+ * prévia abrem o site vivo num diálogo (ilha Simulador, à maneira do
+ * Webild). Todos ficam desenhados aqui, no servidor: sem script, aparecem
+ * um embaixo do outro, e os vínculos levam ao site em nova aba.
  */
 export function Escada() {
   // `abrir` é só do palco; o resto dos rótulos vai ao diálogo.
@@ -31,12 +33,12 @@ export function Escada() {
       <Envelope>
         <Abertura titulo={escada.titulo} lide={escada.lide} />
         <Simulador dados={{ textos, sites }}>
-          <EscadaDemo niveis={escada.niveis}>
+          <EscadaDemo niveis={escada.niveis} sites={sites.map(({ id, plano, rotulo }) => ({ id, plano, rotulo }))} rotuloDosNichos={escada.nichos}>
             {sites.map((site, i) => {
               const plano = planos.find((p) => p.id === site.plano)!;
               const palavras = site.nome.split(" ");
               return (
-                <div key={site.plano} data-site={site.plano} className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
+                <div key={site.id} className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
                   <div>
                     <p data-parte="texto" className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                       <span className="text-rotulo font-semibold text-accent">{plano.nome}</span>
@@ -116,7 +118,7 @@ export function Escada() {
                             ))}
                           </span>
                           <img
-                            src={`/simulador/${site.plano}-computador.webp`}
+                            src={`/simulador/${site.id}-computador.webp`}
                             alt=""
                             width={720}
                             height={450}
@@ -127,7 +129,7 @@ export function Escada() {
                         </span>
                         <span className="vd-moldura-de-celular absolute right-[5%] bottom-[-12%] w-[23%] overflow-hidden rounded-[16px] border-[3px] shadow-[0_24px_50px_-20px_rgb(0_0_0/0.8)] transition-transform duration-500 ease-atlas group-hover:-translate-y-2">
                           <img
-                            src={`/simulador/${site.plano}-celular.webp`}
+                            src={`/simulador/${site.id}-celular.webp`}
                             alt=""
                             width={293}
                             height={633}

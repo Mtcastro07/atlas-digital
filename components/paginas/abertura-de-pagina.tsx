@@ -58,7 +58,8 @@ export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = 
     <section data-tom={tom} aria-labelledby="titulo-da-pagina" className="relative -mt-18 overflow-hidden pt-38 pb-24 md:pt-46 md:pb-36">
       <Envelope className={lado ? "grid items-center gap-16 lg:grid-cols-12 lg:gap-14" : undefined}>
         <div className={lado ? "lg:col-span-6" : "max-w-[58rem]"}>
-          <p className="mov-surge flex items-center gap-4 text-rotulo font-semibold text-accent">
+          {/* O rótulo e o lide só se acendem na mesa (.mov-surge-mesa); no celular, pintam parados, como o título (14/10). */}
+          <p className="mov-surge-mesa flex items-center gap-4 text-rotulo font-semibold text-accent">
             <span className="tabular-nums">
               {String(indice + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </span>
@@ -74,7 +75,7 @@ export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = 
               </span>
             ))}
           </h1>
-          <Lide className="mov-surge mt-8" style={atraso(320)}>
+          <Lide className="mov-surge-mesa mt-8" style={atraso(320)}>
             {abertura.lide}
           </Lide>
         </div>

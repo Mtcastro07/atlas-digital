@@ -10,6 +10,10 @@ type Aparelho = "computador" | "celular";
 
 /** Um site do simulador (conteudo/site.ts, simulador.sites). */
 type SiteDoSimulador = {
+  /** O nicho: identifica o site entre os do mesmo plano. */
+  id: string;
+  /** O nome curto do nicho, no seletor de nichos. */
+  rotulo: string;
   plano: string;
   caminho: string;
   endereco: string;
@@ -26,6 +30,7 @@ type TextosDoSimulador = {
   fechar: string;
   aparelhos: Record<Aparelho, string>;
   planos: string;
+  nichos: string;
   inclui: string;
   experimente: string;
   escolher: string;
@@ -146,6 +151,11 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
 
   const site = sites[indice];
   const plano = planos.find((p) => p.id === site.plano)!;
+  // Os planos com site, na ordem da lista, e os sites do plano em cena (até quatro, desde 08/10).
+  const planosComSite = planos.filter((p) => sites.some((s) => s.plano === p.id));
+  const doPlano = sites.map((s, i) => ({ ...s, i })).filter((s) => s.plano === site.plano);
+  // O último site visto em cada plano: voltar a um plano devolve o nicho que estava nele.
+  const ultimoDoPlano = useRef<Record<string, number>>({ [sites[inicial].plano]: inicial });
 
   // Abre ao montar; a página para de rolar enquanto o diálogo está aberto.
   useEffect(() => {
@@ -239,8 +249,9 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
     });
   }, [aparelho]);
 
-  const trocarDePlano = (i: number) => {
+  const trocarDeSite = (i: number) => {
     if (i === indice) return;
+    ultimoDoPlano.current[sites[i].plano] = i;
     setCarregado(false);
     setIndice(i);
     setCaminhoAberto(sites[i].caminho);
@@ -371,18 +382,37 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
             lado (24 px a partir de 1024 px), para as bordas se alinharem; até
             03/10, 20 e 28 px misturados com 16 e 24. */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 md:px-6">
-          <div role="group" aria-label={textos.planos} className="vd-vidro flex rounded-full p-1">
-            {sites.map((s, i) => (
-              <button
-                key={s.plano}
-                type="button"
-                aria-pressed={i === indice}
-                onClick={() => trocarDePlano(i)}
-                className="min-h-11 cursor-pointer rounded-full px-4 text-nota font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
-              >
-                {planos.find((p) => p.id === s.plano)!.nome}
-              </button>
-            ))}
+          {/* O plano e, com mais de um site nele, os nichos do plano (desde 08/10). Trocar de plano
+              abre o último site visto nele, ou o primeiro. */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div role="group" aria-label={textos.planos} className="vd-vidro flex rounded-full p-1">
+              {planosComSite.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  aria-pressed={p.id === site.plano}
+                  onClick={() => trocarDeSite(ultimoDoPlano.current[p.id] ?? sites.findIndex((s) => s.plano === p.id))}
+                  className="min-h-11 cursor-pointer rounded-full px-4 text-nota font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+                >
+                  {p.nome}
+                </button>
+              ))}
+            </div>
+            {doPlano.length > 1 && (
+              <div role="group" aria-label={textos.nichos} className="vd-vidro flex rounded-full p-1">
+                {doPlano.map((s) => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    aria-pressed={s.i === indice}
+                    onClick={() => trocarDeSite(s.i)}
+                    className="min-h-11 cursor-pointer rounded-full px-4 text-nota font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+                  >
+                    {s.rotulo}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <div role="group" aria-label="Aparelho" className="vd-vidro flex rounded-full p-1">

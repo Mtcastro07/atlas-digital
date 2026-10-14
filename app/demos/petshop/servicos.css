@@ -1,0 +1,668 @@
+/* Banho e Tosa São Francisco · Serviços e valores (app/demos/petshop/servicos/page.tsx): "O verso do cartão"
+   (identidade, seção 4.13; lapidada nas rodadas 1 a 3). Só o que é desta página; os tokens, as matérias e as peças
+   comuns ficam em petshop.css (o contrato da fundação). Prefixo bt-verso-.
+
+   As cenas, na ordem: a abertura na cartolina, com o título e a régua de peso de pé, em chapado, que sangra em cima e
+   embaixo (o momento da página); o verso do cartão deitado no balcão de tinta, com a data, o banho de ponta a ponta e as
+   duas tosas lado a lado; os acréscimos e o pelo com nó, na cartolina; o leva e traz no chapado; o pagamento na
+   cartolina, com o carimbo. Na rodada 1, a folha de preços era um cartão só, de 3,45 telas; na rodada 2, sete faixas
+   listradas, cada uma com um título e uma tabela (o documento listrado do crítico da rodada 3). Um movimento só, o desta
+   página: os cortes da régua assentam (400 ms), uma vez. As linhas das tabelas respondem com a régua de leitura
+   (petshop.css). */
+
+/* ---------- a abertura: o título e a régua de peso ----------
+   O título no corpo dos números (102 px), em duas linhas, e como se pesa embaixo dele; ao lado, a régua de pé
+   (lapidação, rodada 3: deitada na largura da tela, a fita acabava em uns 35 kg e deixava metade da primeira tela vazia).
+   A fita é a faixa chapada de uva, de pé, que sangra em cima (por baixo da tira) e embaixo da abertura, com a graduação
+   vazada na cartolina: a marca a cada quilo, a de 5 kg mais longa e numerada à esquerda dela. O quilo (--bt-verso-u) sai
+   da altura da tela: de 0 a 45 kg cabem inteiros entre o pé da tira e o fim da abertura (16 px a 900 px de altura), e a
+   faixa do pequeno (10 kg) tem altura para o nome a 80 px e o peso embaixo. A escala é linear, de propósito. */
+.bt-verso-abertura {
+  overflow: clip; /* a fita sangra em cima e embaixo; a cena corta */
+}
+.bt-verso-abertura-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 14fr) minmax(0, 10fr);
+  align-items: start;
+  gap: 0 clamp(2rem, 4.44vw, 4rem);
+}
+/* O título e como se pesa no meio da altura da régua: o vazio fica repartido em cima e embaixo, e não num canto. */
+.bt-verso-abertura-texto {
+  align-self: center;
+}
+.bt-verso-titulo {
+  max-width: 11ch;
+  font-size: var(--bt-numero);
+  line-height: 0.92;
+}
+.bt-verso-pesagem {
+  max-width: 24ch;
+  margin-top: 1.75rem;
+  text-wrap: pretty;
+}
+.bt-verso-regua {
+  --bt-verso-u: max(0.875rem, (100svh - var(--bt-tira-altura) - 7rem) / 45);
+  --bt-verso-fita: 6rem; /* a largura da fita */
+  position: relative;
+  height: calc(45 * var(--bt-verso-u));
+  margin: 3rem 0 4rem;
+}
+.bt-verso-escala {
+  position: absolute;
+  top: -100vh;
+  bottom: -100vh;
+  left: 0;
+  width: var(--bt-verso-fita);
+}
+/* A marca de cada quilo, vazada, entra da borda direita da fita; a de 5 kg é mais longa e leva o número à esquerda. */
+.bt-verso-marca {
+  position: absolute;
+  top: calc(100vh + var(--kg) * var(--bt-verso-u));
+  right: 0;
+  width: 1.125rem;
+  height: 1px;
+  background: var(--bt-cartolina);
+  translate: 0 -50%;
+}
+.bt-verso-marca[data-cinco] {
+  width: 2.5rem;
+  height: 2px;
+}
+.bt-verso-numero {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.5rem);
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-size: 1.75rem;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--bt-cartolina);
+  white-space: nowrap;
+  translate: 0 -50%;
+}
+.bt-verso-unidade {
+  font-family: var(--font-bt-texto), sans-serif;
+  font-weight: 600;
+  font-size: 0.55em;
+}
+/* Os portes, cada um na faixa dele, à direita da fita: começam no peso em que a faixa começa. */
+.bt-verso-portes {
+  position: absolute;
+  inset: 0 0 0 var(--bt-verso-fita);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bt-verso-portes li {
+  position: absolute;
+  top: calc(var(--kg) * var(--bt-verso-u));
+  left: 0;
+  right: 0;
+  padding: 0.875rem 0 0 1.5rem;
+}
+.bt-verso-porte {
+  display: block;
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-size: var(--bt-titulo);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.bt-verso-faixa {
+  display: block;
+  margin-top: 0.375rem;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+}
+/* O corte: o filete alto na borda da faixa seguinte, vazado na fita e impresso na cartolina, da borda esquerda da fita
+   até a margem. */
+.bt-verso-portes li + li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--bt-verso-fita));
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--bt-cartolina) 0 var(--bt-verso-fita), var(--bt-uva) 0);
+  translate: 0 -50%;
+}
+/* Os cortes assentam, uma vez, ao abrir a página: chegam 1,5 rem da direita até o lugar, na curva de entrada, sem passar
+   dele. Na troca de página (.ja-aberto), esperam o cartão deslizar no balcão. Com movimento reduzido, já estão no lugar. */
+@media (prefers-reduced-motion: no-preference) {
+  .bt-verso-portes li + li::before {
+    animation: bt-verso-assenta 400ms var(--bt-entrada) 160ms both;
+  }
+  .bt-verso-portes li:last-child::before {
+    animation-delay: 220ms;
+  }
+  html.ja-aberto .bt-verso-portes li + li::before {
+    animation-delay: 480ms;
+  }
+  html.ja-aberto .bt-verso-portes li:last-child::before {
+    animation-delay: 540ms;
+  }
+}
+@keyframes bt-verso-assenta {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+/* A abertura no celular (o passe do celular): o título e como se pesa, numa coluna; embaixo, a régua de pé, a fita que
+   começa um pouco acima do 0 kg e sangra para baixo até o fim da abertura, onde encontra a tinta do balcão (antes, a
+   fita sangrava 100 vh para cima e cobria o título). O quilo a 12 px: de 0 a 45 kg em 540 px, a faixa do pequeno com
+   120 px, o nome do porte a 42 px dentro dela. */
+@media (max-width: 1023.98px) {
+  .bt-verso-abertura-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bt-verso-abertura-texto {
+    padding-top: 2.5rem;
+  }
+  .bt-verso-pesagem {
+    margin-top: 1.25rem;
+  }
+  .bt-verso-regua {
+    --bt-verso-u: 0.75rem;
+    --bt-verso-fita: 4.75rem;
+    --bt-verso-topo: 1.25rem;
+    margin: 2.75rem 0 3.5rem;
+  }
+  .bt-verso-escala {
+    top: calc(-1 * var(--bt-verso-topo));
+  }
+  .bt-verso-marca {
+    top: calc(var(--bt-verso-topo) + var(--kg) * var(--bt-verso-u));
+    width: 0.875rem;
+  }
+  .bt-verso-marca[data-cinco] {
+    width: 1.75rem;
+  }
+  .bt-verso-numero {
+    font-size: 1.375rem;
+  }
+  .bt-verso-portes li {
+    padding: 0.75rem 0 0 1.25rem;
+  }
+  .bt-verso-faixa {
+    margin-top: 0.25rem;
+  }
+  /* O corte de 10 e de 25 kg entra na fita só na largura da marca longa: na fita estreita, ele riscava o número. */
+  .bt-verso-portes li + li::before {
+    left: -1.75rem;
+    background: linear-gradient(90deg, var(--bt-cartolina) 0 1.75rem, var(--bt-uva) 0);
+  }
+}
+
+/* ---------- o verso do cartão, no balcão ----------
+   O cartão inteiro, com as quatro quinas de faca, o corte e a sombra longa, deitado no balcão de tinta (o mesmo cartão
+   da capa, virado). A data no canto de cima, como na tabela colada no balcão; o banho de ponta a ponta; as duas tosas
+   lado a lado, para o tutor comparar a máquina e a tesoura na mesma pelagem (lapidação, rodada 3: as três tabelas iguais
+   e seguidas, cada uma numa faixa). O nome de cada serviço a 80 px, com o que ele compreende logo embaixo; os preços na
+   Overpass forte, a 24 px. */
+/* O balcão em volta do verso: as margens de tinta em cima e embaixo também são a virada de valor da página. */
+.bt-verso-mesa {
+  padding: clamp(4.5rem, 9.5vw, 8.5rem) var(--bt-balcao);
+}
+.bt-verso-cartao {
+  border-radius: var(--bt-faca);
+}
+.bt-verso-folha {
+  position: relative;
+  padding-block: clamp(3rem, 5vw, 4.5rem) clamp(3rem, 5.5vw, 5rem);
+}
+.bt-verso-data {
+  --bt-largura: 100%;
+  position: absolute;
+  top: calc(clamp(3rem, 5vw, 4.5rem) + 0.75rem);
+  right: var(--bt-recuo);
+  font-size: var(--bt-destaque);
+  line-height: 1.2;
+}
+.bt-verso-folha > .bt-verso-tabela caption {
+  padding-right: 22ch;
+}
+.bt-verso-tosas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 3rem clamp(2.5rem, 5vw, 4.5rem);
+  margin-top: clamp(4rem, 7vw, 6rem);
+}
+.bt-verso-tosas .bt-verso-servico {
+  display: block;
+  max-width: 8ch;
+}
+.bt-verso-tosas .bt-verso-compreende {
+  max-width: 40ch;
+}
+.bt-verso-tosas .bt-verso-precos thead th:first-child {
+  width: 29%;
+}
+/* Abaixo de 1280 px, as tosas uma embaixo da outra (lado a lado, os valores encostavam na borda do cartão). */
+@media (max-width: 1279.98px) {
+  .bt-verso-tosas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* O verso no celular: o cartão com 1,25 rem de papel dos lados; a data ("Valores de outubro de 2026") desce para o pé
+   do cartão, como a validade impressa no pé de uma tabela de preços (no alto, acima de "Banho", lia como rótulo acima
+   do título). */
+@media (max-width: 1023.98px) {
+  .bt-verso-folha {
+    display: flex;
+    flex-direction: column;
+  }
+  .bt-verso-cartao .bt-verso-folha {
+    padding-inline: clamp(1rem, 5vw, 2.5rem);
+  }
+  .bt-verso-data {
+    position: static;
+    order: 1;
+    margin-top: 2.5rem;
+    padding-top: 1.125rem;
+    border-top: 1px solid currentColor;
+  }
+  .bt-verso-folha > .bt-verso-tabela caption {
+    padding-right: 0;
+  }
+  .bt-verso-tosas {
+    margin-top: 3.5rem;
+  }
+}
+.bt-verso-banda {
+  padding-block: clamp(3.5rem, 6.5vw, 6rem);
+}
+
+/* As tabelas (as da folha, a dos acréscimos e a do leva e traz): sem fundo nas linhas (o acetato fica por trás), os
+   fios na tinta a 12% (ou na clara a 22%, no chapado), o cabeçalho sobre um filete de tinta. */
+.bt-verso-tabela table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.bt-verso-tabela :is(th, td) {
+  padding: 1.25rem 0 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--bt-fio);
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: inherit;
+}
+.bt-verso-tabela :is(th, td):first-child {
+  padding-left: 0;
+}
+.bt-verso-tabela thead th {
+  padding-block: 0 0.875rem;
+  border-bottom-color: currentColor;
+  vertical-align: bottom;
+  font-size: var(--bt-nota);
+  font-weight: 600;
+  line-height: 1.35;
+}
+/* O nome da linha (a pelagem, o acréscimo, o bairro) na Overpass forte: a Anybody fica para o nome do serviço e o
+   porte (lapidação, rodada 2: a Anybody 800 estava em tudo). */
+.bt-verso-tabela tbody th {
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.25;
+}
+
+.bt-verso-tabela caption {
+  caption-side: top;
+  padding-bottom: clamp(1.25rem, 2.5vw, 2.25rem);
+  text-align: left;
+}
+.bt-verso-servico {
+  display: inline;
+  font-size: var(--bt-titulo);
+  line-height: 0.98;
+}
+.bt-verso-precos thead th:first-child {
+  width: 31%;
+}
+.bt-verso-precos thead th:not(:first-child),
+.bt-verso-precos td[data-rotulo] {
+  text-align: right;
+}
+.bt-verso-col-porte {
+  display: block;
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-size: var(--bt-destaque);
+  line-height: 1.15;
+}
+.bt-verso-col-faixa {
+  display: block;
+  margin-top: 0.125rem;
+}
+.bt-verso-valor {
+  display: block;
+  font-weight: 700;
+  font-size: var(--bt-destaque);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+/* O valor na cor dos números da superfície: a uva no verso do cartão; o canário (a 24 px) no chapado. */
+.bt-verso-valor {
+  color: var(--bt-titulo-cor);
+}
+.bt-verso-tempo {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: var(--bt-nota);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.bt-verso-precos tr[data-nota] :is(th, td) {
+  padding-block: 0.875rem;
+}
+.bt-verso-precos tr[data-nota] td {
+  color: var(--bt-secundario);
+}
+/* O que o serviço compreende, embaixo do nome, na medida do texto. */
+.bt-verso-compreende {
+  display: block;
+  max-width: 62ch;
+  margin-top: 0.875rem;
+  font-size: var(--bt-corpo);
+  line-height: 1.5;
+}
+
+/* As tabelas no celular (o passe do celular; até 767 px): nenhuma rola para o lado e nada passa da célula (antes, a 390
+   px, os valores e os portes passavam de 18 a 56 px da caixa). Os preços: o cabeçalho dos portes numa linha de três
+   colunas, e cada pelagem numa linha só dela, com os três valores embaixo, nas colunas do cabeçalho (sem repetir o porte
+   em cada linha); o "Pelagem" do canto fica só para o leitor de tela. Os acréscimos e o leva e traz viram fichas: o nome,
+   o que compreende (ou os dias e a janela) e o valor, sem os cabeçalhos à vista (o valor e a duração se dizem sozinhos;
+   o "ida e volta" vai junto do valor). As linhas continuam linhas de tabela para o leitor de tela (os papéis em
+   tabela-de-valores.tsx e na página) e respondem com a régua de leitura. */
+@media (max-width: 767.98px) {
+  .bt-verso-tabela :is(table, thead, tbody, caption) {
+    display: block;
+  }
+  .bt-verso-tabela tr {
+    display: grid;
+    column-gap: 0.75rem;
+  }
+  .bt-verso-tabela :is(th, td) {
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+  .bt-verso-tabela thead :is(th, td):first-child {
+    width: auto;
+  }
+  .bt-verso-tabela tbody tr {
+    row-gap: 0.375rem;
+    padding-block: 1rem;
+    border-bottom: 1px solid var(--bt-fio);
+  }
+  /* Fora da vista, e não fora da árvore: a caixa no tamanho do texto, recortada inteira (a caixa de 1 px fazia o texto
+     transbordar dela). */
+  .bt-verso-precos thead th:first-child,
+  .bt-verso-acrescimos thead,
+  .bt-verso-bairros thead {
+    position: absolute;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  :is(.bt-verso-acrescimos, .bt-verso-bairros) thead tr {
+    display: flex;
+    gap: 1rem;
+  }
+  .bt-verso-tabela:is(.bt-verso-acrescimos, .bt-verso-bairros) thead th {
+    min-width: max-content; /* vence a largura em % da mesa, que vem depois nesta folha */
+  }
+  .bt-verso-precos tr {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .bt-verso-precos thead tr {
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid currentColor;
+  }
+  .bt-verso-precos .bt-verso-col-porte {
+    font-size: clamp(0.9375rem, 4.36vw, 1.125rem);
+  }
+  .bt-verso-precos tbody th {
+    grid-column: 1 / -1;
+    font-size: var(--bt-corpo);
+  }
+  .bt-verso-precos tr[data-nota] td {
+    grid-column: 1 / -1;
+  }
+  .bt-verso-precos tr[data-nota] :is(th, td) {
+    padding-block: 0;
+  }
+  .bt-verso-precos .bt-verso-valor {
+    font-size: clamp(0.875rem, 4.36vw, 1.125rem);
+  }
+  .bt-verso-acrescimos tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .bt-verso-acrescimos tbody :is(th, td:nth-child(2)) {
+    grid-column: 1 / -1;
+  }
+  .bt-verso-acrescimos tbody td:nth-child(3) {
+    font-weight: 700;
+  }
+  .bt-verso-acrescimos tbody td:nth-child(4) {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .bt-verso-bairros tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .bt-verso-bairros tbody th {
+    grid-area: 1 / 1;
+  }
+  .bt-verso-bairros tbody td:nth-child(2) {
+    grid-column: 1 / -1;
+    font-weight: 700;
+  }
+  .bt-verso-bairros tbody td:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+  .bt-verso-bairros.bt-verso-tabela tbody td:last-child {
+    grid-area: 1 / 2;
+    width: auto;
+  }
+  .bt-verso-bairros tbody td:last-child::after {
+    content: attr(data-rotulo);
+    display: block;
+    font-family: var(--font-bt-texto), sans-serif;
+    font-weight: 400;
+    font-size: var(--bt-nota);
+    line-height: 1.3;
+    color: var(--bt-corpo-cor);
+    text-transform: lowercase;
+  }
+}
+
+/* Os acréscimos (o título no corpo dos serviços) e o pelo com nó (a nota impressa, sobre o fio). */
+.bt-verso-extras .bt-verso-servico {
+  display: block;
+  margin-bottom: clamp(1.25rem, 2.5vw, 2.25rem);
+}
+.bt-verso-nota-no {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 1rem clamp(2rem, 4.44vw, 4rem);
+  margin-top: clamp(3rem, 6vw, 5.5rem);
+  padding-top: 2.25rem;
+  border-top: 1px solid currentColor;
+}
+.bt-verso-nota-no h3 {
+  --bt-largura: 100%;
+}
+.bt-verso-acrescimos thead th:nth-child(1) {
+  width: 23%;
+}
+.bt-verso-acrescimos thead th:nth-child(2) {
+  width: 29%;
+}
+.bt-verso-acrescimos thead th:nth-child(4) {
+  width: 15%;
+}
+.bt-verso-no {
+  max-width: 44ch;
+  font-size: var(--bt-destaque);
+  line-height: 1.45;
+}
+@media (max-width: 1023.98px) {
+  .bt-verso-nota-no {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* O marca-texto do plano (Spell UI, Highlighted Text, variante marcador; uma vez no site): o lilás do atendente,
+   opaco (em multiply sobre a cartolina ficaria pardo), com as pontas chanfradas da ponta do marcador, cobrindo a altura
+   da letra. Passa da esquerda em 360 ms, uma vez, quando a frase entra na tela (.dm-a-marcar, a ilha do balcão); com
+   movimento reduzido e sem script, já está lá. */
+[data-demo="petshop"] .mov-tarja[data-marcador] {
+  margin-inline: -0.16em;
+  padding-inline: 0.16em;
+}
+[data-demo="petshop"] .mov-tarja[data-marcador] .mov-tarja-janela {
+  inset: 0.14em 0 0.02em;
+  border-radius: 0;
+  clip-path: polygon(0.32em 0, 100% 0, calc(100% - 0.32em) 100%, 0 100%);
+}
+[data-demo="petshop"] .mov-tarja[data-marcador] .mov-tarja-faixa {
+  background: var(--bt-marcador);
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-demo="petshop"] .mov-tarja[data-marcador]:not(.dm-a-marcar) .mov-tarja-faixa {
+    transition: transform 360ms var(--bt-entrada);
+  }
+  html:not(.ja-aberto) [data-demo="petshop"] .mov-tarja[data-marcador] .mov-tarja-faixa {
+    animation-duration: 360ms;
+    animation-timing-function: var(--bt-entrada);
+  }
+}
+
+/* ---------- o leva e traz (o chapado) ----------
+   O título, a condição e o que fica de fora numa coluna; a tabela na outra, mais larga (lapidação, rodada 2: o título
+   amarelo no alto à esquerda e as linhas com fio embaixo eram o molde das cenas de tinta). */
+.bt-verso-leva {
+  padding-block: clamp(4rem, 8vw, 7.5rem);
+}
+.bt-verso-leva-grade {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  align-items: start;
+  gap: 2.5rem clamp(2rem, 4.44vw, 4rem);
+}
+.bt-verso-leva-condicao {
+  max-width: 24ch;
+  margin-top: 1.5rem;
+}
+.bt-verso-bairros thead th:nth-child(1) {
+  width: 22%;
+}
+.bt-verso-bairros thead th:nth-child(2) {
+  width: 19%;
+}
+.bt-verso-bairros thead th:nth-child(4),
+.bt-verso-bairros td:last-child {
+  width: 15%;
+  text-align: right;
+}
+.bt-verso-bairros td:last-child {
+  font-weight: 700;
+  font-size: var(--bt-destaque);
+  line-height: 1.2;
+  color: var(--bt-cartolina);
+  white-space: nowrap;
+}
+.bt-verso-fora {
+  max-width: 34ch;
+  margin-top: 1.5rem;
+}
+@media (max-width: 1023.98px) {
+  .bt-verso-leva-grade {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* No tablet, a coluna do valor com folga para "R$ 22,00" (a 15%, passava 4 px da célula a 768 px). */
+  .bt-verso-bairros thead th:nth-child(4),
+  .bt-verso-bairros td:last-child {
+    width: 19%;
+  }
+}
+
+/* ---------- o pagamento e o carimbo ----------
+   Na cartolina, com o carimbo violeta (o da cartolina): as formas numa linha, na Anybody estreita, e o quando embaixo;
+   à direita, a ação, com o prazo de resposta e o telefone. */
+.bt-verso-pagamento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 2.5rem 4rem;
+  padding-block: clamp(3.5rem, 6vw, 5.5rem);
+}
+.bt-verso-formas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 2.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bt-verso-formas li {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 700;
+  font-stretch: 100%;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+}
+.bt-verso-quando {
+  max-width: 52ch;
+  margin-top: 0.75rem;
+}
+.bt-verso-acao {
+  display: grid;
+  justify-items: end;
+  gap: 1.25rem;
+}
+.bt-verso-acao p {
+  max-width: 34ch;
+  text-align: end;
+}
+@media (max-width: 1023.98px) {
+  .bt-verso-pagamento {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bt-verso-formas {
+    gap: 0.25rem 1.5rem;
+  }
+  .bt-verso-acao {
+    justify-items: start;
+  }
+  .bt-verso-acao p {
+    text-align: start;
+  }
+  /* O telefone no alcance do dedo: o alvo a 44 px, sem mudar a linha. */
+  .bt-verso-acao .bt-vinculo {
+    display: inline-block;
+    margin-block: -0.6875rem;
+    padding-block: 0.6875rem;
+  }
+}
+
+/* ---------- cores forçadas ----------
+   A régua é desenho de fundo: no modo de cores forçadas, as marcas e os cortes ficam na cor do texto, e a fita, no
+   fundo. */
+@media (forced-colors: active) {
+  .bt-verso-marca,
+  .bt-verso-portes li + li::before {
+    background: CanvasText;
+    forced-color-adjust: none;
+  }
+  .bt-verso-escala {
+    border-block: 1px solid CanvasText;
+  }
+}

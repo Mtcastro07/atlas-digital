@@ -299,7 +299,9 @@ export const planosSecao = {
 
 export const escada = {
   titulo: ["A distância não está na lista.", "Está na tela."],
-  lide: "Um site completo por plano. Selecione um nível para comparar; no simulador, o site funciona por inteiro.",
+  lide: "Sites completos, um por nicho, agrupados por plano. Selecione um nível e um nicho para comparar; no simulador, o site funciona por inteiro.",
+  /** Rótulo do seletor dos sites de um plano (os nichos), abaixo do seletor de nível. */
+  nichos: "Nicho",
   niveis: [
     { id: "essencial", nome: "Essencial", nota: "Essencial: os elementos surgem sem hierarquia de tempo." },
     { id: "profissional", nome: "Profissional", nota: "Profissional: entrada em camadas, com ordem de leitura definida." },
@@ -482,6 +484,7 @@ export const simulador = {
   fechar: "Fechar o simulador",
   aparelhos: { computador: "Computador", celular: "Celular" },
   planos: "Planos",
+  nichos: "Nichos do plano",
   inclui: "O plano inclui",
   experimente: "Experimente",
   escolher: "Escolher o",
@@ -496,8 +499,18 @@ export const simulador = {
     paginas: "páginas",
     dica: "navegue pelo menu do próprio site",
   },
+  /**
+   * Os sites de demonstração, até quatro por plano, cada um num nicho
+   * (desde 08/10, a pedido do usuário: o simulador mostra quatro sites por
+   * plano, um nicho em cada). `id` é o nicho e nomeia as prévias
+   * (public/simulador/<id>-*.webp, ferramentas/capturar-simulador.mjs);
+   * `rotulo` é o nome curto no seletor de nichos. O primeiro de cada plano é
+   * o exemplo dele nas outras seções (planos, para quem, orçamento).
+   */
   sites: [
     {
+      id: "nutricao",
+      rotulo: "Nutrição",
       plano: "essencial",
       /** O tom do site (app/nichos.css), para o fundo da prévia e a marca nos cartões. */
       tom: "nutricao",
@@ -510,6 +523,21 @@ export const simulador = {
       experimente: "Passe pelas três páginas do índice (I, II e III) e abra o WhatsApp pelo botão.",
     },
     {
+      id: "petshop",
+      rotulo: "Pet shop",
+      plano: "essencial",
+      tom: "petshop",
+      caminho: "/demos/petshop",
+      endereco: "agenciaatlasdigital.com/demos/petshop",
+      nome: "Banho e Tosa São Francisco",
+      nicho: "Banho e tosa",
+      paginas: 3,
+      resumo: "Três páginas impressas numa cartolina amarela, numa tinta só: o valor e a duração por porte e pelagem, o leva e traz com dia fixo por bairro e o carimbo que abre o WhatsApp.",
+      experimente: "Em Serviços e valores, passe o ponteiro pela tabela do banho; depois, peça o horário pelo carimbo, com a mensagem pronta.",
+    },
+    {
+      id: "deposito",
+      rotulo: "Depósito",
       plano: "profissional",
       tom: "deposito",
       caminho: "/demos/deposito",
@@ -521,6 +549,21 @@ export const simulador = {
       experimente: "Abra a aba 02, mude as medidas e envie a lista pronta pelo cupom.",
     },
     {
+      id: "restaurante",
+      rotulo: "Restaurante",
+      plano: "profissional",
+      tom: "restaurante",
+      caminho: "/demos/restaurante",
+      endereco: "agenciaatlasdigital.com/demos/restaurante",
+      nome: "Cozinha do Ingá",
+      nicho: "Restaurante de almoço",
+      paginas: 6,
+      resumo: "Seis páginas no papel do cardápio, com a lousa do prato do dia de hoje. O montador de pedido soma os pratos e o frete do bairro e envia o total pelo WhatsApp.",
+      experimente: "Na aba Pedido, escolha dois pratos e o bairro: o frete entra à parte, e o total aparece antes de enviar.",
+    },
+    {
+      id: "barbearia",
+      rotulo: "Barbearia",
       plano: "completo",
       tom: "barbearia",
       caminho: "/demos/barbearia",
@@ -530,6 +573,19 @@ export const simulador = {
       paginas: 7,
       resumo: "Sete páginas sobre um palco 3D em WebGL: fichas de metal em relevo viram com a rolagem e na troca de página. Duas funcionalidades sob medida: agendador e agenda de retorno.",
       experimente: "Role o início devagar: a moeda da casa vira nas fichas d’A Navalha e d’O Clássico e na placa de 1996. Depois, calcule a janela de retorno e leve o pedido ao agendador.",
+    },
+    {
+      id: "odontologia",
+      rotulo: "Odontologia",
+      plano: "completo",
+      tom: "odontologia",
+      caminho: "/demos/odontologia",
+      endereco: "agenciaatlasdigital.com/demos/odontologia",
+      nome: "Odontologia Boa Viagem",
+      nicho: "Clínica odontológica",
+      paginas: 12,
+      resumo: "Doze páginas no traço da ficha clínica, sem nenhum valor, que o conselho veda. O mapa dos dentes, peça-assinatura, abre o plano de sessões por região e leva a região ao pedido de avaliação.",
+      experimente: "Na capa, toque numa região do mapa dos dentes: o lápis a circula e os tratamentos dela aparecem. Depois, leve a região ao pedido de avaliação e veja a mensagem montada.",
     },
   ],
 } as const;

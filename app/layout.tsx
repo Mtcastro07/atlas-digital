@@ -49,8 +49,8 @@ const texto = localFont({
 });
 
 // Roda no <head>, antes da primeira pintura, e não grava nada no aparelho
-// (a página não usa cookie nem armazenamento local; documentacao/
-// atlas--conformidade.md):
+// (a página não usa cookie nem armazenamento local; producao/esteira/
+// 17-conformidade-e-normas.md, seção 6):
 // - .js: há script, logo há o botão de pausa; só então o movimento
 //   contínuo roda (sem script, a esfera fica parada e a capa entra uma vez);
 // - .ja-aberto: recarregar ou voltar pelo histórico não repete a entrada
@@ -61,7 +61,8 @@ export const metadata: Metadata = {
   metadataBase: new URL(contato.url),
   title: metadados.titulo,
   description: metadados.descricao,
-  alternates: { canonical: "/" },
+  // Sem endereço canônico aqui: cada página declara o seu (lib/metadados.ts), e a
+  // página 404 herdava o "/" do layout, dizendo à busca que era a capa (até 07/10).
 };
 
 export const viewport: Viewport = {

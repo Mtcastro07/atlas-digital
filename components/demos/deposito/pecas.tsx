@@ -5,6 +5,7 @@ import { IconeWhatsApp } from "@/components/icones";
 import { MarcaDoDeposito } from "@/components/nichos/marcas";
 import { vinculoDoWhatsapp } from "@/conteudo/demos/comum";
 import { depositoSite as site } from "@/conteudo/demos/deposito";
+import { metadadosDoExemplo } from "@/lib/metadados";
 
 // Peças do Depósito Engenhoca, usadas pelas seis páginas (app/demos/deposito/).
 
@@ -17,14 +18,16 @@ export const paginaDe = (id: IdDaPagina) => site.paginas.find((p) => p.id === id
 /** As cinco páginas das abas (o início é a marca). */
 export const abas = site.paginas.filter((p) => p.id !== "inicio");
 
-/** Título, descrição e endereço canônico de cada página. */
+/** Título, descrição, endereço canônico e cartão de compartilhamento de cada página. */
 export function metadadosDe(id: IdDaPagina): Metadata {
   const pagina = paginaDe(id);
-  return {
-    title: id === "inicio" ? `${site.nome} · demonstração` : `${pagina.titulo} · ${site.nome} · demonstração`,
-    description: `${pagina.descricao} Estabelecimento fictício.`,
-    alternates: { canonical: pagina.caminho },
-  };
+  return metadadosDoExemplo({
+    nome: site.nome,
+    titulo: id === "inicio" ? `${site.nome} · demonstração` : `${pagina.titulo} · ${site.nome} · demonstração`,
+    descricao: `${pagina.descricao} Estabelecimento fictício.`,
+    caminho: pagina.caminho,
+    nicho: "deposito",
+  });
 }
 
 /** O título de placa, em linhas. */

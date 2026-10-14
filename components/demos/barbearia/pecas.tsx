@@ -4,6 +4,7 @@ import Link from "next/link";
 import { TextoRolante } from "@/components/texto-rolante";
 import { barbeariaSite as site, type LadoDaCena, type ObjetoDaCena } from "@/conteudo/demos/barbearia";
 import { GradientWaveText } from "@/components/ui/spell/gradient-wave-text";
+import { metadadosDoExemplo } from "@/lib/metadados";
 
 // Peças da Barbearia Santa Rosa, usadas pelas sete páginas (app/demos/barbearia/).
 
@@ -20,14 +21,16 @@ export const paginaDe = (id: IdDaPagina) => site.paginas.find((p) => p.id === id
 /** As seis páginas da barra (o início é a marca). */
 export const capitulos = site.paginas.filter((p) => p.id !== "inicio");
 
-/** Título, descrição e endereço canônico de cada página. */
+/** Título, descrição, endereço canônico e cartão de compartilhamento de cada página. */
 export function metadadosDe(id: IdDaPagina): Metadata {
   const pagina = paginaDe(id);
-  return {
-    title: id === "inicio" ? `${site.nome} · demonstração` : `${pagina.titulo} · ${site.nome} · demonstração`,
-    description: `${pagina.descricao} Estabelecimento fictício.`,
-    alternates: { canonical: pagina.caminho },
-  };
+  return metadadosDoExemplo({
+    nome: site.nome,
+    titulo: id === "inicio" ? `${site.nome} · demonstração` : `${pagina.titulo} · ${site.nome} · demonstração`,
+    descricao: `${pagina.descricao} Estabelecimento fictício.`,
+    caminho: pagina.caminho,
+    nicho: "barbearia",
+  });
 }
 
 /** Os atributos que pedem um objeto ao palco 3D (ilhas/demos/palco-3d). */

@@ -6,6 +6,7 @@ import { MarcaDaNutricao } from "@/components/nichos/marcas";
 import { vinculoDoWhatsapp } from "@/conteudo/demos/comum";
 import { nutricaoSite as site } from "@/conteudo/demos/nutricao";
 import { HighlightedText } from "@/components/ui/spell/highlighted-text";
+import { metadadosDoExemplo } from "@/lib/metadados";
 
 // Peças da Nutrição Icaraí, usadas pelas três páginas (app/demos/nutricao/).
 
@@ -22,14 +23,16 @@ export const romanos = ["i", "ii", "iii", "iv", "v", "vi"];
 export type IdDaPagina = (typeof site.paginas)[number]["id"];
 export const paginaDe = (id: IdDaPagina) => site.paginas.find((p) => p.id === id)!;
 
-/** Título, descrição e endereço canônico de cada página. */
+/** Título, descrição, endereço canônico e cartão de compartilhamento de cada página. */
 export function metadadosDe(id: IdDaPagina): Metadata {
   const pagina = paginaDe(id);
-  return {
-    title: `${pagina.titulo} · ${site.nome} · demonstração`,
-    description: `${pagina.descricao} Estabelecimento fictício.`,
-    alternates: { canonical: pagina.caminho },
-  };
+  return metadadosDoExemplo({
+    nome: site.nome,
+    titulo: `${pagina.titulo} · ${site.nome} · demonstração`,
+    descricao: `${pagina.descricao} Estabelecimento fictício.`,
+    caminho: pagina.caminho,
+    nicho: "nutricao",
+  });
 }
 
 /**
