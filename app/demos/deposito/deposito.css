@@ -9,7 +9,108 @@
    de uma etiqueta. Painéis de grafite (.dp-grafite) para a máquina — a
    calculadora — e para a capa, que repetem a tela da vitrine. Movimento
    do Profissional: galeria, vidro (o cabeçalho, ao rolar) e navegação
-   viva (a aba da página, o estado da loja e o corte da entrega, ao vivo). */
+   viva (a aba da página, o estado da loja e o corte da entrega, ao vivo).
+
+   14.10.2026, pedido de Matheus Castro Oliveira de Luna Garcia: "o que vejo
+   seria que você está usando eles de forma repetitiva dentro dos sites,
+   parecendo que você está spamando os mesmos componentes". O defeito era a
+   série dentro do site: 26 peças subiam ao entrar, em 8 seções; sete peças
+   da capa subiam da opacidade 0, o título incluído; o título de toda página
+   interna subia por cima da transição; o mesmo véu subia em toda ação, a de
+   contorno incluída, e o laranja subia igual nas placas; toda etiqueta
+   aproximava a textura; todo vínculo só trocava de cor. Agora, um momento
+   por cena e uma resposta por papel (09-movimento, seções 1 e 13.1; 19,
+   seção 6; 11-anti-ia, M1 e P5). O registro: registros/demos/deposito/
+   decisoes.md.
+
+   15.10.2026, o crítico de fora (registros/demos/deposito/decisoes.md,
+   "Crítico de fora e correção"): a série de componentes ainda se via (a
+   grade de casas iguais com o código laranja no topo, cinco vezes; a mesma
+   abertura em cinco páginas, três paradas; a cena da conta copiando a
+   Calculadora), e o início não tinha imagem do ofício. Os códigos inertes
+   saíram do laranja; a cena da conta virou a prancha da parede; A casa
+   ganhou a fachada; cada página interna, o seu momento na primeira tela.
+
+   16.10.2026, o segundo crítico de fora (decisoes.md, "Crítico de fora e
+   correção, 14.10.2026"): o movimento já não se repetia, mas os componentes
+   parados sim. O painel (o índice de 01 a 05 pela terceira vez na página,
+   em cinco placas iguais com a seta) virou a planta do balcão; o método
+   ganhou o caminhão e, no celular, o prumo; três páginas internas deixaram
+   a abertura comum; o código numerado saiu das listas que não são ficha,
+   catálogo ou sequência; o carimbo do orçamento virou o numerador.
+
+   Os momentos (uma vez cada, só transform e opacity; com movimento
+   reduzido, a pose final; sem script, por CSS ou já na pose):
+   - a capa: a luz de obra acende e a ficha pendura e gira no arame até
+     ficar de frente; depois, a ficha balança (o ambiente, pausável);
+   - a parede (início): as fiadas são assentadas de baixo para cima;
+   - o método (início): o fio se estica de piquete a piquete;
+   - materiais: o trilho chega da direita; calculadora: o cupom sai da
+     boca da máquina (e reimprime à mão); entrega: o raio abre; orçamento:
+     as rodas do numerador giram até o número do talão (16.10; até ali, o
+     número carimbado); a casa: as portas de enrolar sobem;
+   - a troca de página: a folha sai da prancheta.
+
+   O vocabulário de interação, um papel, uma resposta:
+   - a ação laranja e a de grafite: o véu sobe (240 ms; toque em 0 ms);
+     a ação de contorno, com "o contorno dobra", saiu em 15.10 com o
+     WhatsApp repetido da capa, a única que a usava;
+   - a ação principal (só "Calcular o material", na capa, desde 16.10): o
+     refletivo acende (a faixa de luz cruza uma vez, e o véu é de luz);
+   - o vínculo de texto: a cota acende (opacidade, 150 ms; desde 16.10.2026, à vista a 45% em repouso e
+     inteira sem hover);
+   - o item de índice (o cômodo da planta, desde 16.10, no lugar das
+     placas; a linha da tabela): o piso acende no laranja a 14%, por
+     opacidade; a linha troca seca;
+   - a peça pendurada (a ficha e as etiquetas): gira no arame;
+   - a navegação: o traço laranja da aba (o único scaleX de resposta);
+   - a pergunta: o "+" que gira e se pinta; o estado ao vivo: o ponto
+     parado; a marca: a troca de cor.
+
+   O premium no celular (09-movimento, seção 11; o site não tem
+   identidade.md, e a tabela fica aqui, para aprovar com as capturas a
+   390 px):
+   | Na mesa                                   | No celular                                         |
+   | A luz acende do apagado em 500 ms; a ficha | A luz em 400 ms; a ficha em 400 ms, depois de 160; |
+   |   gira até a pose em 460 ms, depois de 120 |   com uma ação só na capa, a ficha sobe ~50 px: o  |
+   |                                           |   furo, o título e a 1ª linha na 1ª tela           |
+   | A ficha balança ±1,2°, 9 s o ciclo         | ±0,8°, com a pausa junto da ficha, sobre o arame   |
+   | A ficha gira 10° sob o ponteiro            | No toque, −7° em 120 ms, segura 200 e volta em 200 |
+   | O cômodo acende sob o ponteiro (180 ms)    | No :active, em 0 ms, a 22%                         |
+   | A etiqueta gira 6° sob o ponteiro          | No :active, 3° em 120 ms (o dedo também arrasta)   |
+   | A cota do vínculo acende (150 ms; 45% parada) | Inteira em repouso (hover: none); :active, 0 ms    |
+   | A linha da tabela acende sob o ponteiro    | No :active (a tabela vira fichas)                  |
+   | O fio corre os 4 trechos em 560 ms          | Os 4 trechos juntos, quando a lista entra, 400 ms; |
+   |                                           |   abaixo de 640 px, o prumo, de cima para baixo    |
+   | As fiadas assentam, 24 ms entre uma e outra | Igual, quando a prancha entra                     |
+   |   (as 14 em 592 ms)                       |                                                    |
+   | O trilho chega 96 px na carga (500 ms)     | Chega 40 px na carga (480 ms): a galeria está na   |
+   |                                           |   primeira tela desde 16.10                        |
+   | O cupom sai 38% na carga (480 ms)          | Curso de 30%, quando a boca entra (480 ms); o visor|
+   |                                           |   da máquina mostra e reimprime o número           |
+   | O raio abre (440 ms)                       | Igual: o mapa abre a página (16.10)                |
+   | As rodas do numerador giram (até 570 ms)   | Igual: o talão está na primeira tela               |
+   | As portas sobem (440 ms, 60 ms entre elas) | Igual: a fachada está na primeira tela             |
+   | A troca de página: 160 + 260 ms            | 120 + 200 ms                                       |
+   Nada segue o dedo nem a rolagem; sem giroscópio.
+
+   O código laranja (15.10.2026; proposto em 14.10, executado a partir da
+   crítica de fora, a confirmar com o aprovador): os códigos inertes (as
+   placas, as etapas, as etiquetas, a tabela, as perguntas, os campos do
+   talão, os rótulos do rodapé) passaram à tinta apagada, com o mesmo texto
+   e a mesma fonte; os S-01 a S-04 da Calculadora saíram com a grade que os
+   gerava (não eram texto do conteúdo). Os F-01 a F-04 de A casa, que são
+   texto aprovado, saíram com a grade de casas, voltaram na noite de 15.10
+   e saíram de novo em 16.10 (segundo crítico de fora: o código numerado em
+   toda lista vira carimbo, 11-anti-ia T10 e L5): ficam na ficha da capa,
+   que é uma ficha. Também em 16.10 saíram o 00 a 05 do rodapé, os P-01 a
+   P-04 das perguntas, os 01 a 04 dos campos do talão e o "0X / 05" das
+   aberturas; o código fica onde é a coisa (as abas, a ficha, as etiquetas
+   e a tabela do catálogo, as etapas do método, que são sequência). O
+   laranja fica no que se toca (o código das abas, as ações, o foco) e no
+   sinal (o rótulo da capa, a unidade do cupom, o raio e a legenda do mapa,
+   o numerador do talão, o estado da loja), como pede 19-o-padrao-atlas,
+   seção 5.1, item 4. A paleta não mudou. */
 
 [data-demo="deposito"] {
   --background: #ebe8e1; /* cal */
@@ -38,8 +139,27 @@
   color: var(--foreground);
 }
 html:has([data-demo="deposito"]) {
-  background: #ebe8e1;
+  /* O grafite (15.10.2026): no repuxo da rolagem, embaixo do rodapé e em cima da faixa do topo, os dois de grafite, não
+     aparece mais uma faixa de cal (até ali, #ebe8e1). A página pinta a cal no [data-demo], com min-h-dvh. */
+  background: #1b2128;
   color-scheme: light;
+  /* As curvas do site (09-movimento, seção 3), num lugar só; no <html>, para a troca de página também as ler. */
+  --dp-estado: cubic-bezier(0.2, 0, 0, 1);
+  --dp-entra: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --dp-sai: cubic-bezier(0.3, 0, 0.8, 0.15);
+  /* O foco que sobe com Shift+Tab não fica sob o cabeçalho preso (102 px a 390, 116 a 768, 132 a 1024, 122 a
+     1280 e a 1440, medido em 14.10): 144 px de folga, acima dos 80 do global (app/globals.css, @layer base). Até
+     14.10, a régua acusava 24 focos encobertos nas seis páginas. */
+  scroll-padding-top: 9rem;
+  /* A barra de rolagem na tinta e na cal (14.10). */
+  scrollbar-color: #15191e #ebe8e1;
+}
+/* O cursor de texto: laranja na máquina de grafite, o laranja escuro no talão (14.10). */
+[data-demo="deposito"] :is(input, textarea) {
+  caret-color: var(--accent);
+}
+[data-demo="deposito"] .dp-grafite :is(input, textarea) {
+  caret-color: var(--primary);
 }
 [data-demo="deposito"] ::selection {
   background: #e0662b;
@@ -83,6 +203,16 @@ html:has([data-demo="deposito"]) {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.004em;
+}
+/* O título de exibição de várias linhas (16.10.2026, Impeccable, typeset): com a Oswald em caixa-alta e a entrelinha
+   de 0,90 a 0,96, o til de BALCÃO caía sobre CONTA, a cedilha de ORÇAMENTO sobre POR, o Á de PÁGINA tocava a linha de
+   cima e a vírgula de OBRA, virava acento de COM. Com 1,10, os acentos e as vírgulas cabem entre as linhas (com 1,04,
+   o til ainda tocava o T de CONTA e a cedilha o P de POR, medido a 320 e a 390 px); a folga no topo guarda o til e o
+   acento da primeira linha. O equilíbrio das linhas fica explícito aqui. */
+.dp-titulo {
+  line-height: 1.1;
+  padding-top: 0.06em;
+  text-wrap: balance;
 }
 .dp-mono {
   font-family: var(--font-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -137,10 +267,12 @@ html:has([data-demo="deposito"]) {
   outline: 2px solid var(--foreground);
   outline-offset: -5px;
 }
-/* O botão principal: um véu na cor da tinta sobe de baixo no hover, só por
-   transform. No toque, que não tem hover, o véu cobre o botão de uma vez,
-   mais denso: a resposta é a cor, o botão não anda. Desabilitado, nada
-   sobe. Até 03/10, o hover ficava preso depois do toque e não havia toque. */
+/* O botão de ação (o laranja e o de grafite): um véu na cor da tinta sobe de
+   baixo no hover, só por transform. No toque, que não tem hover, o véu cobre
+   o botão de uma vez, mais denso: a resposta é a cor, o botão não anda.
+   Desabilitado, nada sobe. Até 03/10, o hover ficava preso depois do toque e
+   não havia toque. Em 14.10, o hover passou de 420 para 240 ms (09-movimento,
+   seção 13.1: de 150 a 300 ms). */
 .dp-botao {
   position: relative;
   isolation: isolate;
@@ -154,9 +286,9 @@ html:has([data-demo="deposito"]) {
   background: var(--foreground);
   opacity: 0.12;
   transform: translateY(101%);
-  transition: transform 420ms var(--ease-atlas);
+  transition: transform 240ms var(--dp-estado);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .dp-botao:not(:disabled, [aria-disabled="true"]):hover::after {
     transform: translateY(0);
   }
@@ -166,26 +298,127 @@ html:has([data-demo="deposito"]) {
   opacity: 0.22;
   transition-duration: 0ms;
 }
-
-/* ---------- cabeçalho: vidro ao rolar e a aba da página ---------- */
-.dp-barra {
-  transition:
-    background-color 500ms var(--ease-atlas),
-    box-shadow 500ms var(--ease-atlas);
+/* A ação principal (só "Calcular o material", na capa; 16.10.2026, crítico de fora: a resposta dela era a mais fraca
+   do site, 14 de diferença média de cor, contra 185 da placa do painel; 09-movimento, seção 13.1, "luz e reflexo"):
+   "o refletivo acende". A matéria é o laranja de sinalização, que é película refletiva: sob o ponteiro, a faixa de luz
+   cruza a etiqueta uma vez (560 ms, só transform, em skewX) e o véu que sobe é de luz, não de tinta, e fica (o laranja
+   clareia: a tinta grafite passa de 5,4:1 a ~7:1). No toque, o véu de luz em 0 ms, sem a faixa; no foco do teclado,
+   o véu, sem animação. Com movimento reduzido, a faixa não cruza. */
+.dp-botao-principal::after {
+  background: #fff7ec;
+  opacity: 0.32;
 }
-/* O fio da borda e uma sombra de 40 px a 60% (saiu em 03/10 pela regra 3
-   das Diretrizes de Design Premium e voltou no mesmo dia, a pedido do
-   usuário: é parte da identidade do site). */
-[data-rolou] .dp-barra {
+.dp-botao-principal:not(:disabled, [aria-disabled="true"]):active::after {
+  opacity: 0.4;
+}
+.dp-botao-principal:focus-visible::after {
+  transform: translateY(0);
+  transition: none;
+}
+.dp-botao-principal::before {
+  content: "";
+  position: absolute;
+  inset: -2px auto -2px 0;
+  z-index: -1;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgb(255 250 240 / 0.6) 45% 55%, transparent);
+  transform: translateX(-130%) skewX(-18deg);
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .dp-botao-principal:hover::before {
+    transform: translateX(400%) skewX(-18deg);
+    transition: transform 560ms var(--dp-estado) 40ms;
+  }
+}
+
+/* O vínculo de texto: a cota acende (14.10). O desenho da cota de medida (a linha de 1 px com as marcas de 5 px nas
+   pontas, como .dp-cota) aparece sob o texto por opacidade, sem scaleX: desenhar da esquerda para a direita já é o
+   traço da aba e o fio do método. A cor do texto continua passando ao acento onde o vínculo a tem. No toque e no foco
+   do teclado, aparece inteira, sem transição. Até 14.10, só a troca de cor (a marca P5).
+   16.10.2026 (Impeccable, polish): a cota fica à vista em repouso, a 45%, e inteira onde não há hover (hover: none).
+   Até ali, opacidade 0 em repouso: no celular, "Fazer a conta da sua obra" se lia como subtítulo, sem sinal de toque. */
+.dp-vinculo {
+  position: relative;
+}
+.dp-vinculo::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: calc(50% - 0.85em);
+  height: 5px;
+  background:
+    linear-gradient(currentColor, currentColor) 0 50% / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 0 / 1px 100% no-repeat,
+    linear-gradient(currentColor, currentColor) 100% 0 / 1px 100% no-repeat;
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 110ms var(--dp-sai);
+}
+/* O vínculo de duas linhas (o endereço do rodapé): a cota no pé da caixa, sob a última linha. */
+.dp-vinculo-pe::after {
+  bottom: 0.25rem;
+}
+@media (hover: none) {
+  .dp-vinculo::after {
+    opacity: 1;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .dp-vinculo:hover::after {
+    opacity: 1;
+    transition: opacity 150ms var(--dp-estado);
+  }
+}
+.dp-vinculo:is(:active, :focus-visible)::after {
+  opacity: 1;
+  transition: none;
+}
+
+/* ---------- cabeçalho: vidro ao rolar e a aba da página ----------
+   Desde 14.10, nada anima background-color nem box-shadow (até ali, 500 ms
+   dos dois): o vidro fica num ::before, sempre posto (no topo, sobre a cal
+   da página, ele se lê como a cal), e o fio e a sombra, num ::after, que
+   acende por opacidade em 240 ms ao rolar. Os valores são os de antes: a
+   sombra de 40 px a 60% saiu em 03/10 pela regra 3 das Diretrizes de Design
+   Premium e voltou no mesmo dia, a pedido do usuário. */
+.dp-barra {
+  position: relative;
+  isolation: isolate;
+}
+.dp-barra::before,
+.dp-barra::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.dp-barra::before {
   background-color: rgb(235 232 225 / 0.88);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   backdrop-filter: blur(16px) saturate(140%);
+}
+.dp-barra::after {
   box-shadow: 0 1px 0 var(--border), 0 18px 40px -30px rgb(21 25 30 / 0.6);
+  opacity: 0;
+  transition: opacity 240ms var(--dp-estado);
+}
+[data-rolou] .dp-barra::after {
+  opacity: 1;
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  [data-rolou] .dp-barra {
+  .dp-barra::before {
+    background-color: var(--background);
+  }
+  [data-rolou] .dp-barra::before {
     background-color: var(--card);
   }
+}
+/* A pausa do balanço da ficha, junto da ficha, na capa (15.10.2026; até ali, na faixa do topo do início, onde
+   empurrava o cabeçalho): os cantos retos do site. */
+.dp-pausa button {
+  border-radius: 0;
 }
 .dp-aba {
   position: relative;
@@ -200,9 +433,9 @@ html:has([data-demo="deposito"]) {
   background: var(--primary);
   transform: scaleX(0);
   transform-origin: 0 50%;
-  transition: transform 450ms var(--ease-atlas);
+  transition: transform 220ms var(--dp-estado);
 }
-@media (hover: hover) {
+@media (hover: hover) and (pointer: fine) {
   .dp-aba:hover::after {
     transform: scaleX(0.35);
   }
@@ -224,58 +457,234 @@ html:has([data-demo="deposito"]) {
   background: var(--primary);
 }
 
-/* ---------- capa: a luz de obra sobre o grafite ---------- */
+/* ---------- capa: a luz de obra sobre o grafite ----------
+   Num plano próprio desde 14.10 (era o fundo da seção), para acender na
+   carga, como o refletor do canteiro ligando: do apagado ao aceso, sem
+   piscar (até 15.10, de 0,25 a 1, que não se percebia, crítico de fora). */
 .dp-luz-de-obra {
   background-image:
     radial-gradient(60% 70% at 78% 110%, color-mix(in srgb, var(--primary) 32%, transparent), transparent 70%),
     radial-gradient(50% 40% at 10% -10%, rgb(242 239 233 / 0.07), transparent 70%);
 }
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .dp-luz-de-obra {
+    animation: dp-luz-acende 500ms var(--dp-entra) both;
+  }
+}
+@keyframes dp-luz-acende {
+  from {
+    opacity: 0;
+  }
+}
 
-/* ---------- as placas do painel: o laranja sobe sob o ponteiro ----------
-   Acesa no foco do teclado e sob o ponteiro (só onde há ponteiro: no toque,
-   o hover ficava preso depois do toque); no toque, o laranja cobre a placa
-   de uma vez, sem a seta andar (até 03/10, o toque não respondia). */
-.dp-placa {
+/* ---------- a ficha da casa: a assinatura em CSS 3D (14.10) ----------
+   Pendurada pelo furo num arame. Três invólucros, um por tempo, todos com a
+   origem no furo (50% 22px): a entrada (.dp-ficha-pendura: pendura e gira
+   até ficar de frente, uma vez por visita, na carga, em todas as larguras:
+   a 390 × 844, o topo da ficha fica em ~759 px, acima da dobra da
+   revelação, que nunca a recolheria); o ambiente (.dp-ficha-balanca:
+   balança no arame, ±1,2°, 4,5 s por meia oscilação, sem fim; começa no
+   meio do curso, na pose de repouso; só com script e visível; pausa no
+   botão junto da ficha, desde 15.10); e a resposta à mão (.dp-ficha-gira: gira 10° no
+   arame sob o ponteiro, a mesma resposta das etiquetas da galeria). A face
+   de lado (.dp-ficha-espessura) é a espessura do cartão, que se vê nos
+   primeiros quadros do giro da entrada. O arame (.dp-arame) fica fora dos
+   invólucros. Com movimento reduzido, nada se move, e a ficha fica na pose. */
+.dp-ficha {
+  perspective: 1000px;
+}
+.dp-ficha-pendura,
+.dp-ficha-balanca,
+.dp-ficha-gira {
+  transform-style: preserve-3d;
+  transform-origin: 50% 22px;
+}
+.dp-ficha-gira {
+  position: relative;
+}
+/* A espessura, 4 px na cal funda (o --muted do tema claro), atrás da borda direita, abaixo do chanfro. */
+.dp-ficha-espessura {
+  position: absolute;
+  top: 14px;
+  right: 0;
+  bottom: 0;
+  width: 4px;
+  background: #dedad1;
+  transform-origin: 100% 50%;
+  transform: rotateY(-90deg);
+}
+/* O arame: 1 px de cal a 45%, do furo para cima; na mesa, até o alto da capa, que recorta. */
+.dp-arame {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 23px);
+  width: 1px;
+  height: 40px;
+  translate: -0.5px 0;
+  background: linear-gradient(to top, rgb(235 232 225 / 0.45) 60%, transparent);
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .dp-arame {
+    height: 100vh;
+    background: rgb(235 232 225 / 0.45);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .dp-ficha-pendura {
+    animation: dp-ficha-pendura 460ms var(--dp-entra) 120ms both;
+  }
+  .js .dp-ficha-balanca[data-visivel] {
+    animation: dp-ficha-balanca 4500ms cubic-bezier(0.45, 0, 0.55, 1) -2250ms infinite alternate both;
+  }
+  /* A pausa (WCAG 2.2.2) com o [data-visivel] e depois da regra que anima (16.10.2026, Impeccable): o atalho
+     `animation` de `.js .dp-ficha-balanca[data-visivel]` (0,3,0) repunha o `running` e vencia o
+     `.ambiente-pausado .dp-ficha-balanca` (0,2,0), e a ficha seguia balançando com o botão em "pausado". */
+  .ambiente-pausado .dp-ficha-balanca[data-visivel],
+  .dp-ficha-balanca[data-fora] {
+    animation-play-state: paused;
+  }
+  .dp-ficha-gira {
+    transition: transform 200ms var(--dp-estado);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .dp-ficha:hover .dp-ficha-gira {
+      transform: rotateY(-10deg);
+      transition-duration: 260ms;
+    }
+  }
+  /* No toque: gira 7° em 120 ms, segura 200 ms e volta em 200 ms. */
+  @media (hover: none) {
+    .dp-ficha-gira {
+      transition: transform 200ms var(--dp-estado) 200ms;
+    }
+    .dp-ficha:active .dp-ficha-gira {
+      transform: rotateY(-7deg);
+      transition: transform 120ms var(--dp-estado) 0ms;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    html:not(.ja-aberto) .dp-luz-de-obra {
+      animation-duration: 400ms;
+    }
+    /* 160 ms de espera no celular (até 15.10, 80): o giro não passa antes do primeiro quadro no aparelho lento. */
+    html:not(.ja-aberto) .dp-ficha-pendura {
+      animation-duration: 400ms;
+      animation-delay: 160ms;
+    }
+    .js .dp-ficha-balanca[data-visivel] {
+      animation-name: dp-ficha-balanca-celular;
+    }
+  }
+}
+@keyframes dp-ficha-pendura {
+  from {
+    transform: rotateY(-28deg) rotate(-3deg);
+  }
+}
+@keyframes dp-ficha-balanca {
+  from {
+    transform: rotate(-1.2deg);
+  }
+  to {
+    transform: rotate(1.2deg);
+  }
+}
+@keyframes dp-ficha-balanca-celular {
+  from {
+    transform: rotate(-0.8deg);
+  }
+  to {
+    transform: rotate(0.8deg);
+  }
+}
+
+/* ---------- a planta do balcão: o cômodo acende (16.10.2026) ----------
+   A cena 2 do início. Até 16.10, "as placas do painel": cinco casas iguais,
+   cada uma com o código (01 a 05, o índice das abas pela terceira vez na
+   página), o nome, o resumo e a seta (11-anti-ia, L3 e K3, que o kit já
+   apontava neste site, seção 7.2), com a resposta mais forte do site (a
+   placa inteira laranja, 185 de diferença média de cor, contra 14 na ação
+   principal; crítico de fora). Agora, a planta baixa da casa: cada página
+   é um lugar do depósito (o estoque, o balcão, o pátio, a mesa do pedido,
+   a frente), de tamanhos diferentes, com as paredes de 3 px, a porta com o
+   arco de abrir e a mobília em traço fino (MobiliaDoComodo). Sem código e
+   sem seta. A resposta à mão é a do item de índice, mais baixa que a da
+   ação: o piso acende no laranja a 14%, por opacidade (180 ms sob o
+   ponteiro fino; no toque e no foco do teclado, em 0 ms, a 22% e a 14%).
+   Com movimento reduzido, em 150 ms. */
+.dp-planta {
+  border-top: 3px solid var(--foreground);
+  border-left: 3px solid var(--foreground);
+}
+.dp-comodo {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
+  border-right: 3px solid var(--foreground);
+  border-bottom: 3px solid var(--foreground);
 }
-.dp-placa::before {
+.dp-comodo::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
   background: var(--primary);
-  transform: translateY(101%);
-  transition: transform 600ms var(--ease-atlas);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms var(--dp-sai);
 }
-.dp-placa .dp-placa-seta {
-  transition: transform 500ms var(--ease-atlas);
+.dp-comodo:has(:focus-visible)::before {
+  opacity: 0.14;
+  transition: none;
 }
-.dp-placa:is(:focus-visible, :active)::before {
-  transform: translateY(0);
+.dp-comodo:active::before {
+  opacity: 0.22;
+  transition: none;
 }
-.dp-placa:active::before {
-  transition-duration: 0ms;
-}
-.dp-placa:is(:focus-visible, :active),
-.dp-placa:is(:focus-visible, :active) .dp-placa-apaga {
-  color: #15191e;
-}
-.dp-placa:focus-visible .dp-placa-seta {
-  transform: translateX(6px);
-}
-@media (hover: hover) {
-  .dp-placa:hover::before {
-    transform: translateY(0);
+@media (hover: hover) and (pointer: fine) {
+  .dp-comodo:hover::before {
+    opacity: 0.14;
+    transition: opacity 180ms var(--dp-estado);
   }
-  .dp-placa:hover,
-  .dp-placa:hover .dp-placa-apaga {
-    color: #15191e;
-  }
-  .dp-placa:hover .dp-placa-seta {
-    transform: translateX(6px);
-  }
+}
+/* O vínculo cobre o cômodo inteiro; o anel do foco fica por dentro das paredes. */
+.dp-comodo > a:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -8px;
+}
+/* A porta, no pé do cômodo: a folha aberta (a borda da esquerda), o arco de abrir (o canto arredondado) e o vão na
+   parede (o ::after, na cor da cal, sobre a parede de baixo). A frente da casa não tem: a parede dela é a da rua, com
+   as portas de enrolar desenhadas na mobília. */
+.dp-porta-planta {
+  position: absolute;
+  bottom: 0;
+  left: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, currentColor 55%, transparent);
+  border-bottom: 0;
+  border-left-width: 1.5px;
+  border-top-right-radius: 100%;
+  pointer-events: none;
+}
+.dp-porta-planta::after {
+  content: "";
+  position: absolute;
+  left: -1.5px;
+  right: -1px;
+  bottom: -3px;
+  height: 3px;
+  background: var(--background);
+}
+/* A marca de entrar (16.10.2026, Impeccable, polish): a seta de acesso da planta baixa, ao lado da porta, no traço da
+   mobília, apontando para dentro do cômodo. O sinal de que o cômodo se toca, também no celular, em repouso. */
+.dp-entrar {
+  position: absolute;
+  bottom: 6px;
+  left: calc(1.5rem + 44px + 10px);
+  width: 12px;
+  height: 22px;
+  pointer-events: none;
 }
 
 /* ---------- galeria de materiais ---------- */
@@ -290,20 +699,78 @@ html:has([data-demo="deposito"]) {
 .dp-galeria > * {
   scroll-snap-align: start;
 }
-/* O furo da etiqueta, por onde passa o arame. */
+/* O furo da etiqueta, por onde passa o arame, com o ilhós de metal em volta (16.10.2026, crítico de fora: sobre a
+   textura clara do revestimento, EGH-04, o furo de cal sumia; o anel de 2 px no cinza do aço o desenha em qualquer
+   fundo, e o da ficha da capa ganha o mesmo ilhós). */
 .dp-furo {
   width: 14px;
   height: 14px;
   border-radius: 50%;
   background: var(--background);
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
+  box-shadow:
+    inset 0 1px 2px rgb(0 0 0 / 0.35),
+    0 0 0 2px #8b939c,
+    0 0 0 3px rgb(21 25 30 / 0.35);
 }
-.dp-etiqueta .dp-textura {
-  transition: transform 900ms var(--ease-atlas);
+/* A etiqueta gira no arame (14.10), a mesma resposta da ficha da capa: as duas são peças penduradas pelo furo. Até
+   14.10, a textura aproximava 6% em 900 ms sob o ponteiro, igual em toda etiqueta, e não tinha toque. A peça de
+   dentro gira em torno do eixo vertical do furo (27 px da esquerda): o lado oposto recua, e nada cresce para fora da
+   faixa. O <li>, parado, recebe o ponteiro, para a borda que recua não tremer. No toque, 3°: o dedo na galeria é
+   também o arrasto, e o navegador desfaz o :active quando a rolagem começa. */
+.dp-etiqueta-peca {
+  transform-origin: 27px 0;
 }
-@media (hover: hover) {
-  .dp-etiqueta:hover .dp-textura {
-    transform: scale(1.06);
+@media (prefers-reduced-motion: no-preference) {
+  .dp-etiqueta-peca {
+    transition: transform 200ms var(--dp-estado);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .dp-etiqueta:hover .dp-etiqueta-peca {
+      transform: perspective(900px) rotateY(6deg);
+      transition-duration: 260ms;
+    }
+  }
+  @media (hover: none) {
+    .dp-etiqueta:active .dp-etiqueta-peca {
+      transform: perspective(900px) rotateY(3deg);
+      transition-duration: 120ms;
+    }
+  }
+}
+
+/* O trilho anuncia que corre (14.10): a lista inteira chega da direita até o lugar, uma vez, com opacidade 1 desde
+   o primeiro quadro (até ali, cada etiqueta subia sozinha). Desde 16.10.2026, a galeria está na primeira tela também
+   no celular (a abertura de Materiais corre para o trilho; crítico de fora: a 390 px, a primeira tela era só texto, e o
+   trilho chegava fora da vista): anima na carga em toda largura, 96 px em 500 ms na mesa e 40 px em 480 ms abaixo de
+   1024, depois de 80 ms. Numa tela baixa, em que a galeria fica abaixo da dobra, a revelação a recolhe (40 px) e ela
+   chega quando entra na tela; a entrada da carga, ali, roda fora da vista. A seção recorta: sem rolagem lateral da
+   página no meio da passagem. */
+@media (prefers-reduced-motion: no-preference) {
+  .dp-trilho[data-revelar] {
+    transition: transform 480ms var(--dp-entra);
+  }
+  .dp-trilho[data-revelar].dm-oculto {
+    opacity: 1;
+    transform: translateX(40px);
+    transition: none;
+  }
+  html:not(.ja-aberto) .dp-trilho {
+    animation: dp-trilho-chega-celular 480ms var(--dp-entra) 80ms both;
+  }
+  @media (min-width: 1024px) {
+    html:not(.ja-aberto) .dp-trilho {
+      animation: dp-trilho-chega 500ms var(--dp-entra) 80ms both;
+    }
+  }
+}
+@keyframes dp-trilho-chega {
+  from {
+    transform: translateX(96px);
+  }
+}
+@keyframes dp-trilho-chega-celular {
+  from {
+    transform: translateX(40px);
   }
 }
 
@@ -354,23 +821,29 @@ html:has([data-demo="deposito"]) {
 .dp-tabela tbody tr:nth-child(odd) {
   background: color-mix(in srgb, var(--foreground) 3.5%, transparent);
 }
-.dp-tabela tbody tr {
-  transition: background-color 250ms var(--ease-atlas);
-}
-@media (hover: hover) {
+/* A linha acende sob o ponteiro fino e no toque, seca (16.10.2026: até ali, animava background-color em 200 ms, fora
+   do "só transform e opacity" do freio; e o hover valia para todo ponteiro, o grosso incluído). */
+@media (hover: hover) and (pointer: fine) {
   .dp-tabela tbody tr:hover {
     background: color-mix(in srgb, var(--primary) 16%, transparent);
   }
 }
+/* No toque, a linha (no celular, a ficha) acende em 0 ms (14.10). */
+.dp-tabela tbody tr:active {
+  background: color-mix(in srgb, var(--primary) 16%, transparent);
+}
 /* No celular, a tabela larga (680 px) vira fichas: o código numa coluna à
    esquerda e, ao lado, o material, a unidade de venda e o uso, um embaixo
-   do outro. O cabeçalho fica só para leitor de tela. */
+   do outro. O cabeçalho fica só para leitor de tela. Só a tabela de
+   referência (role="table", em Materiais): até 14.10, a regra pegava também
+   a tabela do frete (Entrega), de duas colunas, e espremia o caso numa
+   coluna de 52 px, que transbordava 34 px (achado do Impeccable a 390 px). */
 @media (max-width: 767.98px) {
-  .dp-tabela {
+  .dp-tabela[role="table"] {
     display: block;
     min-width: 0;
   }
-  .dp-tabela thead {
+  .dp-tabela[role="table"] thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -378,31 +851,31 @@ html:has([data-demo="deposito"]) {
     clip-path: inset(50%);
     white-space: nowrap;
   }
-  .dp-tabela tbody {
+  .dp-tabela[role="table"] tbody {
     display: block;
   }
   /* Na grade de 4 px (até 03/10, 2,4, 14,4 e 3,2 px). */
-  .dp-tabela tbody tr {
+  .dp-tabela[role="table"] tbody tr {
     display: grid;
     grid-template-columns: 3.25rem 1fr;
     column-gap: 0.75rem;
     row-gap: 0.25rem;
     padding: 1rem;
   }
-  .dp-tabela tbody tr > * {
+  .dp-tabela[role="table"] tbody tr > * {
     padding: 0;
   }
-  .dp-tabela tbody tr > :first-child {
+  .dp-tabela[role="table"] tbody tr > :first-child {
     grid-row: span 3;
     padding-top: 0.25rem;
   }
-  .dp-tabela tbody tr > :not(:first-child) {
+  .dp-tabela[role="table"] tbody tr > :not(:first-child) {
     grid-column: 2;
   }
-  .dp-tabela tbody tr > :nth-child(3) {
+  .dp-tabela[role="table"] tbody tr > :nth-child(3) {
     font-size: 15px;
   }
-  .dp-tabela tbody tr > :nth-child(4) {
+  .dp-tabela[role="table"] tbody tr > :nth-child(4) {
     font-size: 14.5px;
   }
 }
@@ -425,18 +898,383 @@ html:has([data-demo="deposito"]) {
     radial-gradient(circle at 35% 35%, #8b939c, #4a525b);
 }
 
-/* ---------- a página que entra ---------- */
+/* ---------- a parede (a cena 3 do início, 15.10) ----------
+   No laranja, com a tinta grafite: o anel do foco e a seleção também na
+   tinta (o laranja escuro do acento cairia a ~1,6:1 sobre o laranja). O
+   momento da cena: as fiadas da elevação são assentadas de baixo para
+   cima, cada uma desce 14 unidades e acende, 24 ms depois da de baixo (as
+   14 fiadas em 592 ms; a última começa aos 312 ms), uma vez, quando a
+   prancha entra na tela. Até a noite de 15.10, 32 ms entre as fiadas: a
+   última terminava aos 696 ms, acima dos 600 da entrada (09-movimento,
+   seção 2). A prancha leva o data-revelar, com a pose anulada;
+   a pose é das fiadas. Com movimento reduzido e sem script, a parede já
+   está de pé. Até 15.10, esta cena era "a conta do balcão", com o cupom da
+   Calculadora parado (o cupom e a boca foram para lá). */
+.dp-cena-parede {
+  --ring: #15191e;
+}
+.dp-cena-parede ::selection {
+  background: #15191e;
+  color: #e0662b;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .dp-entra-pagina {
-    animation: dp-entra-pagina 700ms var(--ease-atlas) both;
+  .dp-prancha[data-revelar] {
+    transition: none;
   }
-  .ja-aberto .dp-entra-pagina {
+  .dp-prancha[data-revelar].dm-oculto {
+    opacity: 1;
+    transform: none;
+  }
+  .dp-fiada {
+    transition:
+      transform 280ms var(--dp-entra) calc(var(--fiada) * 24ms),
+      opacity 160ms linear calc(var(--fiada) * 24ms);
+  }
+  .dp-prancha[data-revelar].dm-oculto .dp-fiada {
+    opacity: 0;
+    transform: translateY(-14px);
+    transition: none;
+  }
+}
+
+/* ---------- a calculadora: o cupom sai da boca da máquina (15.10) ----------
+   O cupom, escondido 38% sob a boca, no invólucro que recorta, é impresso
+   uma vez. Na mesa, a máquina e o cupom estão na primeira tela: na carga,
+   480 ms depois de 120, e a pose da revelação se anula. Abaixo de 1024 px,
+   o cupom fica embaixo da máquina: curso de 30%, em 480 ms, quando a boca
+   entra na tela (a boca leva o data-revelar, com a pose anulada). Com
+   movimento reduzido e sem script, já impresso. Até 15.10, este era o
+   momento da cena da conta, na página inicial. */
+@media (prefers-reduced-motion: no-preference) {
+  .dp-boca[data-revelar] {
+    transition: none;
+  }
+  .dp-boca[data-revelar].dm-oculto {
+    opacity: 1;
+    transform: none;
+  }
+  .dp-cupom {
+    transition: transform 480ms var(--dp-entra);
+  }
+  .dp-boca[data-revelar].dm-oculto .dp-cupom {
+    transform: translateY(-30%);
+    transition: none;
+  }
+  @media (min-width: 1024px) {
+    .dp-boca[data-revelar].dm-oculto .dp-cupom {
+      transform: none;
+    }
+    html:not(.ja-aberto) .dp-cupom {
+      animation: dp-cupom-imprime 480ms var(--dp-entra) 120ms both;
+    }
+  }
+}
+@keyframes dp-cupom-imprime {
+  from {
+    transform: translateY(-38%);
+  }
+}
+
+/* ---------- a folha de índices (Calculadora, 15.10) ----------
+   Abaixo de 640 px, o serviço vira a linha de cima do grupo, e o material e
+   o consumo ficam lado a lado embaixo dele. */
+@media (max-width: 639.98px) {
+  .dp-indices,
+  .dp-indices tbody {
+    display: block;
+  }
+  /* Sem o vão entre as colunas (16.10.2026, Impeccable): o tracejado de cada célula se partia em dois trechos no vão
+     de 1rem; o recuo à direita do material (pr-6) já separa o consumo. */
+  .dp-indices tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: 0;
+  }
+  .dp-indices th[scope="rowgroup"] {
+    flex-basis: 100%;
+    width: auto;
+    padding-bottom: 0.5rem;
+  }
+  .dp-indices td:first-of-type {
+    flex: 1 1 0;
+  }
+  .dp-indices tr:first-child td {
+    padding-top: 0.875rem;
+    border-top: 1px dashed color-mix(in srgb, var(--foreground) 30%, transparent);
+  }
+}
+
+/* ---------- o método: a linha de pedreiro esticada entre os piquetes (14.10) ----------
+   O fio de 2 px de cada etapa (.dp-fio), sobre a borda transparente do <li>.
+   Desde 15.10, a lista inteira leva o data-revelar, com a pose anulada (até
+   ali, cada <li>: no celular, a mesma revelação quatro vezes seguidas,
+   crítico de fora); a pose é do fio, recolhido à esquerda. Na mesa, as
+   quatro etapas estão numa linha: cada trecho corre em 140 ms, linear, um
+   depois do outro (--atraso de 0 a 420 ms), e o último desacelera; os
+   quatro se leem como um fio só (560 ms). Abaixo de 1024 px, os quatro
+   esticam juntos, em 400 ms, quando a lista entra: um gesto só. Com
+   movimento reduzido e sem script, o fio está inteiro.
+
+   16.10.2026 (crítico de fora: no celular, quatro blocos iguais empilhados,
+   fio, código, título e texto, em uma tela e meia): abaixo de 640 px, o fio
+   vira o prumo, a linha vertical de piquete a piquete, à esquerda das
+   etapas, que ficam mais juntas; os três trechos esticam de cima para
+   baixo, juntos, em 400 ms, quando a lista entra (scaleY). A última etapa
+   não tem trecho: o prumo acaba no último piquete. */
+.dp-fio {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--primary);
+  transform-origin: 0 50%;
+}
+@media (max-width: 639.98px) {
+  .dp-fio {
+    top: 10px;
+    bottom: -4px;
+    right: auto;
+    width: 2px;
+    height: auto;
+    transform-origin: 50% 0;
+  }
+  .dp-metodo > li:last-child .dp-fio {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dp-metodo[data-revelar] {
+    transition: none;
+  }
+  .dp-metodo[data-revelar].dm-oculto {
+    opacity: 1;
+    transform: none;
+  }
+  .dp-fio {
+    transition: transform 400ms var(--dp-entra);
+  }
+  .dp-metodo[data-revelar].dm-oculto .dp-fio {
+    transform: scaleX(0);
+    transition: none;
+  }
+  @media (max-width: 639.98px) {
+    .dp-metodo[data-revelar].dm-oculto .dp-fio {
+      transform: scaleY(0);
+    }
+  }
+  @media (min-width: 1024px) {
+    .dp-fio {
+      transition: transform 140ms linear var(--atraso, 0ms);
+    }
+    .dp-metodo > li:last-child .dp-fio {
+      transition-timing-function: var(--dp-entra);
+    }
+  }
+}
+
+/* ---------- entrega: o raio abre (14.10) ----------
+   O círculo do mesmo dia e a cota "RAIO" abrem do centro, de 0,9 até a
+   pose, uma vez por visita, na carga (o mapa está na primeira tela, a 1440
+   e a 390); as ruas, os bairros e o depósito ficam parados. */
+.dp-raio {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .dp-raio {
+    animation: dp-raio-abre 440ms var(--dp-entra) 160ms both;
+  }
+}
+@keyframes dp-raio-abre {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+/* Abaixo de 640 px, os rótulos do mapa crescem (16.10.2026, Impeccable, adapt): o recorte (slice) reduz o desenho a
+   ~0,53 da escala, e os bairros de 15 unidades saíam com 8 px. Em unidades do desenho; o tamanho em CSS vence o
+   atributo. Os bairros cabem na janela que o recorte mostra de 320 a 639 px (x de 339 a 941). */
+@media (max-width: 639.98px) {
+  .dp-mapa-bairro,
+  .dp-mapa-legenda {
+    font-size: 22px;
+    stroke-width: 8px;
+  }
+  .dp-mapa-raio {
+    font-size: 20px;
+  }
+  .dp-mapa-casa {
+    font-size: 28px;
+  }
+}
+
+/* O marcador de agora (MarcadorDoAgora, ilha comum em components/ilhas/demos/estado-da-loja.tsx), no vocabulário do
+   site (16.10.2026, Impeccable): o canto reto da etiqueta, não a pílula arredondada, e 11 px (Q9). Sem mexer na ilha. */
+.dp-agora .dp-codigo {
+  border-radius: 0;
+  font-size: 11px;
+}
+
+/* ---------- a casa: a resposta abre da pergunta (14.10) ----------
+   A resposta desce 8 px do summary, que a abriu, em 240 ms, a cada
+   abertura; fecha seca. Aberta pelo teclado, entra sem animar. */
+@media (prefers-reduced-motion: no-preference) {
+  .dp-pergunta[open] > p {
+    animation: dp-resposta-abre 240ms var(--dp-entra) both;
+  }
+  .dp-pergunta[open]:has(> summary:focus-visible) > p {
     animation: none;
   }
 }
-@keyframes dp-entra-pagina {
+@keyframes dp-resposta-abre {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-8px);
+  }
+}
+
+/* ---------- orçamento: o numerador do talão (16.10.2026) ----------
+   O número do talão fica no carimbo do numerador (a borda, a tinta laranja, a inclinação de −3°, parada), e cada
+   algarismo é uma roda (Numerador, pecas.tsx): a fita de algarismos, numa janela de 1 em, gira até o número, uma vez por
+   visita, na carga, em 380 ms, 30 ms entre uma roda e a outra, depois de 100 ms (a última assenta aos 570 ms); a roda
+   das unidades gira mais. Só transform. Com movimento reduzido e sem script (a animação é CSS), o número está posto.
+   Até 16.10, "o número carimbado" (de 1,35 até a pose, em 180 ms): 20 px que quase não se percebiam (crítico de fora),
+   e o gesto do carimbo da nutrição e do pet shop. */
+.dp-carimbo {
+  rotate: -3deg;
+  mix-blend-mode: multiply;
+}
+.dp-roda {
+  display: block;
+  height: 1em;
+  overflow: hidden;
+}
+.dp-roda-fita {
+  display: block;
+  transform: translateY(calc(var(--passos) * -1em));
+}
+.dp-roda-fita > span {
+  display: block;
+  height: 1em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .dp-roda-fita {
+    animation: dp-roda-gira 380ms var(--dp-entra) calc(100ms + var(--roda) * 30ms) both;
+  }
+}
+@keyframes dp-roda-gira {
+  from {
+    transform: none;
+  }
+}
+
+/* ---------- a casa: as portas de enrolar sobem (15.10) ----------
+   Na fachada da abertura (FachadaDaCasa, pecas.tsx): a porta aberta fica
+   recolhida sob a caixa do rolo, com a barra de baixo à vista (96% acima).
+   Na carga, uma vez por visita, as duas sobem de fechadas até lá, em 440 ms,
+   a segunda 60 ms depois da primeira (a abertura está na primeira tela a
+   1440 e a 390). Com movimento reduzido e sem script (a animação é CSS),
+   abertas. */
+.dp-porta {
+  transform-box: fill-box;
+  transform: translateY(-96%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .dp-porta {
+    animation: dp-porta-sobe 440ms var(--dp-entra) calc(100ms + var(--porta, 0) * 60ms) both;
+  }
+}
+@keyframes dp-porta-sobe {
+  from {
+    transform: none;
+  }
+}
+
+/* ---------- orçamento sem script ----------
+   O talão sem script só recarregaria a página: a fileira do envio some, e a
+   página põe o botão do WhatsApp no lugar (<noscript>, orcamento/page.tsx). */
+html:not(.js) .dp-talao-acoes {
+  display: none;
+}
+
+/* ---------- a troca de página: a folha sai da prancheta (14.10) ----------
+   Só neste site, sem mexer nos arquivos comuns (o padrão do restaurante): a
+   folha que sai sobe 24 px e se apaga em 160 ms; a que entra já está
+   embaixo e só aparece, em 260 ms, depois de 60 ms: não sobe (até 14.10,
+   subia 22 px em 700 ms, por cima do título que também subia). Abaixo de
+   1024 px, 120 e 200 ms. O cabeçalho continua ancorado; com movimento
+   reduzido, a troca é imediata (app/movimento.css). */
+html:has([data-demo="deposito"])::view-transition-old(.pagina-sai) {
+  animation: dp-folha-sai 160ms var(--dp-sai) both;
+}
+html:has([data-demo="deposito"])::view-transition-new(.pagina-entra) {
+  animation: dp-folha-entra 260ms var(--dp-entra) 60ms both;
+}
+@media (max-width: 1023.98px) {
+  html:has([data-demo="deposito"])::view-transition-old(.pagina-sai) {
+    animation: dp-folha-sai 120ms var(--dp-sai) both;
+  }
+  html:has([data-demo="deposito"])::view-transition-new(.pagina-entra) {
+    animation: dp-folha-entra 200ms var(--dp-entra) 40ms both;
+  }
+}
+@keyframes dp-folha-sai {
+  to {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+}
+@keyframes dp-folha-entra {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- o rótulo em segmentos (16.10.2026) ----------
+   O rótulo da prancha ("Prancha 01 · elevação · escala 1:50" e o EGH) quebrava a 390 px com o "·" solto no fim da
+   linha e o EGH sozinho numa terceira (crítico de fora). Cada trecho é um item que não se parte; o "·" vem antes de
+   cada um, e o invólucro recua 1,6 em e recorta: o ponto que abriria uma linha fica fora da vista. O EGH vai para a
+   direita da última linha, sem ponto. O texto inteiro está no sr-only, ao lado. */
+.dp-segmentos > * {
+  white-space: nowrap;
+}
+.dp-segmentos > :not(:last-child)::before {
+  content: "·" / "";
+  display: inline-block;
+  width: 1.6em;
+  text-align: center;
+}
+.dp-segmentos > :last-child {
+  margin-left: auto;
+  padding-left: 1.6em;
+}
+
+/* ---------- o "Ir para o conteúdo" (do layout raiz), na etiqueta do depósito (16.10.2026) ----------
+   Era a pílula arredondada do Atlas, no azul dele, fora do mundo de cantos retos (crítico de fora). Agora, a etiqueta
+   do site: o laranja de sinalização, a tinta grafite, o canto chanfrado e o contorno do foco por dentro (o chanfro
+   recorta o de fora). O atalho fica fora do [data-demo]: as cores vão escritas. */
+body:has([data-demo="deposito"]) > a[href="#conteudo"] {
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  background: #e0662b;
+  color: #15191e;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  outline: 2px solid #15191e;
+  outline-offset: -5px;
+}
+
+/* ---------- com movimento reduzido: a luz acende em até 150 ms (09-movimento, seção 2) ----------
+   Nada se desloca (cada momento acima já fica na pose); o que só muda de opacidade, a sombra do cabeçalho ao rolar
+   (240 ms) e o cômodo da planta sob o ponteiro (180 ms; até 16.10, a placa), dissolve em 150 ms (14.10). A linha da
+   tabela troca seca desde 16.10 (não anima mais a cor de fundo). */
+@media (prefers-reduced-motion: reduce) {
+  .dp-barra::after,
+  .dp-comodo:hover::before {
+    transition-duration: 150ms;
   }
 }

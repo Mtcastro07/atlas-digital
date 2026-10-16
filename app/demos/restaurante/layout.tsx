@@ -16,7 +16,8 @@ import "./restaurante.css";
 // a porta de vidro, o barrado do pé da parede, a ilha do salão (as cenas, as peças, o balanço da lousa) e os filtros:
 // o giz, que o texto escrito na lousa recebe, e a caneta, a do guardanapo e do que se escreve à mão no papel.
 
-export const viewport: Viewport = { themeColor: "#f3efe6" };
+// O papel da casa de hoje (o verde-claro da comanda, desde 09.10.2026), e não o creme antigo.
+export const viewport: Viewport = { themeColor: "#eef0e4" };
 
 // O prato de hoje e a plaquinha da porta: o site inteiro se refaz a cada 10 minutos.
 export const revalidate = 600;

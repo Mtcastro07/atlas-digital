@@ -248,6 +248,8 @@ export const resumoDoCardapio = {
   titulo: "O cardápio, todo dia",
   lide: "Além do prato do dia, o cardápio fixo, com a porção e o preço. Os alérgenos de cada prato estão no cardápio inteiro.",
   ver: "Ver o cardápio inteiro",
+  /** O fim do nome acessível de cada prato do cartaz e do cardápio: o toque leva ao pedido com ele marcado. */
+  marcar: "Marcar no pedido.",
 };
 
 export const comoPedir = {
@@ -350,7 +352,7 @@ export const encomendasPagina = {
   lide: "As marmitas da semana e o almoço para grupos. O pedido sai por mensagem, com a data e o número de pessoas; nada é gravado neste site.",
   marmitas: {
     titulo: "As marmitas da semana",
-    texto: "O prato do dia de segunda a sexta, encomendado até a sexta anterior: uma marmita de 450 g por dia, entregue no almoço ou retirada no balcão. A casa não congela o prato do dia.",
+    texto: "O prato do dia de segunda a sexta, encomendado até a sexta anterior: uma marmita de 450 g por dia, a da feijoada também, entregue no almoço ou retirada no balcão. A casa não congela o prato do dia.",
     pedir: "Encomendar as marmitas",
     /** O rótulo da lousa das marmitas. */
     lousa: "De segunda a sexta",
@@ -368,6 +370,12 @@ export const encomendasPagina = {
     /** A mensagem, com os marcadores {data}, {pessoas} e {onde} (a ilha os troca; vazio vira "a combinar"). */
     mensagem: "Olá. Gostaria de um orçamento de almoço para grupo. Data: {data}. Pessoas: {pessoas}. {onde}.",
     aCombinar: "a combinar",
+    /** Os avisos junto do campo: a ilha confere antes de compor a mensagem (vazio é "a combinar", sem aviso). */
+    avisos: {
+      pessoas: "O almoço para grupos é de 10 a 40 pessoas.",
+      data: "Escolha uma data a partir de amanhã: a resposta sai em até um dia útil.",
+      sabado: "No salão, o almoço para grupos é no sábado. Escolha um sábado ou “Para levar”.",
+    },
   },
 };
 

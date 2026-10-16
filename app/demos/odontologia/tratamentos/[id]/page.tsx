@@ -60,8 +60,11 @@ export default async function Tratamento({ params }: { params: Promise<{ id: str
             </p>
             <p className="sr-only">{emTodas ? tratamentoPagina.mapaEmTodas : tratamentoPagina.mapaComRegioes(onde.join("; "))}</p>
             <div data-ceramica className="od-placa od-placa-de-nome">
-              <h2 className="od-placa-rotulo-miudo">{tratamentoPagina.quemAtende}</h2>
-              <p className="od-placa-nome">{quem.nome}</p>
+              {/* O rótulo dentro do título (sem o rótulo solto acima do nome: a marca T2). */}
+              <h2>
+                <span className="od-placa-rotulo-miudo">{tratamentoPagina.quemAtende}</span>{" "}
+                <span className="od-placa-nome">{quem.nome}</span>
+              </h2>
               <p className="od-placa-cro">
                 {quem.profissao}, <span className="whitespace-nowrap">{quem.cro}</span>
               </p>
@@ -87,8 +90,11 @@ export default async function Tratamento({ params }: { params: Promise<{ id: str
             </li>
           ))}
         </ol>
-        <h2 className="od-evolucao-cuidados-titulo">{tratamentoPagina.cuidados}</h2>
-        <p className="od-evolucao-cuidados">{t.cuidados}</p>
+        {/* Um bloco só: a lista alta, ao lado, esticava a linha do título e abria ~115 px até o texto (o Clareamento). */}
+        <div className="od-evolucao-cuidados-bloco">
+          <h2 className="od-evolucao-cuidados-titulo">{tratamentoPagina.cuidados}</h2>
+          <p className="od-evolucao-cuidados">{t.cuidados}</p>
+        </div>
       </section>
 
       <section aria-label={tratamentoPagina.pedir} className="od-largura od-ressalva">

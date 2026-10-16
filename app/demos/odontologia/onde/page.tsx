@@ -25,7 +25,8 @@ export default function Onde() {
             </h1>
             <p className="od-lide">{ondePagina.lide}</p>
             <address className="od-onde-endereco">
-              <span className="whitespace-nowrap">{rua}</span>
+              {/* Sem o nowrap: a rua quebra depois da vírgula (a 360 px, saía o último algarismo; na mesa, estourava a coluna). */}
+              <span>{rua}</span>
               <span>{bairro}</span>
               <span>{cep}</span>
             </address>

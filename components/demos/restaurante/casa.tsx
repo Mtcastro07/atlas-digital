@@ -27,7 +27,8 @@ export function metadadosDaCasa(id: IdDaPagina): Metadata {
 
 /**
  * O botão de ágata: a louça esmaltada branca de borda verde (a ação principal do salão). Com `mensagem`, abre o
- * WhatsApp com ela, em nova aba; com `href`, é um vínculo da casa. `miuda`: a versão da porta de vidro.
+ * WhatsApp com ela, em nova aba; com `href`, é um vínculo da casa. `miuda`: a versão da porta de vidro. A ação
+ * principal da página leva `rs-agata-principal` no `className`: só ela tem o brilho do esmalte que cruza a louça.
  */
 export function Agata({
   rotulo,
@@ -79,3 +80,16 @@ export const endereco = {
   numaLinha: () => endereco.linhas().join(", "),
   noMapa: () => `https://www.openstreetmap.org/?mlat=${casa.ponto.latitude}&mlon=${casa.ponto.longitude}#map=18/${casa.ponto.latitude}/${casa.ponto.longitude}`,
 };
+
+/**
+ * A seta de giz do item na lousa (o dia da semana, na parede do início e nas lousinhas da cozinha): sob o ponteiro, e no
+ * toque por 900 ms, ela aparece ao lado do dia e anda até ele, como a mão que aponta o prato no quadro. O tique é da
+ * caneta, no papel; o risco embaixo é da navegação: a seta é do item na lousa (o crítico de fora, 14.10.2026).
+ */
+export function SetaDeGiz() {
+  return (
+    <svg aria-hidden="true" className="rs-seta-de-giz" viewBox="0 0 32 14">
+      <path d="M30 7.4C22 6.6 13 7.8 3.4 7M8.6 2.4 2.6 7.1l6.2 4.6" />
+    </svg>
+  );
+}

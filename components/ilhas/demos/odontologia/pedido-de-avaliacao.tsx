@@ -88,7 +88,20 @@ export function PedidoDeAvaliacao({
               </label>
             ))}
           </div>
-          {atendimento === "urgencia" && <p className="od-nota-a-lapis">{textos.urgenciaNota}</p>}
+          {atendimento === "urgencia" && (
+            <>
+              <p className="od-nota-a-lapis">{textos.urgenciaNota}</p>
+              {/* Com dor, a ação logo sob a nota, sem descer até o cartão (no celular, ele fica depois do mapa); na mesa, o
+                  cartão já está ao lado, preso. */}
+              <p className="od-so-no-celular">
+                <a href={vinculoDoWhatsapp(numero, mensagem)} target="_blank" rel="noopener noreferrer" className="od-ceramica">
+                  <IconeWhatsApp className="od-ceramica-icone" />
+                  <span>{textos.enviar}</span>
+                  <span className="sr-only">{textos.novaAba}</span>
+                </a>
+              </p>
+            </>
+          )}
         </fieldset>
 
         <EscolhaDeRegiao regioes={regioes} valor={regiao} aoMudar={setRegiao} legenda={textos.regiao} todas={textos.todasAsRegioes} legendas={textos.legendas} />

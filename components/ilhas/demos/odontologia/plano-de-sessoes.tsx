@@ -7,14 +7,17 @@ import { EscolhaDeRegiao, type OpcaoDeRegiao } from "@/components/ilhas/demos/od
 import type { RegiaoId } from "@/lib/demos/odontologia/dentes";
 import { decodificarAncora } from "@/lib/demos/odontologia/mensagem";
 
-type Resumo = { id: string; regioes: readonly RegiaoId[] };
+type Resumo = { id: string; regioes: readonly RegiaoId[]; comArtigo: string };
 type Textos = {
   legenda: string;
   todas: string;
   ajuda?: string;
-  /** "2 de 6 tratamentos alcançam dentes do fundo, arcada superior." */
-  contagem: string;
   todasContagem: string;
+  /** A resposta diz a diferença para a lista inteira: "Nenhum fica de fora…", "Só o clareamento fica de fora…". */
+  nenhumFora: string;
+  nenhumForaInclusive: string;
+  soFora: string;
+  soForaVarios: string;
   /** O vínculo que leva a região escolhida ao pedido de avaliação. */
   seguir: string;
   legendas: { superior: string; inferior: string };
@@ -54,11 +57,24 @@ export function PlanoDeSessoes({
     return () => window.removeEventListener("hashchange", ler);
   }, [regioes]);
   const total = tratamentos.length;
-  const mostrados = regiao ? tratamentos.filter((t) => t.regioes.includes(regiao)).length : total;
   const frase = regioes.find((r) => r.id === regiao)?.frase ?? "";
-  const contagem = regiao
-    ? textos.contagem.replace("{n}", String(mostrados)).replace("{total}", String(total)).replace("{regiao}", frase)
-    : textos.todasContagem.replace("{total}", String(total));
+  const nomes = (lista: readonly Resumo[]) => lista.map((t) => t.comArtigo).join(" e ");
+  const fora = tratamentos.filter((t) => !t.regioes.includes(regiao as RegiaoId));
+  // Os de poucas regiões que alcançam esta: o que a distingue das outras, quando a lista não muda.
+  const soAqui = tratamentos.filter((t) => t.regioes.length < regioes.length && t.regioes.includes(regiao as RegiaoId));
+  const molde = !regiao
+    ? textos.todasContagem
+    : fora.length
+      ? fora.length > 1
+        ? textos.soForaVarios
+        : textos.soFora
+      : soAqui.length
+        ? textos.nenhumForaInclusive
+        : textos.nenhumFora;
+  const contagem = molde
+    .replace("{total}", String(total))
+    .replace("{regiao}", frase)
+    .replace("{quais}", nomes(fora.length ? fora : soAqui));
   return (
     <div data-regiao={regiao || undefined} className="od-plano">
       <EscolhaDeRegiao

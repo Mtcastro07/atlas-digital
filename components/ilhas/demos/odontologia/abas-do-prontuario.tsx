@@ -21,7 +21,11 @@ type Aba = { id: string; caminho: string; rotulo: string };
  * cortada, e a pasta ocupava um terço da tela): a pasta fica numa linha, e as páginas vão para o índice do prontuário,
  * aberto em tela cheia (o vocabulário de interação da identidade: "no celular, o menu abre como o prontuário aberto").
  * É um <dialog> nativo: o foco preso, o Esc, o fundo inerte. O gatilho é a aba "Páginas" da pasta; sem script, ele
- * leva à lista de páginas do pé (#paginas-da-clinica).
+ * leva à lista de páginas do pé (#paginas-da-clinica); com script, é um botão (role e barra de espaço).
+ *
+ * No celular (o fechamento do Impeccable, 16.10.2026), o lugar do interruptor na pasta é da ação "Pedir avaliação" (a
+ * ação sumia entre a capa e a chamada, ~7.000 px), e o interruptor vai para o índice, com o nome à vista. Um só
+ * interruptor, montado onde a tela pede: dois dariam dois estados de pausa.
  */
 export function AbasDoProntuario({
   nome,
@@ -34,6 +38,7 @@ export function AbasDoProntuario({
   avaliacao,
   indice,
   fechar,
+  pausa,
 }: {
   nome: string;
   /** O registro da clínica (CRO-RJ). */
@@ -48,11 +53,24 @@ export function AbasDoProntuario({
   /** O gatilho do índice, no celular ("Páginas"), e o fecho dele. */
   indice: string;
   fechar: string;
+  /** O nome à vista do interruptor do refletor. */
+  pausa: string;
 }) {
   const caminho = usePathname();
   const estado = (a: Aba) => (caminho === a.caminho ? "page" : caminho.startsWith(`${a.caminho}/`) ? "true" : undefined);
   const dialogo = useRef<HTMLDialogElement>(null);
   const [aberto, setAberto] = useState(false);
+  // Depois da hidratação: o gatilho vira botão, e o interruptor vai para onde a pasta o mostra (a mesma condição do CSS).
+  const [pronto, setPronto] = useState(false);
+  const [celular, setCelular] = useState(false);
+  useEffect(() => {
+    const estreita = window.matchMedia("(max-width: 639px), (max-width: 1023px) and (max-height: 30rem)");
+    const ler = () => setCelular(estreita.matches);
+    ler();
+    setPronto(true);
+    estreita.addEventListener("change", ler);
+    return () => estreita.removeEventListener("change", ler);
+  }, []);
   // O índice fecha ao trocar de página e quando a tela passa a ter as abas à vista (a mesma condição do CSS).
   useEffect(() => {
     dialogo.current?.close();
@@ -62,6 +80,10 @@ export function AbasDoProntuario({
     return () => largo.removeEventListener("change", aoAlargar);
   }, [caminho]);
   const fecharIndice = () => dialogo.current?.close();
+  const abrirIndice = () => {
+    dialogo.current?.showModal();
+    setAberto(true);
+  };
   // O vínculo para outra página deixa o índice aberto até a página nova chegar (o efeito acima o fecha): sem o
   // relance da página velha no meio. O da página de agora só fecha.
   const fecharSeAqui = (destino: string) => () => {
@@ -88,21 +110,28 @@ export function AbasDoProntuario({
           ))}
         </nav>
         <div className="od-pasta-direita">
-          <span className="od-interruptor">
-            <ControleDoMovimento />
-          </span>
+          {!celular && (
+            <span className="od-interruptor" title={pausa}>
+              <ControleDoMovimento />
+            </span>
+          )}
           <Link href={avaliacao} aria-current={caminho === avaliacao ? "page" : undefined} tabIndex={caminho === avaliacao ? -1 : undefined} className="od-ceramica od-ceramica-miuda od-pasta-acao">
             <span>{acao}</span>
           </Link>
           <a
             href="#paginas-da-clinica"
+            role={pronto ? "button" : undefined}
             aria-haspopup="dialog"
             aria-expanded={aberto}
             onClick={(e) => {
               if (!dialogo.current?.showModal) return;
               e.preventDefault();
-              dialogo.current.showModal();
-              setAberto(true);
+              abrirIndice();
+            }}
+            onKeyDown={(e) => {
+              if (e.key !== " " || !dialogo.current?.showModal) return;
+              e.preventDefault();
+              abrirIndice();
             }}
             className="od-aba od-indice-gatilho"
           >
@@ -132,6 +161,14 @@ export function AbasDoProntuario({
                   </li>
                 ))}
               </ul>
+              {celular && (
+                <p className="od-indice-pausa">
+                  <span aria-hidden="true">{pausa}</span>
+                  <span className="od-interruptor">
+                    <ControleDoMovimento />
+                  </span>
+                </p>
+              )}
               <Link href={avaliacao} aria-current={caminho === avaliacao ? "page" : undefined} onClick={fecharSeAqui(avaliacao)} className="od-ceramica od-ceramica-grande od-indice-acao">
                 <span>{acao}</span>
               </Link>

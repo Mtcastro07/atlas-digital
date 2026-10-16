@@ -5,16 +5,9 @@ import { buttonVariants } from "@/components/ui/button";
 import { falarNoWhatsApp, mensagens, orcamento, simulador } from "@/conteudo/site";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
-/**
- * O montador de orçamento, com o desenho da tabela do site de 28/08, na
- * névoa (o bloco claro de decisão). No início, como era lá: o texto à
- * esquerda e o painel à direita. Na página Orçamento (`completo`), o
- * título visível é o da página, e o painel ocupa a coluna inteira, com a
- * tabela completa (ilhas/montador.tsx). O aviso para quem está sem script
- * continua nas duas.
- */
-export function Orcamento({ completo = false }: { completo?: boolean }) {
-  const semScript = (
+/** O aviso para quem está sem script: o montador precisa dele, e a conversa pode começar pelo WhatsApp. */
+function SemScript() {
+  return (
     <noscript>
       <Apoio className="mt-6">{orcamento.semScript}</Apoio>
       <a href={linkWhatsApp(mensagens.contato)} className={buttonVariants({ className: "mt-4" })}>
@@ -22,26 +15,14 @@ export function Orcamento({ completo = false }: { completo?: boolean }) {
       </a>
     </noscript>
   );
+}
 
-  if (completo) {
-    return (
-      <Secao id="orcamento" tom="claro">
-        <Envelope>
-          {/* Sem a abertura, a seção guarda o título para leitor de tela: a página vai de h1 a h2. */}
-          <h2 className="sr-only">{orcamento.titulo.join(" ")}</h2>
-          {semScript}
-          <Montador
-            privacidade={orcamento.privacidade}
-            completo={{
-              textos: orcamento.completo,
-              sites: simulador.sites.map(({ plano, nome, caminho }) => ({ plano, nome, caminho })),
-            }}
-          />
-        </Envelope>
-      </Secao>
-    );
-  }
-
+/**
+ * O montador de orçamento, com o desenho da tabela do site de 28/08, na
+ * névoa (o bloco claro de decisão), no início: o texto à esquerda e o
+ * painel à direita. O aviso para quem está sem script fica sob o texto.
+ */
+export function Orcamento() {
   return (
     <Secao id="orcamento" tom="claro">
       <Envelope className="grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
@@ -52,10 +33,36 @@ export function Orcamento({ completo = false }: { completo?: boolean }) {
               linhas ao lado do painel. */}
           <h2 className="mt-3.5 text-numero">{orcamento.titulo.join(" ")}</h2>
           <Lide className="mt-6">{orcamento.lide}</Lide>
-          {semScript}
+          <SemScript />
         </div>
         <Montador privacidade={orcamento.privacidade} />
       </Envelope>
     </Secao>
+  );
+}
+
+/**
+ * A figura da página Orçamento (desde 16/10): o próprio montador, com a
+ * tabela completa (ilhas/montador.tsx), logo abaixo do título "Dois
+ * toques, valor exato." — a abertura e a ferramenta numa cena só, e a
+ * primeira tela, na mesa, já com o plano para escolher. Até 16/10, a
+ * figura era a equação (plano mais módulos é igual a criação mais
+ * mensalidade), num cartão parado que repetia o lide, e o montador vinha
+ * numa seção à parte, na mesma névoa, com a borda de cima no pé da
+ * primeira tela (o crítico de fora: a abertura mais pobre das seis). O
+ * aviso para quem está sem script vem antes do painel.
+ */
+export function MontadorDaPagina() {
+  return (
+    <>
+      <SemScript />
+      <Montador
+        privacidade={orcamento.privacidade}
+        completo={{
+          textos: orcamento.completo,
+          sites: simulador.sites.map(({ plano, nome, caminho }) => ({ plano, nome, caminho })),
+        }}
+      />
+    </>
   );
 }

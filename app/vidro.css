@@ -295,28 +295,17 @@
     }
   }
 
-  /* ---------- botão magnético ----------
-     Com [data-magnetico], o botão puxa levemente em direção ao ponteiro
-     (components/ilhas/luz-do-cursor.tsx, pela propriedade translate) e
-     volta com mola ao sair. */
-  [data-magnetico] {
-    transition-property: translate, background-color, color, border-color, box-shadow, transform;
-    transition-timing-function: var(--ease-mola);
-    transition-duration: 450ms;
-  }
-
-  /* ---------- globo em miniatura ----------
-     O separador da faixa de nichos (secoes/faixa.tsx): o globo da marca
-     desenhado por máscara num pseudoelemento, na cor do vínculo — nenhum
-     elemento a mais no DOM. */
+  /* ---------- separador da faixa de nichos ----------
+     Um ponto de bronze, num pseudoelemento (secoes/faixa.tsx). Até 16/10,
+     o globo da marca em miniatura, 22 vezes na faixa: a assinatura usada
+     como marcador (o crítico de fora). */
   .vd-separador::after {
     content: "";
     flex: none;
-    width: 0.7em;
-    height: 0.7em;
+    width: 0.3em;
+    height: 0.3em;
+    border-radius: 50%;
     background: var(--accent);
-    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-24 -24 48 48'><g fill='none' stroke='black' stroke-width='4'><circle r='21.75'/><ellipse rx='9.75' ry='21.75'/><path d='M-20.42 -7.5H20.42M-20.42 7.5H20.42'/></g></svg>") center / contain no-repeat;
-    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-24 -24 48 48'><g fill='none' stroke='black' stroke-width='4'><circle r='21.75'/><ellipse rx='9.75' ry='21.75'/><path d='M-20.42 -7.5H20.42M-20.42 7.5H20.42'/></g></svg>") center / contain no-repeat;
   }
 
   /* ---------- globo ----------
@@ -451,8 +440,9 @@
     box-shadow:
       0 0 0 3px rgb(255 255 255 / 0.9),
       0 4px 10px rgb(15 42 71 / 0.3);
+    /* Na curva da casa (até 16/10, a mola de 1,4, que ultrapassava: um quique; o crítico de fora). */
     transition:
-      transform 350ms var(--ease-mola),
+      transform 350ms var(--ease-atlas),
       box-shadow 350ms var(--ease-atlas);
   }
   .vd-nota {
@@ -522,19 +512,17 @@
     }
   }
 
-  /* ---------- bloco (azulejo de conteúdo) ----------
-     Superfície arredondada; no hover, sobe 3 px com sombra macia. */
+  /* ---------- bloco (azulejo de conteúdo; as portas do início) ----------
+     No toque e sob o ponteiro fino, o fundo se tinge (abaixo, .vd-bloco:active
+     e .vd-bloco:hover; o hover desde a crítica de 14/10). Até 14/10, no
+     hover, subia 3 px com sombra macia, em toda grade de cartões iguais (a
+     marca M1; pedido do usuário, 14/10: "parecendo que você está spamando
+     os mesmos componentes"). */
   .vd-bloco {
-    transition:
-      transform 450ms var(--ease-atlas),
-      box-shadow 450ms var(--ease-atlas),
-      background-color 300ms var(--ease-atlas);
-  }
-  @media (hover: hover) {
-    .vd-bloco:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 22px 44px -26px var(--sombra);
-    }
+    /* O fundo do cartão mora aqui, e não no utilitário bg-card: na camada de utilitários, ele vencia o tingimento
+       abaixo, que nunca aparecia, nem no toque (achado em 14/10). */
+    background-color: var(--card);
+    transition: background-color 300ms var(--ease-atlas);
   }
 
   /* ---------- esqueleto (regra 4: o estado de carregamento) ----------
@@ -855,6 +843,13 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
   @media (hover: none) {
     .vd-bloco:active {
       background-color: color-mix(in srgb, var(--card) 88%, var(--foreground));
+    }
+  }
+  /* Com ponteiro fino, o mesmo tingimento, mais leve (14/10, o crítico de
+     fora: sem a subida, o cartão inteiro respondia só pelo algarismo). */
+  @media (hover: hover) and (pointer: fine) {
+    .vd-bloco:is(:hover, :focus-visible) {
+      background-color: color-mix(in srgb, var(--card) 90%, var(--foreground));
     }
   }
 }

@@ -77,9 +77,9 @@ export default function InicioDaClinica() {
         </div>
       </section>
 
-      {/* 2 · Percorra a boca: a placa presa, e cada passo, no meio da tela, a gira para a região dele (o motor lê os
-          passos); o nome da região em cartaz. */}
-      <section aria-labelledby="percurso" className="od-cena od-percurso" data-cena>
+      {/* 2 · Percorra a boca: a placa presa, e cada passo, no meio da tela, a gira para a região dele e a pinta a lápis
+          (o motor lê os passos); o nome da região em cartaz, parado. */}
+      <section aria-labelledby="percurso" className="od-cena od-percurso">
         <div className="od-largura od-percurso-grade">
           <div className="od-percurso-palco">
             <Ancora className="od-ancora-do-percurso" inclina={-0.08} />
@@ -95,11 +95,12 @@ export default function InicioDaClinica() {
                 const daRegiao = tratamentos.filter((t) => t.regioes.includes(r.id));
                 return (
                   <li key={r.id} data-passo={r.id} className="od-passo">
-                    <h3 className="od-passo-nome">{r.curto}</h3>
-                    <p className="od-passo-frase">
-                      {passo.titulo}. {percurso.contagem(daRegiao.length)}. {passo.nota}
-                    </p>
+                    <h3 className="od-passo-nome">{r.nome}</h3>
+                    {/* A numeração FDI, de legenda sob o nome, como na ficha à mão (antes, em cartaz, acima dele). */}
                     <p className="od-passo-dentes">{dentesDas([r.id])}</p>
+                    <p className="od-passo-frase">
+                      {percurso.contagem(daRegiao.length)}. {passo.nota}
+                    </p>
                   </li>
                 );
               })}
@@ -108,9 +109,9 @@ export default function InicioDaClinica() {
         </div>
       </section>
 
-      {/* 3 · A ficha de tratamentos: uma linha por tratamento; sob o ponteiro, a região acende na arcada da margem, e a
-          miniatura do mapa vem junto do ponteiro. */}
-      <section aria-labelledby="ficha" className="od-cena od-ficha-cena" data-cena>
+      {/* 3 · A ficha de tratamentos: uma linha por tratamento; sob o ponteiro ou com o foco, a região acende na arcada
+          da margem. */}
+      <section aria-labelledby="ficha" className="od-cena od-ficha-cena">
         <div className="od-largura od-ficha-grade">
           <div className="od-ficha-cabeca">
             <h2 id="ficha" className="od-titulo-grande">
@@ -135,7 +136,7 @@ export default function InicioDaClinica() {
                 // Como na ficha à mão: a linha que repete a de cima leva as aspas de repetição (o leitor de tela ouve o texto).
                 const anterior = tratamentos[i - 1];
                 const repete = anterior !== undefined && anterior.regioes.join() === t.regioes.join();
-                const onde = todas ? ficha.todas : t.regioes.map((id) => regioes.find((r) => r.id === id)!.curto).join("; ");
+                const onde = todas ? ficha.todas : t.regioes.map((id) => regioes.find((r) => r.id === id)!.nome).join("; ");
                 return (
                   <tr key={t.id} data-linha-da-ficha data-regioes={t.regioes.join(" ")}>
                     <th scope="row">
@@ -154,8 +155,9 @@ export default function InicioDaClinica() {
                       <td>
                         {onde}
                         <span className="od-ficha-dentes">{todas ? mapa.numeracao : dentesDas(t.regioes)}</span>
-                        {/* No celular, a miniatura fica na linha (sem o ponteiro que a leva): a região a lápis no mapa. */}
-                        <MapaDosDentes ativas={todas ? [] : t.regioes} legendas={mapa.legendas} className="od-ficha-mini" />
+                        {/* No celular (sem a arcada da margem), a região a lápis no mapa pequeno, só quando é parte da boca:
+                            a boca inteira daria o mapa em branco, e o texto basta. */}
+                        {!todas && <MapaDosDentes ativas={t.regioes} legendas={mapa.legendas} className="od-ficha-mini" />}
                       </td>
                     )}
                   </tr>
@@ -169,13 +171,11 @@ export default function InicioDaClinica() {
             </Link>
           </p>
         </div>
-        <div aria-hidden="true" data-miniatura className="od-miniatura">
-          <MapaDosDentes percurso legendas={mapa.legendas} />
-        </div>
       </section>
 
-      {/* 4 · Os cartões de retorno: a cerâmica, com o relevo e a aresta de luz sob a mão; os números contam uma vez. */}
-      <section aria-labelledby="cartoes" className="od-cena od-cartoes" data-cena>
+      {/* 4 · Os cartões de retorno: o papel em repouso, na fila de deslizar, com o trilho do avanço (o lápis anda com a
+          fila); o 30 das manutenções conta uma vez. */}
+      <section aria-labelledby="cartoes" className="od-cena od-cartoes">
         <div className="od-largura od-cartoes-cabeca">
           <div>
             <h2 id="cartoes" className="od-titulo-de-cena">
@@ -188,8 +188,8 @@ export default function InicioDaClinica() {
           </div>
         </div>
         <ol data-galeria="cartoes-de-retorno" aria-label={cartoesDeRetorno.rotuloDaFila} className="od-fila" tabIndex={0}>
-          {tratamentos.map((t, i) => (
-            <li key={t.id} data-ceramica className="od-cartao" style={{ "--i": i } as React.CSSProperties}>
+          {tratamentos.map((t) => (
+            <li key={t.id} className="od-cartao">
               <h3 className="od-cartao-nome">{t.nome}</h3>
               <p className="od-cartao-frase">{t.umaFrase}</p>
               <p className="od-cartao-numero">
@@ -214,6 +214,9 @@ export default function InicioDaClinica() {
             </li>
           ))}
         </ol>
+        <div aria-hidden="true" className="od-largura">
+          <span className="od-trilho" style={{ "--n": tratamentos.length } as React.CSSProperties} />
+        </div>
       </section>
 
       {/* 5 · O termo: o que não se faz aqui, cláusula por cláusula, com o "Nenhum" em cartaz e circulado a lápis. */}
@@ -230,7 +233,7 @@ export default function InicioDaClinica() {
                   <p className="od-clausula-fato">
                     <span className="od-nenhum">
                       {primeira}
-                      <span aria-hidden="true" className="od-sublinha" />
+                      <span aria-hidden="true" className="od-circulo" />
                     </span>{" "}
                     <span className="od-clausula-resto">{resto.join(" ")}</span>
                   </p>
@@ -242,9 +245,9 @@ export default function InicioDaClinica() {
         </div>
       </section>
 
-      {/* 6 · A porta da clínica: o endereço em cartaz; as placas de cerâmica (quem atende e o horário, com a luz que a
-          atravessa); o bairro a lápis. */}
-      <section aria-labelledby="porta" className="od-cena od-porta" data-cena>
+      {/* 6 · A porta da clínica: o endereço em cartaz; duas placas de cerâmica (a de quem atende, com os três nomes, e a
+          do horário, com a luz que a atravessa). */}
+      <section aria-labelledby="porta" className="od-cena od-porta">
         <div className="od-largura od-porta-grade">
           <h2 id="porta" className="sr-only">
             {porta.titulo}
@@ -262,9 +265,11 @@ export default function InicioDaClinica() {
               </Link>
             </p>
           </div>
-          <ul aria-label={porta.placas} className="od-placas">
+          {/* Uma placa só, com os três nomes gravados (antes, três placas iguais em coluna, ao lado da do horário: a série
+              de peças idênticas que o pedido de 14.10.2026 tira; o crítico de fora). */}
+          <ul aria-label={porta.placas} data-ceramica className="od-placa od-placa-de-nome od-placas">
             {equipe.map((d) => (
-              <li key={d.id} data-ceramica className="od-placa od-placa-de-nome">
+              <li key={d.id}>
                 <p className="od-placa-nome">{d.nome}</p>
                 <p className="od-placa-cro">
                   {d.profissao}, <span className="whitespace-nowrap">{d.cro}</span>
@@ -283,7 +288,7 @@ export default function InicioDaClinica() {
       </section>
 
       {/* 7 · A avaliação marcada: o campo do lápis vermelho, de ponta a ponta; a placa de volta à luz. */}
-      <section aria-labelledby="chamada" className="od-cena od-chamada" data-cena data-tinta="vermelha">
+      <section aria-labelledby="chamada" className="od-cena od-chamada" data-tinta="vermelha">
         <div className="od-largura od-chamada-grade">
           <div className="od-chamada-texto">
             <h2 id="chamada" className="od-chamada-titulo">

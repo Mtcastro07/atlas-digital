@@ -51,7 +51,7 @@ export function EscolhaDeRegiao({
           </MapaDosDentes>
         </div>
       </div>
-      <div className="od-opcoes">
+      <div className="od-opcoes od-opcoes-regiao">
         <label>
           <input type="radio" name={grupo} value="" checked={valor === ""} onChange={() => aoMudar("")} className="peer sr-only" />
           <span className="od-opcao">{todas}</span>

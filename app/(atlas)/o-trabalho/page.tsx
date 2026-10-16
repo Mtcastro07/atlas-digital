@@ -9,7 +9,7 @@ export const metadata = metadadosDaPagina("trabalho");
 /**
  * O trabalho: a abertura é a régua do prazo, como uma trena — da visita
  * ao rascunho em 24 horas, às revisões e à publicação —; depois, as
- * quatro etapas, com a marca em número de cada uma.
+ * quatro etapas, num cronograma em linhas (desde 16/10).
  */
 export default function PaginaDoTrabalho() {
   return (

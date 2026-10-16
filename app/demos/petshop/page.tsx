@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 import { CartaoDeEntrega } from "@/components/demos/petshop/cartao-de-entrega";
 import { Mapa } from "@/components/demos/petshop/mapa";
-import { Carimbo, Endereco, Impresso, LuzDaPorta, ReguaDeLeitura, Telefone, Vinculo, horarioEmLinha, metadadosDe, paginaDe } from "@/components/demos/petshop/pecas";
+import { Carimbo, Endereco, Impresso, LuzDaPorta, Telefone, Vinculo, horarioEmLinha, metadadosDe, paginaDe } from "@/components/demos/petshop/pecas";
 import { Pausa } from "@/components/ilhas/demos/petshop/pausa";
 import {
   atendimento,
@@ -69,13 +69,46 @@ const diasEmTexto = [...porDia]
   .join("; ");
 
 /**
+ * A lista de preços da cena 2: o porte, o peso e o tempo, e o preço vazado. `prova`: a cópia impressa na folha que o rolo
+ * cobre, sem a peça (o verniz e a medida da linha são só da lista de verdade).
+ */
+const listaDePrecos = (prova = false) => (
+  <dl className="bt-preco-lista">
+    {portes.map((porte) => {
+      const preco = banhoPeloCurto[porte.id];
+      const [inteiro, centavos] = real(preco.centavos).replace(/^R\$\s/, "").split(",");
+      return (
+        <div key={porte.id} data-bt-peca={prova ? undefined : ""} data-bt-linha={prova ? undefined : ""} className="bt-preco-linha">
+          <dt>
+            <span className="bt-subtitulo bt-preco-porte">{porte.nome}</span>{" "}
+            <span className="bt-preco-faixa">
+              {porte.faixa}, {duracao(preco.minutos)} de banho
+            </span>
+          </dt>
+          {/* O valor inteiro para o leitor de tela; as peças da etiqueta, só desenho (liam "R$ 60 ,00"). */}
+          <dd className="bt-numero bt-preco-valor">
+            <span className="sr-only">{real(preco.centavos)}</span>
+            <span aria-hidden="true">
+              <span className="bt-preco-moeda">R$ </span>
+              <Impresso>{inteiro}</Impresso>
+              <span className="bt-preco-centavos">,{centavos}</span>
+            </span>
+          </dd>
+        </div>
+      );
+    })}
+  </dl>
+);
+
+/**
  * O Início do Banho e Tosa São Francisco: o cartão do balcão em seis cenas (identidade, seção 4.12, aprovada em
  * 13.10.2026; lapidada nas rodadas 1 a 3). O cartão da capa é o único deitado no balcão; as cenas claras são a cartolina
  * de ponta a ponta, com as peças deitadas nela (o cartão de entrega, o verso do cartão); as escuras são a tinta. O valor
  * vira a cada cena, e cada cena tem a sua composição e a sua peça:
  * 1, a frente do cartão (o nome, a ação, a amostra do preço, a luz da porta; a pilha, a sombra e a luz no balcão); 2, o
  * preço no chapado (a lista tipográfica do porte, alinhada pelo tnum, revelada pelo rolo de tinta); 3, do pente à entrega
- * (a linha do atendimento em trechos chapados, nos minutos da tabela, que termina no cartão de entrega); 4, fora da
+ * (a linha do atendimento em trechos chapados, nos minutos da tabela, que termina no cartão de entrega, que vira ao
+ * chegar); 4, fora da
  * tabela (as quatro ausências, só tipografia); 5, quando e onde (o verso do cartão inteiro: o mapinho, o horário
  * impresso, o endereço e o leva e traz); 6, a mensagem pronta (impressa com as lacunas, com o carimbo claro ao lado).
  * Cada fato sai de conteudo/demos/petshop.ts.
@@ -128,7 +161,9 @@ export default function Inicio() {
       </section>
 
       {/* 2 · O preço no chapado: a lista tipográfica (identidade, seção 4.12), o porte à esquerda e o preço à direita,
-          numa coluna pelo tnum; o rolo de tinta passa sobre o papel nu e deixa os preços vazados, uma vez. */}
+          numa coluna pelo tnum; o rolo de tinta passa sobre a prova impressa na cartolina e deixa os preços vazados, uma
+          vez. Sob a mão,
+          só o número da linha pega a luz (cada linha é uma peça); a lista não leva a régua de leitura (14.10.2026). */}
       <section aria-labelledby="preco-titulo" className="bt-cena bt-tinta bt-preco">
         <div className="bt-largura">
           <div className="bt-preco-cabeca">
@@ -139,43 +174,28 @@ export default function Inicio() {
               Pelagem {pelagens.curta.toLowerCase()}, por porte. {valoresDe}.
             </p>
           </div>
-          <div data-bt-peca="" data-bt-revela="" className="bt-preco-peca">
-            <ReguaDeLeitura className="bt-preco-regua">
-              <dl className="bt-preco-lista">
-                {portes.map((porte) => {
-                  const preco = banhoPeloCurto[porte.id];
-                  const [inteiro, centavos] = real(preco.centavos).replace(/^R\$\s/, "").split(",");
-                  return (
-                    <div key={porte.id} data-bt-linha="" className="bt-preco-linha">
-                      <dt>
-                        <span className="bt-subtitulo bt-preco-porte">{porte.nome}</span>{" "}
-                        <span className="bt-preco-faixa">
-                          {porte.faixa}, {duracao(preco.minutos)} de banho
-                        </span>
-                      </dt>
-                      <dd className="bt-numero bt-preco-valor">
-                        <span className="bt-preco-moeda">R$ </span>
-                        <Impresso>{inteiro}</Impresso>
-                        <span className="bt-preco-centavos">,{centavos}</span>
-                      </dd>
-                    </div>
-                  );
-                })}
-              </dl>
-              <span aria-hidden="true" className="bt-preco-rolo" />
-            </ReguaDeLeitura>
+          <div data-bt-revela="" className="bt-preco-peca">
+            <div className="bt-preco-regua">
+              {listaDePrecos()}
+              {/* A folha que o rolo cobre: a prova da mesma lista, uva na cartolina, que a tinta vira (inicio.css). */}
+              <div aria-hidden="true" inert data-nosnippet="" className="bt-preco-rolo">
+                <div className="bt-cartolina bt-preco-prova">{listaDePrecos(true)}</div>
+              </div>
+            </div>
           </div>
           <p className="bt-preco-nota">
             <Vinculo href={tabela}>As outras pelagens, a tosa e os acréscimos, em {paginaDe("servicos").rotulo}</Vinculo>
           </p>
+          {/* No celular, a ação ao alcance do polegar logo depois do preço (inicio.css; na mesa, a tira já a tem à vista). */}
+          <Carimbo miudo className="bt-preco-acao" />
         </div>
       </section>
 
       {/* 3 · Do pente à entrega: a cartolina de ponta a ponta. O título numa linha, o trato e o exemplo embaixo dele; a
           linha do atendimento de ponta a ponta, em trechos chapados do tamanho dos minutos de cada etapa (a soma é a
           tabela), com a hora em que cada etapa começa e os minutos vazados no trecho, e o nome e o que se faz alternados
-          em cima e embaixo, como no roteiro; ela termina
-          no cartão de entrega, que pende do último trecho e passa da borda da cena, deitado sobre a tinta da cena 4. */}
+          em cima e embaixo, como no roteiro; ela termina no cartão de entrega, que pende do último trecho e passa da borda
+          da cena, deitado sobre a tinta da cena 4. */}
       <section aria-labelledby="atendimento-titulo" className="bt-cena bt-cartolina bt-atendimento">
         <div className="bt-largura bt-atendimento-grade">
           <h2 id="atendimento-titulo" className="bt-titulo bt-atendimento-titulo">
@@ -186,16 +206,22 @@ export default function Inicio() {
           </p>
           {/* "1 h 30" não se parte (a 768 px, o "h 30" descia sozinho para a linha de baixo). */}
           <p className="bt-atendimento-exemplo">{atendimento.exemplo.replace(/(\d) h (\d)/g, "$1\u00a0h\u00a0$2")}</p>
-          <ol data-bt-revela="" className="bt-linha" style={{ "--bt-trechos": trechos } as React.CSSProperties}>
+          {/* --i e --fila: abaixo de 640 px, a fita deita numa linha só e os rótulos vêm embaixo, um por fila (inicio.css). */}
+          <ol className="bt-linha" style={{ "--bt-trechos": trechos, "--bt-etapas": etapas.length } as React.CSSProperties}>
             {etapas.map((e, i) => (
               <li
                 key={e.nome}
                 data-lado={lado(i)}
                 data-curto={e.minutos < 10 ? "" : undefined}
                 className="bt-linha-etapa"
-                style={{ "--i": i, "--ate": ate(i), "--min": e.minutos } as React.CSSProperties}
+                style={{ "--ate": ate(i), "--min": e.minutos, "--i": i + 1, "--fila": i + 2 } as React.CSSProperties}
               >
                 <div className="bt-linha-rotulo">
+                  {/* A hora e os minutos do trecho, à vista no rótulo quando o trecho é estreito demais para eles (o
+                      leitor de tela já os lê no trecho). */}
+                  <p aria-hidden="true" className="bt-linha-quando">
+                    {noRelogio(e.inicio)} · {e.minutos} min
+                  </p>
                   <h3 className="bt-linha-nome">{e.nome}</h3>
                   <p className="bt-linha-oque">{e.oQue}</p>
                 </div>
@@ -210,10 +236,9 @@ export default function Inicio() {
               </li>
             ))}
           </ol>
-          <div className="bt-perspectiva bt-atendimento-entrega">
-            <div data-bt-peca="inclina" className="bt-atendimento-entrega-peca">
-              <CartaoDeEntrega />
-            </div>
+          {/* O gesto da cena, uma vez: ao chegar, o cartão de entrega vira, das costas (a marca da casa) para a frente. */}
+          <div data-bt-revela="" className="bt-atendimento-entrega">
+            <CartaoDeEntrega />
           </div>
         </div>
       </section>
@@ -239,7 +264,7 @@ export default function Inicio() {
       {/* 5 · Quando e onde: o verso do cartão, inteiro, deitado na cartolina e sobre a borda da cena 4 (lapidação, rodada
           3: o título à esquerda e o mapa à direita eram a abertura de Onde da odontologia). Como no verso de um cartão de
           gráfica: o mapinho dos bairros do leva e traz, com o dia de cada um, na margem do papel, e a linha do leva e traz
-          embaixo dele; ao lado, o título, o horário impresso (o bloco chapado de tinta, a 24 px, que assenta uma vez) e o
+          embaixo dele; ao lado, o título, o horário impresso (o bloco chapado de tinta, a 24 px, parado e sem régua) e o
           endereço. O verso inclina sob a mão. No DOM, o título e o texto vêm antes do mapa (no celular, a ordem da
           leitura; na mesa, a grade põe o mapa à esquerda: inicio.css). */}
       <section aria-labelledby="quando-titulo" className="bt-cena bt-cartolina bt-quando">
@@ -250,21 +275,19 @@ export default function Inicio() {
                 <h2 id="quando-titulo" className="bt-titulo bt-quando-titulo">
                   Quando e onde
                 </h2>
-                <div data-bt-revela="" className="bt-tinta bt-horario">
-                  <ReguaDeLeitura>
-                    <dl>
-                      {diasAbertos.map((g) => (
-                        <div key={g.dias} data-bt-linha="" className="bt-horario-linha">
-                          <dt>{g.dias}</dt>
-                          <dd>{g.texto}</dd>
-                        </div>
-                      ))}
-                      <div data-bt-linha="" className="bt-horario-linha bt-horario-fechado">
-                        <dt>{diasFechados}</dt>
-                        <dd>{fechado}</dd>
+                <div className="bt-tinta bt-horario">
+                  <dl>
+                    {diasAbertos.map((g) => (
+                      <div key={g.dias} className="bt-horario-linha">
+                        <dt>{g.dias}</dt>
+                        <dd>{g.texto}</dd>
                       </div>
-                    </dl>
-                  </ReguaDeLeitura>
+                    ))}
+                    <div className="bt-horario-linha bt-horario-fechado">
+                      <dt>{diasFechados}</dt>
+                      <dd>{fechado}</dd>
+                    </div>
+                  </dl>
                   <p className="bt-horario-feriados">{feriados}</p>
                 </div>
                 <Endereco rotuloDoMapa={mapa.abrir} className="bt-quando-endereco" />

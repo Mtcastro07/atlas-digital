@@ -6,10 +6,26 @@
    de cartaz, redonda e itálica), Newsreader no texto — as duas com
    serifa, as únicas dos três sites. Peças de impresso: sumário com
    pontilhado, entrevista em P. e R., nota de rodapé, legenda de figura,
-   colofão e o índice em algarismos romanos. Movimento do Essencial:
-   revelação e transições — a página entra como uma folha que assenta e o
-   pontilhado corre até o número. Nada contínuo. */
+   colofão e o índice em algarismos romanos.
 
+   Movimento (refeito em 14.10.2026, pedido do usuário: "parecendo que
+   você está spamando os mesmos componentes"; refeito de novo no mesmo dia,
+   depois do crítico de fora): nenhum efeito em série. Um momento por
+   página, cada um com o seu impresso, na abertura dela: na capa, a folha
+   do plano que pousa junto do título, a luz da janela que passa sobre ela
+   (e responde ao ponteiro e ao toque) e a sombra da horta da janela, que
+   balança devagar (o ambiente do Essencial, pausável e parado fora da
+   tela); em Valores, o recibo que se preenche (o valor por extenso e a
+   assinatura se escrevem); no Consultório, o caminho a pé que se marca no
+   mapa e o consultório que se carimba na ponta dele. O marca-texto, uma
+   vez por página, numa palavra do corpo, fora dos títulos. O resto da
+   folha fica impresso, parado desde o primeiro quadro. Entre as páginas, a
+   troca curta da receita do kit, com o cabeçalho e o botão flutuante
+   ancorados. */
+
+/* As transparências da tinta (filetes, hastes, sombras) vêm de var(--foreground) por color-mix (fechamento com o
+   Impeccable, 16.10.2026; eram 26 literais rgb(30 51 38 / α)). Nenhuma delas fica dentro dos campos que redefinem a
+   tinta (.nt-contracapa, .nt-campo-tinta), onde a tinta vira palha. */
 [data-demo="nutricao"] {
   --background: #f4efe4; /* palha */
   --foreground: #1e3326; /* tinta verde, 11,5:1 */
@@ -25,7 +41,7 @@
   --secondary-foreground: #1e3326;
   --accent: #8d461a; /* 6:1 */
   --border: #d6ccb9;
-  --input: rgb(30 51 38 / 0.38);
+  --input: color-mix(in srgb, var(--foreground) 38%, transparent);
   --ring: #8d461a;
   /* A letra da marca, na Fraunces do próprio site (a 600 da vitrine não
      entra aqui: junto com as fontes do site, o empacotador as reunia num
@@ -40,8 +56,9 @@
   font-size: 18px;
   line-height: 1.55;
   background-color: var(--background);
-  /* O grão do papel: ruído gerado, quase invisível. */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .25  0 0 0 0 .2  0 0 0 0 .1  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  /* O grão do papel: ruído gerado, quase invisível (também na folha do plano, na página do plano e na tampa do pontilhado). */
+  --nt-grao: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .25  0 0 0 0 .2  0 0 0 0 .1  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  background-image: var(--nt-grao);
   color: var(--foreground);
   font-kerning: normal;
   font-variant-ligatures: common-ligatures;
@@ -54,6 +71,21 @@ html:has([data-demo="nutricao"]) {
   background: #d9e2cf;
   color: var(--foreground);
 }
+/* A barra de rolagem na tinta e na palha, na mesa (fechamento com o Impeccable, 16.10.2026; era a do navegador).
+   Abaixo de 1024 px, ela fica oculta pela regra global (app/globals.css). */
+@media (min-width: 1024px) {
+  html:has([data-demo="nutricao"]) {
+    scrollbar-color: #4f6053 #f4efe4;
+  }
+}
+/* O "Ir para o conteúdo" (do layout raiz) na paleta da folha (fechamento com o Impeccable, 16.10.2026): era a pílula
+   no azul do Atlas. O chapado da tinta verde, a palha (11,5:1) e o contorno do foco no damasco da ação. O atalho fica
+   fora do [data-demo]: as cores vão escritas, como no depósito. */
+html:has([data-demo="nutricao"]) body > a[href="#conteudo"] {
+  background: #1e3326;
+  color: #f4efe4;
+  outline-color: #8d461a;
+}
 
 /* ---------- tipografia ---------- */
 .nt-exibicao {
@@ -61,6 +93,13 @@ html:has([data-demo="nutricao"]) {
   font-weight: 400;
   letter-spacing: -0.028em;
   font-kerning: normal;
+  /* O espaço entre palavras da Fraunces de cartaz (o eixo óptico 144) é
+     estreito nos corpos médios: 0,137 em, contra 0,248 em na Newsreader do
+     texto; a 24 px, 3,3 px, e "A pé" se lia "Apé" (crítico de fora,
+     16.10.2026). Um acréscimo que cai com o corpo: +0,1 em até ~45 px,
+     ~2,5 px a 72 px e nada de ~143 px para cima (o título da capa fica como
+     era). */
+  word-spacing: clamp(0px, calc(5px - 0.035em), 0.1em);
 }
 /* Versalete: os rótulos, o fólio, os nomes do índice. */
 .nt-versal {
@@ -80,6 +119,12 @@ html:has([data-demo="nutricao"]) {
 .nt-numeros {
   font-variant-numeric: lining-nums tabular-nums;
 }
+/* A Fraunces não tem algarismos tabulares: nela, só os de caixa-alta (a
+   régua acusava o tabular-nums sem efeito; 16.10.2026). */
+.nt-exibicao.nt-numeros,
+.nt-fp-hora {
+  font-variant-numeric: lining-nums;
+}
 
 /* ---------- filetes e pontilhado ---------- */
 /* Filete duplo: o fio grosso e o fino, como no topo de uma página impressa. */
@@ -88,21 +133,32 @@ html:has([data-demo="nutricao"]) {
   border-top: 2px solid var(--foreground);
   border-bottom: 1px solid var(--foreground);
 }
-/* O pontilhado do sumário e da carta: corre do rótulo até o valor. */
+/* O pontilhado do sumário e da carta, impresso, do rótulo até o valor (o
+   0,55 de opacidade, na cor, no ::before). Desde o crítico de fora, só
+   impresso: nenhum corre. */
 .nt-pontilhado {
+  position: relative;
   flex: 1 1 2rem;
   min-width: 2rem;
   height: 0.5em;
   margin: 0 0.5em;
   align-self: baseline;
-  background: radial-gradient(circle, currentColor 0.9px, transparent 1.3px) 0 100% / 9px 4px repeat-x;
-  opacity: 0.55;
-  clip-path: inset(0 0 0 0);
-  transition: clip-path 1500ms var(--ease-atlas) calc(var(--atraso, 0ms) + 200ms);
 }
-.dm-oculto .nt-pontilhado {
-  clip-path: inset(0 100% 0 0);
-  transition: none;
+.nt-pontilhado::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, color-mix(in srgb, currentColor 55%, transparent) 0.9px, transparent 1.3px) 0 100% / 9px 4px repeat-x;
+}
+/* A revelação comum (app/demos/demos.css) não esmaece nem sobe nada neste
+   site: o que tem [data-revelar] fica de pé desde o primeiro quadro, e a
+   .dm-oculto só arma o momento do consultório (o caminho e o carimbo),
+   numa tela baixa em que o mapa nasce abaixo da dobra, pelas regras dele,
+   mais específicas. (Até 14.10.2026, armava também o pontilhado que
+   corria na carta de valores.) */
+[data-demo="nutricao"] [data-revelar].dm-oculto {
+  opacity: 1;
+  transform: none;
 }
 
 /* ---------- vínculos ---------- */
@@ -129,20 +185,109 @@ html:has([data-demo="nutricao"]) {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.3em;
 }
-
-/* ---------- a folha que assenta (transição de página) ---------- */
-@media (prefers-reduced-motion: no-preference) {
-  .nt-folha {
-    animation: nt-folha 900ms var(--ease-atlas) both;
-  }
-  .ja-aberto .nt-folha {
-    animation: none;
+/* Nas outras, o filete corre até o item, da esquerda (a navegação, 09-movimento, seção 13.1; crítico de fora,
+   16.10.2026: até então, só a cor mudava): sob o ponteiro fino e no foco em 220 ms, no toque em 120 ms; volta em
+   150 ms. Com movimento reduzido, aparece seco. */
+.nt-indice-rotulo {
+  position: relative;
+}
+.nt-indice a:not([aria-current]) .nt-indice-rotulo::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0.02em;
+  left: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.nt-indice a:active .nt-indice-rotulo::after,
+.nt-indice a:focus-visible .nt-indice-rotulo::after {
+  transform: scaleX(1);
+}
+@media (hover: hover) and (pointer: fine) {
+  .nt-indice a:hover .nt-indice-rotulo::after {
+    transform: scaleX(1);
   }
 }
-@keyframes nt-folha {
+@media (prefers-reduced-motion: no-preference) {
+  .nt-indice a .nt-indice-rotulo::after {
+    transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .nt-indice a:active .nt-indice-rotulo::after {
+    transition-duration: 120ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .nt-indice a:hover:not(:active) .nt-indice-rotulo::after {
+    transition-duration: 220ms;
+  }
+}
+
+/* ---------- a troca de página ----------
+   A receita do kit (09-movimento.md, seções 2, 3 e 8), só neste site: a
+   página que sai só se apaga, em 150 ms; a que entra começa depois, de
+   10 px, em 300 ms; as duas nunca se cruzam. Sem giro nem pose da
+   assinatura (a transição com a assinatura é do Completo). No celular,
+   300 ms no total. O cabeçalho (CabecalhoFixo) e o botão flutuante
+   (grupo nt-flutuante, moldura.tsx) ficam parados. Com movimento
+   reduzido, a troca é seca (app/movimento.css); sem suporte, imediata. */
+html:has([data-demo="nutricao"])::view-transition-old(.pagina-sai) {
+  animation: 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both nt-troca-sai;
+}
+html:has([data-demo="nutricao"])::view-transition-new(.pagina-entra) {
+  animation: 300ms cubic-bezier(0.05, 0.7, 0.1, 1) 150ms both nt-troca-entra;
+}
+@media (max-width: 1023.98px) {
+  html:has([data-demo="nutricao"])::view-transition-old(.pagina-sai) {
+    animation-duration: 100ms;
+  }
+  html:has([data-demo="nutricao"])::view-transition-new(.pagina-entra) {
+    animation: 200ms cubic-bezier(0.05, 0.7, 0.1, 1) 100ms both nt-troca-entra-celular;
+  }
+}
+::view-transition-group(nt-flutuante) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(nt-flutuante) {
+  display: none;
+}
+::view-transition-new(nt-flutuante) {
+  animation: none;
+}
+/* A espera dos três momentos de abertura (a folha que pousa, o recibo que
+   se escreve, o caminho e o carimbo no mapa): na navegação pelo índice, a
+   página nova só aparece depois da saída e entra em 300 ms (no celular,
+   100 + 200 ms); aos 280 ms (200 ms) ela já está quase inteira, e o
+   momento roda à vista, não por baixo da troca. Na carga direta, a espera
+   é curta (15.10.2026; até então, os momentos começavam aos 80 a 200 ms e
+   corriam em boa parte durante a troca: o crítico de fora quase não os
+   via). */
+[data-demo="nutricao"] {
+  --nt-depois: 280ms;
+}
+@media (max-width: 1023.98px) {
+  [data-demo="nutricao"] {
+    --nt-depois: 200ms;
+  }
+}
+@keyframes nt-troca-sai {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes nt-troca-entra {
   from {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(10px);
+  }
+}
+@keyframes nt-troca-entra-celular {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
 }
 
@@ -154,7 +299,7 @@ html:has([data-demo="nutricao"]) {
 .nt-flutuante {
   box-shadow:
     0 0 0 6px color-mix(in srgb, var(--background) 80%, transparent),
-    0 18px 40px -16px rgb(30 51 38 / 0.55);
+    0 18px 40px -16px color-mix(in srgb, var(--foreground) 55%, transparent);
 }
 .nt-flutuante-rotulo {
   opacity: 0;
@@ -171,20 +316,29 @@ html:has([data-demo="nutricao"]) {
     translate: 0 0;
   }
 }
-/* No celular, o botão recolhe ao rolar para baixo e volta ao rolar para cima
-   (ilha RecolherAoRolar, data-recolhido): o texto da folha fica livre. */
-@media (max-width: 767.98px) {
-  .nt-flutuante {
-    transition:
-      opacity 350ms var(--ease-atlas),
-      translate 350ms var(--ease-atlas),
-      visibility 350ms;
-  }
-  .nt-flutuante[data-recolhido] {
-    opacity: 0;
-    translate: 0 14px;
-    visibility: hidden;
-  }
+/* O botão recolhe, com script, enquanto o agendamento do cabeçalho está na
+   tela (sem data-solto: começa assim, sem passagem), em toda largura desde
+   16.10.2026; e, no celular, ao rolar para baixo, voltando ao rolar para
+   cima (data-recolhido, que a ilha só escreve abaixo de 768 px): o texto
+   da folha fica livre (ilha RecolherAoRolar).
+   Esta lista vence a do Tailwind: o pressionado (scale e filter, 120 ms)
+   entra nela, senão estala sem passagem. */
+.nt-flutuante {
+  transition:
+    opacity 350ms var(--ease-atlas),
+    translate 350ms var(--ease-atlas),
+    visibility 350ms,
+    scale 120ms var(--ease-atlas),
+    filter 300ms var(--ease-atlas);
+}
+.nt-flutuante:active {
+  transition-duration: 350ms, 350ms, 350ms, 120ms, 120ms;
+}
+.nt-flutuante[data-recolhido],
+.js .nt-flutuante[data-recolhe]:not([data-solto]) {
+  opacity: 0;
+  translate: 0 14px;
+  visibility: hidden;
 }
 
 /* A letra da marca no peso que a fonte do site tem (400, sem negrito sintético). */
@@ -192,10 +346,1232 @@ html:has([data-demo="nutricao"]) {
   font-weight: 400;
 }
 
-/* ---------- o mapa gravado ---------- */
+/* ---------- o mapa gravado (a abertura do Consultório) ---------- */
 .nt-mapa .rua-borda {
   stroke: var(--foreground);
 }
 .nt-mapa .rua-miolo {
   stroke: var(--card);
+}
+/* A moldura do mapa: a chapa gravada, com o fio de 2 px. Abaixo de 1024
+   px, um recorte quadrado (4 × 3 a partir de 640 px) em volta do
+   consultório e do Campo (o desenho inteiro tem 1.400 × 560: na largura do
+   celular, ficaria com 137 px de altura e o carimbo com 22 px); a partir
+   de 1024 px, o desenho inteiro. */
+.nt-mapa-moldura {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 2px solid var(--foreground);
+  background: var(--card);
+}
+.nt-mapa-moldura .nt-mapa {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  aspect-ratio: 1400 / 560;
+  /* O centro do recorte: x = 860 de 1.400, entre o consultório e o Campo. */
+  transform: translateX(-61.4%);
+}
+@media (min-width: 640px) {
+  .nt-mapa-moldura {
+    aspect-ratio: 4 / 3;
+  }
+}
+@media (min-width: 1024px) {
+  .nt-mapa-moldura {
+    aspect-ratio: auto;
+  }
+  .nt-mapa-moldura .nt-mapa {
+    position: static;
+    width: 100%;
+    height: auto;
+    transform: none;
+  }
+}
+
+/* A cartela: a partir de 1024 px, o título da página vai para o canto de
+   cima, à esquerda, do mapa, num papel com o fio duplo à direita e embaixo
+   (o grosso por dentro, o fino por fora), como a cartela de um mapa
+   impresso. O mapa foi desenhado com esse canto livre. No celular, o título
+   fica em cima do mapa. */
+@media (min-width: 1024px) {
+  .nt-cartela {
+    position: absolute;
+    z-index: 2;
+    top: 2px;
+    left: 2px;
+    padding: clamp(24px, 2.4vw, 40px) clamp(30px, 3vw, 52px) clamp(28px, 2.8vw, 46px) clamp(24px, 2.4vw, 40px);
+    background: var(--nt-grao) var(--card);
+    border-right: 1px solid var(--foreground);
+    border-bottom: 1px solid var(--foreground);
+    box-shadow:
+      inset -4px -4px 0 var(--card),
+      inset -6px -6px 0 var(--foreground);
+  }
+}
+
+/* O momento da página III: o caminho a pé desde o portão do Campo se marca,
+   traço a traço (dez traços, 28 ms um do outro, cada um acendendo em 120
+   ms), e o consultório se carimba na ponta dele: o círculo com a marca
+   desce de 1,35 a 1, girando de −14° a 0, e a linha de chamada acende
+   depois. Em ~740 ms, uma vez, depois da troca (--nt-depois). Na carga,
+   se o consultório está nos primeiros 92% da tela (em toda tela medida, de
+   320 a 1920 px); abaixo disso, quando entra na tela (a ilha Revelacao
+   tira a .dm-oculto do grupo). Com movimento reduzido e sem script, o
+   mapa aparece inteiro.
+   Desde 15.10.2026 (revisão do cético, conferência 5): com o grupo armado
+   (.dm-oculto), a animação de carga não roda. Até então, ela rodava
+   escondida abaixo da dobra (o carimbo ia a 1 e voltava a 0, fora da
+   tela) e, se a pessoa chegasse ao mapa nesse meio-tempo, a transição da
+   revelação o zerava e o refazia: aparecia, sumia e voltava. Agora o mesmo
+   momento roda quando o grupo entra na tela (a animação começa quando a
+   .dm-oculto sai), e as transições ficam só para a recarga e a volta pelo
+   histórico (.ja-aberto), em que a carga não tem momento; as duas nunca
+   disputam o mesmo carimbo. Na revelação, o momento espera o --nt-depois
+   (280 ms; 200 ms no celular), como na carga. */
+.nt-carimbo {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.ja-aberto .nt-rota-traco {
+    transition: opacity 120ms cubic-bezier(0.05, 0.7, 0.1, 1) calc(var(--i) * 28ms);
+  }
+  html.ja-aberto .nt-carimbo {
+    transition:
+      opacity 260ms cubic-bezier(0.2, 0, 0, 1) 300ms,
+      transform 260ms cubic-bezier(0.2, 0, 0, 1) 300ms;
+  }
+  html.ja-aberto .nt-chamada {
+    transition: opacity 200ms cubic-bezier(0.05, 0.7, 0.1, 1) 480ms;
+  }
+  html.js:not(.ja-aberto) .nt-consultorio:not(.dm-oculto) .nt-rota-traco {
+    animation: nt-acende 120ms cubic-bezier(0.05, 0.7, 0.1, 1) calc(var(--nt-depois) + var(--i) * 28ms) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-consultorio:not(.dm-oculto) .nt-carimbo {
+    animation: nt-carimbo 260ms cubic-bezier(0.2, 0, 0, 1) calc(var(--nt-depois) + 300ms) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-consultorio:not(.dm-oculto) .nt-chamada {
+    animation: nt-acende 200ms cubic-bezier(0.05, 0.7, 0.1, 1) calc(var(--nt-depois) + 480ms) backwards;
+  }
+  [data-demo="nutricao"] .nt-consultorio.dm-oculto :is(.nt-rota-traco, .nt-chamada) {
+    opacity: 0;
+    transition: none;
+  }
+  [data-demo="nutricao"] .nt-consultorio.dm-oculto .nt-carimbo {
+    opacity: 0;
+    transform: scale(1.35) rotate(-14deg);
+    transition: none;
+  }
+}
+@keyframes nt-carimbo {
+  from {
+    opacity: 0;
+    transform: scale(1.35) rotate(-14deg);
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes nt-acende {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A legenda do mapa (como chegar): o símbolo de cada modo, o mesmo do mapa.
+   Sob o ponteiro fino, e no toque enquanto o dedo está no item, o
+   marca-texto da folha passa no mapa: no caminho a pé, ou num halo em volta
+   do ponto de ônibus e do estacionamento, que crescem um pouco (220 ms; no
+   toque, 120 ms). Com movimento reduzido, só o marca-texto, seco. Desde o
+   crítico de fora (16.10.2026), o mesmo marca-texto passa também no símbolo
+   do próprio item, sob o dedo: no celular, o realce do mapa ficava de 250 a
+   900 px acima do dedo, fora da tela, e a legenda parecia morta. E, abaixo
+   de 1024 px, a legenda vem logo embaixo do mapa (consultorio/page.tsx). */
+.nt-simbolo {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+}
+.nt-mapa :is(.nt-simbolo-onibus, .nt-simbolo-carro) {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.nt-mapa .nt-simbolo-carro {
+  transform-origin: center;
+}
+.nt-realce {
+  opacity: 0;
+}
+.nt-local:has([data-modo="a-pe"]:active) .nt-realce-a-pe,
+.nt-local:has([data-modo="onibus"]:active) .nt-realce-onibus,
+.nt-local:has([data-modo="carro"]:active) .nt-realce-carro,
+.nt-legenda [data-modo]:active .nt-realce {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nt-local:has([data-modo="a-pe"]:hover) .nt-realce-a-pe,
+  .nt-local:has([data-modo="onibus"]:hover) .nt-realce-onibus,
+  .nt-local:has([data-modo="carro"]:hover) .nt-realce-carro,
+  .nt-legenda [data-modo]:hover .nt-realce {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nt-realce,
+  .nt-mapa :is(.nt-simbolo-onibus, .nt-simbolo-carro) {
+    transition:
+      opacity 160ms cubic-bezier(0.2, 0, 0, 1),
+      transform 160ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .nt-local:has([data-modo="onibus"]:active) .nt-simbolo-onibus,
+  .nt-local:has([data-modo="carro"]:active) .nt-simbolo-carro {
+    transform: scale(1.25);
+    transition-duration: 120ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .nt-local:has([data-modo="onibus"]:hover) .nt-simbolo-onibus,
+  .nt-local:has([data-modo="carro"]:hover) .nt-simbolo-carro {
+    transform: scale(1.25);
+  }
+  .nt-local:has([data-modo]:hover) :is(.nt-realce, .nt-simbolo-onibus, .nt-simbolo-carro) {
+    transition-duration: 220ms;
+  }
+}
+.nt-legenda [data-modo] {
+  cursor: default;
+}
+
+/* ---------- o logotipo ---------- */
+/* O nome do cabeçalho não troca de cor como a navegação (14.10.2026): o
+   pingo de damasco da marca cresce, sob o ponteiro e no toque. O vínculo
+   "I A consulta" do índice tem o mesmo endereço, mas não tem a marca. */
+[data-demo="nutricao"] header a[href="/demos/nutricao"] svg circle:last-of-type {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-demo="nutricao"] header a[href="/demos/nutricao"] svg circle:last-of-type {
+    transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  [data-demo="nutricao"] header a[href="/demos/nutricao"]:active svg circle:last-of-type {
+    transform: scale(1.35);
+    transition-duration: 120ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  [data-demo="nutricao"] header a[href="/demos/nutricao"]:hover svg circle:last-of-type {
+    transform: scale(1.35);
+    transition-duration: 200ms;
+  }
+}
+
+/* ---------- a nota chamada ---------- */
+/* Seguido o ¹, a nota responde, seca (o salto por âncora é navegação, sem
+   animação): o filete de cima passa à tinta e o algarismo, ao damasco do
+   vínculo. O ↩ volta ao texto. */
+#nota-1:target {
+  border-top-color: var(--foreground);
+}
+#nota-1:target > sup {
+  color: var(--accent);
+}
+
+/* ---------- a contracapa (o rodapé) e o campo da tinta ---------- */
+/* O colofão no chapado da tinta verde, de ponta a ponta, nas três páginas
+   (14.10.2026): o bloco de cor forte da folha clara. O mesmo campo, desde
+   o crítico de fora (14.10.2026), na nota sobre o site, no meio da capa
+   (.nt-campo-tinta): a capa vira de valor antes da contracapa. Os tokens se
+   redefinem na cena; as razões sobre #1e3326: a palha, 11,8:1; o apagado,
+   6,9:1; a sálvia da marca (o hover da navegação), 6,9:1. O grão do papel
+   se inverte: o mesmo ruído, em palha a 6%. Quieta. */
+.nt-contracapa,
+.nt-campo-tinta {
+  --foreground: #f4efe4;
+  --muted-foreground: #b8baaf;
+  --border: rgb(244 239 228 / 0.2);
+  --accent: #a9bfa8;
+  --ring: #a9bfa8;
+  background-color: #1e3326;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .957  0 0 0 0 .937  0 0 0 0 .894  0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23p)'/></svg>");
+  color: var(--foreground);
+}
+.nt-contracapa ::selection,
+.nt-campo-tinta ::selection {
+  background: #a9bfa8;
+  color: #1e3326;
+}
+/* O encarte de sálvia (crítico de fora, 16.10.2026): a sálvia da marca, um
+   pouco mais clara (#b7c9b3), de ponta a ponta, com o grão do papel, no
+   sumário da capa e nas perguntas de Valores, como o encarte de papel de cor
+   no meio da folha. Os tokens se redefinem na cena; as razões sobre
+   #b7c9b3: a tinta, 7,7:1; o apagado #33493a, 5,6:1. Quieto. */
+.nt-campo-salvia {
+  --muted-foreground: #33493a;
+  --border: color-mix(in srgb, var(--foreground) 24%, transparent);
+  --accent: #6e3612;
+  background-color: #b7c9b3;
+  background-image: var(--nt-grao);
+  color: var(--foreground);
+}
+
+/* ---------- a folha do plano (a assinatura da capa) ----------
+   O alto da primeira página do plano alimentar, pousado na mesa junto da
+   janela, com a rotina do dia numa régua de horas. Desde o crítico de fora
+   (14.10.2026): na mesa, no alto, à direita do título, sangrando 30 px pela
+   borda da tela (inteira na primeira tela de 1024 × 768 a 1920 × 1080, e
+   longe do botão flutuante); no celular, inteira, logo abaixo do título.
+   A janela (.nt-folha-janela) recorta a sangria sem alargar o documento.
+   As letras da folha crescem com ela (cqi), com piso em px. */
+.nt-folha-lugar {
+  position: relative;
+}
+.nt-folha-janela {
+  position: relative;
+  margin-inline: -24px;
+  /* Embaixo, a folga da sombra longa da folha, que a janela não corta. */
+  padding: 26px 0 76px 24px;
+  overflow: clip;
+  pointer-events: none;
+}
+/* Abaixo de 640 px, a janela recorta só a sangria da direita: a sombra
+   longa passa da borda de baixo, por trás da pausa e do lide (z-index 1),
+   e a folga dela sai (fechamento com o Impeccable, 16.10.2026: a 390 ×
+   844, o lide começava a 791 px, só a capitular na primeira tela). */
+@media (max-width: 639.98px) {
+  .nt-folha-janela {
+    padding-top: 12px;
+    padding-bottom: 0;
+    overflow-y: visible;
+  }
+}
+@media (min-width: 768px) {
+  .nt-folha-janela {
+    margin-inline: -40px;
+    padding-left: 40px;
+  }
+}
+.nt-folha-do-plano {
+  position: relative;
+  z-index: 0;
+  width: min(560px, calc(100% - 4px));
+  margin-left: auto;
+  margin-right: -30px;
+  transform: rotate(-2.5deg);
+  container-type: inline-size;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* No celular, inteira, sem a sangria, para o jantar caber à direita da haste (ver "o dia", abaixo; 16.10.2026). */
+@media (max-width: 639.98px) {
+  .nt-folha-do-plano {
+    margin-right: 0;
+  }
+}
+@media (min-width: 1024px) {
+  /* Na mesa, a janela cobre a capa de ponta a ponta da tela, com folga em
+     cima e embaixo para a sombra; a folha, no alto, à direita do título,
+     de proporção fixa (2,1), para a pausa caber logo abaixo dela e o canto
+     de baixo ficar acima do botão flutuante a 1280 × 720. */
+  .nt-folha-lugar {
+    /* Maior desde o crítico de fora (16.10.2026; até então, clamp(390px, 34vw, 560px): 490 px a 1440 e 435 px a 1280), até onde a segunda linha do título deixa, a ≥ 17 px dela. */
+    --folha-w: clamp(400px, calc(46vw - 60px), 560px);
+    /* Da borda direita da tela: sangra 30 px; nas telas muito largas, fica a 150 px da borda do texto. */
+    --folha-direita: max(-30px, calc((100vw - 1320px) / 2 - 150px));
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .nt-folha-janela {
+    position: absolute;
+    inset: -6rem calc((100% - 100vw) / 2) -8rem;
+    margin: 0;
+    padding: 0;
+  }
+  .nt-folha-do-plano {
+    position: absolute;
+    top: calc(6rem - 20px);
+    right: var(--folha-direita);
+    width: var(--folha-w);
+    aspect-ratio: 2.1;
+    margin: 0;
+    transform: rotate(-3deg);
+  }
+  .nt-fp-papel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 3.8cqi calc(30px + 4.6cqi) 3cqi 5cqi;
+  }
+  .nt-fp-dia {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+}
+/* A sombra longa, tingida de tinta, numa camada própria: a luz a desloca. */
+.nt-fp-sombra {
+  position: absolute;
+  inset: 0;
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 10px 18px -10px color-mix(in srgb, var(--foreground) 24%, transparent),
+    0 38px 70px -30px color-mix(in srgb, var(--foreground) 38%, transparent);
+}
+/* O papel do cartão, com o grão e a luz parada da janela (de cima e da
+   esquerda): um pouco mais fundo que a página, para a faixa de luz se ver. */
+.nt-fp-papel {
+  position: relative;
+  overflow: hidden;
+  padding: 5cqi calc(30px + 5cqi) 4.4cqi 5.4cqi;
+  background-color: var(--card);
+  background-image:
+    var(--nt-grao),
+    linear-gradient(160deg in oklch, #fbf8f1, #ece3d0);
+  color: var(--foreground);
+}
+.nt-fp-cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.2em 3cqi;
+  padding-bottom: 2cqi;
+  border-bottom: 3px double color-mix(in srgb, var(--foreground) 75%, transparent);
+}
+.nt-fp-titulo {
+  font-size: max(19px, 5.2cqi);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.nt-fp-assinatura {
+  font-size: max(11px, 2.7cqi);
+  color: var(--muted-foreground);
+}
+/* O dia: os nomes das refeições em escada, cada um com a haste até o seu
+   ponto na régua. Até o fechamento com o Impeccable (16.10.2026), o jantar
+   ficava no quarto degrau, à esquerda da haste, logo abaixo do lanche, e
+   "Jantar 20h" se lia junto de "Lanche 16h". No celular, ele fica à
+   direita da própria haste, como os outros, e a escada continua; a folha,
+   sem a sangria, dá lugar a ele (até 639 px, "Lanche 16h" chega à haste das
+   20h, e o jantar não pode subir). A partir de 640 px, à esquerda da haste
+   (à direita, a sangria o cortaria), ele sobe ao primeiro degrau, ao lado
+   do café. */
+.nt-fp-dia {
+  margin-top: 3.4cqi;
+  padding-inline: 1cqi;
+}
+.nt-fp-refeicoes {
+  position: relative;
+  height: calc(4 * 1.42em + 0.35em);
+  font-size: max(13px, 3.2cqi);
+  line-height: 1.42;
+}
+.nt-fp-refeicoes li {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  top: calc(var(--n) * 1.42em);
+  bottom: 0;
+  padding-left: 0.5em;
+  border-left: 1px solid color-mix(in srgb, var(--foreground) 45%, transparent);
+  white-space: nowrap;
+}
+@media (min-width: 640px) {
+  .nt-fp-refeicoes li.nt-fp-ultima {
+    top: 0;
+    padding: 0 0.5em 0 0;
+    border-left: 0;
+    border-right: 1px solid color-mix(in srgb, var(--foreground) 45%, transparent);
+    transform: translateX(-100%);
+  }
+}
+/* O ponto da refeição, na régua. */
+.nt-fp-refeicoes li::after {
+  content: "";
+  position: absolute;
+  bottom: -4.5px;
+  left: -5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--foreground);
+}
+@media (min-width: 640px) {
+  .nt-fp-refeicoes li.nt-fp-ultima::after {
+    left: auto;
+    right: -5px;
+  }
+}
+.nt-fp-hora {
+  font-family: var(--font-exibicao), Georgia, serif;
+  font-style: italic;
+  color: var(--muted-foreground);
+}
+/* A régua de 6h a 22h: a marca de cada hora, mais longa nas pares, e as
+   horas escritas de quatro em quatro. */
+.nt-fp-regua {
+  position: relative;
+  height: max(22px, 5.4cqi);
+  border-top: 1.5px solid var(--foreground);
+}
+.nt-fp-marca {
+  position: absolute;
+  top: 0;
+  left: calc(var(--x) * 100%);
+  width: 1px;
+  height: 5px;
+  background: color-mix(in srgb, var(--foreground) 60%, transparent);
+}
+.nt-fp-marca.nt-fp-par {
+  height: 8px;
+}
+.nt-fp-marca > span {
+  position: absolute;
+  top: 9px;
+  left: 0;
+  transform: translateX(-50%);
+  /* Piso de 12 px no celular (fechamento com o Impeccable, 16.10.2026; era 10,5). */
+  font-size: max(12px, 2.5cqi);
+  line-height: 1;
+  color: var(--muted-foreground);
+}
+.nt-fp-pe {
+  margin-top: 1cqi;
+  font-size: max(11px, 2.6cqi);
+  color: var(--muted-foreground);
+}
+/* A faixa de reflexo, 40% da folha, recortada pelo papel, por baixo da
+   tinta: clareia o papel e o grão, não as letras. No repouso, o centro a
+   22% da largura, do lado da janela. Mais clara e mais larga que até o
+   crítico de fora (14.10.2026), sobre o papel mais fundo. */
+.nt-fp-papel > :not(.nt-fp-luz) {
+  position: relative;
+  z-index: 1;
+}
+.nt-fp-luz {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40%;
+  background: linear-gradient(105deg in oklch, rgb(255 254 250 / 0) 14%, rgb(255 254 250 / 0.95) 50%, rgb(255 254 250 / 0) 86%);
+  transform: translateX(5%);
+}
+
+/* A entrada (uma vez por visita; o título, o lide e a ação já estão no
+   lugar): a folha é pousada na mesa, vinda de um pouco acima e à direita,
+   mais inclinada, até a inclinação de repouso, com a sombra acendendo
+   junto (560 ms na mesa, 480 ms no celular), depois da troca
+   (--nt-depois); em seguida, a luz da janela passa uma vez sobre ela até o
+   repouso. */
+/* Uma animação só, nas duas telas (o ponto de partida numa variável): com
+   nomes diferentes por tela, a entrada recomeçava ao cruzar os 1024 px. */
+.nt-folha-do-plano {
+  --pousa: translate(8%, -10%) rotate(-9deg);
+}
+@media (min-width: 1024px) {
+  .nt-folha-do-plano {
+    --pousa: translate(10%, -14%) rotate(-11deg);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.ja-aberto) .nt-folha-do-plano {
+    animation: nt-folha-pousa 480ms cubic-bezier(0.05, 0.7, 0.1, 1) var(--nt-depois) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-fp-sombra {
+    animation: nt-acende 480ms cubic-bezier(0.05, 0.7, 0.1, 1) var(--nt-depois) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-fp-luz {
+    animation: nt-luz-passa 520ms cubic-bezier(0.4, 0.14, 0.3, 1) calc(var(--nt-depois) + 280ms) backwards;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  html.js:not(.ja-aberto) .nt-folha-do-plano {
+    animation-duration: 560ms;
+  }
+  html.js:not(.ja-aberto) .nt-fp-sombra {
+    animation-duration: 560ms;
+  }
+  html.js:not(.ja-aberto) .nt-fp-luz {
+    animation-duration: 600ms;
+    animation-delay: calc(var(--nt-depois) + 320ms);
+  }
+}
+@keyframes nt-folha-pousa {
+  from {
+    opacity: 0;
+    transform: var(--pousa);
+  }
+  35% {
+    opacity: 1;
+  }
+}
+@keyframes nt-luz-passa {
+  from {
+    transform: translateX(-120%);
+  }
+}
+
+/* ---------- a sombra da horta da janela (o ambiente da capa) ----------
+   Dois ramos de manjericão desfocados, na tinta, a 13%, por cima da folha
+   e da palha, por baixo do título (crítico de fora, 14.10.2026: a
+   assinatura não se movia depois da entrada; 09-movimento.md, seção 4).
+   Cada ramo balança do pé, no seu ritmo (9 s e 13 s, ida e volta, só
+   transform). Só com script (a pausa é dele), sem movimento reduzido, na
+   tela (data-fora) e sem a pausa (data-pausado); senão, parado no
+   repouso. */
+.nt-horta {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: -60px;
+  bottom: 0;
+  width: min(92vw, 440px);
+  opacity: 0.14;
+  pointer-events: none;
+  /* As bordas se apagam: a janela recorta a sombra sem deixar um corte reto. */
+  -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent);
+  mask-image: radial-gradient(closest-side, #000 62%, transparent);
+}
+@media (min-width: 1024px) {
+  .nt-horta {
+    top: -1rem;
+    right: -90px;
+    bottom: auto;
+    width: clamp(460px, 44vw, 720px);
+    aspect-ratio: 1;
+  }
+}
+.nt-ramo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: 48% 96%;
+}
+.nt-ramo-1 {
+  transform-origin: 60% 98%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .nt-ramo-0 {
+    animation: nt-ramo-0 9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  .js .nt-ramo-1 {
+    animation: nt-ramo-1 13s cubic-bezier(0.37, 0, 0.63, 1) -4s infinite alternate;
+  }
+  [data-pausado] .nt-ramo,
+  .nt-horta[data-fora] .nt-ramo {
+    animation-play-state: paused;
+  }
+}
+@keyframes nt-ramo-0 {
+  from {
+    transform: rotate(-2.2deg) translateX(-4px);
+  }
+  to {
+    transform: rotate(2deg) translateX(6px);
+  }
+}
+@keyframes nt-ramo-1 {
+  from {
+    transform: rotate(2.6deg);
+  }
+  to {
+    transform: rotate(-2deg) translateY(-6px);
+  }
+}
+
+/* A pausa: logo abaixo da folha, à esquerda (no celular, longe do botão
+   flutuante; na mesa, acima dele). Só com script e
+   sem movimento reduzido (sem eles, a sombra não se move). O rótulo diz o
+   que o toque fará, "Pausar" ou "Retomar" (fechamento com o Impeccable,
+   16.10.2026). Na tinta cheia: sobre a sombra da folha, o apagado caía a
+   4,13:1 na mesa. Acima da sombra (z-index), que passa por trás dela. */
+.nt-pausa {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  white-space: nowrap;
+  min-height: 44px;
+  margin-top: -48px;
+  font-size: 15px;
+  font-style: italic;
+  color: var(--foreground);
+  pointer-events: auto;
+  transition: color 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+/* No celular, compacta: 38 px na coluna, o alvo de 44 px por cima da folga até o lide. */
+@media (max-width: 639.98px) {
+  .nt-pausa {
+    margin-block: 4px -10px;
+  }
+}
+.nt-pausa svg {
+  width: 10px;
+  height: 10px;
+  fill: currentColor;
+}
+.nt-pausa:active {
+  color: var(--accent);
+  transition-duration: 120ms;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nt-pausa:hover {
+    color: var(--accent);
+  }
+}
+html:not(.js) .nt-pausa {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nt-pausa {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  /* Logo abaixo do canto esquerdo da folha. */
+  .nt-pausa {
+    position: absolute;
+    z-index: 2;
+    top: calc(-20px + var(--folha-w) / 2.1 + 20px);
+    left: calc(100% + (100vw - 100%) / 2 - var(--folha-direita) - var(--folha-w) + 10px);
+    margin: 0;
+  }
+}
+
+/* ---------- o talão do recibo (a abertura de Valores) ----------
+   Desde o crítico de fora de 16.10.2026, o talão inteiro: o canhoto, que
+   fica no bloco (com a lombada, a faixa funda da borda presa), e o recibo,
+   presos pelo picote. O papel do talão, esverdeado (#edf0e4), com o grão e
+   a moldura impressa a 9 px da borda (até então, o papel #faf7f0 sobre a
+   palha, sem moldura, se lia como um cartão branco à direita do título, o
+   quadro da capa). O picote: meios furos de 7 px, de 12 em 12 px, na cor
+   da palha, na borda de cada parte, que se encontram (assim a sombra de
+   contato fica no próprio papel, sem máscara). Desde o fechamento com o
+   Impeccable (16.10.2026), depois da carta de valores: na mesa, em pé, na
+   coluna das observações, ao lado da carta; de 640 a 1023 px, deitado, com
+   o canhoto à esquerda; no celular, em pé, o canhoto em cima. As letras do
+   recibo crescem com ele (cqi), com piso em px. Reto, sem a luz da janela
+   nem a sombra longa, que são da folha do plano (15.10.2026). */
+.nt-talao {
+  --talao-papel: #edf0e4;
+  --furos-baixo: radial-gradient(circle 3.5px at 6px 100%, var(--background) 88%, transparent) 0 100% / 12px 8px repeat-x;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 30rem;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.nt-canhoto,
+.nt-recibo-papel {
+  background-color: var(--talao-papel);
+  color: var(--foreground);
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--foreground) 12%, transparent),
+    0 2px 6px -2px color-mix(in srgb, var(--foreground) 18%, transparent);
+}
+/* O canhoto: em pé (no celular e na mesa), uma tira em duas colunas, com a
+   lombada em cima e os furos embaixo; a data à direita, no lugar do valor,
+   que o canhoto não repete (fechamento com o Impeccable, 16.10.2026). */
+.nt-canhoto {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 2px 16px;
+  padding: 18px 18px 14px;
+  background-image: var(--furos-baixo), linear-gradient(color-mix(in srgb, var(--foreground) 7%, transparent) 9px, transparent 9px), var(--nt-grao);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.nt-canhoto-numero {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.nt-canhoto-data {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+.nt-canhoto .nt-recibo-dia {
+  width: 22px;
+  margin-inline: 2px;
+}
+.nt-recibo {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  container-type: inline-size;
+}
+.nt-recibo-papel {
+  position: relative;
+  height: 100%;
+  padding: calc(8px + 5cqi) 6cqi 5.4cqi;
+  background-image: radial-gradient(circle 3.5px at 6px 0, var(--background) 88%, transparent), var(--nt-grao);
+  background-size: 12px 8px, auto;
+  background-repeat: repeat-x, repeat;
+  /* A moldura impressa do talão. */
+  outline: 1px solid color-mix(in srgb, var(--foreground) 28%, transparent);
+  outline-offset: -9px;
+}
+.nt-recibo-cabeca {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  column-gap: 4cqi;
+}
+.nt-recibo-titulo {
+  font-size: max(28px, 9.4cqi);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.nt-recibo-numero {
+  grid-row: 2;
+  margin-top: 1.4cqi;
+  font-size: max(11px, 2.8cqi);
+  color: var(--muted-foreground);
+}
+.nt-recibo-valor {
+  position: relative;
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  align-self: center;
+  padding: 0.28em 0.55em 0.22em;
+  border: 1.5px solid var(--foreground);
+  box-shadow: inset 0 0 0 3px var(--talao-papel), inset 0 0 0 4px color-mix(in srgb, var(--foreground) 45%, transparent);
+  font-size: max(19px, 5.6cqi);
+  line-height: 1;
+  white-space: nowrap;
+}
+/* A resposta à mão (16.10.2026), sob o ponteiro fino e no toque: o recibo
+   se solta do canhoto pelo picote (6 px para baixo no celular, 8 px para a
+   direita a partir de 640 px), e o fio de dentro da caixa do valor, a 45%
+   da tinta, acende na tinta cheia, como o valor conferido. Só transform e
+   opacity: entra em 220 ms sob o ponteiro, em 120 ms no toque, e volta em
+   150 ms. Com movimento reduzido, só o fio acende, seco. Até 16.10.2026, só
+   o fio, que a 1 × de densidade não se via (crítico de fora); até
+   15.10.2026, o recibo inclinado se endireitava. */
+.nt-talao {
+  --solta: translateY(6px);
+}
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .nt-talao {
+    --solta: translateX(8px);
+  }
+}
+.nt-recibo-valor::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid var(--foreground);
+  opacity: 0;
+  pointer-events: none;
+}
+.nt-talao:active .nt-recibo-valor::after {
+  opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .nt-talao:hover .nt-recibo-valor::after {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nt-recibo {
+    transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .nt-talao:active .nt-recibo {
+    transform: var(--solta);
+    transition-duration: 120ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .nt-talao:hover .nt-recibo {
+    transform: var(--solta);
+  }
+  .nt-talao:hover:not(:active) .nt-recibo {
+    transition-duration: 220ms;
+  }
+}
+.nt-recibo-texto,
+.nt-recibo-data {
+  font-size: max(13.5px, 3.4cqi);
+  line-height: 1.8;
+}
+.nt-recibo-texto {
+  margin-top: 4cqi;
+}
+/* As linhas em branco do formulário. */
+.nt-recibo-branco {
+  display: inline-block;
+  width: 26cqi;
+  height: 1em;
+  vertical-align: -0.18em;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+.nt-recibo-dia {
+  width: 5cqi;
+}
+.nt-recibo-mes {
+  width: 12cqi;
+}
+/* O que se escreve à mão: o valor por extenso e a rubrica. */
+.nt-recibo-extenso {
+  display: inline-block;
+  font-family: var(--font-exibicao), Georgia, serif;
+  font-style: italic;
+  font-size: 1.12em;
+  line-height: 1.2;
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+/* A data à esquerda e a assinatura à direita, na mesma linha; quando não
+   cabem (no celular), a assinatura desce, à direita, e a data não se parte
+   (até 16.10.2026, a 390 px, "de 2026." caía sozinho na linha de baixo). */
+.nt-recibo-pe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2cqi 4cqi;
+  margin-top: 2.4cqi;
+}
+.nt-recibo-data {
+  white-space: nowrap;
+}
+.nt-recibo-firma {
+  flex: none;
+  margin-left: auto;
+  text-align: center;
+}
+.nt-recibo-rubrica {
+  display: block;
+  width: max(104px, 30cqi);
+  border-bottom: 1px solid color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+.nt-recibo-rubrica svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: var(--foreground);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.nt-recibo-nome {
+  margin-top: 0.4em;
+  font-size: max(13px, 3.2cqi);
+  line-height: 1.2;
+}
+.nt-recibo-credencial {
+  margin-top: 0.3em;
+  font-size: max(10.5px, 2.4cqi);
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+/* De 640 a 1023 px, deitado, com o canhoto à esquerda (depois das regras do celular, que estas sobrepõem). Na mesa, em
+   pé de novo, na coluna das observações, ao lado da carta (fechamento com o Impeccable, 16.10.2026). */
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .nt-talao {
+    flex-direction: row;
+    max-width: none;
+  }
+  .nt-canhoto {
+    flex: 0 0 clamp(156px, 23%, 200px);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px 22px 20px 28px;
+    background-image:
+      radial-gradient(circle 3.5px at 100% 6px, var(--background) 88%, transparent),
+      linear-gradient(90deg, color-mix(in srgb, var(--foreground) 7%, transparent) 10px, transparent 10px),
+      var(--nt-grao);
+    background-position: 100% 0, 0 0, 0 0;
+    background-size: 8px 12px, auto, auto;
+    background-repeat: repeat-y, no-repeat, repeat;
+  }
+  .nt-canhoto-ref {
+    margin-top: auto;
+  }
+  .nt-canhoto-data {
+    margin-top: 2px;
+  }
+  .nt-recibo-papel {
+    padding: 3.8cqi 4.6cqi 3.4cqi calc(8px + 4.6cqi);
+    background-image: radial-gradient(circle 3.5px at 0 6px, var(--background) 88%, transparent), var(--nt-grao);
+    background-size: 8px 12px, auto;
+    background-repeat: repeat-y, repeat;
+  }
+  /* Deitado, o recibo é baixo: o texto em duas linhas, a data e a assinatura numa só (a 1280 × 720, o talão inteiro na primeira tela). */
+  .nt-recibo-titulo {
+    font-size: max(30px, 6.4cqi);
+  }
+  .nt-recibo-numero {
+    margin-top: 0.6cqi;
+    font-size: max(11px, 1.9cqi);
+  }
+  .nt-recibo-valor {
+    font-size: max(19px, 4.2cqi);
+  }
+  .nt-recibo-texto,
+  .nt-recibo-data {
+    font-size: max(14.5px, 2.75cqi);
+    line-height: 1.7;
+  }
+  .nt-recibo-texto {
+    margin-top: 2cqi;
+  }
+  .nt-recibo-texto .nt-recibo-branco {
+    width: 15cqi;
+  }
+  .nt-recibo-pe {
+    margin-top: 1.2cqi;
+  }
+  .nt-recibo-rubrica {
+    width: max(100px, 21cqi);
+  }
+  .nt-recibo-nome {
+    font-size: max(13.5px, 2.5cqi);
+  }
+  .nt-recibo-credencial {
+    font-size: max(10.5px, 1.7cqi);
+  }
+}
+/* O momento da página II: o que foi escrito se descobre da esquerda para a
+   direita, como a mão que escreve: o valor por extenso (520 ms) e, logo
+   depois, a rubrica (460 ms), a partir de --nt-depois + 80 ms (na mesa, de
+   360 a 1.280 ms; até 15.10.2026, de 200 a 820 ms, rápido demais para se
+   ler como escrita). Só por transform: a janela (recortada por
+   clip-path, que não mexe na linha de base) corre da esquerda para o
+   lugar, e a tinta dentro dela corre o mesmo tanto ao contrário, parada
+   na folha. Uma vez por visita. Com movimento reduzido e sem script, o
+   recibo já está preenchido. A resposta à mão está acima (o recibo que se
+   solta do canhoto). Desde o fechamento com o Impeccable (16.10.2026), o
+   talão vem depois da carta, e no celular nasce abaixo da dobra: como no
+   carimbo do mapa, com o talão armado (.dm-oculto), a escrita espera, em
+   branco, e roda quando ele entra na tela. */
+.nt-escrita {
+  display: inline-block;
+  margin-inline: -0.12em;
+  clip-path: inset(-0.4em 0);
+}
+.nt-escrita > * {
+  display: inline-block;
+  padding-inline: 0.12em;
+}
+.nt-recibo-rubrica .nt-escrita,
+.nt-recibo-rubrica .nt-escrita > * {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.ja-aberto) .nt-talao:not(.dm-oculto) .nt-recibo-extenso .nt-escrita {
+    animation: nt-escrita-janela 520ms cubic-bezier(0.4, 0.14, 0.3, 1) calc(var(--nt-depois) + 80ms) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-talao:not(.dm-oculto) .nt-recibo-extenso .nt-escrita > * {
+    animation: nt-escrita-tinta 520ms cubic-bezier(0.4, 0.14, 0.3, 1) calc(var(--nt-depois) + 80ms) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-talao:not(.dm-oculto) .nt-recibo-rubrica .nt-escrita {
+    animation: nt-escrita-janela 460ms cubic-bezier(0.4, 0.14, 0.3, 1) calc(var(--nt-depois) + 540ms) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-talao:not(.dm-oculto) .nt-recibo-rubrica .nt-escrita > * {
+    animation: nt-escrita-tinta 460ms cubic-bezier(0.4, 0.14, 0.3, 1) calc(var(--nt-depois) + 540ms) backwards;
+  }
+  html.js:not(.ja-aberto) .nt-talao.dm-oculto .nt-escrita {
+    transform: translateX(-100%);
+  }
+  html.js:not(.ja-aberto) .nt-talao.dm-oculto .nt-escrita > * {
+    transform: translateX(100%);
+  }
+  .nt-recibo-valor::after {
+    transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .nt-talao:active .nt-recibo-valor::after {
+    transition-duration: 120ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .nt-talao:hover:not(:active) .nt-recibo-valor::after {
+    transition-duration: 220ms;
+  }
+}
+@keyframes nt-escrita-janela {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@keyframes nt-escrita-tinta {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+/* ---------- a página do plano (o método, 14.10.2026) ----------
+   A folha da capa atravessa a segunda cena, agora inteira, sobre a palha:
+   o mesmo papel, o grão, a luz parada da janela e a sombra longa, parada.
+   Os quatro tempos, na mesa, em colunas (crítico de fora, 14.10.2026). No
+   canto de cima, à direita, a orelha dobrada: o canto cortado na cor da
+   palha, a aba em --deep com o fio de tinta e a sombra própria (só
+   opacidade). Sob o ponteiro fino, a orelha levanta (de 1 a 1,3, do
+   canto; a sombra de 0,35 a 0,6), em 220 ms, e baixa em 160 ms; no toque,
+   enquanto o dedo está na folha, sobe em 120 ms e baixa em 300 ms. Com
+   movimento reduzido, só a sombra muda, seca. Só CSS. Maior desde o
+   crítico de fora (de 36 e 44 px para 48 e 64 px): mal se via. */
+.nt-pagina-do-plano {
+  position: relative;
+  isolation: isolate;
+  padding: 20px;
+  background-color: var(--card);
+  background-image:
+    var(--nt-grao),
+    linear-gradient(160deg in oklch, #fcfaf4, #f1eadb);
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 10px 18px -10px color-mix(in srgb, var(--foreground) 22%, transparent),
+    0 34px 64px -28px color-mix(in srgb, var(--foreground) 34%, transparent);
+}
+@media (min-width: 768px) {
+  .nt-pagina-do-plano {
+    padding: 40px;
+  }
+}
+/* 56 px na mesa larga; de 1024 a 1279 px, 40 px, para os quatro tempos não quebrarem o nome em duas linhas. */
+@media (min-width: 1280px) {
+  .nt-pagina-do-plano {
+    padding: 56px;
+  }
+}
+.nt-orelha {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  width: 48px;
+  height: 48px;
+  transform-origin: 100% 0;
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  .nt-orelha {
+    width: 64px;
+    height: 64px;
+  }
+}
+/* A sombra da aba sobre o papel, embaixo dela e à esquerda. */
+.nt-orelha::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top right, var(--foreground) 50%, transparent 50%);
+  filter: blur(3px);
+  transform: translate(-2px, 3px);
+  opacity: 0.35;
+}
+/* A aba dobrada: a metade de baixo, à esquerda, do canto. */
+.nt-orelha-aba {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top right, var(--deep) calc(50% - 1px), color-mix(in srgb, var(--foreground) 20%, transparent) calc(50% - 1px));
+  box-shadow:
+    inset 1px 0 color-mix(in srgb, var(--foreground) 20%, transparent),
+    inset 0 -1px color-mix(in srgb, var(--foreground) 20%, transparent);
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+/* O canto cortado, na cor da palha (a metade de cima, à direita). */
+.nt-orelha::after {
+  content: "";
+  position: absolute;
+  inset: -1px -1px 0 0;
+  background: var(--nt-grao) var(--background);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+@media (min-width: 1024px) {
+  .nt-pagina-do-plano:active .nt-orelha::before {
+    opacity: 0.6;
+  }
+}
+/* Abaixo de 1024 px, os quatro tempos ficam um embaixo do outro, e a página
+   do plano vai a ~1.300 px: a orelha, no canto de cima, ficava de 680 a 990
+   px acima do dedo que tocava o iii e o iv (crítico de fora, 16.10.2026). Lá,
+   o toque responde no tempo tocado: o algarismo passa da tinta a 72% à tinta
+   cheia, só por opacidade (120 ms; volta em 300 ms). */
+@media (max-width: 1023.98px) {
+  .nt-tempo-numero {
+    color: var(--foreground);
+    opacity: 0.72;
+  }
+  .nt-tempos li:active .nt-tempo-numero {
+    opacity: 1;
+  }
+}
+@media (max-width: 1023.98px) and (prefers-reduced-motion: no-preference) {
+  .nt-tempo-numero {
+    transition: opacity 300ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .nt-tempos li:active .nt-tempo-numero {
+    transition-duration: 120ms;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .nt-pagina-do-plano:hover .nt-orelha::before {
+    opacity: 0.6;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nt-orelha,
+  .nt-orelha::before {
+    transition:
+      transform 300ms cubic-bezier(0.2, 0, 0, 1),
+      opacity 300ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .nt-pagina-do-plano:active .nt-orelha {
+    transform: scale(1.3);
+  }
+  .nt-pagina-do-plano:active .nt-orelha,
+  .nt-pagina-do-plano:active .nt-orelha::before {
+    transition-duration: 120ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .nt-orelha,
+  .nt-orelha::before {
+    transition-duration: 160ms;
+  }
+  .nt-pagina-do-plano:hover .nt-orelha {
+    transform: scale(1.3);
+  }
+  .nt-pagina-do-plano:hover .nt-orelha,
+  .nt-pagina-do-plano:hover .nt-orelha::before {
+    transition-duration: 220ms;
+  }
+}
+
+/* O marca-texto no corpo (14.10.2026; até então, só nos títulos): sem o
+   recuo de 0,1 em de cada lado, a palavra fica no alinhamento do texto,
+   inclusive quando abre a linha. */
+[data-demo="nutricao"] p .mov-tarja[data-marcador] {
+  padding-inline: 0;
+}
+/* Quando a palavra entra na tela (a revelação tira a .dm-a-marcar), a
+   faixa passa logo, em 150 ms. O atraso do ComMarcaTexto (600 ms na capa,
+   1.300 ms em Valores) é da carga, para a faixa passar depois do momento
+   da abertura, e só vale para a animação (15.10.2026; até então, valia
+   também ao rolar, e a palavra ficava 1,1 s na tela sem a marca). */
+@media (prefers-reduced-motion: no-preference) {
+  [data-demo="nutricao"] .mov-tarja[data-marcador] .mov-tarja-faixa {
+    transition-delay: 150ms;
+  }
 }

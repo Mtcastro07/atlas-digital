@@ -4,7 +4,6 @@ import { EscadaDemo } from "@/components/ilhas/escada-demo";
 import { Simulador } from "@/components/ilhas/simulador";
 import { buttonVariants } from "@/components/ui/button";
 import { BarsSpinner } from "@/components/ui/spell/bars-spinner";
-import { ShimmerText } from "@/components/ui/spell/shimmer-text";
 import { TiltCard } from "@/components/ui/spell/tilt-card";
 import { planos } from "@/conteudo/planos";
 import { escada, planosSecao, simulador } from "@/conteudo/site";
@@ -104,7 +103,7 @@ export function Escada() {
                         </span>
                         {plano.destaque && (
                           <span className="absolute top-3 right-3 z-10 rounded-full bg-primary px-3 py-1 text-rotulo font-semibold text-primary-foreground">
-                            <ShimmerText>{planosSecao.seloDestaque}</ShimmerText>
+                            {planosSecao.seloDestaque}
                           </span>
                         )}
                         {/* As duas telas flutuam com sombras de 75 e 80% de preto (saíram em 03/10 pela regra 3 das

@@ -222,11 +222,13 @@ export const urgencia: Urgencia = { dias: [1, 2, 3, 4, 5] as readonly Dia[], ate
 export const fechamentos: readonly Fechamento[] = feriadosNacionais;
 
 /** As quatro regiões do mapa (nicho, seção 5.1): o nome é o que o leitor de tela lê em cada controle. */
-export const regioes: readonly { id: RegiaoId; nome: string; curto: string; frase: string }[] = [
-  { id: "frente-superior", nome: "Dentes da frente, arcada superior", curto: "Frente, em cima", frase: "dentes da frente, arcada superior" },
-  { id: "fundo-superior", nome: "Dentes do fundo, arcada superior", curto: "Fundo, em cima", frase: "dentes do fundo, arcada superior" },
-  { id: "frente-inferior", nome: "Dentes da frente, arcada inferior", curto: "Frente, embaixo", frase: "dentes da frente, arcada inferior" },
-  { id: "fundo-inferior", nome: "Dentes do fundo, arcada inferior", curto: "Fundo, embaixo", frase: "dentes do fundo, arcada inferior" },
+// Um nome leigo só, em toda a página (o fechamento do Impeccable, 16.10.2026: havia três, "Frente, em cima", "Dentes da
+// frente, arcada superior" e a numeração FDI); a numeração fica de legenda, sob o nome (dentesDas).
+export const regioes: readonly { id: RegiaoId; nome: string; frase: string }[] = [
+  { id: "frente-superior", nome: "Dentes da frente, em cima", frase: "dentes da frente, em cima" },
+  { id: "fundo-superior", nome: "Dentes do fundo, em cima", frase: "dentes do fundo, em cima" },
+  { id: "frente-inferior", nome: "Dentes da frente, embaixo", frase: "dentes da frente, embaixo" },
+  { id: "fundo-inferior", nome: "Dentes do fundo, embaixo", frase: "dentes do fundo, embaixo" },
 ];
 
 /** Uma etapa do tratamento: a sessão, a duração, o que se faz e o tempo até a seguinte. */
@@ -255,6 +257,8 @@ export type Tratamento = {
   quem: IdDoDentista;
   /** O atendimento que a mensagem do WhatsApp cita. */
   atendimento: string;
+  /** O nome curto, com o artigo, no meio da frase ("Só o clareamento fica de fora…"). */
+  comArtigo: string;
 };
 
 const TODAS: readonly RegiaoId[] = ["frente-superior", "fundo-superior", "frente-inferior", "fundo-inferior"];
@@ -280,6 +284,7 @@ export const tratamentos: readonly Tratamento[] = [
     cuidados: "Sensibilidade por algumas horas é possível; a higiene segue como de costume. Persistindo o desconforto, avisar a clínica.",
     quem: "beatriz",
     atendimento: "limpeza e orientação de higiene",
+    comArtigo: "a limpeza",
   },
   {
     id: "restauracao",
@@ -302,6 +307,7 @@ export const tratamentos: readonly Tratamento[] = [
       "Com anestesia, esperar o efeito passar antes de mastigar, para não ferir o lábio nem a bochecha. Sensibilidade leve nos primeiros dias é possível; avisar se persistir ou se a mordida parecer alta.",
     quem: "beatriz",
     atendimento: "restauração",
+    comArtigo: "a restauração",
   },
   {
     id: "canal",
@@ -321,6 +327,7 @@ export const tratamentos: readonly Tratamento[] = [
       "Evitar mastigar do lado tratado até a restauração definitiva. Desconforto leve pode ocorrer; se aumentar, ou se houver inchaço, contatar a clínica no mesmo dia.",
     quem: "caio",
     atendimento: "tratamento de canal",
+    comArtigo: "o tratamento de canal",
   },
   {
     id: "clareamento",
@@ -333,7 +340,7 @@ export const tratamentos: readonly Tratamento[] = [
     intervalo: "7 dias, e 14 de uso em casa",
     regioes: ["frente-superior", "frente-inferior"],
     etapas: [
-      { nome: "Consulta 1", minutos: 30, faz: "Exame do dente e moldagem.", depois: "7 dias depois", dias: 7 },
+      { nome: "Consulta 1", minutos: 30, faz: "Exame dos dentes e moldagem.", depois: "7 dias depois", dias: 7 },
       { nome: "Consulta 2", minutos: 30, faz: "Entrega da moldeira e orientação de uso em casa.", depois: "14 dias de uso em casa, depois", dias: 14 },
       { nome: "Consulta 3", minutos: 30, faz: "Revisão do clareamento." },
     ],
@@ -341,6 +348,7 @@ export const tratamentos: readonly Tratamento[] = [
       "Durante o uso, evitar café, chá-preto, vinho tinto e outros alimentos e bebidas de cor forte. Sensibilidade pode ocorrer; avisar o dentista, que ajusta o uso.",
     quem: "beatriz",
     atendimento: "clareamento supervisionado",
+    comArtigo: "o clareamento",
   },
   {
     id: "coroa",
@@ -360,6 +368,7 @@ export const tratamentos: readonly Tratamento[] = [
     cuidados: "Com a coroa provisória, evitar alimentos duros e pegajosos. Depois da cimentação, a higiene inclui o fio dental ao redor do dente.",
     quem: "beatriz",
     atendimento: "coroa",
+    comArtigo: "a coroa",
   },
   {
     id: "aparelho",
@@ -384,6 +393,7 @@ export const tratamentos: readonly Tratamento[] = [
       "Higiene com escova interdental e fio próprio para aparelho; evitar alimentos duros e pegajosos; se uma peça soltar, contatar a clínica.",
     quem: "helena",
     atendimento: "aparelho ortodôntico fixo",
+    comArtigo: "o aparelho ortodôntico",
   },
 ];
 
@@ -479,6 +489,9 @@ export const barra = {
   /** No celular (o passe de 14.10.2026), as abas vão para o índice do prontuário, aberto em tela cheia. */
   indice: "Páginas",
   fechar: "Fechar",
+  /** O nome à vista do interruptor do refletor (a dica na mesa, a legenda no índice): o mesmo do botão, para quem fala o
+   * que vê (WCAG 2.5.3; components/ilhas/controle-do-movimento.tsx). */
+  pausa: "Pausar animações",
 };
 
 export const capa = {
@@ -499,10 +512,10 @@ export const percurso = {
   lide: "Cada região da boca tem os tratamentos que a alcançam. O número de sessões de cada um está na página dele.",
   /** A nota de cada passo diz só o que a contagem ("6 tratamentos.") não diz. */
   passos: {
-    "frente-superior": { titulo: "Os dentes da frente, em cima", nota: "Inclusive o clareamento, que só trata os dentes da frente." },
-    "fundo-superior": { titulo: "Os dentes do fundo, em cima", nota: "O clareamento não chega ao fundo." },
-    "frente-inferior": { titulo: "Os dentes da frente, embaixo", nota: "Os mesmos da arcada de cima." },
-    "fundo-inferior": { titulo: "Os dentes do fundo, embaixo", nota: "Os mesmos do fundo da arcada de cima." },
+    "frente-superior": { nota: "Inclusive o clareamento, que só trata os dentes da frente." },
+    "fundo-superior": { nota: "O clareamento não chega ao fundo." },
+    "frente-inferior": { nota: "Os mesmos da arcada de cima." },
+    "fundo-inferior": { nota: "Os mesmos do fundo da arcada de cima." },
   },
   contagem: (n: number) => (n === 1 ? "1 tratamento" : `${n} tratamentos`),
   fim: "Abrir o plano de sessões",
@@ -528,7 +541,7 @@ export const ficha = {
 
 export const cartoesDeRetorno = {
   titulo: "O tempo, no lugar do preço",
-  lide: "O número de sessões e o intervalo entre elas, antes da consulta. O tempo ocupa o lugar do preço, que a norma do conselho veda.",
+  lide: "Antes da consulta, cada tratamento diz quantas sessões leva e quantos dias passam entre elas. O valor, a norma do conselho veda.",
   rotuloDaFila: "Cartões de retorno dos seis tratamentos",
   setas: { anterior: "Cartão anterior", proximo: "Próximo cartão" },
   abrir: "Ver o tratamento",
@@ -589,8 +602,12 @@ export const tratamentosPagina = {
     descricao: "O mapa dos dentes: as duas arcadas, vistas de cima, com a numeração de cada dente.",
   },
   rotuloDaLista: "Tratamentos e sessões por região",
-  contagem: "{n} de {total} tratamentos alcançam {regiao}.",
+  /** A resposta à região diz a diferença para a lista inteira, e não só a contagem (que, em três das cinco escolhas, não muda). */
   todasContagem: "Os {total} tratamentos, em todas as regiões.",
+  nenhumFora: "Nenhum fica de fora: os {total} alcançam os {regiao}.",
+  nenhumForaInclusive: "Nenhum fica de fora: os {total} alcançam os {regiao}, inclusive {quais}.",
+  soFora: "Só {quais} fica de fora nos {regiao}.",
+  soForaVarios: "Só {quais} ficam de fora nos {regiao}.",
   regioesTodas: "Todas as regiões.",
   regioesRotulo: "Regiões:",
   intervalo: "Intervalo:",

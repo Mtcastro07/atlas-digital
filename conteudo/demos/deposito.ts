@@ -124,6 +124,17 @@ export const depositoSite = {
     titulo: "Orçamento por mensagem. Sem cadastro.",
     acao: "Montar o pedido",
   },
+  /**
+   * A cena da parede (15.10.2026, no lugar da cópia da calculadora): a conta do estado inicial da calculadora,
+   * desenhada como a elevação de uma prancha de projeto. As medidas, a lista e a perda saem da própria calculadora.
+   */
+  parede: {
+    rotulo: "Prancha 01 · elevação · escala 1:50",
+    titulo: "Uma parede de",
+    lide: "Desenhada como no projeto, bloco por bloco. Na nota da prancha, o que ela pede ao balcão, já com a perda.",
+    nota: "Nota",
+    acao: "Fazer a conta da sua obra",
+  },
 
   // ---------- 02 · Calculadora ----------
   calculadora: {
@@ -195,6 +206,10 @@ export const depositoSite = {
     copiar: "Copiar lista",
     copiado: "Lista copiada",
     nota: "Estimativa de referência. A quantidade final é conferida no balcão, com o projeto à vista.",
+    // 16.10.2026 (Impeccable; texto a aprovar): o erro da medida, sob o campo, com o exemplo da própria medida
+    // ("como 4,80"), e a entrega da lista ao talão do orçamento, pela URL (nada é guardado).
+    erroMedida: "Use um número maior que zero, como",
+    levar: "Levar para o orçamento",
     indices: {
       titulo: "Índices de consumo",
       lide: "Os números que a calculadora usa, por metro quadrado, antes da perda.",
@@ -240,6 +255,9 @@ export const depositoSite = {
     texto: "Entrega própria na Engenhoca e nos bairros vizinhos. Pedido fechado até as 15h sai no caminhão da tarde.",
     frete: "Frete grátis acima de R$ 300 dentro do bairro. Fora dele, o valor vem no orçamento, antes do aceite.",
     raio: "Raio de entrega no mesmo dia",
+    // 16.10.2026 (Impeccable; texto a aprovar): os bairros do mapa, escritos também junto do frete. Os nomes são os
+    // que o mapa já mostrava; a ordem é a dos lugares do mapa (MapaDaEntrega).
+    vizinhos: { rotulo: "Bairros vizinhos", nomes: ["Barreto", "Caramujo", "Santana", "Fonseca"] },
     dia: {
       titulo: "O dia do caminhão",
       marcos: [
@@ -284,7 +302,11 @@ export const depositoSite = {
       listaExemplo: "Ex.: 10 sacos de cimento CP-II, 1 m³ de areia média",
       recebimento: "Recebimento",
       opcoes: ["Entrega", "Retirada no balcão"],
+      // 16.10.2026 (Impeccable; texto a aprovar): a marca do campo obrigatório.
+      obrigatorio: "obrigatório",
     },
+    // 16.10.2026 (Impeccable; texto a aprovar): junto do envio desabilitado, o que falta para liberá-lo.
+    falta: "Para liberar o envio, escreva o que precisa.",
     acao: "Enviar pelo WhatsApp",
     copiar: "Copiar pedido",
     copiado: "Pedido copiado",

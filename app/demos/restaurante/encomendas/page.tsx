@@ -14,7 +14,8 @@ const DE_SEGUNDA_A_SEXTA: readonly Dia[] = [1, 2, 3, 4, 5];
  * verde, virada para cima da espiral, traz a etiqueta com o título da página escrito a caneta; ela assenta ao abrir a
  * página (o momento desta página). Na folha, à esquerda, as marmitas da semana, com o prato de cada dia; à direita, o
  * almoço para grupos, com a data, as pessoas e o lugar compondo a mensagem (nada é gravado). Sem script, a mensagem
- * curta.
+ * curta. A ação cheia da folha é uma, a do grupo; a das marmitas é de contorno, como "Copiar a mensagem": as duas
+ * cheias, lado a lado, tinham o mesmo peso em repouso (o crítico de fora, 16.10.2026).
  */
 export default function Encomendas() {
   const { marmitas, eventos } = textos;
@@ -43,7 +44,7 @@ export default function Encomendas() {
                 ))}
               </ul>
               <p>{marmitas.texto}</p>
-              <Agata rotulo={marmitas.pedir} mensagem={marmitas.mensagem} className="mt-6" />
+              <Agata rotulo={marmitas.pedir} mensagem={marmitas.mensagem} className="mt-6 rs-agata-contorno" />
             </section>
             <section aria-labelledby="eventos" className="rs-caderno-pagina">
               <h2 id="eventos">{eventos.titulo}</h2>
@@ -61,11 +62,12 @@ export default function Encomendas() {
                     novaAba: casa.novaAba,
                     mensagem: eventos.mensagem,
                     aCombinar: eventos.aCombinar,
+                    avisos: eventos.avisos,
                   }}
                 />
               </div>
               <div className="rs-sem-script mt-6">
-                <Agata rotulo={eventos.pedir} mensagem={eventos.mensagem.replace("{data}", eventos.aCombinar).replace("{pessoas}", eventos.aCombinar).replace(" {onde}.", "")} />
+                <Agata rotulo={eventos.pedir} mensagem={eventos.mensagem.replace("{data}", eventos.aCombinar).replace("{pessoas}", eventos.aCombinar).replace(" {onde}.", "")} className="rs-agata-principal" />
               </div>
             </section>
           </div>

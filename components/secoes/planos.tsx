@@ -1,10 +1,8 @@
 import Link from "next/link";
 
-import { Abertura, Envelope, Orbe, Secao } from "@/components/estrutura";
+import { Abertura, Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta, IconeVisto } from "@/components/icones";
-import { TextoRolante } from "@/components/texto-rolante";
 import { buttonVariants } from "@/components/ui/button";
-import { ShimmerText } from "@/components/ui/spell/shimmer-text";
 import { modulos, planos, type Modulo } from "@/conteudo/planos";
 import { acaoOrcamento, planosSecao, simulador } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
@@ -19,15 +17,20 @@ function precoDoModulo(m: Modulo) {
 /**
  * Os planos lado a lado, o recomendado em navy. "Escolher" leva ao
  * montador com o plano já marcado (/orcamento#orcamento-<id>; ver Montador).
- * Os módulos seguem num bloco único, em linhas. Da branchCto: no hover,
- * a aresta do plano acende e um orbe de bronze segue o ponteiro; as
- * letras de "Escolher" rolam. No alto de cada plano, o site feito nele —
+ * Os módulos seguem num bloco único, em linhas. O cartão fica quieto: a
+ * resposta mora na prévia (a tela sobe 4 px e o nome passa a bronze; no
+ * toque, o nome, em 120 ms) e no botão. Só o "Escolher" do recomendado
+ * (plano.destaque, hoje o Profissional) leva a faixa de luz (.vd-brilho); o selo "Recomendado" fica
+ * parado. Até 14/10, os três cartões subiam com a aresta acesa e o orbe sob
+ * o cursor, as letras dos três "Escolher" rolavam e o brilho passava no
+ * selo a cada 3 s (pedido do usuário, 14/10: "parecendo que você está
+ * spamando os mesmos componentes"). No alto de cada plano, o site feito nele —
  * a prévia de um dos três sites de demonstração, no tom do próprio site,
  * com o lugar que pulsa enquanto a imagem não chega (vd-esqueleto) —, que
- * abre o site em nova aba: o preço ao lado do que ele compra. O orbe e a
- * sombra da prévia saíram em 03/10 pela regra 3 das Diretrizes de Design
- * Premium e voltaram no mesmo dia, a pedido do usuário: são parte da
- * identidade do site. Cartões com o padrão de 32/40 px por dentro (até
+ * abre o site em nova aba: o preço ao lado do que ele compra. A sombra da
+ * prévia saiu em 03/10 pela regra 3 das Diretrizes de Design Premium e
+ * voltou no mesmo dia, a pedido do usuário: é parte da identidade do
+ * site. Cartões com o padrão de 32/40 px por dentro (até
  * 03/10, 28/32 px nos planos).
  */
 export function Planos() {
@@ -44,13 +47,14 @@ export function Planos() {
               return (
                 <article
                   key={plano.id}
+                  // O destino de cada degrau da escada de preços, na abertura.
+                  id={`plano-${plano.id}`}
                   data-tom={plano.destaque ? "escuro" : undefined}
                   className={cn(
-                    "vd-bloco vd-luz vd-aresta relative flex flex-col rounded-xl p-8 md:p-10",
+                    "vd-aresta relative flex flex-col rounded-xl p-8 md:p-10",
                     plano.destaque ? "bg-background" : "bg-card",
                   )}
                 >
-                  <Orbe />
                   {site && (
                     <a href={site.caminho} target="_blank" rel="noopener" className="group/previa mb-7 block no-underline">
                       <span data-tom={site.tom} className="vd-previa relative block aspect-[16/8] overflow-hidden rounded-lg border border-border">
@@ -70,7 +74,7 @@ export function Planos() {
                       <span className="mt-3 flex min-h-11 items-center justify-between gap-3">
                         <span className="flex flex-col">
                           <span className="text-rotulo text-muted-foreground">{planosSecao.siteDoPlano}</span>
-                          <span className="text-nota font-semibold text-foreground transition-colors duration-300 group-hover/previa:text-accent">
+                          <span className="text-nota font-semibold text-foreground transition-colors duration-300 group-hover/previa:text-accent group-active/previa:text-accent group-active/previa:duration-120">
                             {site.nome}
                           </span>
                         </span>
@@ -80,7 +84,7 @@ export function Planos() {
                   )}
                   {plano.destaque && (
                     <span className="absolute top-8 right-8 rounded-full bg-primary px-3 py-1 text-rotulo font-semibold text-primary-foreground md:top-10 md:right-10">
-                      <ShimmerText>{planosSecao.seloDestaque}</ShimmerText>
+                      {planosSecao.seloDestaque}
                     </span>
                   )}
                   <h3 className="text-destaque">{plano.nome}</h3>
@@ -99,10 +103,10 @@ export function Planos() {
                     href={`${acaoOrcamento.destino}#orcamento-${plano.id}`}
                     className={buttonVariants({
                       variant: plano.destaque ? "default" : "secondary",
-                      className: "mt-8 w-full",
+                      className: plano.destaque ? "vd-brilho mt-8 w-full" : "mt-8 w-full",
                     })}
                   >
-                    <TextoRolante texto={`${planosSecao.acaoPlano} ${plano.nome}`} />
+                    {planosSecao.acaoPlano} {plano.nome}
                   </Link>
                 </article>
               );
@@ -111,9 +115,10 @@ export function Planos() {
           <div aria-hidden="true" className="vd-galeria-trilho" />
         </div>
 
-        <div className="mt-8 rounded-xl bg-card p-8 md:p-10">
+        {/* Os módulos em linhas, direto no branco (até 16/10, num bloco creme, mais um cartão na cena: o crítico de fora). */}
+        <div className="mt-16 md:mt-20">
           <h3 className="text-destaque">{planosSecao.tituloModulos}</h3>
-          <ul className="mt-4">
+          <ul className="mt-4 border-y border-border">
             {modulos.map((m) => {
               const preco = precoDoModulo(m);
               return (
@@ -122,7 +127,8 @@ export function Planos() {
                   className="grid gap-x-8 gap-y-1 border-t border-border py-5 first:border-t-0 md:grid-cols-[13rem_1fr_auto] md:items-baseline"
                 >
                   <span className="font-sub font-medium">{m.nome}</span>
-                  <span className="text-nota text-muted-foreground">{m.descricao}</span>
+                  {/* No máximo ~60 caracteres por linha (16/10, Impeccable; a 1440 px, a descrição corria a linha inteira). */}
+                  <span className="max-w-[60ch] text-nota text-muted-foreground">{m.descricao}</span>
                   <span className="text-nota tabular-nums md:text-right">
                     <span className="font-semibold">{preco.criacao}</span>
                     <span className="text-muted-foreground">, {preco.mensal}</span>

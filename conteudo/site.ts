@@ -153,7 +153,15 @@ export const proximaPagina = {
   rotulo: "Próxima página",
   aSeguir: "A seguir",
   fim: "Fim do percurso",
-  acao: "Continuar",
+  /** A ação nomeia o destino (16/10, Impeccable; até então, "Continuar"). */
+  acoes: {
+    "para-quem": "Ver para quem é",
+    planos: "Ver os planos",
+    orcamento: "Montar orçamento",
+    trabalho: "Ver o trabalho",
+    atlas: "Conhecer o Atlas",
+    duvidas: "Ler as dúvidas",
+  },
   inicio: "Voltar ao início",
   /** A porta do início, para o pé da última página. */
   portaDoInicio: { dado: "6", unidade: "páginas", resumo: "As seis páginas numa só vista." },
@@ -234,7 +242,12 @@ export const capa = {
    * 7 a 15 dias úteis ficam no lide, logo acima: cada fato aparece uma vez.
    */
   destaques: [
-    { valor: "10", rotulo: "blocos de verificação antes de cada entrega" },
+    // O que os dez blocos verificam, só o que a régua mede (producao/qualidade/02-regua.md, seção 5; 16/10, Impeccable).
+    {
+      valor: "10",
+      rotulo: "blocos de verificação antes de cada entrega",
+      detalhe: "Do celular ao computador: leitura em cada tela, contraste, uso pelo teclado, velocidade, privacidade e texto.",
+    },
     { valor: "0", rotulo: "cookies e rastreadores neste site" },
     { valor: "1", rotulo: "visita presencial ao estabelecimento" },
     { valor: "2", rotulo: "rodadas de revisão incluídas" },
@@ -303,7 +316,7 @@ export const escada = {
   /** Rótulo do seletor dos sites de um plano (os nichos), abaixo do seletor de nível. */
   nichos: "Nicho",
   niveis: [
-    { id: "essencial", nome: "Essencial", nota: "Essencial: os elementos surgem sem hierarquia de tempo." },
+    { id: "essencial", nome: "Essencial", nota: "Essencial: tudo aparece de uma vez, sem ordem de entrada." },
     { id: "profissional", nome: "Profissional", nota: "Profissional: entrada em camadas, com ordem de leitura definida." },
     { id: "completo", nome: "Completo", nota: "Completo: o título se compõe palavra a palavra e os blocos assentam em sequência." },
   ],
@@ -367,7 +380,8 @@ export const trabalho = {
     {
       titulo: "Visita e briefing",
       marca: { valor: "1", rotulo: "visita presencial" },
-      texto: "No próprio estabelecimento. O formulário é preenchido com o responsável, que fornece as fotografias do local.",
+      // O briefing explicado uma vez (16/10, Impeccable, heurística 2): a conversa de levantamento.
+      texto: "A conversa de levantamento, no próprio estabelecimento. O formulário é preenchido com o responsável, que fornece as fotografias do local.",
     },
     {
       titulo: "Rascunho",
@@ -382,7 +396,7 @@ export const trabalho = {
     {
       titulo: "Publicação",
       marca: { valor: "7 a 15", rotulo: "dias úteis, em geral" },
-      texto: "Após a régua de verificação e a conferência de privacidade. Domínio, hospedagem e manutenção seguem pela mensalidade.",
+      texto: "Após a verificação técnica e a conferência de privacidade. Domínio, hospedagem e manutenção seguem pela mensalidade.",
     },
   ],
 };

@@ -39,21 +39,25 @@ export function diasJuntos(expediente: Expediente) {
   return grupos.map((g) => ({ dias: g.de === g.ate ? DIAS[g.de] : `${DIAS[g.de]} a ${DIAS_NA_FRASE[g.ate]}`, texto: g.texto }));
 }
 
-const formato = new Intl.DateTimeFormat("en-US", {
-  timeZone: "America/Sao_Paulo",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  weekday: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-  hourCycle: "h23",
-});
+// Criado na primeira chamada, e não na avaliação do módulo: o formatador com fuso custava ~112 ms na carga de toda
+// página que importa o relógio, também das que só escrevem o horário (a auditoria do Impeccable, 16.10.2026).
+let formato: Intl.DateTimeFormat | undefined;
+const formatador = () =>
+  (formato ??= new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Sao_Paulo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }));
 const SEMANA_EM_INGLES = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 } as const;
 
 /** A data, o dia da semana e os minutos de parede de Niterói, num instante qualquer. */
 export function horaDeNiteroi(instante: Date = new Date()): Agora {
-  const p = Object.fromEntries(formato.formatToParts(instante).map((x) => [x.type, x.value]));
+  const p = Object.fromEntries(formatador().formatToParts(instante).map((x) => [x.type, x.value]));
   return { data: `${p.year}-${p.month}-${p.day}`, dia: SEMANA_EM_INGLES[p.weekday as keyof typeof SEMANA_EM_INGLES], minutos: Number(p.hour) * 60 + Number(p.minute) };
 }
 

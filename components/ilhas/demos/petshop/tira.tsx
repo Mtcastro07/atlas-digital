@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import { Pausa } from "@/components/ilhas/demos/petshop/pausa";
 
 type Pagina = { id: string; caminho: string; rotulo: string };
+
+/** Nada a assinar: o useSyncExternalStore só separa o servidor (e a hidratação) do cliente. */
+const nadaAssinar = () => () => {};
 
 /** Rolagem mínima, em pixels, para contar como mudança de direção. */
 const LIMIAR = 8;
@@ -39,7 +42,7 @@ export function TiraDoCartao({
   inicio: string;
   paginas: readonly Pagina[];
   rotuloDasPaginas: string;
-  pausa: string;
+  pausa: { pausar: string; retomar: string };
   menu: { abrir: string; fechar: string; acao: React.ReactNode; pe: React.ReactNode };
   children: React.ReactNode;
 }) {
@@ -119,11 +122,13 @@ export function TiraDoCartao({
 /**
  * O menu do celular (abaixo de 1024 px): o índice do cartão. O gatilho é o desenho da lista da tira (o quadrado de tinta
  * na primeira linha, as outras reservadas); abre um <dialog> modal em tela cheia (o foco preso, o Esc, o fundo inerte,
- * tudo nativo), que é o balcão de tinta com um cartão deitado nele, sangrando em cima e à esquerda como o da capa: as
- * páginas em exibição (a atual com o quadrado de tinta violeta), o carimbo e o horário. O cartão desliza no balcão, como
- * na troca de página (240 ms de entrada, 160 ms de saída, só transform e opacity; com movimento reduzido ou pelo teclado,
- * sem animação). Tocar no balcão fecha. Sem script (ou antes de o script chegar), o gatilho é uma âncora para o próprio
- * menu, que aparece por :target, e o fechar volta ao conteúdo.
+ * tudo nativo): a tinta translúcida sobre a página e o cartão como uma barra na direita, do lado do gatilho (pedido do
+ * usuário, 14/10), com as páginas em exibição (a atual com o quadrado de tinta violeta), o carimbo e o horário. A barra
+ * entra da borda direita (240 ms de entrada, 160 ms de saída, só transform e opacity; com movimento reduzido ou pelo
+ * teclado, sem animação). Tocar fora da barra fecha. Sem script (ou antes de o script chegar), o gatilho é uma âncora para o próprio
+ * menu, que aparece por :target, e o fechar volta ao conteúdo. Depois da hidratação, o gatilho e o fechar são botões
+ * (role="button", e a barra de espaço os aciona em vez de rolar a página; o Impeccable, fechamento de 16.10.2026): a
+ * âncora continua para quem está sem script.
  */
 function MenuDoCartao({
   nome,
@@ -146,6 +151,18 @@ function MenuDoCartao({
 }) {
   const dialogo = useRef<HTMLDialogElement>(null);
   const [aberto, setAberto] = useState(false);
+  // No servidor e na hidratação, a âncora; no cliente, o botão (sem descompasso na hidratação).
+  const hidratado = useSyncExternalStore(nadaAssinar, () => true, () => false);
+  const comoBotao = hidratado
+    ? {
+        role: "button",
+        onKeyDown: (evento: React.KeyboardEvent<HTMLAnchorElement>) => {
+          if (evento.key !== " ") return;
+          evento.preventDefault(); // a barra de espaço não rola a página
+          evento.currentTarget.click(); // o clique sem ponteiro: sem animação (anima)
+        },
+      }
+    : {};
 
   // Sem movimento quando o usuário pede menos movimento ou quando a ação veio do teclado (o clique sem ponteiro).
   const anima = (evento: { detail: number }) => !window.matchMedia("(prefers-reduced-motion: reduce)").matches && evento.detail > 0;
@@ -153,7 +170,8 @@ function MenuDoCartao({
     const d = dialogo.current!;
     const cartao = d.querySelector(".bt-menu-cartao")!;
     const ida: Keyframe[] = [{ opacity: 0 }, { opacity: 1 }];
-    const cartaoIda: Keyframe[] = [{ opacity: 0, transform: "translateX(2.5rem)" }, { opacity: 1, transform: "none" }];
+    // A barra entra da borda direita, inteira, sem esmaecer (até 14/10, o cartão do alto deslizava 2,5 rem e acendia).
+    const cartaoIda: Keyframe[] = [{ transform: "translateX(100%)" }, { transform: "none" }];
     const opcoes = sai ? { duration: 160, easing: SAIDA, direction: "reverse" as const } : { duration: 240, easing: ENTRADA };
     d.animate(ida, { ...opcoes, duration: sai ? 160 : 180 });
     return cartao.animate(cartaoIda, opcoes).finished;
@@ -200,6 +218,7 @@ function MenuDoCartao({
         aria-label={abrir}
         onClick={abrirMenu}
         className="bt-tira-indice"
+        {...comoBotao}
       >
         <svg viewBox="0 0 20 20" aria-hidden="true">
           <rect className="bt-tira-indice-tinta" x="1" y="3.5" width="4" height="4" />
@@ -236,6 +255,7 @@ function MenuDoCartao({
                 fecharMenu(anima(evento));
               }}
               className="bt-menu-fechar"
+              {...comoBotao}
             >
               <svg viewBox="0 0 20 20" aria-hidden="true">
                 <path d="M4.2 3.1 16.9 15.8l-1.1 1.1L3.1 4.2zM15.8 3.1l1.1 1.1L4.2 16.9l-1.1-1.1z" />

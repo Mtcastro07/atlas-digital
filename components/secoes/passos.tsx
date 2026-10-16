@@ -59,7 +59,7 @@ export function Passos() {
           ))}
         </PilhaDePassos>
         <p className="mt-10 text-center md:mt-12">
-          <Link href={passosDoInicio.vinculo.destino} className={buttonVariants({ variant: "link", size: "link" })}>
+          <Link href={passosDoInicio.vinculo.destino} className={buttonVariants({ variant: "link", size: "link", className: "max-w-full whitespace-normal" })}>
             {passosDoInicio.vinculo.rotulo}
             <IconeSeta className="size-3.5" />
           </Link>

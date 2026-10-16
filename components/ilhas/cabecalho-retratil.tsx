@@ -14,6 +14,9 @@ const INTERVALO = 80;
 
 type Fundo = "claro" | "escuro" | "misto";
 
+/** A transição de página em curso, onde o navegador a expõe (o Chrome; os outros, ainda não). */
+const transicaoAtiva = () => (document as Document & { activeViewTransition?: ViewTransition | null }).activeViewTransition;
+
 /**
  * Se o fundo de um elemento é claro: sobe pelos ancestrais até achar uma
  * cor de fundo opaca e mede a luminância dela. Sem nada até a raiz, é o
@@ -92,8 +95,10 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
       const fundo = fundoSob(elemento, barra);
       if (elemento.dataset.fundo !== fundo) elemento.dataset.fundo = fundo;
     };
-    // No máximo uma leitura a cada INTERVALO ms; a última posição é sempre lida.
+    // No máximo uma leitura a cada INTERVALO ms; a última posição é sempre lida. Durante a transição de página, nenhuma
+    // (a rolagem ao topo da página nova cai nela): o fim da transição lê (abaixo).
     const agendarLeitura = () => {
+      if (transicaoAtiva()) return;
       const espera = INTERVALO - (performance.now() - lida);
       window.clearTimeout(pendente);
       if (espera <= 0) lerFundo();
@@ -113,10 +118,23 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
       });
     };
 
-    lerFundo();
+    // Na troca de página, o que está sob a barra é a camada da transição, não a página (lia-se "escuro" sobre a página
+    // clara, até a primeira rolagem; o crítico de fora, 14/10). Enquanto ela dura, vale o tom da abertura da página nova,
+    // que fica sob o cabeçalho no topo; quando acaba, a leitura de verdade. Sem activeViewTransition, relê aos 900 ms.
+    const transicao = transicaoAtiva();
+    let viva = true;
+    if (transicao && elemento) {
+      const tom = document.querySelector("main [data-tom]")?.getAttribute("data-tom");
+      elemento.dataset.fundo = tom && tom !== "escuro" ? "claro" : "escuro";
+      transicao.finished.finally(() => viva && lerFundo());
+    } else {
+      lerFundo();
+      if (!("activeViewTransition" in document)) pendente = window.setTimeout(lerFundo, 900);
+    }
     window.addEventListener("scroll", aoRolar, { passive: true });
     window.addEventListener("resize", aoRolar, { passive: true });
     return () => {
+      viva = false;
       window.removeEventListener("scroll", aoRolar);
       window.removeEventListener("resize", aoRolar);
       cancelAnimationFrame(quadro);
@@ -128,12 +146,12 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
     // A faixa do <header> é transparente e não recebe o ponteiro: o que se
     // vê é a pílula de vidro dentro dela (secoes/cabecalho.tsx). Recolhido,
     // sobe a própria altura e mais 2 rem: a sombra da pílula desce até 30 px
-    // abaixo da faixa e ficava no topo da tela (14/10).
+    // abaixo da faixa e ficava no topo da tela (14/10). Com movimento reduzido, recolhe sem deslizar (14/10).
     <header
       ref={cabecalho}
       data-fundo="escuro"
       data-recolhido={recolhido || undefined}
-      className="pointer-events-none sticky top-0 z-40 transition-transform duration-300 ease-atlas max-lg:data-recolhido:[&:not(:has(:focus-visible))]:-translate-y-[calc(100%+2rem)]"
+      className="pointer-events-none sticky top-0 z-40 transition-transform duration-300 ease-atlas motion-reduce:transition-none max-lg:data-recolhido:[&:not(:has(:focus-visible))]:-translate-y-[calc(100%+2rem)]"
     >
       {children}
     </header>

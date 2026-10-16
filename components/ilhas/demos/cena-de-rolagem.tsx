@@ -36,10 +36,15 @@ export function CenaDeRolagem() {
     const ativas = new Set<HTMLElement>();
     let quadro = 0;
 
+    /** Lê todas as caixas e só depois escreve (desde 16/10, o Impeccable: ler e escrever cena a cena forçava o leiaute a cada uma). */
+    const escrever = (lista: Iterable<HTMLElement>) => {
+      const janela = window.innerHeight;
+      const valores = [...lista].map((cena) => [cena, progresso(cena, janela).toFixed(4)] as const);
+      for (const [cena, p] of valores) cena.style.setProperty("--p", p);
+    };
     const desenhar = () => {
       quadro = 0;
-      const janela = window.innerHeight;
-      for (const cena of ativas) cena.style.setProperty("--p", progresso(cena, janela).toFixed(4));
+      escrever(ativas);
     };
     const pedirQuadro = () => {
       if (!quadro) quadro = requestAnimationFrame(desenhar);
@@ -57,7 +62,7 @@ export function CenaDeRolagem() {
     );
     cenas.forEach((cena) => observador.observe(cena));
     // A primeira escrita já com a posição real (a página pode abrir no meio).
-    for (const cena of cenas) cena.style.setProperty("--p", progresso(cena, window.innerHeight).toFixed(4));
+    escrever(cenas);
 
     window.addEventListener("scroll", pedirQuadro, { passive: true });
     window.addEventListener("resize", pedirQuadro, { passive: true });

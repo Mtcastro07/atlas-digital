@@ -5,21 +5,26 @@ import { useEffect } from "react";
 
 /** A inclinação máxima das peças, em graus: pouca, para o giz continuar legível. */
 const INCLINACAO = 3;
-/** O balanço da lousa no prego: a amplitude em graus e o período em segundos. */
-const BALANCO = { graus: 0.55, segundos: 7.5 };
+/** A cena chega quando entra nos três quartos de cima da tela: na beira de baixo, o momento passaria sem ninguém ver. */
+const CHEGADA = 0.75;
 
 /**
  * O salão que responde (identidade, seção 8; 09-movimento.md, seções 12 e 13). Uma ilha só, no layout, refeita a
  * cada página:
- * - **as cenas** ([data-cena]): as que nascem abaixo da dobra esperam ([data-espera]) e, ao entrar na tela, ganham
- *   [data-vista], uma vez; o momento de cada cena é dela (restaurante.css). O que já está na tela nunca some;
- * - **as peças** ([data-peca]: a lousa, o cavalete, os azulejos, a comanda): sob o ponteiro fino, inclinam até 3° e a
- *   luz da matéria vai aonde o ponteiro está (--rx, --ry, --lx, --ly); no toque, a luz acende no ponto tocado;
- * - **o balanço** ([data-balanca]): a lousa balança devagar no prego, só na tela, sem a pausa (html.ambiente-pausado,
- *   o botão da porta) e com a aba visível; na tela, ela ganha [data-na-tela], que também solta o vapor da panela;
+ * - **as cenas** ([data-cena]): as que nascem abaixo dos três quartos de cima da tela esperam ([data-espera]) e, ao
+ *   entrar neles, ganham [data-vista], uma vez; o momento de cada cena é dela (restaurante.css). A cena que nasce na
+ *   beira de baixo da tela já chega à primeira pintura na pose de espera (a regra html.js, no CSS): nada some. A fila
+ *   da cozinha, que espera sem as lousinhas, chega ao entrar na tela (a régua nunca fica vazia à vista);
+ * - **as peças** ([data-peca]: a lousa da capa, a lousa grande da cozinha, o cavalete): sob o ponteiro fino, inclinam
+ *   até 3° e a luz da matéria vai aonde o ponteiro está (--rx, --ry, --lx, --ly); no toque, a luz acende no ponto
+ *   tocado. Os azulejos ([data-peca="luz"]) estão assentados no rejunte: só o brilho do vidrado segue a mão;
+ * - **o balanço** ([data-balanca]): a lousa balança devagar no prego (um @keyframes do CSS), só na tela: ela ganha
+ *   [data-na-tela], que solta o balanço e o vapor da panela; a pausa (html.ambiente-pausado) os para no CSS;
  * - **a galeria de hoje** ([data-ate-hoje]): a fila das lousas abre no dia de hoje ([data-hoje]);
- * - **os itens de lista** ([data-toque]): no toque, ganham [data-tocado] por um instante (o tique, no celular).
- * Com movimento reduzido, nada espera, nada inclina, nada balança; o tique do toque fica (é cor, não deslocamento).
+ * - **o que responde ao toque** ([data-toque]: os itens de lista e o guardanapo): no toque, ganha [data-tocado] por um
+ *   instante (o tique no papel, a seta de giz na lousa, o mapa que aproxima no guardanapo).
+ * Com movimento reduzido, nada espera, nada inclina, nada balança; o tique do toque fica (é cor, não deslocamento), e o
+ * guardanapo não aproxima (o CSS).
  */
 export function SalaoVivo() {
   const caminho = usePathname();
@@ -37,8 +42,8 @@ export function SalaoVivo() {
       fila.scrollTo({ left: ate, behavior: "instant" });
     }
 
-    // Os itens de lista ([data-toque]: os pratos, os dias), no toque: o tique da comanda se escreve no tocado, por
-    // 900 ms (o equivalente do ponteiro, que só a mesa tem). Só no toque que não rolou: a rolagem cancela o ponteiro.
+    // O que responde ao toque ([data-toque]: os pratos, os dias, as lousinhas, o guardanapo): [data-tocado] por 900 ms,
+    // o equivalente do ponteiro, que só a mesa tem. Só no toque que não rolou: a rolagem cancela o ponteiro.
     for (const item of document.querySelectorAll<HTMLElement>("[data-toque]")) {
       let fim = 0;
       const tocou = (e: PointerEvent) => {
@@ -56,31 +61,37 @@ export function SalaoVivo() {
     }
     if (reduzir) return () => desfazer.forEach((f) => f());
 
-    // As cenas.
-    const dobra = window.innerHeight * 0.9;
-    const vigia = new IntersectionObserver(
-      (entradas) => {
-        for (const e of entradas) {
-          if (!e.isIntersecting) continue;
-          e.target.removeAttribute("data-espera");
-          e.target.setAttribute("data-vista", "");
-          vigia.unobserve(e.target);
-        }
-      },
-      { threshold: 0.18 },
-    );
+    // As cenas. A fila da cozinha é a exceção: na espera, as lousinhas não estão à vista, e a régua com os ganchos
+    // vazios lia como página quebrada (o crítico de fora, 16.10.2026). Ela chega quando a régua entra na tela, e não
+    // nos três quartos de cima: na carga, se a régua já está à vista, as lousinhas são penduradas na hora.
+    const dobra = window.innerHeight * CHEGADA;
+    const chegar = (entradas: IntersectionObserverEntry[], olheiro: IntersectionObserver) => {
+      for (const e of entradas) {
+        if (!e.isIntersecting) continue;
+        e.target.removeAttribute("data-espera");
+        e.target.setAttribute("data-vista", "");
+        olheiro.unobserve(e.target);
+      }
+    };
+    const vigia = new IntersectionObserver(chegar, { threshold: 0.18, rootMargin: `0px 0px -${(1 - CHEGADA) * 100}% 0px` });
+    const vigiaDaBeira = new IntersectionObserver(chegar);
     for (const cena of document.querySelectorAll<HTMLElement>("[data-cena]")) {
-      if (cena.getBoundingClientRect().top > dobra) {
+      const naBeira = cena.dataset.cena === "fila";
+      if (cena.getBoundingClientRect().top > (naBeira ? window.innerHeight : dobra)) {
         cena.setAttribute("data-espera", "");
-        vigia.observe(cena);
+        (naBeira ? vigiaDaBeira : vigia).observe(cena);
       } else cena.setAttribute("data-vista", "");
     }
-    desfazer.push(() => vigia.disconnect());
+    desfazer.push(() => {
+      vigia.disconnect();
+      vigiaDaBeira.disconnect();
+    });
 
     // As peças.
     for (const peca of document.querySelectorAll<HTMLElement>("[data-peca]")) {
       let quadro = 0;
       let ultimo: PointerEvent | null = null;
+      const inclina = fino && peca.dataset.peca !== "luz";
       const aplicar = () => {
         quadro = 0;
         if (!ultimo) return;
@@ -89,7 +100,7 @@ export function SalaoVivo() {
         const y = Math.min(1, Math.max(0, (ultimo.clientY - r.top) / r.height));
         peca.style.setProperty("--lx", `${(x * 100).toFixed(1)}%`);
         peca.style.setProperty("--ly", `${(y * 100).toFixed(1)}%`);
-        if (fino) {
+        if (inclina) {
           peca.style.setProperty("--rx", `${((0.5 - y) * 2 * INCLINACAO).toFixed(2)}deg`);
           peca.style.setProperty("--ry", `${((x - 0.5) * 2 * INCLINACAO).toFixed(2)}deg`);
         }
@@ -128,47 +139,15 @@ export function SalaoVivo() {
       });
     }
 
-    // O balanço.
+    // O balanço: só a marca de "na tela"; o movimento é do CSS (nenhum script escreve estilo a cada quadro).
     const balancas = [...document.querySelectorAll<HTMLElement>("[data-balanca]")];
-    const naTela = new Set<HTMLElement>();
     const olho = new IntersectionObserver((entradas) => {
-      for (const e of entradas) {
-        (e.isIntersecting ? naTela.add(e.target as HTMLElement) : naTela.delete(e.target as HTMLElement));
-        e.target.toggleAttribute("data-na-tela", e.isIntersecting);
-      }
-      if (naTela.size) pedir();
+      for (const e of entradas) e.target.toggleAttribute("data-na-tela", e.isIntersecting);
     });
     balancas.forEach((b) => olho.observe(b));
-    let laco = 0;
-    let tempo = 0;
-    let antes = 0;
-    const raiz = document.documentElement;
-    const passo = (agora: number) => {
-      laco = 0;
-      const dt = antes ? Math.min(0.05, (agora - antes) / 1000) : 0;
-      antes = agora;
-      if (!raiz.classList.contains("ambiente-pausado") && !document.hidden) tempo += dt;
-      const graus = Math.sin((tempo / BALANCO.segundos) * Math.PI * 2) * BALANCO.graus;
-      for (const b of naTela) b.style.setProperty("--balanco", `${graus.toFixed(3)}deg`);
-      // Com a pausa, o laço para; a pausa desfeita o retoma (o vigia da classe, abaixo).
-      if (naTela.size && !raiz.classList.contains("ambiente-pausado")) pedir();
-      else antes = 0;
-    };
-    function pedir() {
-      if (!laco) laco = requestAnimationFrame(passo);
-    }
-    const vigiaDaPausa = new MutationObserver(() => {
-      if (!raiz.classList.contains("ambiente-pausado") && naTela.size) pedir();
-    });
-    vigiaDaPausa.observe(raiz, { attributes: true, attributeFilter: ["class"] });
     desfazer.push(() => {
-      vigiaDaPausa.disconnect();
       olho.disconnect();
-      cancelAnimationFrame(laco);
-      balancas.forEach((b) => {
-        b.style.removeProperty("--balanco");
-        b.removeAttribute("data-na-tela");
-      });
+      balancas.forEach((b) => b.removeAttribute("data-na-tela"));
     });
 
     return () => desfazer.forEach((f) => f());

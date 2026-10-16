@@ -42,13 +42,15 @@ export function Cabecalho() {
     <CabecalhoFixo>
       <CabecalhoRetratil>
         <Envelope className="flex h-18 items-center">
-          {/* O tom fica na pílula, não no <header>: lá, a regra base pintaria a faixa inteira de navy. */}
+          {/* O tom fica na pílula, não no <header>: lá, a regra base pintaria a faixa inteira de navy. A coluna da marca pode
+              encolher (minmax(0, 1fr)) e a pílula é contêiner: com a letra a 200% a 390 px, o rótulo "Menu" recolhe
+              (menu-celular.tsx) e nada passa da tela (Impeccable, 16/10). */}
           <div
             data-tom="escuro"
             data-vidro-liquido
             data-vidro-desfoque="20"
             data-vidro-intensidade="1.8"
-            className="vd-barra pointer-events-auto -mx-3 grid h-13 grow grid-cols-[1fr_auto] items-center gap-4 rounded-full pr-1 pl-4 md:-mx-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6 lg:pl-6"
+            className="vd-barra @container pointer-events-auto -mx-3 grid h-13 grow grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-full pr-1 pl-4 md:-mx-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6 lg:pl-6"
           >
             {/* No hover, o globo gira; com movimento reduzido, sem o giro, o logotipo responde em cor. */}
             <Link

@@ -15,6 +15,14 @@ import { useEffect } from "react";
 export function NavegacaoViva() {
   const caminho = usePathname();
 
+  // No Safari do iPhone, o :active só acende se a página escuta o toque: um ouvinte passivo, vazio, no documento,
+  // para a placa, a ficha, a etiqueta e o vínculo responderem ao dedo em 120 ms (14.10.2026).
+  useEffect(() => {
+    const nada = () => {};
+    document.addEventListener("touchstart", nada, { passive: true });
+    return () => document.removeEventListener("touchstart", nada);
+  }, []);
+
   useEffect(() => {
     const cabecalho = document.querySelector<HTMLElement>("[data-cabecalho]");
     const aoRolar = () => cabecalho?.toggleAttribute("data-rolou", window.scrollY > 24);

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { EVENTO_ANCORA, type DetalheDaAncora } from "@/lib/ancoras";
 
@@ -15,6 +15,7 @@ const duracaoDe = (distancia: number) => Math.min(1400, 650 + Math.abs(distancia
 const suavizar = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 let quadroDaRolagem = 0;
+let tempoDaChegada = 0;
 
 function pararRolagem() {
   cancelAnimationFrame(quadroDaRolagem);
@@ -25,7 +26,8 @@ function pararRolagem() {
  * Rolagem até `destino`, quadro a quadro, com a curva acima — mais fluida
  * que a rolagem suave do navegador, que é curta e brusca nas distâncias
  * longas. Só responde ao clique: a rolagem da pessoa (roda, toque,
- * teclado) continua nativa e interrompe esta (ver Ancoras).
+ * teclado) continua nativa e interrompe esta (ver Ancoras). Devolve a
+ * duração, em milissegundos (0 quando instantânea).
  */
 function rolarAte(destino: number, instantaneo: boolean) {
   pararRolagem();
@@ -33,7 +35,7 @@ function rolarAte(destino: number, instantaneo: boolean) {
   const distancia = destino - inicio;
   if (instantaneo || Math.abs(distancia) < 2) {
     window.scrollTo({ top: destino, behavior: "instant" });
-    return;
+    return 0;
   }
   const duracao = duracaoDe(distancia);
   const comeco = performance.now();
@@ -43,6 +45,22 @@ function rolarAte(destino: number, instantaneo: boolean) {
     quadroDaRolagem = t < 1 ? requestAnimationFrame(passo) : 0;
   };
   quadroDaRolagem = requestAnimationFrame(passo);
+  return duracao;
+}
+
+/**
+ * A chegada à resposta (desde 14/10): a pergunta acende quando a rolagem a
+ * alcança (.vd-duvida[data-chegou], app/movimento.css), e o atributo sai
+ * quando a camada termina (1.400 ms). Uma marcada por vez; a mesma,
+ * escolhida de novo, recomeça.
+ */
+function marcarChegada(resposta: HTMLElement, chegada: number) {
+  window.clearTimeout(tempoDaChegada);
+  document.querySelectorAll("[data-chegou]").forEach((el) => el.removeAttribute("data-chegou"));
+  resposta.style.setProperty("--chegada", `${Math.round(chegada)}ms`);
+  void resposta.offsetWidth; // recomeça a camada, se a chegada anterior ainda corria
+  resposta.setAttribute("data-chegou", "");
+  tempoDaChegada = window.setTimeout(() => resposta.removeAttribute("data-chegou"), chegada + 1400);
 }
 
 /**
@@ -95,7 +113,14 @@ function irPara(id: string, instantaneo = false) {
   // A resposta de uma dúvida: o <details> abre antes de medir.
   const resposta = alvo.closest("details");
   if (resposta) resposta.open = true;
-  rolarAte(posicaoDe(alvo), semMovimento);
+  // Um destino numa galeria de deslizar (os planos, no celular): a galeria corre até ele; o encaixe o alinha.
+  const galeria = alvo.closest<HTMLElement>(".vd-galeria");
+  if (galeria && galeria.scrollWidth > galeria.clientWidth) {
+    const esquerda = galeria.scrollLeft + alvo.getBoundingClientRect().left - galeria.getBoundingClientRect().left;
+    galeria.scrollTo({ left: esquerda, behavior: semMovimento ? "instant" : "smooth" });
+  }
+  const chegada = rolarAte(posicaoDe(alvo), semMovimento);
+  if (resposta) marcarChegada(resposta, chegada);
   if (!alvo.matches("a[href], button, input, select, textarea, [tabindex]")) alvo.setAttribute("tabindex", "-1");
   alvo.focus({ preventScroll: true });
   window.dispatchEvent(new CustomEvent<DetalheDaAncora>(EVENTO_ANCORA, { detail: { id } }));
@@ -125,9 +150,18 @@ function depoisDoPainel(tarefa: () => void) {
  * chegada com âncora vale também para a troca de página (um vínculo como
  * /orcamento#orcamento-essencial). Um destino dentro de um <details> (a
  * resposta de uma dúvida) abre o <details>.
+ * Na primeira troca de página, tira o .ja-aberto do <html> (desde 15/10):
+ * posto na recarga ou na volta pelo histórico (app/layout.tsx), ele vale só
+ * para a página da carga. Até então, nunca saía, e uma recarga apagava o
+ * momento de todas as páginas seguintes da navegação
+ * (producao/esteira/09-movimento.md, seção 5, item 6, aberto desde 03/10).
  */
 export function Ancoras() {
   const caminho = usePathname();
+  const caminhoDaCarga = useRef(caminho);
+  useEffect(() => {
+    if (caminho !== caminhoDaCarga.current) document.documentElement.classList.remove("ja-aberto");
+  }, [caminho]);
   useEffect(() => {
     // Chegada com âncora: no endereço da página que abre, ou posta nele com
     // a página aberta (digitada, ou um vínculo de fora para esta mesma

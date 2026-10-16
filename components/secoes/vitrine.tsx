@@ -24,9 +24,12 @@ export function Vitrine() {
   return (
     <Secao id="vitrine" tom="claro">
       <Envelope className="vd-alternador">
+        {/* Centrada: a cena de cima, os públicos, é na margem e no mesmo tom (de 14 a 16/10, o contrário,
+            quando os públicos eram três blocos centrados). */}
         <Abertura titulo={vitrine.titulo} lide={vitrine.texto} />
 
-        <fieldset className="mx-auto mt-10 w-full max-w-sm lg:hidden">
+        {/* min-w-0: o fieldset tem largura mínima no conteúdo; com a letra a 200%, alargava a página (16/10). */}
+        <fieldset className="mx-auto mt-10 w-full max-w-sm min-w-0 lg:hidden">
           <legend className="sr-only">{vitrine.seletor}</legend>
           <div className="vd-vidro vd-segmento" style={{ "--n": demonstrativos.length, "--i": 0 } as React.CSSProperties}>
             <span aria-hidden="true" className="vd-segmento-cursor" />

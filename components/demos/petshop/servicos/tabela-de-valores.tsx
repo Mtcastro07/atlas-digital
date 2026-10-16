@@ -18,8 +18,8 @@ const nomeDasPelagens = (ids: readonly PelagemId[]) =>
  * o porte nas colunas e a pelagem nas linhas, o valor e a duração em cada célula (identidade, seção 4.13). Estática: nada calcula, nada seleciona (a tabela interativa é do Profissional);
  * cada linha responde com a régua de leitura. O nome do serviço é a legenda da tabela, com o título dentro (a navegação
  * por títulos chega a ela). Pensada para virar fichas no celular sem repetir títulos: cada linha é uma ficha (a
- * pelagem, o <th scope="row">), e cada célula leva o porte em data-rotulo, para o CSS escrever o rótulo sem tirar a
- * tabela da árvore de acessibilidade. A vírgula entre o valor e a duração é só para o leitor de tela. Os papéis (role)
+ * pelagem, o <th scope="row">), e cada célula leva o porte e o peso em data-rotulo, para o CSS escrever o rótulo sem
+ * tirar a tabela da árvore de acessibilidade (nas fichas da letra a 200%: servicos.css). A vírgula entre o valor e a duração é só para o leitor de tela. Os papéis (role)
  * repetem os da tabela de propósito: no celular, as linhas viram grade (servicos.css), e o Safari e o Chrome tiram a
  * semântica de tabela do que perde o display de tabela; com os papéis escritos, ela fica.
  */
@@ -52,7 +52,7 @@ export function TabelaDeValores({ servico }: { servico: Servico }) {
               <th scope="row" role="rowheader">{nomeDasPelagens(linha.pelagens)}</th>
               {"precos" in linha ? (
                 portes.map((p) => (
-                  <td key={p.id} role="cell" data-rotulo={p.nome}>
+                  <td key={p.id} role="cell" data-rotulo={`${p.nome}, ${p.faixa}`}>
                     <span className="bt-verso-valor">{real(linha.precos[p.id].centavos)}</span>
                     <span className="sr-only">, </span>
                     <span className="bt-verso-tempo">{duracao(linha.precos[p.id].minutos)}</span>

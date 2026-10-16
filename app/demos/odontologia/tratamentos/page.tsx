@@ -31,7 +31,7 @@ export default function Tratamentos() {
           <div className="od-prontuario-ficha" aria-label={tratamentosPagina.rotuloDaLista} role="group">
             <PlanoDeSessoes
               regioes={regioes.map(({ id, nome, frase }) => ({ id, nome, frase }))}
-              tratamentos={tratamentos.map(({ id, regioes: r }) => ({ id, regioes: r }))}
+              tratamentos={tratamentos.map(({ id, regioes: r, comArtigo }) => ({ id, regioes: r, comArtigo }))}
               destino={paginaDe("avaliacao").caminho}
               cabeca={
                 <>
@@ -43,18 +43,21 @@ export default function Tratamentos() {
                 legenda: tratamentosPagina.mapa.legenda,
                 todas: tratamentosPagina.mapa.todas,
                 ajuda: tratamentosPagina.mapa.ajuda,
-                contagem: tratamentosPagina.contagem,
                 todasContagem: tratamentosPagina.todasContagem,
+                nenhumFora: tratamentosPagina.nenhumFora,
+                nenhumForaInclusive: tratamentosPagina.nenhumForaInclusive,
+                soFora: tratamentosPagina.soFora,
+                soForaVarios: tratamentosPagina.soForaVarios,
                 seguir: tratamentosPagina.pedirComRegiao,
                 legendas: mapa.legendas,
               }}
             >
               <ul className="od-plano-lista">
                 {tratamentos.map((t) => (
-                  <li key={t.id} data-regioes={t.regioes.join(" ")} className="od-plano-linha">
+                  <li key={t.id} data-regioes={t.regioes.join(" ")} data-linha-da-ficha className="od-plano-linha">
                     <div>
                       <h2 className="od-plano-nome">
-                        <Link href={paginaDe(t.id).caminho} className="od-lapis">
+                        <Link href={paginaDe(t.id).caminho} className="od-plano-vinculo">
                           {t.nome}
                         </Link>
                       </h2>

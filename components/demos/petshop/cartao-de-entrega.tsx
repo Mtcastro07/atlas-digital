@@ -9,8 +9,10 @@ import { real } from "@/lib/demos/petshop/valores";
  * 3, o violeta em peça inerte); embaixo, a marca da casa batida no cartão, a borracha cheia com o nome vazado.
  * O que o exemplo da cena 3 diz vai preenchido: o porte, a pelagem, o serviço e o valor (da tabela). O peso medido e a
  * hora em que ficou pronto ficam no fio, em branco (a unidade no rótulo): só a balança e o relógio os dizem (a linha do
- * atendimento conta o tempo desde a chegada, 1:30, e não a hora do relógio). Peça que responde à mão (data-bt-peca, na
- * página): inclina.
+ * atendimento conta o tempo desde a chegada, 1:30, e não a hora do relógio). Não inclina (14.10.2026: quem inclina sob a
+ * mão é a frente e o verso do cartão da casa); o gesto dele é o da cena 3, uma vez: chega de costas e vira, como o
+ * cartão que o atendente vira no balcão para o tutor ler (crítico de fora, 14.10.2026; inicio.css). As costas são a
+ * marca da casa na borracha cheia, desenho (aria-hidden), atrás da frente.
  */
 export function CartaoDeEntrega({ className = "" }: { className?: string }) {
   const c = cartaoDeEntrega.campos;
@@ -25,22 +27,28 @@ export function CartaoDeEntrega({ className = "" }: { className?: string }) {
     { rotulo: c.hora },
   ];
   return (
-    <figure className={`bt-entrega ${className}`}>
-      <figcaption className="bt-entrega-nome">{cartaoDeEntrega.nome}</figcaption>
-      <dl className="bt-entrega-campos">
-        {campos.map((campo) => (
-          <div key={campo.rotulo} className="bt-entrega-campo">
-            <dt>{campo.rotulo}</dt>
-            <dd>
-              {campo.valor ? <span className="bt-entrega-carimbado">{campo.valor}</span> : <span className="sr-only">em branco</span>}
-            </dd>
-          </div>
-        ))}
-      </dl>
-      <p aria-hidden="true" className="bt-entrega-marca">
+    <>
+      <figure className={`bt-entrega ${className}`}>
+        <figcaption className="bt-entrega-nome">{cartaoDeEntrega.nome}</figcaption>
+        <dl className="bt-entrega-campos">
+          {campos.map((campo) => (
+            <div key={campo.rotulo} className="bt-entrega-campo">
+              <dt>{campo.rotulo}</dt>
+              <dd>
+                {campo.valor ? <span className="bt-entrega-carimbado">{campo.valor}</span> : <span className="sr-only">em branco</span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <p aria-hidden="true" className="bt-entrega-marca">
+          <span className="bt-entrega-quadrado" />
+          {site.nome}
+        </p>
+      </figure>
+      <span aria-hidden="true" className="bt-entrega-costas">
         <span className="bt-entrega-quadrado" />
         {site.nome}
-      </p>
-    </figure>
+      </span>
+    </>
   );
 }

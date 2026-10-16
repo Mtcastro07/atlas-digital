@@ -89,7 +89,7 @@ export default function InicioDoSalao() {
           <LousaPendurada
             naCalha={
               <div className="rs-capa-acao">
-                <Agata rotulo={prato ? capa.pedirODia : casa.acao.whatsapp} mensagem={prato ? capa.mensagemDoDia(prato.nome) : undefined} className="rs-agata-grande" />
+                <Agata rotulo={prato ? capa.pedirODia : casa.acao.whatsapp} mensagem={prato ? capa.mensagemDoDia(prato.nome) : undefined} className="rs-agata-grande rs-agata-principal" />
               </div>
             }
           >
@@ -114,21 +114,28 @@ export default function InicioDoSalao() {
       </section>
 
       {/* 2 · Os pratos em cartaz: a tipografia como imagem, com o pontilhado do cardápio. */}
-      <section aria-labelledby="pratos" className="rs-cena rs-cartaz-do-dia" data-cena="cardapio">
+      <section aria-labelledby="pratos" className="rs-cena rs-cartaz-do-dia">
         <div className="rs-largura">
           <h2 id="pratos" className="rs-palavra-gigante">
             {pratos.nome}
           </h2>
           <div className="rs-cartaz-grade">
-            <ul className="rs-cartaz-pratos">
-              {pratos.itens.map((i, ordem) => (
-                <li key={i.id} className="rs-prato-cartaz" data-toque style={{ "--ordem": ordem } as React.CSSProperties}>
-                  <svg aria-hidden="true" className="rs-tique" viewBox="0 0 24 24">
-                    <path d="M3 13.5 9 19 21 5" />
-                  </svg>
-                  <span className="rs-prato-cartaz-nome">{i.nome}</span>
-                  <span aria-hidden="true" className="rs-prato-pontos" />
-                  <span className="rs-prato-cartaz-preco">{real(i.preco)}</span>
+            {/* O gatilho do momento é a lista, não a seção: os pontilhados correm quando os pratos chegam à tela. Cada prato
+                leva ao pedido com ele já marcado (o tique é a escolha, não um enfeite), e diz a porção ao lado do nome. */}
+            <ul className="rs-cartaz-pratos" data-cena="cardapio">
+              {pratos.itens.map((i) => (
+                <li key={i.id}>
+                  <Link href={`${pedido}?item=${i.id}`} className="rs-prato-cartaz" data-toque>
+                    <svg aria-hidden="true" className="rs-tique" viewBox="0 0 24 24">
+                      <path d="M3 13.5 9 19 21 5" />
+                    </svg>
+                    <span className="rs-prato-cartaz-nome">
+                      {i.nome} <small className="rs-prato-cartaz-porcao">{i.porcao}</small>
+                    </span>
+                    <span aria-hidden="true" className="rs-prato-pontos" />
+                    <span className="rs-prato-cartaz-preco">{real(i.preco)}</span>
+                    <span className="sr-only">{resumoDoCardapio.marcar}</span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -147,15 +154,15 @@ export default function InicioDoSalao() {
 
       {/* 4 · A parede de azulejo branco: o painel da casa (o azulejo em escala de nove peças, sangrando) e os quatro
           azulejos pintados à mão na fileira da parede, um aviso em cada. */}
-      <section aria-labelledby="avisos" className="rs-cena rs-avisos rs-parede-branca" data-cena="azulejo">
+      <section aria-labelledby="avisos" className="rs-cena rs-avisos rs-parede-branca">
         <div aria-hidden="true" className="rs-painel" />
         <div className="rs-largura rs-avisos-grade">
           <h2 id="avisos" className="rs-titulo-de-cena rs-avisos-titulo">
             {ausencias.titulo}
           </h2>
           <ul className="rs-azulejos">
-            {ausencias.itens.map((a, ordem) => (
-              <li key={a.fato} className="rs-azulejo-pintado" data-peca style={{ "--ordem": ordem } as React.CSSProperties}>
+            {ausencias.itens.map((a) => (
+              <li key={a.fato} className="rs-azulejo-pintado" data-peca="luz">
                 <p className="rs-azulejo-peca">
                   <span className="rs-azulejo-fato">{a.fato}</span>
                 </p>
@@ -166,18 +173,20 @@ export default function InicioDoSalao() {
         </div>
       </section>
 
-      {/* 5 · A comanda na mesa de madeira: como o pedido chega com o total. */}
-      <section aria-labelledby="como-pedir" className="rs-cena rs-na-mesa rs-mesa" data-cena="comanda">
+      {/* 5 · A comanda na mesa de madeira: como o pedido chega com o total. O momento da cena: o bloco desliza na madeira e
+          vira para quem lê, quando chega à tela (o gatilho fica nele). A ação é o vínculo, não a ágata: na mesa, a ágata
+          "Fazer o pedido" da porta já está na mesma tela (o crítico de fora, 14.10.2026). */}
+      <section aria-labelledby="como-pedir" className="rs-cena rs-na-mesa rs-mesa">
         <div className="rs-largura rs-na-mesa-grade">
-          <div className="rs-bloco" data-peca>
+          <div className="rs-bloco" data-cena="balcao">
             <div className="rs-comanda">
               <p className="rs-comanda-cabeca">
                 <span className="rs-comanda-titulo">{comoPedir.comanda}</span>
                 <span className="rs-comanda-casa">{casa.nome}</span>
               </p>
               <ol>
-                {comoPedir.passos.map((p, ordem) => (
-                  <li key={p.titulo} className="rs-comanda-passo" style={{ "--ordem": ordem } as React.CSSProperties}>
+                {comoPedir.passos.map((p) => (
+                  <li key={p.titulo} className="rs-comanda-passo">
                     <svg aria-hidden="true" viewBox="0 0 24 24">
                       <path d="M3 13.5 9 19 21 5" />
                     </svg>
@@ -197,13 +206,16 @@ export default function InicioDoSalao() {
             <p className="rs-texto-lide">
               {comoPedir.minimo(real(entrega.minimo))} {entrega.retirada}
             </p>
-            <Agata rotulo={comoPedir.montar} href={pedido} className="mt-9" />
+            <Link href={pedido} className="rs-pontilhado-claro mt-7">
+              {comoPedir.montar}
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* 6 · A porta: o endereço em cartaz, o guardanapo com o mapa do bairro e a plaquinha esmaltada do horário. */}
-      <section aria-labelledby="porta-do-salao" className="rs-cena rs-fachada" data-cena="porta">
+      {/* 6 · A porta: o endereço em cartaz, o guardanapo com o mapa do bairro e a plaquinha esmaltada do horário. Chega
+          parada: o guardanapo responde à mão (o ponteiro e o toque, data-toque). */}
+      <section aria-labelledby="porta-do-salao" className="rs-cena rs-fachada">
         <div className="rs-largura rs-fachada-grade">
           <h2 id="porta-do-salao" className="sr-only">
             {horarioEOnde.titulo}
@@ -217,7 +229,7 @@ export default function InicioDoSalao() {
               </Link>
             </small>
           </address>
-          <div className="rs-guardanapo">
+          <div className="rs-guardanapo" data-toque>
             <div className="rs-guardanapo-miolo">
               <MapaDoBairro credito={horarioEOnde.credito} />
             </div>
@@ -248,7 +260,7 @@ export default function InicioDoSalao() {
         </div>
         <div className="rs-soleira">
           <div className="rs-largura rs-soleira-acoes">
-            <Agata rotulo={capa.montar} href={pedido} className="rs-agata-grande" />
+            <Agata rotulo={capa.montar} href={pedido} className="rs-agata-grande rs-agata-principal" />
             <Agata rotulo={casa.acao.whatsapp} className="rs-agata-contorno" />
             <Ligue />
           </div>

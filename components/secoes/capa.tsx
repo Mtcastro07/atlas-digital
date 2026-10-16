@@ -1,7 +1,6 @@
 import { Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
 import { Esfera } from "@/components/marca/esfera";
-import { TextoRolante } from "@/components/texto-rolante";
 import { Lide } from "@/components/tipografia";
 import { buttonVariants } from "@/components/ui/button";
 import { GradientWaveText } from "@/components/ui/spell/gradient-wave-text";
@@ -18,7 +17,12 @@ const palavrasDoTitulo = capa.titulo.split(" ");
  * duas ações. Ocupa a primeira tela inteira, como no site de 28/08. Da
  * branchCto (fusão de 01/10): o título que se compõe palavra a palavra, a
  * partir de 1024 px (no celular, parado: pinta de imediato, sem atrasar o
- * LCP); a ação magnética, com as letras que rolam. Fundo liso, do tom: o
+ * LCP). A ação responde como toda "Montar orçamento" do site, com o
+ * hover do sistema (desde 16/10: de 14 a 16/10, com o ímã e a faixa de
+ * luz, enquanto a da fundação tinha só o hover e a do fim, as letras que
+ * rolam; a mesma ação respondia de três jeitos na mesma página, a marca M2,
+ * e o ímã e as letras são a resposta da barbearia, não a do Atlas:
+ * 19-o-padrao-atlas.md, seção 6). Fundo liso, do tom: o
  * anteparo da esfera, que segura o contraste do texto, é da cor do fundo.
  * Título em Archivo Black (desde 05/10, de novo, a do site de 28/08), em
  * text-display (40 a 80 px; no site de 28/08, 92 px).
@@ -51,8 +55,8 @@ export function Capa() {
           </h1>
           <Lide className="mx-auto mt-8 max-w-[34ch]">{capa.lide}</Lide>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-            <a href={capa.acaoPrincipal.destino} data-magnetico className={buttonVariants({ size: "lg" })}>
-              <TextoRolante texto={capa.acaoPrincipal.rotulo} />
+            <a href={capa.acaoPrincipal.destino} className={buttonVariants({ size: "lg" })}>
+              {capa.acaoPrincipal.rotulo}
             </a>
             <a href={capa.acaoSecundaria.destino} className={buttonVariants({ variant: "link", size: "link" })}>
               {capa.acaoSecundaria.rotulo}

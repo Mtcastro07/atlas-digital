@@ -13,9 +13,9 @@ type Textos = {
  * aparelho) continua num traço tracejado. É o tempo no lugar do preço, desenhado (producao/esteira/nichos/
  * odontologia.md, seção 4.1). O desenho é decorativo: a legenda dá o resumo ao leitor de tela, e a lista de sessões, logo
  * abaixo, tem o detalhe. O traço se desenha uma vez, na revelação. Com uma sessão só, nada a desenhar. Ordem do HTML: a
- * da leitura (a sessão, o intervalo, a sessão), para a régua virar coluna no celular sem trocar de ordem. No celular,
- * a régua é a coluna (odontologia.css, o passe do celular), e o traço espera a figura entrar na tela ([data-cena]: a
- * ilha do consultório a acende), em vez de correr na carga, fora da vista.
+ * da leitura (a sessão, o intervalo, a sessão), para a régua virar coluna no celular sem trocar de ordem (odontologia.css,
+ * o passe do celular). Na mesa e no celular, a figura abaixo da dobra espera entrar na tela para se desenhar ([data-cena]:
+ * a ilha do consultório a acende), em vez de correr na carga, fora da vista.
  */
 export function LinhaDoTempo({ etapas, textos, minutos }: { etapas: readonly Etapa[]; textos: Textos; minutos: (m: number) => string }) {
   if (etapas.length < 2) return null;

@@ -5,8 +5,6 @@ import { IconeSeta } from "@/components/icones";
 import { buttonVariants } from "@/components/ui/button";
 import { paginaDe, paginasInternas, proximaPagina, type IdDaPagina } from "@/conteudo/site";
 
-const dois = (n: number) => String(n).padStart(2, "0");
-
 /** O traço de cada página na régua do percurso: até a atual, em bronze; a seguinte acende no hover; as outras, apagadas. */
 function corDoTraco(k: number, atual: number) {
   if (k <= atual) return "bg-accent";
@@ -18,20 +16,23 @@ function corDoTraco(k: number, atual: number) {
  * O pé de cada página interna: a página seguinte (da última, a volta ao
  * início). Em cima, a régua do percurso — as seis páginas em seis traços,
  * as já percorridas em bronze. Embaixo, o nome da página seguinte e o
- * resumo, de um lado; do outro, o número da porta dela no início (o mesmo
- * "3 planos", "4 etapas"…), e a ação em pílula, como as outras do
- * site. A área inteira é um só vínculo. No hover, nada anda nem muda de
+ * resumo, de um lado; do outro, a ação em pílula, como as outras do site.
+ * Até 14/10, ao lado da pílula, o número da porta dela no início, em
+ * display (o mesmo "3 planos", "4 etapas"…): o número grande com unidade
+ * em série, a marca L2, em seis fins de página e repetindo as portas (o
+ * crítico de fora, 14/10). Até 16/10, o rótulo levava também a posição da
+ * página seguinte ("A seguir — 05 / 06"), que a régua já mostra e que a
+ * abertura da página repete logo depois (o crítico de fora). A área inteira é um só vínculo. No hover, nada anda nem muda de
  * tamanho (pedido do usuário, 01/10): muda a cor, e a pílula ganha o
  * brilho bronze das ações (saiu em 03/10 pela regra 3 das Diretrizes de
  * Design Premium e voltou no mesmo dia, a pedido do usuário: é parte da
- * identidade do site). O nome e o número em text-display (40 a 80 px);
+ * identidade do site). O nome em text-display (40 a 80 px);
  * respiro de 64/96 px (até 03/10, 80/112). O tom alterna com o da seção
  * de cima (escuro por padrão; branco depois de seção escura).
  */
 export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; tom?: "escuro" | "branco" }) {
   const i = paginasInternas.findIndex((p) => p.id === atual);
   const proxima = paginasInternas[i + 1] ?? null;
-  const total = paginasInternas.length;
   const porta = proxima ? proxima.porta : proximaPagina.portaDoInicio;
   const nome = proxima ? proxima.menu : paginaDe("inicio").menu;
   return (
@@ -50,19 +51,10 @@ export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; to
             ))}
           </span>
 
-          <span className="mt-10 grid items-end gap-x-10 gap-y-8 md:mt-14 lg:grid-cols-12">
+          {/* minmax(0, 1fr) e a pílula que quebra: com a letra a 200% a 390 px, o nome e a ação saíam da tela (16/10). */}
+          <span className="mt-10 grid grid-cols-[minmax(0,1fr)] items-end gap-x-10 gap-y-8 md:mt-14 lg:grid-cols-12">
             <span className="lg:col-span-7">
-              <span className="flex items-center gap-3 text-rotulo font-semibold text-accent">
-                {proxima ? proximaPagina.aSeguir : proximaPagina.fim}
-                {proxima && (
-                  <>
-                    <span aria-hidden="true" className="h-px w-8 bg-accent/60" />
-                    <span className="tabular-nums">
-                      {dois(i + 2)} / {dois(total)}
-                    </span>
-                  </>
-                )}
-              </span>
+              <span className="block text-rotulo font-semibold text-accent">{proxima ? proximaPagina.aSeguir : proximaPagina.fim}</span>
               <span className="mt-4 block font-display tracking-titulo text-display transition-colors duration-300 ease-atlas group-hover:text-accent">
                 {nome}
               </span>
@@ -70,17 +62,13 @@ export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; to
             </span>
 
             <span className="flex flex-col gap-8 lg:col-span-5 lg:items-end lg:text-right">
-              <span className="block font-semibold text-accent">
-                <span className="font-display text-display font-normal tracking-titulo">{porta.dado}</span>
-                {porta.unidade && <span className="ml-2 text-destaque font-bold">{porta.unidade}</span>}
-              </span>
               {/* A pílula é desenho: o vínculo é a área inteira. Sem compressão e sem deslocamento. */}
               <span
                 className={buttonVariants({
-                  className: "pointer-events-none w-fit group-hover:bg-primary-hover group-hover:shadow-[0_10px_30px_-10px_var(--primary)]",
+                  className: "pointer-events-none w-fit max-w-full whitespace-normal group-hover:bg-primary-hover group-hover:shadow-[0_10px_30px_-10px_var(--primary)]",
                 })}
               >
-                {proxima ? proximaPagina.acao : proximaPagina.inicio}
+                {proxima ? proximaPagina.acoes[proxima.id] : proximaPagina.inicio}
                 <IconeSeta className="size-4" />
               </span>
             </span>

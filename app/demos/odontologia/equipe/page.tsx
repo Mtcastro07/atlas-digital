@@ -7,8 +7,8 @@ export const metadata = metadadosDe("equipe");
 
 /**
  * A equipe e a clínica (producao/esteira/nichos/odontologia.md, seção 4.1). O momento desta página: o corredor dos
- * consultórios, no escuro, com a placa de cerâmica de cada porta acesa pelo refletor, uma depois da outra, ao abrir a
- * página. Na placa, o nome gravado, a profissão e a inscrição no CRO-RJ; ao lado, na parede, o título (a especialidade
+ * consultórios, no escuro, com a placa da primeira porta (a da responsável técnica) acesa pelo refletor ao abrir a
+ * página; as outras respondem à mão. Na placa, o nome gravado, a profissão e a inscrição no CRO-RJ; ao lado, na parede, o título (a especialidade
  * só com o título registrado), a formação e o que atende. A relação que o Código de Ética Odontológica pede (art. 43,
  * § 2º) é a própria fila das portas: o especialista com o título, o clínico geral com a área de atuação. A clínica, sem
  * foto (site de demonstração): a estrutura, a biossegurança, o acesso.
@@ -25,8 +25,10 @@ export default function Equipe() {
           <p className="od-lide">{equipePagina.lide}</p>
           <ul className="od-equipe-portas">
             {equipe.map((d, i) => (
-              <li key={d.id} id={d.id} style={{ "--i": i } as React.CSSProperties}>
-                <div data-ceramica className="od-placa od-placa-acesa">
+              <li key={d.id} id={d.id}>
+                {/* A primeira porta, a da responsável técnica, é a que o refletor acende ao abrir (as outras, em repouso:
+                    a cascata de três luzes iguais, abaixo da dobra, saiu em 14.10.2026). */}
+                <div data-ceramica className={i === 0 ? "od-placa od-placa-acesa" : "od-placa"}>
                   <h2 className="od-placa-nome">{d.nome}</h2>
                   <p className="od-placa-cro">
                     {d.profissao}, <span className="whitespace-nowrap">{d.cro}</span>

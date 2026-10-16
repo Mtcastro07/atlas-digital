@@ -12,7 +12,9 @@ export const metadata = metadadosDaPagina("planos");
  * Planos: a abertura é a escada de preços (três degraus, o preço de
  * criação em cada um); depois, os planos com o que cada um inclui, a
  * escada dos sites de demonstração, até quatro por plano (o simulador abre o site vivo,
- * com as páginas dele) e a condição dos três primeiros contratos.
+ * com as páginas dele) e a condição dos três primeiros contratos, em
+ * extrato, na névoa (desde 16/10: até então, no navy da escada). Os tons:
+ * navy, branco, navy, névoa e o navy da próxima página.
  */
 export default function PaginaDosPlanos() {
   return (
@@ -20,8 +22,8 @@ export default function PaginaDosPlanos() {
       <AberturaDePagina pagina="planos" figura={<EscadaDePrecos />} />
       <Planos />
       <Escada />
-      <Fundacao colada />
-      <ProximaPagina atual="planos" tom="branco" />
+      <Fundacao extrato />
+      <ProximaPagina atual="planos" />
     </>
   );
 }

@@ -21,7 +21,6 @@ type Props = {
 };
 
 const SUAVE = [0.22, 1, 0.36, 1] as const;
-const MOLA = [0.34, 1.4, 0.5, 1] as const;
 
 const PARTES = "[data-parte]";
 const TITULO = "[data-parte=titulo]";
@@ -74,7 +73,8 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
     animate(no(TITULO), { opacity: 1, transform: "none" }, { duration: 0 });
     animate(no(PALAVRAS), { opacity: [0, 1], transform: ["translateY(108%)", "none"] }, { duration: 1.1, ease: SUAVE, delay: stagger(0.08) });
     animate(no(TEXTO), { opacity: [0, 1], transform: ["translateY(20px)", "none"] }, { duration: 0.7, ease: SUAVE, delay: stagger(0.06, { startDelay: 0.3 }) });
-    animate(no(BLOCOS), { opacity: [0, 1], transform: ["translateY(38px) scale(0.92)", "none"] }, { duration: 1.1, ease: MOLA, delay: 0.42 });
+    // Na curva da casa, sem ultrapassar (até 16/10, a mola de 1,4, um quique fora das exceções: 09-movimento.md, seção 3).
+    animate(no(BLOCOS), { opacity: [0, 1], transform: ["translateY(38px) scale(0.92)", "none"] }, { duration: 1.1, ease: SUAVE, delay: 0.42 });
   }
 
   function escolherNivel(id: string | undefined) {

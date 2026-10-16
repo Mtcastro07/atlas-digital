@@ -3,8 +3,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * Faixa corrida com os nichos, sob os destaques do início (a do site de
- * 28/08, com o globo da marca como separador, desenhado em CSS:
- * .vd-separador; volta na fusão de 01/10, da branchCto).
+ * 28/08; volta na fusão de 01/10, da branchCto). O separador é um ponto
+ * de bronze, desenhado em CSS (.vd-separador); até 16/10, era o globo da
+ * marca, repetido 22 vezes: a assinatura virava marcador (o crítico de fora).
  * Em Inter, como no site de 28/08, em peso médio, no degrau do lide (text-destaque, 18
  * a 21 px; até 03/10, de 17 a 24 px), e 20 px de cada lado do globo (até
  * 03/10, 1,1 em, fora da escala). Contínua:

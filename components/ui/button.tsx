@@ -7,19 +7,28 @@ import { cva, type VariantProps } from "class-variance-authority"
 // Sem `cn` aqui, de propósito: este arquivo vai ao navegador, e o motor de
 // fusão de classes custava ~9 ms de CPU na carga (180 ms com CPU 20×).
 // `className` acrescenta layout (largura, margem); não sobrepõe variante.
-// Da branchCto (fusão de 01/10): na ação principal, uma faixa de luz
-// atravessa a pílula no hover (.vd-brilho, app/vidro.css), e um brilho
-// bronze a envolve (sombra de 30 px). Os dois saíram em 03/10 pela regra 3
-// das Diretrizes de Design Premium e voltaram no mesmo dia, a pedido do
-// usuário: são parte da identidade do site. `translate` na transição serve
-// ao botão magnético ([data-magnetico]). `scale` também entra na
+// Da branchCto (fusão de 01/10): na ação principal, um brilho bronze a
+// envolve no hover (sombra de 30 px), e o bronze clareia. A faixa de luz
+// que atravessa a pílula (.vd-brilho, app/vidro.css) saiu da variante em
+// 14/10 e vai por `className` só às ações que fecham a decisão: o
+// "Escolher" do plano recomendado (`plano.destaque`, components/secoes/planos.tsx)
+// e o envio pelo WhatsApp do montador (a mesma faixa em toda ação
+// em bronze era a marca M7; pedido do usuário, 14/10: "parecendo que você
+// está spamando os mesmos componentes"). Desde 16/10, toda "Montar
+// orçamento" responde igual, com o hover do sistema: a da capa tinha a
+// faixa e o ímã, e a do fim, as letras que rolam (o crítico de fora: a
+// mesma ação de três jeitos na mesma página). O brilho e a faixa saíram em 03/10
+// pela regra 3 das Diretrizes de Design Premium e voltaram no mesmo dia, a
+// pedido do usuário: são parte da identidade do site. `translate` na transição serve
+// ao botão magnético ([data-magnetico]: no Atlas, nenhum desde 16/10; a regra e a curva ficam no barbearia.css desde 16/10; o da barbearia
+// tem classes próprias). `scale` também entra na
 // transição: no Tailwind 4, `active:scale-*` escreve a propriedade
 // `scale`, não `transform`, e sem ela na lista o botão estalava para 97% e
 // voltava, sem passagem (corrigido em 01/10).
 // Desabilitado: o apagado vem da base (app/globals.css); o cursor de "não
 // permitido" é repetido aqui porque o `cursor-pointer` do utilitário vence
-// a base; e o hover não responde (`not-disabled:`; a faixa de luz, que é
-// do CSS de app/vidro.css, some com `disabled:after:hidden`). Até 03/10,
+// a base; e o hover não responde (`not-disabled:`; a faixa de luz não vai
+// a <button>: as ações que a levam são vínculos). Até 03/10,
 // opacidade 50% e pointer-events: none, que escondia o cursor.
 const buttonVariants = cva(
   "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap no-underline transition-[background-color,color,border-color,box-shadow,transform,translate,scale] duration-300 ease-atlas select-none active:scale-[0.97] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -27,7 +36,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "vd-brilho bg-primary text-primary-foreground not-disabled:hover:bg-primary-hover not-disabled:hover:shadow-[0_10px_30px_-10px_var(--primary)] disabled:after:hidden",
+          "bg-primary text-primary-foreground not-disabled:hover:bg-primary-hover not-disabled:hover:shadow-[0_10px_30px_-10px_var(--primary)]",
         secondary: "bg-secondary text-secondary-foreground not-disabled:hover:bg-secondary/88",
         outline: "border border-input bg-transparent text-foreground not-disabled:hover:border-foreground not-disabled:hover:bg-foreground/[0.05]",
         vidro: "vd-vidro text-foreground not-disabled:hover:bg-foreground/[0.08]",

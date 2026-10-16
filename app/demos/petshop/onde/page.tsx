@@ -1,5 +1,5 @@
 import { Mapa } from "@/components/demos/petshop/mapa";
-import { Carimbo, Endereco, ReguaDeLeitura, Telefone, metadadosDe, paginaDe } from "@/components/demos/petshop/pecas";
+import { Carimbo, Endereco, Telefone, metadadosDe, paginaDe } from "@/components/demos/petshop/pecas";
 import { expediente, feriados, mapa, petshopSite as site } from "@/conteudo/demos/petshop";
 import { diaADia } from "@/lib/demos/relogio";
 
@@ -10,10 +10,10 @@ import "../onde.css";
 // momento desta página); na água, o endereço e o vínculo para o OpenStreetMap, com rótulo próprio. O mapa é o da cena 5
 // do Início visto de perto, sem os bairros (lapidação, rodada 3: era o mesmo desenho, no mesmo quadro e com os mesmos
 // rótulos). Depois, no chapado em que a baía deságua, a semana: os dias impressos um embaixo do outro, com a hora uma
-// vez por grupo de dias iguais (rodada 3: "9h às 18h" quatro vezes em exibição), no corpo dos números da casa, e a régua
-// de leitura; do outro lado, o título ("Terça a sábado": os dias em que a porta abre), o prazo de resposta, o carimbo e o
-// telefone. Estático: nenhuma revelação (o mapa é o dispositivo), nenhuma inclinação (o mapa em sangria é o chão da
-// página, não uma peça sobre ele).
+// vez por grupo de dias iguais (rodada 3: "9h às 18h" quatro vezes em exibição), no corpo dos números da casa, sem régua
+// de leitura (14.10.2026: quatro grupos se leem sem ela); do outro lado, o título ("Terça a sábado": os dias em que a porta abre), o prazo de resposta, o carimbo e o
+// telefone. O momento da página, uma vez, ao abrir: o mapa chega perto da casa (onde.css; crítico de fora, 14.10.2026).
+// Nenhuma inclinação (o mapa em sangria é o chão da página, não uma peça sobre ele).
 
 export const metadata = metadadosDe("onde");
 
@@ -49,8 +49,7 @@ export default function Onde() {
         </div>
       </section>
 
-      {/* A semana: os sete dias, um embaixo do outro, lidos com a régua; do outro lado, o título, o prazo, o carimbo e o
-          telefone. */}
+      {/* A semana: os sete dias, um embaixo do outro; do outro lado, o título, o prazo, o carimbo e o telefone. */}
       <section aria-labelledby="quando" className="bt-cena bt-tinta bt-onde-semana">
         <div className="bt-largura bt-onde-grade">
           <div className="bt-onde-cabeca">
@@ -60,12 +59,11 @@ export default function Onde() {
             <p className="bt-destaque bt-onde-prazo">{site.prazoDeResposta}</p>
           </div>
           <div className="bt-onde-semana-dias">
-            <ReguaDeLeitura className="bt-onde-dias">
+            <div className="bt-onde-dias">
               <dl>
                 {semana.map((g) => (
                   <div
                     key={g.dias[0]}
-                    data-bt-linha=""
                     data-varios={g.dias.length > 1 ? "" : undefined}
                     className={g.texto === "Fechado" ? "bt-onde-dia bt-onde-fechado" : "bt-onde-dia"}
                     style={{ "--n": g.dias.length } as React.CSSProperties}
@@ -77,7 +75,7 @@ export default function Onde() {
                   </div>
                 ))}
               </dl>
-            </ReguaDeLeitura>
+            </div>
             <p className="bt-onde-feriados">{feriados}</p>
           </div>
           <div className="bt-onde-pedir">

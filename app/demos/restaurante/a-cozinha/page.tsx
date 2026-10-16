@@ -1,4 +1,4 @@
-import { Agata, daCasa, metadadosDaCasa } from "@/components/demos/restaurante/casa";
+import { Agata, daCasa, metadadosDaCasa, SetaDeGiz } from "@/components/demos/restaurante/casa";
 import { LousaPendurada } from "@/components/demos/restaurante/lousa-pendurada";
 import { SetasDaGaleria } from "@/components/ilhas/demos/setas-da-galeria";
 import { capa, cozinhaPagina as textos, lousa, nomeDoDia, pratosDoDia, restauranteSite as casa } from "@/conteudo/demos/restaurante";
@@ -11,9 +11,11 @@ const DE_SEGUNDA_A_SABADO: readonly Dia[] = [1, 2, 3, 4, 5, 6];
 
 /**
  * A cozinha: a parede de azulejo verde, com a lousa grande, onde a página está escrita a giz (o título e o que a feira
- * decide), e embaixo as seis lousas da semana, penduradas uma a uma ao abrir a página (o momento desta página), na
- * galeria de deslizar do Profissional, que abre no dia de hoje; as setas são os pregos da parede. No pé, no papel, o
- * pedido.
+ * decide), e embaixo as seis lousas da semana, penduradas uma a uma nos ganchos de uma régua de madeira quando a fila
+ * chega à tela (o momento desta página), na galeria de deslizar do Profissional, que abre no dia de hoje; as setas são
+ * os pregos da parede. As lousinhas não inclinam e têm a calha nua (a peça que inclina e a calha com o giz são da lousa
+ * grande); cada uma é um item na lousa, que responde como o dia da semana do início: a seta de giz aponta o dia. No pé,
+ * no papel, o pedido.
  */
 export default function ACozinha() {
   const hoje = horaDeNiteroi().dia;
@@ -38,9 +40,12 @@ export default function ACozinha() {
           {DE_SEGUNDA_A_SABADO.map((d, ordem) => {
             const prato = pratosDoDia[d]!;
             return (
-              <li key={d} data-hoje={d === hoje || undefined} aria-current={d === hoje ? "date" : undefined} style={{ "--ordem": ordem } as React.CSSProperties}>
-                <LousaPendurada balanca={false}>
-                  <p className="rs-lousinha-dia">{d === hoje ? lousa.hoje(nomeDoDia[d]) : nomeDoDia[d]}</p>
+              <li key={d} data-toque data-hoje={d === hoje || undefined} aria-current={d === hoje ? "date" : undefined} style={{ "--ordem": ordem } as React.CSSProperties}>
+                <LousaPendurada miuda>
+                  <p className="rs-lousinha-dia">
+                    {d === hoje ? lousa.hoje(nomeDoDia[d]) : nomeDoDia[d]}
+                    <SetaDeGiz />
+                  </p>
                   <p className="rs-giz rs-lousinha-prato">{prato.nome}</p>
                   <p className="rs-lousinha-preco">
                     {real(prato.preco)}
@@ -57,7 +62,7 @@ export default function ACozinha() {
           {hojeTem ? `${lousa.hoje(nomeDoDia[hoje])}: ${hojeTem.curto}` : lousa.domingo}
         </h2>
         <p className="rs-cozinha-fim-acoes">
-          <Agata rotulo={hojeTem ? capa.pedirODia : casa.acao.whatsapp} mensagem={hojeTem ? capa.mensagemDoDia(hojeTem.nome) : undefined} className="rs-agata-grande" />
+          <Agata rotulo={hojeTem ? capa.pedirODia : casa.acao.whatsapp} mensagem={hojeTem ? capa.mensagemDoDia(hojeTem.nome) : undefined} className="rs-agata-grande rs-agata-principal" />
           <Agata rotulo={capa.montar} href={daCasa("pedido").caminho} className="rs-agata-contorno" />
         </p>
       </section>

@@ -11,18 +11,23 @@ const CONTAGEM = 900;
 /**
  * O consultório que responde à mão (identidade, seção 9: o vocabulário de interação do Completo; 09-movimento.md,
  * seção 13). Uma ilha, no layout, refeita a cada página; delega no documento, sem um ouvinte por peça:
- * - as cenas ([data-cena]) que nascem abaixo da dobra aguardam ([data-aguarda]) e acendem ([data-acesa]) ao entrar,
- *   uma vez: o momento de cada uma é dela (odontologia.css); o que já está na tela nunca some;
- * - a cerâmica ([data-ceramica]: os cartões de retorno, as placas): sob o ponteiro fino, inclina até 4° e a aresta
- *   de luz vai aonde ele está (--giro-x, --giro-y, --luz-x, --luz-y); no toque, a luz no ponto tocado, por 400 ms;
- * - os números ([data-conta]) contam uma vez, ao entrar na tela;
+ * - as figuras com um momento de entrada ([data-cena]: o termo da inicial e a linha do tempo de cada tratamento) que
+ *   nascem abaixo da dobra aguardam ([data-aguarda]) e acendem ([data-acesa]) ao entrar, uma vez (odontologia.css);
+ *   as outras cenas não entram em série (lapidacao.md, "Repetição dentro do site", 14.10.2026);
+ * - as placas de nome ([data-ceramica]: a da porta, com os três nomes; as da Equipe; a de quem atende): sob o ponteiro
+ *   fino, inclinam até 4° e a aresta de luz vai aonde ele está (--giro-x, --giro-y, --luz-x, --luz-y); no toque, sem
+ *   inclinação (a identidade, a tabela do celular), a peça cede sob o dedo (data-premida: a compressão de 0,97, que volta
+ *   ao soltar; 09-movimento.md, seção 11) e a luz fica no ponto tocado até 400 ms depois de o dedo sair (a luz sozinha,
+ *   na cerâmica clara, mal se via: o crítico de fora, 15.10.2026);
+ * - os números ([data-conta]) de dois algarismos para cima contam uma vez, ao entrar na tela (hoje, o 30);
  * - a ficha de tratamentos: a linha sob o ponteiro, ou com o foco, acende a região dela na arcada da margem
- *   (.od-ancora-da-ficha, data-regiao) e leva a miniatura do mapa ([data-miniatura]) para junto do ponteiro, na
- *   margem da ficha;
- * - o percurso: o passo no meio da tela ganha [data-agora] (o nome da região em foco);
+ *   (.od-ancora-da-ficha, data-regiao); na página de Tratamentos, a linha da lista acende a dela na placa do mapa ao
+ *   lado e, ao apagar, a placa volta à região escolhida (antes, o item respondia como vínculo, com o traço do lápis, e
+ *   a placa não acendia nada: o crítico de fora, 15.10.2026);
  * - a tinta da pasta: a cena que está embaixo do cabeçalho ([data-tinta]: "escura", "vermelha") vai à raiz, e a pasta
- *   troca de tinta com ela (o cabeçalho que lê a cena; 19-o-padrao-atlas.md, seção 6.1).
- * Com movimento reduzido: nada aguarda, nada inclina, nada conta; a região acende sem a miniatura.
+ *   troca de tinta com ela (o cabeçalho que lê a cena; 19-o-padrao-atlas.md, seção 6.1); data-tinta-lida diz ao CSS
+ *   que a tinta já foi lida (antes, a pasta nasce com a da primeira cena).
+ * Com movimento reduzido: nada aguarda, nada inclina, nada conta; a região acende igual.
  */
 export function ConsultorioVivo() {
   const caminho = usePathname();
@@ -44,6 +49,7 @@ export function ConsultorioVivo() {
     const soltar = () => {
       if (!peca) return;
       peca.removeAttribute("data-sob-a-luz");
+      peca.removeAttribute("data-premida");
       for (const v of ["--giro-x", "--giro-y"]) peca.style.removeProperty(v);
       peca = null;
     };
@@ -64,42 +70,35 @@ export function ConsultorioVivo() {
       else delete raiz.dataset.tinta;
     };
     verTinta();
+    // Daqui em diante, a tinta é a lida; antes da hidratação, o CSS dá à pasta a da primeira cena (odontologia.css).
+    raiz.setAttribute("data-tinta-lida", "");
     ouvir(window, "scroll", () => {
       if (!quadroDaTinta) quadroDaTinta = requestAnimationFrame(verTinta);
     });
     ouvir(window, "resize", verTinta);
 
-    // O percurso: o passo do meio da tela.
-    const meio = new IntersectionObserver(
-      (es) => es.forEach((e) => e.target.toggleAttribute("data-agora", e.isIntersecting)),
-      { rootMargin: "-46% 0px -46% 0px" },
-    );
-    document.querySelectorAll("[data-passo]").forEach((p) => meio.observe(p));
-    observadores.push(meio);
-
-    // A ficha: a linha acende a região na arcada da margem; a miniatura acompanha o ponteiro.
-    const ancoraDaFicha = document.querySelector<HTMLElement>(".od-ancora-da-ficha");
-    const miniatura = document.querySelector<HTMLElement>("[data-miniatura]");
+    // A ficha: a linha acende a região na arcada da margem.
+    const ancoraDaFicha = document.querySelector<HTMLElement>(".od-ancora-da-ficha, .od-plano .od-ancora-fixa");
     const linhaDe = (e: Event) => (e.target as Element | null)?.closest?.<HTMLElement>("[data-linha-da-ficha]") ?? null;
     let linhaAtual: HTMLElement | null = null;
+    // A região da placa antes da primeira linha acesa (a escolhida no mapa, em Tratamentos), para onde ela volta.
+    let regiaoDaPlaca: string | undefined;
     const acender = (linha: HTMLElement | null) => {
       if (linha === linhaAtual) return;
+      if (!linhaAtual) regiaoDaPlaca = ancoraDaFicha?.dataset.regiao;
       linhaAtual?.removeAttribute("data-marcada");
       linhaAtual = linha;
       linha?.setAttribute("data-marcada", "");
       if (ancoraDaFicha) {
-        if (linha?.dataset.regioes) ancoraDaFicha.dataset.regiao = linha.dataset.regioes;
+        const regiao = linha ? linha.dataset.regioes : regiaoDaPlaca;
+        if (regiao) ancoraDaFicha.dataset.regiao = regiao;
         else delete ancoraDaFicha.dataset.regiao;
-      }
-      if (miniatura) {
-        if (linha && fino && !reduzir) {
-          miniatura.dataset.ativas = linha.dataset.regioes ?? "";
-          miniatura.setAttribute("data-mostra", "");
-        } else miniatura.removeAttribute("data-mostra");
       }
     };
     ouvir(document, "pointerover", (e) => acender(linhaDe(e)));
-    ouvir(document, "focusin", (e) => acender(linhaDe(e)));
+    // Só o foco do teclado (tabIndex 0 ou mais): o toque numa linha põe o foco no <main> (tabIndex -1), e isso apagava a
+    // linha logo ao soltar o dedo, antes dos 400 ms (o crítico de fora, 14.10.2026).
+    ouvir(document, "focusin", (e) => (e.target as HTMLElement).tabIndex >= 0 && acender(linhaDe(e)));
     // No toque, a linha acende no ponto tocado e apaga logo depois (o dedo que rola não deixa a linha acesa para trás).
     let apagar = 0;
     const soltarLinha = (e: Event) => {
@@ -109,15 +108,6 @@ export function ConsultorioVivo() {
     };
     ouvir(document, "pointerup", soltarLinha);
     ouvir(document, "pointercancel", soltarLinha);
-    if (miniatura && fino && !reduzir) {
-      ouvir(document, "pointermove", (e) => {
-        if (!linhaAtual) return;
-        const p = e as PointerEvent;
-        // Junto do ponteiro, mas na margem da ficha: a miniatura não cobre a coluna "Onde".
-        const borda = linhaAtual.closest("table")?.getBoundingClientRect().right ?? 0;
-        miniatura.style.translate = `${Math.max(p.clientX + 22, borda + 16)}px ${p.clientY - 70}px`;
-      });
-    }
 
     if (reduzir) return () => desfazer();
 
@@ -149,7 +139,8 @@ export function ConsultorioVivo() {
           numeros.unobserve(e.target);
           const el = e.target as HTMLElement;
           const fim = Number(el.dataset.conta);
-          if (!Number.isFinite(fim) || fim < 2) return;
+          // Contar até um algarismo (o 2, os 3) não mostra o tempo passando; o 30 das manutenções, sim.
+          if (!Number.isFinite(fim) || fim < 10) return;
           const desde = performance.now();
           const passo = (agora: number) => {
             const k = Math.min(1, (agora - desde) / CONTAGEM);
@@ -181,6 +172,7 @@ export function ConsultorioVivo() {
         alvo.style.setProperty("--giro-x", `${((0.5 - y) * 2 * GIRO).toFixed(2)}deg`);
         alvo.style.setProperty("--giro-y", `${((x - 0.5) * 2 * GIRO).toFixed(2)}deg`);
       }
+      if (ultimo.pointerType !== "mouse") alvo.setAttribute("data-premida", "");
       alvo.setAttribute("data-sob-a-luz", "");
     };
     ouvir(document, "pointermove", (e) => {
@@ -193,9 +185,23 @@ export function ConsultorioVivo() {
       ultimo = p;
       iluminar();
       window.clearTimeout(toque);
-      toque = window.setTimeout(soltar, 400);
     });
-    ouvir(document.documentElement, "pointerleave", soltar);
+    // A luz do toque conta os 400 ms de quando o dedo sai (sob o dedo, ela não se vê), como a linha da ficha.
+    const soltarDepois = (e: Event) => {
+      if ((e as PointerEvent).pointerType === "mouse" || !peca) return;
+      // A peça volta logo (a compressão do toque); a luz fica. O quadro pendente do último movimento do dedo a premeria
+      // de novo.
+      cancelAnimationFrame(quadro);
+      quadro = 0;
+      peca.removeAttribute("data-premida");
+      window.clearTimeout(toque);
+      toque = window.setTimeout(soltar, 400);
+    };
+    ouvir(document, "pointerup", soltarDepois);
+    ouvir(document, "pointercancel", soltarDepois);
+    // Só o mouse que sai da página: o dedo que deixa a tela também dispara o pointerleave da raiz, e a luz do toque
+    // apagava ao soltar, em vez de durar os 400 ms.
+    ouvir(document.documentElement, "pointerleave", (e) => (e as PointerEvent).pointerType === "mouse" && soltar());
 
     function desfazer() {
       ao.forEach(([alvo, tipo, f]) => alvo.removeEventListener(tipo, f));

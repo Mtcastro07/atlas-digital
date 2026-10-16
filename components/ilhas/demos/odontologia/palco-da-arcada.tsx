@@ -29,6 +29,9 @@ export function PalcoDaArcada({
     if (!canvas) return;
     const iniciar = async () => {
       const { iniciarPalco } = await import("@/components/ilhas/demos/odontologia/arcada-3d/motor");
+      // A criação do contexto do WebGL e a compilação numa tarefa própria, e não junto com a avaliação do módulo (a
+      // iniciação em etapas, cedendo a vez; a auditoria do Impeccable, 16.10.2026).
+      await new Promise<void>((pronto) => (window.requestIdleCallback ? window.requestIdleCallback(() => pronto(), { timeout: 300 }) : window.setTimeout(pronto, 16)));
       if (!vivo) return;
       palco.current = iniciarPalco(canvas, {
         cena: "capa",

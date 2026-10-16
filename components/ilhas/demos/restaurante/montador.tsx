@@ -82,6 +82,13 @@ export function Montador({
   const mudar = (item: string, delta: number) => setEscolha((e) => ({ ...e, [item]: Math.max(0, Math.min(20, (e[item] ?? 0) + delta)) }));
   const quantos = resumo.linhas.reduce((n, l) => n + l.quantidade, 0);
 
+  // O prato tocado no cartaz do início ou no cardápio chega marcado (?item=<id>). Nada é guardado no aparelho: o aviso
+  // de privacidade promete que "nenhuma informação é gravada no navegador".
+  useEffect(() => {
+    const pedido = new URLSearchParams(window.location.search).get("item");
+    if (pedido && itens.some((i) => i.id === pedido)) setEscolha({ [pedido]: 1 });
+  }, [itens]);
+
   // A tira só aparece enquanto a comanda está abaixo da tela.
   const comanda = useRef<HTMLElement>(null);
   const [comandaAbaixo, setComandaAbaixo] = useState(true);
@@ -110,13 +117,19 @@ export function Montador({
                       </div>
                       <p className="rs-prato-detalhe">{i.detalhe}</p>
                     </div>
+                    {/* O "−" no zero fica com o foco (aria-disabled, e o clique ignorado): desabilitado, ele jogava o foco
+                        no corpo da página. Os sinais, a caneta (traços desenhados). */}
                     <div className="rs-contador" role="group" aria-label={textos.quantidade.replace("{nome}", i.nome)}>
-                      <button type="button" onClick={() => mudar(i.id, -1)} disabled={q === 0} aria-label={textos.menos.replace("{nome}", i.nome)}>
-                        <span aria-hidden="true">−</span>
+                      <button type="button" onClick={() => q > 0 && mudar(i.id, -1)} aria-disabled={q === 0 || undefined} aria-label={textos.menos.replace("{nome}", i.nome)}>
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M5.5 12.4c4.4-.5 8.6-.5 13 .1" />
+                        </svg>
                       </button>
                       <output aria-live="polite">{q}</output>
                       <button type="button" onClick={() => mudar(i.id, 1)} aria-label={textos.mais.replace("{nome}", i.nome)}>
-                        <span aria-hidden="true">+</span>
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M5.5 12.4c4.4-.5 8.6-.5 13 .1M11.8 5.6c.4 4.3.4 8.6.1 12.9" />
+                        </svg>
                       </button>
                     </div>
                   </li>
@@ -137,93 +150,99 @@ export function Montador({
             </h2>
             <p className="rs-comanda-casa">{textos.casa}</p>
           </div>
-          {resumo.vazio ? (
-            <p className="rs-comanda-vazio">{textos.vazio}</p>
-          ) : (
-            <ul className="rs-comanda-linhas">
-              {resumo.linhas.map((l) => (
-                <li key={l.id}>
-                  <span>
-                    {l.quantidade} × {l.nome}
-                  </span>
-                  <span>{real(l.valor)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <fieldset className="mt-6">
-            <legend className="rs-comanda-rotulo">{textos.entrega}</legend>
-            <div className="rs-escolhas">
-              {(["entrega", "retirada"] as const).map((t) => (
-                <label key={t}>
-                  <input type="radio" name={`${id}-tipo`} value={t} checked={tipo === t} onChange={() => setTipo(t)} />
-                  <span>{t === "entrega" ? textos.entregaNo : textos.retirada}</span>
-                </label>
-              ))}
-            </div>
-            {tipo === "entrega" && (
-              <label className="mt-3 grid gap-1.5">
-                <span className="rs-comanda-rotulo">{textos.bairro}</span>
-                <select value={bairro} onChange={(e) => setBairro(e.target.value)} className="rs-campo">
-                  {bairros.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.nome}: {real(b.frete)}, {b.tempo}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-          </fieldset>
-
-          <label className="mt-4 grid gap-1.5">
-            <span className="rs-comanda-rotulo">{textos.pagamento}</span>
-            <select value={pagamento} onChange={(e) => setPagamento(e.target.value)} className="rs-campo">
-              {pagamentos.map((p) => (
-                <option key={p}>{p}</option>
-              ))}
-            </select>
-          </label>
-          <label className="mt-4 grid gap-1.5">
-            <span className="rs-comanda-rotulo">{textos.observacao}</span>
-            <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} maxLength={200} className="rs-campo" />
-          </label>
-
-          <dl className="rs-contas">
-            <div>
-              <dt>{textos.subtotal}</dt>
-              <dd>{real(resumo.subtotal)}</dd>
-            </div>
-            <div>
-              <dt>{textos.frete}</dt>
-              <dd>{tipo === "retirada" ? textos.semFrete : real(resumo.frete)}</dd>
-            </div>
-            <div className="rs-contas-total">
-              <dt>{textos.total}</dt>
-              {/* A resposta à ação: o total que muda assenta de novo (a chave remonta o número; restaurante.css). */}
-              <dd aria-live="polite">
-                <span key={resumo.total} className="rs-total-tique">
-                  {real(resumo.total)}
-                </span>
-              </dd>
-            </div>
-          </dl>
-          {resumo.falta > 0 && <p className="rs-aviso-do-minimo">{textos.abaixoDoMinimo.replace("{falta}", real(resumo.falta))}</p>}
-
-          <div className="mt-6 grid gap-3">
-            {resumo.enviavel ? (
-              <a href={vinculoDoWhatsapp(numero, mensagem)} target="_blank" rel="noopener noreferrer" className="rs-agata w-full">
-                <IconeWhatsApp className="size-5 flex-none" />
-                {textos.enviar}
-                <span className="sr-only">{textos.novaAba}</span>
-              </a>
+          {/* Na mesa, a comanda presa cabe na tela: o rolo (os itens e as escolhas) rola por dentro, e o pé (as contas, o
+              total e o envio) fica à vista embaixo. */}
+          <div className="rs-comanda-rolo">
+            {resumo.vazio ? (
+              <p className="rs-comanda-vazio">{textos.vazio}</p>
             ) : (
-              <span role="link" aria-disabled="true" className="rs-agata w-full">
-                <IconeWhatsApp className="size-5 flex-none" />
-                {textos.enviar}
-              </span>
+              <ul className="rs-comanda-linhas">
+                {resumo.linhas.map((l) => (
+                  <li key={l.id}>
+                    <span>
+                      {l.quantidade} × {l.nome}
+                    </span>
+                    <span>{real(l.valor)}</span>
+                  </li>
+                ))}
+              </ul>
             )}
-            {!resumo.vazio && <CopyButton valor={mensagem} rotulo={textos.copiar} className="rs-agata rs-agata-contorno w-full" />}
+
+            <fieldset className="mt-6">
+              <legend className="rs-comanda-rotulo">{textos.entrega}</legend>
+              <div className="rs-escolhas">
+                {(["entrega", "retirada"] as const).map((t) => (
+                  <label key={t}>
+                    <input type="radio" name={`${id}-tipo`} value={t} checked={tipo === t} onChange={() => setTipo(t)} />
+                    <span>{t === "entrega" ? textos.entregaNo : textos.retirada}</span>
+                  </label>
+                ))}
+              </div>
+              {tipo === "entrega" && (
+                <label className="mt-3 grid gap-1.5">
+                  <span className="rs-comanda-rotulo">{textos.bairro}</span>
+                  <select value={bairro} onChange={(e) => setBairro(e.target.value)} className="rs-campo">
+                    {bairros.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.nome}: {real(b.frete)}, {b.tempo}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
+            </fieldset>
+
+            <label className="mt-4 grid gap-1.5">
+              <span className="rs-comanda-rotulo">{textos.pagamento}</span>
+              <select value={pagamento} onChange={(e) => setPagamento(e.target.value)} className="rs-campo">
+                {pagamentos.map((p) => (
+                  <option key={p}>{p}</option>
+                ))}
+              </select>
+            </label>
+            <label className="mt-4 grid gap-1.5">
+              <span className="rs-comanda-rotulo">{textos.observacao}</span>
+              <textarea value={observacao} onChange={(e) => setObservacao(e.target.value)} rows={2} maxLength={200} className="rs-campo" />
+            </label>
+          </div>
+
+          <div className="rs-comanda-pe">
+            <dl className="rs-contas">
+              <div>
+                <dt>{textos.subtotal}</dt>
+                <dd>{real(resumo.subtotal)}</dd>
+              </div>
+              <div>
+                <dt>{textos.frete}</dt>
+                <dd>{tipo === "retirada" ? textos.semFrete : real(resumo.frete)}</dd>
+              </div>
+              <div className="rs-contas-total">
+                <dt>{textos.total}</dt>
+                {/* A resposta à ação: o total que muda assenta de novo (a chave remonta o número; restaurante.css). */}
+                <dd aria-live="polite">
+                  <span key={resumo.total} className="rs-total-tique">
+                    {real(resumo.total)}
+                  </span>
+                </dd>
+              </div>
+            </dl>
+            {resumo.falta > 0 && <p className="rs-aviso-do-minimo">{textos.abaixoDoMinimo.replace("{falta}", real(resumo.falta))}</p>}
+
+            <div className="mt-6 grid gap-3">
+              {resumo.enviavel ? (
+                <a href={vinculoDoWhatsapp(numero, mensagem)} target="_blank" rel="noopener noreferrer" className="rs-agata rs-agata-principal w-full">
+                  <IconeWhatsApp className="size-5 flex-none" />
+                  {textos.enviar}
+                  <span className="sr-only">{textos.novaAba}</span>
+                </a>
+              ) : (
+                <span role="link" aria-disabled="true" className="rs-agata w-full">
+                  <IconeWhatsApp className="size-5 flex-none" />
+                  {textos.enviar}
+                </span>
+              )}
+              {!resumo.vazio && <CopyButton valor={mensagem} rotulo={textos.copiar} className="rs-agata rs-agata-contorno w-full" />}
+            </div>
           </div>
         </div>
       </aside>

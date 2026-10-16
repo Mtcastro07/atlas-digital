@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 import { IconeWhatsApp } from "@/components/icones";
 import { buttonVariants } from "@/components/ui/button";
@@ -24,12 +25,13 @@ const atraso = (ms: number) => ({ "--atraso": `${ms}ms`, animationDuration: "560
 
 /**
  * Menu do celular: o vidro escuro desce do topo e cobre a tela inteira,
- * com a marca no alto e as sete páginas numeradas como no resto do site
- * (00, o início; 01 a 06, as portas), cada uma numa linha; a da página
- * aberta, em bronze. As linhas entram em sequência ao abrir. No pé, a ação
+ * com a marca no alto e as sete páginas, cada uma numa linha; a da página
+ * aberta, em bronze. Até 16/10, numeradas de 00 a 06, como as portas e o
+ * pé das páginas: a numeração em série, em páginas que não são sequência
+ * (as marcas L5 e T2; o crítico de fora). As linhas entram em sequência ao abrir. No pé, a ação
  * do orçamento e o WhatsApp. Carregado sob demanda por MenuCelular.
- * Na escala (regra 1): o número no rótulo (12 px) e o nome no degrau dos
- * números (24 px no celular; até 03/10, 25,6 px). Onde há ponteiro, o nome
+ * Na escala (regra 1): o nome no degrau dos números (24 px no celular; até
+ * 03/10, 25,6 px). Onde há ponteiro, o nome
  * se acende em bronze no hover, como o da página aberta (até 03/10, não
  * respondia). A rolagem da lista tem 8 px de folga em cima e embaixo: o
  * anel de foco da primeira e da última linha não é cortado por ela.
@@ -38,6 +40,18 @@ export default function PainelMenu({ aberto, aoMudar, itens, marca }: Props) {
   const fechar = () => aoMudar(false);
   const caminho = usePathname();
   const paginas = [{ id: "inicio", rotulo: "Início", caminho: "/" }, ...itens];
+
+  // Com o menu aberto, o <main> sai da árvore de acessibilidade e do foco (16/10, Impeccable). O Base UI esconde os
+  // irmãos do painel com aria-hidden, mas poupa o <main> por causa das regiões aria-live dele (a nota da escada, o
+  // montador), que ficavam lidas por trás do menu.
+  useEffect(() => {
+    const main = document.querySelector("main");
+    if (!aberto || !main) return;
+    main.inert = true;
+    return () => {
+      main.inert = false;
+    };
+  }, [aberto]);
 
   return (
     <Sheet open={aberto} onOpenChange={aoMudar}>
@@ -62,7 +76,6 @@ export default function PainelMenu({ aberto, aoMudar, itens, marca }: Props) {
                   aria-current={caminho === item.caminho ? "page" : undefined}
                   className="group flex min-h-15 items-baseline gap-4 py-3 no-underline"
                 >
-                  <span className="w-6 flex-none text-rotulo font-semibold text-accent tabular-nums">{String(i).padStart(2, "0")}</span>
                   <span className="text-numero font-semibold tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent group-aria-[current=page]:text-accent">
                     {item.rotulo}
                   </span>

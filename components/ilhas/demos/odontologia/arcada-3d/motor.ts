@@ -58,6 +58,12 @@ const FRACAO = 0.86;
 const paraPlaca = (x: number, y: number) => [(x / LARGURA - 0.5) * 2.4 * FRACAO, -(y / ALTURA - 0.5) * 2.4 * FRACAO] as const;
 /** A entrada do refletor: o token de entrada (09-movimento.md, seção 2). */
 const ENTRADA = 600;
+/**
+ * A chegada da placa sobre a reserva (o mapa em traço, que sai em 160 ms pelo CSS): a placa acende de 100 a 400 ms do
+ * primeiro quadro. Os dois desenhos não coincidem, e a passagem cruzada de 600 ms mostrava dois jogos de números e duas
+ * legendas (o crítico de fora, 15.10.2026).
+ */
+const ESTREIA = [100, 400] as const;
 
 /** Onde a placa olha em cada região: o centro dos dentes dela, a aproximação e a inclinação para trás. */
 const FOCOS = Object.fromEntries(
@@ -73,6 +79,29 @@ const FOCOS = Object.fromEntries(
   }),
 ) as Record<RegiaoId, { x: number; y: number; zoom: number; inclina: number; lado: number }>;
 const REPOUSO = { inclina: 0.58, lado: -0.16, luzX: -0.55, luzY: 0.75 };
+
+/**
+ * Até onde a placa vai na tela, acima e abaixo do meio da caixa, em alturas da caixa (positivo para cima): os oito cantos
+ * da peça (com o relevo dos dentes), do espaço da placa ao do mundo (o inverso de local(), em ./cena.ts), projetados
+ * pela câmera do desenho (em z = 7, o raio com 0,4 de abertura por unidade da caixa). A placa inclinada e aproximada
+ * passa da caixa: é por isto que se sabe quanto.
+ */
+const alcanceDaPlaca = (giroX: number, giroY: number, zoom: number, focoX: number, focoY: number) => {
+  let topo = -Infinity;
+  let base = Infinity;
+  for (const x of [-1.2, 1.2])
+    for (const y of [-1.2, 1.2])
+      for (const z of [-0.075, 0.16]) {
+        const [vx, vy] = [x - focoX, y - focoY];
+        const z1 = -Math.sin(giroY) * vx + Math.cos(giroY) * z;
+        const y2 = Math.cos(giroX) * vy + Math.sin(giroX) * z1;
+        const z2 = -Math.sin(giroX) * vy + Math.cos(giroX) * z1;
+        const q = (zoom * y2) / (0.4 * (7 - zoom * z2));
+        topo = Math.max(topo, q);
+        base = Math.min(base, q);
+      }
+  return { topo, base };
+};
 
 const passo = (a: number, b: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
@@ -237,22 +266,28 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
    * O peso de uma âncora: quanto dela está à vista na área útil (de 20 a 65%, em curva). A âncora que sai da tela
    * apaga a placa aos poucos, em vez de levá-la para fora; duas âncoras à vista dividem a placa, que fica entre elas.
    * A âncora fixa (o mapa da escolha, com as áreas de toque por cima) acende inteira assim que aparece: meio à vista,
-   * ela não pode ficar desbotada nem sair do lugar.
+   * ela não pode ficar desbotada nem sair do lugar. A sozinha na tela (a placa que sai para uma cena sem placa, como a
+   * da chamada para o pé, sem outra âncora com que dividir a placa) fica inteira ou sai: inteira com 60% da âncora à
+   * vista; abaixo disso, apaga no tempo (a suavização dos pesos, ~300 ms), e não na rolagem. A meia-transparência que
+   * ficava parada sobre o vermelho, com o pé à vista, lia como fantasma (o crítico de fora, 14.10.2026). No celular,
+   * toda âncora é sozinha (a placa não viaja entre elas): a meia placa parada sob a pasta era o mesmo fantasma (o
+   * crítico de fora, 15.10.2026).
    */
-  const pesoAlvo = (r: DOMRect, area: ReturnType<typeof areaUtil>, fixa: boolean) => {
+  const pesoAlvo = (r: DOMRect, area: ReturnType<typeof areaUtil>, fixa: boolean, sozinha = false) => {
     if (!r.width || !r.height) return 0;
     const vista = Math.max(0, Math.min(r.bottom, area.bottom) - Math.max(r.top, area.top));
     const parte = vista / Math.max(1, Math.min(r.height, area.bottom - area.top));
-    return fixa ? passo(0, 0.08, parte) : passo(0.2, 0.65, parte);
+    if (fixa) return passo(0, 0.08, parte);
+    return sozinha ? (parte >= 0.6 ? 1 : 0) : passo(0.2, 0.65, parte);
   };
   /**
    * A caixa inteira na área útil: menor, se não cabe; levada para dentro, se passa da borda. Abaixo de 1024 px (o passe
    * do celular), só de lado: lá, a âncora fica na coluna do texto, e a placa levada para dentro da tela descia sobre o
    * texto de baixo ao rolar (o "Todas as regiões da boca" dos tratamentos, o lugar e a ação da capa); a placa rola com a
-   * âncora e se apaga ao sair (o peso, abaixo), sob a pasta.
+   * âncora e se apaga ao sair (o peso, abaixo), sob a pasta. Na mesa, a âncora sozinha que sai por cima também rola:
+   * presa, a placa parava sob a pasta, e a legenda de baixo a atravessava (o crítico de fora, 15.10.2026).
    */
-  const presaNaArea = (c: Caixa, area: ReturnType<typeof areaUtil>): Caixa => {
-    const vertical = window.innerWidth >= 1024;
+  const presaNaArea = (c: Caixa, area: ReturnType<typeof areaUtil>, vertical = window.innerWidth >= 1024): Caixa => {
     const k = Math.min(1, vertical ? (area.bottom - area.top) / c.height : 1, (area.right - area.left) / c.width);
     const width = c.width * k;
     const height = c.height * k;
@@ -309,6 +344,10 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
   const ponteiro = { x: REPOUSO.luzX, y: REPOUSO.luzY, alvoX: REPOUSO.luzX, alvoY: REPOUSO.luzY, ativo: false };
   const cena = { focoX: 0, focoY: 0, zoom: 1, inclina: REPOUSO.inclina, lado: REPOUSO.lado, regiao: [0, 0, 0, 0] };
   let primeiro = true;
+  /** O giro do último quadro desenhado: dele sai até onde a placa vai na tela (alcanceDaPlaca). */
+  const giro = { x: REPOUSO.inclina, y: REPOUSO.lado };
+  /** Quanto da placa a faixa das cenas comporta, de 0 a 1 (a placa sai antes da tesoura). */
+  let cabe = 1;
   /** O topo em que os passos do percurso ficam presos, empilhados (o celular); null onde eles correm soltos. */
   let pilha: number | null = null;
   /** No toque, o halo espera a caixa da placa existir para acender sobre ela. */
@@ -403,12 +442,22 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       const area = areaUtil();
       faixaDasCenas.topo = Infinity;
       faixaDasCenas.base = -Infinity;
-      for (const a of ancoras) {
-        const bruta = a.getBoundingClientRect();
+      const brutas = ancoras.map((a) => a.getBoundingClientRect());
+      // A âncora sozinha na área útil fica inteira ou sai (pesoAlvo); no celular, toda âncora.
+      const naMesa = window.innerWidth >= 1024;
+      const sozinha = !naMesa || brutas.filter((r) => r.bottom > area.top && r.top < area.bottom).length === 1;
+      let subindo = false;
+      for (const [i, a] of ancoras.entries()) {
+        const bruta = brutas[i];
         const fixa = a.dataset.fixa !== undefined;
-        const alvo = pesoAlvo(bruta, area, fixa);
+        // Na mesa, a sozinha que começa a passar sob a pasta, sem outra âncora logo abaixo para onde viajar (a da página de
+        // cada tratamento, a da ficha, a da chamada), sai rolando com a cena (presaNaArea), em vez de ficar presa. A da
+        // capa espera a do percurso, e a presa do percurso fica abaixo do teto até se soltar.
+        const seguinte = brutas[i + 1];
+        const sai = naMesa && sozinha && !fixa && bruta.top < area.top && (!seguinte || seguinte.top > area.bottom + window.innerHeight);
+        const alvo = sai ? 0 : pesoAlvo(bruta, area, fixa, sozinha);
         // A fixa fica onde está (a tesoura corta o que passa da tela); as outras, inteiras na área útil.
-        const r = fixa ? bruta : presaNaArea(bruta, area);
+        const r = fixa ? bruta : presaNaArea(bruta, area, naMesa && !sai);
         const antes = pesosDasAncoras.get(a) ?? 0;
         const w = !pesosProntos || opcoes.reduzir ? alvo : suave(antes, alvo, dt, 7);
         if (Math.abs(w - alvo) > 1e-3) mexe = true;
@@ -427,6 +476,7 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
           maior = w;
           principal = a;
           caixaDoPrincipal = r;
+          subindo = sai;
         } else if (w > segundo) segundo = w;
       }
       pesosProntos = true;
@@ -442,13 +492,28 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
           if (k >= 1) viagem = null;
           else mexe = true;
         }
+        const alcance = alcanceDaPlaca(giro.x, giro.y, cena.zoom, cena.focoX, cena.focoY);
+        // Na mesa, a placa nunca entra embaixo da pasta (09.10.2026): a caixa presa na área útil não basta, porque a placa
+        // girada e aproximada passa dela (no quarto passo do percurso, o canto de cima subia sob a pasta); a caixa desce o
+        // quanto a placa passaria do teto. No celular, a placa rola com a âncora e passa sob a pasta ao sair; a âncora fixa
+        // (com as áreas de toque do mapa por cima) não sai do lugar.
+        const sobra = area.top - (caixaAtual.top + caixaAtual.height * (0.5 - alcance.topo));
+        if (!naColuna && !subindo && sobra > 0 && principal?.dataset.fixa === undefined) caixaAtual.top += sobra;
         ultimaCaixa = { ...caixaAtual };
+        // A placa que passaria da faixa das cenas acesas (a tesoura a cortaria a seco) se apaga antes do corte: no fim
+        // da inicial, ela ficava fantasma e cortada reto na borda de baixo da chamada (o crítico de fora, 14.10.2026). Só
+        // na mesa, onde a caixa fica presa na área útil; no celular, a placa rola dentro da cena dela.
+        const corte = Math.max(
+          caixaAtual.top + caixaAtual.height * (0.5 - alcance.base) - faixaDasCenas.base,
+          faixaDasCenas.topo - (caixaAtual.top + caixaAtual.height * (0.5 - alcance.topo)),
+        );
+        cabe = naColuna ? 1 : 1 - passo(-48, 0, corte);
         if (acenderPendente) {
           acenderPendente = false;
           acenderNaFicha();
         }
       }
-      visibilidade = naColuna ? Math.max(0, Math.min(1, maior) - segundo) : Math.min(1, soma);
+      visibilidade = (naColuna ? Math.max(0, Math.min(1, maior) - segundo) : Math.min(1, soma)) * cabe;
     }
 
     // O alvo: a região (a pintura) e, sem movimento reduzido, o foco, a aproximação e a inclinação dela.
@@ -487,6 +552,8 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     // O refletor: acende na entrada (com a curva de saída); com o ponteiro fino, vai aonde o cursor está.
     const t = semEntrada ? 1 : Math.min(1, (agora - acesaDesde) / ENTRADA);
     const acesa = 1 - Math.pow(1 - t, 3);
+    const estreia = opcoes.reduzir ? 1 : passo(ESTREIA[0], ESTREIA[1], agora - acesaDesde);
+    if (estreia < 1) mexe = true;
     if (t < 1) mexe = true;
     // O ambiente: o refletor passeia numa órbita lenta (umas 19 s por volta) quando ninguém o leva.
     const ambienteVivo = !opcoes.reduzir && !raiz.classList.contains("ambiente-pausado") && agora - ultimaRolagem > 900 && t >= 1;
@@ -511,13 +578,15 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       gl.uniform2f(uni.uRes, canvas.width, canvas.height);
       gl.uniform4f(uni.uCaixa, (b.left - r.left) * k, (r.bottom - (b.top + b.height)) * k, b.width * k, b.height * k);
       const sob = fino && ponteiro.ativo;
-      gl.uniform2f(uni.uGiro, cena.inclina + respiraInclina + (sob ? -ponteiro.y * 0.05 : 0), cena.lado * (ancorado ? 1 : 1 - soma) + respiraLado + (sob ? ponteiro.x * 0.07 : 0));
+      giro.x = cena.inclina + respiraInclina + (sob ? -ponteiro.y * 0.05 : 0);
+      giro.y = cena.lado * (ancorado ? 1 : 1 - soma) + respiraLado + (sob ? ponteiro.x * 0.07 : 0);
+      gl.uniform2f(uni.uGiro, giro.x, giro.y);
       gl.uniform2f(uni.uFoco, cena.focoX, cena.focoY);
       gl.uniform1f(uni.uZoom, cena.zoom);
       gl.uniform4f(uni.uRegiao, cena.regiao[0], cena.regiao[1], cena.regiao[2], cena.regiao[3]);
       gl.uniform2f(uni.uLuz, ponteiro.x, ponteiro.y);
       gl.uniform1f(uni.uAcesa, acesa);
-      gl.uniform1f(uni.uVisivel, visibilidade);
+      gl.uniform1f(uni.uVisivel, visibilidade * estreia);
       gl.uniform1f(uni.uSombra, window.innerWidth >= 1024 ? 1 : 0);
       gl.disable(gl.SCISSOR_TEST);
       gl.clearColor(0, 0, 0, 0);
@@ -564,45 +633,50 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     if (!quadro && vivo && naTela && !document.hidden) quadro = requestAnimationFrame(desenhar);
   }
 
-  // A textura: o desenho com o navegador ocioso, o peso no worker; o primeiro quadro espera por ela.
-  void desenharTexturas(opcoes.familia, opcoes.textos, ladoDaCor)
-    .then((t) => {
-      if (!vivo) return;
-      const ajustar = (mipmap: boolean) => {
-        if (mipmap) gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mipmap ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        if (mipmap && anisotropia) {
-          const maximo = gl.getParameter(anisotropia.MAX_TEXTURE_MAX_ANISOTROPY_EXT) as number;
-          gl.texParameterf(gl.TEXTURE_2D, anisotropia.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, maximo));
-        }
-      };
-      [t.relevo, t.regioes].forEach((dados, i) => {
-        gl.activeTexture(i === 0 ? gl.TEXTURE0 : gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, texturas[i]);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, ladoDaCor, ladoDaCor, 0, gl.RGBA, gl.UNSIGNED_BYTE, dados);
-        ajustar(true);
-      });
-      // A altura: meio-float no WebGL2 (o brilho úmido mostraria os degraus de 8 bits; o R16F filtra, mas não gera
-      // mipmap sem extensão); 8 bits no WebGL 1.
-      gl.activeTexture(gl.TEXTURE2);
-      gl.bindTexture(gl.TEXTURE_2D, texturas[2]);
-      if (gl2) {
-        gl2.texImage2D(gl2.TEXTURE_2D, 0, gl2.R16F, TEX, TEX, 0, gl2.RED, gl2.HALF_FLOAT, t.altura16);
-        ajustar(false);
-      } else {
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, TEX, TEX, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, t.altura8);
-        ajustar(true);
+  // A textura: o desenho com o navegador ocioso, o peso no worker; o primeiro quadro espera por ela. A subida para a
+  // placa de vídeo vai em etapas, uma textura por vez, cedendo a vez entre elas: num bloco só (duas de 2048 com o
+  // mipmap e a altura), era uma tarefa longa na carga (a auditoria do Impeccable, 16.10.2026).
+  void (async () => {
+    const t = await desenharTexturas(opcoes.familia, opcoes.textos, ladoDaCor);
+    if (!vivo) return;
+    const ajustar = (mipmap: boolean) => {
+      if (mipmap) gl.generateMipmap(gl.TEXTURE_2D);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, mipmap ? gl.LINEAR_MIPMAP_LINEAR : gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      if (mipmap && anisotropia) {
+        const maximo = gl.getParameter(anisotropia.MAX_TEXTURE_MAX_ANISOTROPY_EXT) as number;
+        gl.texParameterf(gl.TEXTURE_2D, anisotropia.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, maximo));
       }
-      comTextura = true;
-      pedir();
-    })
-    .catch(() => {
-      vivo = false;
-      raiz.setAttribute("data-sem-ceramica", "");
-    });
+    };
+    for (const [i, dados] of [t.relevo, t.regioes].entries()) {
+      await ocioso();
+      if (!vivo) return;
+      gl.activeTexture(i === 0 ? gl.TEXTURE0 : gl.TEXTURE1);
+      gl.bindTexture(gl.TEXTURE_2D, texturas[i]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, ladoDaCor, ladoDaCor, 0, gl.RGBA, gl.UNSIGNED_BYTE, dados);
+      ajustar(true);
+    }
+    await ocioso();
+    if (!vivo) return;
+    // A altura: meio-float no WebGL2 (o brilho úmido mostraria os degraus de 8 bits; o R16F filtra, mas não gera
+    // mipmap sem extensão); 8 bits no WebGL 1.
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, texturas[2]);
+    if (gl2) {
+      gl2.texImage2D(gl2.TEXTURE_2D, 0, gl2.R16F, TEX, TEX, 0, gl2.RED, gl2.HALF_FLOAT, t.altura16);
+      ajustar(false);
+    } else {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, TEX, TEX, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, t.altura8);
+      ajustar(true);
+    }
+    comTextura = true;
+    pedir();
+  })().catch(() => {
+    vivo = false;
+    raiz.setAttribute("data-sem-ceramica", "");
+  });
 
   /** O halo do refletor na página: o cursor, em pixels da seção, como variáveis de CSS. */
   const levarHalo = (e: PointerEvent) => {
@@ -723,6 +797,9 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       ligar(naTela);
       if (naTela) {
         ultimo = performance.now();
+        // Os pesos pararam onde a placa saiu da tela: a âncora que volta não viaja da de antes (a placa da ficha cruzava o
+        // título da chamada ao chegar, da margem direita para a esquerda; o crítico de fora, 14.10.2026).
+        pesosProntos = false;
         pedir();
       } else {
         aoSair();

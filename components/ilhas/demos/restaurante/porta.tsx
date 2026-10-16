@@ -42,7 +42,8 @@ export function PortaDoSalao({
   pedido: string;
   acao: string;
   textos: { aberto: string; fechado: string; hoje: string; menu: string; fechar: string };
-  /** O prato de hoje, curto, com o preço ("Moqueca de peixe, R$ 44,00"); no domingo, nada. */
+  /** O prato de hoje, curto, com o preço ("Moqueca de peixe, R$ 44,00"), no pé do menu; no domingo, nada. A porta da
+   *  mesa não o leva: a lousinha que o levava, de 1536 px para cima, cortava as páginas e repetia a capa (16.10.2026). */
   doDia: string | null;
   expediente: Expediente;
   fechamentos: readonly Fechamento[];
@@ -86,11 +87,6 @@ export function PortaDoSalao({
           ))}
         </nav>
         <div className="rs-porta-direita">
-          {doDia && (
-            <p className="rs-porta-lousinha">
-              <span>{textos.hoje}</span> {doDia}
-            </p>
-          )}
           <p className="rs-plaquinha" data-aberta={estado.aberto}>
             <span aria-hidden="true" className="rs-plaquinha-cordao" />
             <span aria-hidden="true" className="rs-plaquinha-giro">

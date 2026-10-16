@@ -54,15 +54,28 @@ export const nutricaoSite = {
     rotulo: "Nutrição clínica · Icaraí, Niterói",
     titulo: ["Comer bem.", "Sem se tornar", "outra pessoa."],
     lide: "Plano alimentar elaborado a partir da rotina de cada pessoa, com substituições previstas para cada refeição, e não uma lista de proibições.",
+    /** A palavra que o marca-texto marca no lide (uma vez por página, fora dos títulos; 14.10.2026). */
+    destaque: "rotina",
     secundaria: "Ver os valores",
     nota: "Presencial em Icaraí ou por vídeo, com a mesma duração.",
   },
-  /** O índice das seções da primeira página, na margem da capa. */
-  nestaPagina: [
-    { id: "sumario", rotulo: "Sumário da consulta" },
-    { id: "metodo", rotulo: "Da consulta ao hábito" },
-    { id: "nota", rotulo: "Nota sobre este site" },
-  ],
+  /**
+   * A folha do plano, na capa (decorativa, aria-hidden; 14.10.2026): o alto da primeira página do plano alimentar,
+   * com a rotina do dia numa régua de horas (desde o crítico de fora, 14.10.2026; até então, uma lista com pontilhado
+   * até o horário, que repetia o sumário). Nada de alimento, quantidade, caloria, peso nem nome de paciente
+   * (CFN 599/2018). `hora`, em horas decimais, põe a refeição na régua (de 6h a 22h). Texto novo, a aprovar.
+   */
+  folhaDoPlano: {
+    titulo: "Plano alimentar",
+    assinatura: "Maria da Silva · CRN4 00000",
+    refeicoes: [
+      { nome: "Café da manhã", rotulo: "7h30", hora: 7.5 },
+      { nome: "Almoço", rotulo: "12h30", hora: 12.5 },
+      { nome: "Lanche", rotulo: "16h", hora: 16 },
+      { nome: "Jantar", rotulo: "20h", hora: 20 },
+    ],
+    pe: "Trocas previstas em cada refeição",
+  },
   /** O sumário: os números da oferta, com pontilhado até o valor. */
   sumario: {
     titulo: "Sumário da consulta",
@@ -75,8 +88,6 @@ export const nutricaoSite = {
   },
   metodo: {
     titulo: ["Da primeira consulta", "ao hábito."],
-    // A palavra que o marca-texto marca (Spell UI, Highlighted Text, variante marca-texto; desde 03/10).
-    destaque: "hábito",
     etapas: [
       {
         nome: "Primeira consulta",
@@ -114,7 +125,8 @@ export const nutricaoSite = {
   // ---------- II · Valores ----------
   consultas: {
     titulo: ["Os valores", "estão publicados."],
-    destaque: "publicados",
+    /** A palavra que o marca-texto marca, nas observações (consultas.nota), não no título (14.10.2026). */
+    destaque: "reembolso",
     itens: [
       {
         nome: "Primeira consulta",
@@ -137,6 +149,26 @@ export const nutricaoSite = {
     ],
     nota: "Presencial em Icaraí ou por vídeo, com a mesma duração e o mesmo material. Recibo com CRN para reembolso, quando o plano de saúde o prevê.",
     pagamento: "Pix, cartão de débito ou de crédito, no dia da consulta.",
+  },
+  /**
+   * O recibo, na abertura de Valores (decorativo, aria-hidden; crítico de fora, 14.10.2026): a folha do talão que a
+   * consulta deixa para o reembolso ("Recibo com CRN para reembolso", nas observações). O valor por extenso e a
+   * assinatura se escrevem na entrada da página, o momento dela. Sem nome de paciente: a linha fica em branco.
+   * Estabelecimento fictício (número 000). Texto novo, a aprovar.
+   */
+  recibo: {
+    titulo: "Recibo",
+    numero: "Nº 000",
+    valor: "R$ 250,00",
+    recebiDe: "Recebi de",
+    importancia: "a importância de",
+    extenso: "duzentos e cinquenta reais,",
+    referente: "referente à primeira consulta de nutrição, de 60 minutos.",
+    data: "Niterói,",
+    assinatura: "Maria da Silva",
+    credencial: "Nutricionista · CRN4 00000",
+    /** O que o canhoto do talão guarda (crítico de fora, 16.10.2026). Texto novo, a aprovar. */
+    canhoto: "Primeira consulta",
   },
   duvidas: {
     titulo: "Perguntas frequentes",
@@ -170,9 +202,9 @@ export const nutricaoSite = {
     titulo: ["Uma sala", "em Icaraí."],
     referencia: "A duas quadras do Campo de São Bento. Elevador e acesso sem degraus.",
     chegada: [
-      { modo: "A pé", texto: "Duas quadras a partir do Campo de São Bento." },
-      { modo: "De ônibus", texto: "Ponto a uma quadra do prédio." },
-      { modo: "De carro", texto: "Estacionamento rotativo na rua." },
+      { modo: "A pé", simbolo: "a-pe", texto: "Duas quadras a partir do Campo de São Bento." },
+      { modo: "De ônibus", simbolo: "onibus", texto: "Ponto a uma quadra do prédio." },
+      { modo: "De carro", simbolo: "carro", texto: "Estacionamento rotativo na rua." },
     ],
     horarios: [
       { dia: "Segunda", hora: "9h às 18h" },
@@ -184,7 +216,23 @@ export const nutricaoSite = {
       { dia: "Domingo", hora: "Fechado" },
     ],
     legendaDoMapa: "O consultório, a duas quadras do Campo de São Bento",
+    /**
+     * O vínculo do endereço para o mapa (fechamento com o Impeccable, 16.10.2026): uma busca no OpenStreetMap pelo
+     * Campo de São Bento, a referência real, porque o endereço é fictício. Nenhum mapa embutido, nenhum pedido externo.
+     */
+    mapa: {
+      rotulo: "Abrir no mapa",
+      vinculo: `https://www.openstreetmap.org/search?query=${encodeURIComponent("Campo de São Bento, Icaraí, Niterói")}`,
+    },
   },
 
   colofao: "Composto em Fraunces e Newsreader, sobre papel de cor palha.",
+
+  /** A página que não existe, dentro da folha (app/demos/nutricao/not-found.tsx; fechamento com o Impeccable, 16.10.2026). */
+  naoEncontrada: {
+    rotulo: "Página não encontrada",
+    titulo: ["Esta página", "não está na folha."],
+    texto: "A publicação tem três páginas: a consulta, os valores e o consultório.",
+    voltar: "Voltar à primeira página",
+  },
 };

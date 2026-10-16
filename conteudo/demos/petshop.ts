@@ -128,7 +128,8 @@ export type Porte = { id: PorteId; nome: string; faixa: string; /** O limite de 
 /** As faixas de porte por peso (briefing, seção 12). O peso é medido na balança da recepção, na chegada. */
 export const portes: readonly Porte[] = [
   { id: "pequeno", nome: "Pequeno", faixa: "até 10 kg", ateKg: 10 },
-  { id: "medio", nome: "Médio", faixa: "de 10 a 25 kg", ateKg: 25 },
+  // "Acima de 10": com "de 10 a 25 kg", o animal de 10 kg cabia em dois portes (o Impeccable, fechamento de 16.10.2026).
+  { id: "medio", nome: "Médio", faixa: "acima de 10 até 25 kg", ateKg: 25 },
   { id: "grande", nome: "Grande", faixa: "acima de 25 kg" },
 ];
 export const pesagem = "O peso é medido na balança da recepção, na chegada. O porte e o valor são confirmados antes de começar.";
@@ -139,6 +140,20 @@ export const pelagens: Record<PelagemId, string> = {
   longa: "Longa",
   dupla: "Dupla (com subpelo)",
   encaracolada: "Encaracolada",
+};
+/**
+ * Como reconhecer cada pelagem (Serviços e valores, na abertura, junto da régua de peso): o que se vê no animal e raças
+ * de exemplo, para o tutor achar a linha dele na tabela (o Impeccable, fechamento de 16.10.2026).
+ */
+export const reconhecerPelagem = {
+  titulo: "Como reconhecer a pelagem",
+  itens: {
+    curta: "Rente ao corpo, sem franja e sem lã por baixo (pinscher, boxer, dálmata).",
+    longa: "Cai liso e passa do corpo, com franja nas orelhas e nas patas (yorkshire, maltês, shih-tzu).",
+    dupla: "Uma capa de pelo por cima e lã por baixo; solta tufos na troca (husky, chow-chow, pastor-alemão).",
+    encaracolada: "Em cachos, que não caem na troca e formam nós sem escova (poodle, bichon frisé).",
+  } satisfies Record<PelagemId, string>,
+  duvida: "Na dúvida, a casa confirma na pesagem, antes de começar.",
 };
 
 /** Um preço da tabela: o valor, em centavos, e a duração, em minutos. */
@@ -192,7 +207,7 @@ export const servicos: readonly Servico[] = [
   },
 ];
 
-/** O banho por porte, com pelo curto (a lista da cena 2 e a amostra da capa: a primeira linha do banho). */
+/** O banho por porte, com pelagem curta (a lista da cena 2 e a amostra da capa: a primeira linha do banho). */
 export const banhoPeloCurto = (servicos[0].linhas[0] as Extract<Linha, { precos: unknown }>).precos;
 
 /** Os acréscimos ao banho (briefing, seção 2), como a casa os escreve. */
@@ -272,11 +287,12 @@ export const cartaoDeEntrega = {
 };
 
 /**
- * A linha do atendimento: o banho por etapas, no exemplo da página inicial (briefing, seção 2: porte médio, pelo curto,
- * 1 h 30). A soma dos minutos é a duração da tabela (90). O que se faz em cada etapa vem do que o banho compreende.
+ * A linha do atendimento: o banho por etapas, no exemplo da página inicial (briefing, seção 2: porte médio, pelagem
+ * curta, 1 h 30). A soma dos minutos é a duração da tabela (90). O que se faz em cada etapa vem do que o banho compreende.
+ * "Pelagem curta", como na tabela, na capa e na cena 2 (até 16.10.2026, aqui era "pelo curto").
  */
 export const atendimento = {
-  exemplo: "Exemplo: porte médio, pelo curto, banho. 1 h 30, como na tabela.",
+  exemplo: "Exemplo: porte médio, pelagem curta, banho. 1 h 30, como na tabela.",
   etapas: [
     { nome: "Pesagem e pente", minutos: 10, oQue: "Na balança da recepção; o tutor vê os nós no balcão, antes da água." },
     { nome: "Banho", minutos: 25, oQue: "Xampu neutro e água morna, com os ouvidos protegidos." },
@@ -288,26 +304,25 @@ export const atendimento = {
 
 export type BairroId = "sao-francisco" | "charitas" | "cachoeiras" | "icarai" | "santa-rosa" | "vital-brazil";
 
-/** O leva e traz (briefing, seção 12): ida e volta, por animal; só os bairros que fazem divisa com São Francisco. */
+/**
+ * O leva e traz (briefing, seção 12): ida e volta, por animal; só os bairros que fazem divisa com São Francisco. A janela
+ * é uma só e se diz uma vez (o Impeccable, fechamento de 16.10.2026: ela se repetia em cinco linhas da tabela); o sábado,
+ * só de São Francisco, tem a dele.
+ */
 export const levaETraz = {
   titulo: "Leva e traz",
   condicao: "Ida e volta, por animal; só os bairros que fazem divisa com São Francisco.",
   fora: "Fora desses bairros, não há leva e traz: a janela de uma hora só se cumpre perto.",
   janela: "Busca das 9h às 10h; entrega das 16h às 17h.",
+  sabado: "No sábado, busca das 8h às 9h e entrega das 12h às 13h.",
   bairros: [
-    {
-      id: "sao-francisco",
-      nome: "São Francisco",
-      dias: "Terça a sábado",
-      janela: "Busca das 9h às 10h e entrega das 16h às 17h; no sábado, busca das 8h às 9h e entrega das 12h às 13h",
-      centavos: 1500,
-    },
-    { id: "charitas", nome: "Charitas", dias: "Terça e quinta", janela: "Busca das 9h às 10h; entrega das 16h às 17h", centavos: 2200 },
-    { id: "cachoeiras", nome: "Cachoeiras", dias: "Terça e quinta", janela: "Busca das 9h às 10h; entrega das 16h às 17h", centavos: 2200 },
-    { id: "icarai", nome: "Icaraí", dias: "Quarta e sexta", janela: "Busca das 9h às 10h; entrega das 16h às 17h", centavos: 2200 },
-    { id: "santa-rosa", nome: "Santa Rosa", dias: "Quarta e sexta", janela: "Busca das 9h às 10h; entrega das 16h às 17h", centavos: 2200 },
-    { id: "vital-brazil", nome: "Vital Brazil", dias: "Quarta e sexta", janela: "Busca das 9h às 10h; entrega das 16h às 17h", centavos: 2200 },
-  ] satisfies readonly { id: BairroId; nome: string; dias: string; janela: string; centavos: number }[],
+    { id: "sao-francisco", nome: "São Francisco", dias: "Terça a sábado", centavos: 1500 },
+    { id: "charitas", nome: "Charitas", dias: "Terça e quinta", centavos: 2200 },
+    { id: "cachoeiras", nome: "Cachoeiras", dias: "Terça e quinta", centavos: 2200 },
+    { id: "icarai", nome: "Icaraí", dias: "Quarta e sexta", centavos: 2200 },
+    { id: "santa-rosa", nome: "Santa Rosa", dias: "Quarta e sexta", centavos: 2200 },
+    { id: "vital-brazil", nome: "Vital Brazil", dias: "Quarta e sexta", centavos: 2200 },
+  ] satisfies readonly { id: BairroId; nome: string; dias: string; centavos: number }[],
 };
 
 /** A forma de pagamento (briefing, seção 2). */
@@ -324,7 +339,13 @@ export const mensagemPronta =
   "Pedido de horário, Banho e Tosa São Francisco. Nome do animal: ___. Porte e peso: ___. Pelagem: ___. Serviço: ___. Leva e traz: ___. Ciente de que pelo com nó pode pedir desembaraço, com o valor dito antes de começar.";
 
 /** Os textos da interface comum (a tira, o rodapé, o mapa, a página que não existe). */
-export const tira = { navegacao: "Páginas do Banho e Tosa São Francisco", pausa: "Pausar o movimento", menu: "Abrir o menu", fechar: "Fechar o menu" };
+export const tira = {
+  navegacao: "Páginas do Banho e Tosa São Francisco",
+  /** O rótulo da pausa acompanha o estado (identidade, seções 4.3 e 4.7; o Impeccable, fechamento de 16.10.2026). */
+  pausa: { pausar: "Pausar o movimento", retomar: "Retomar o movimento" },
+  menu: "Abrir o menu",
+  fechar: "Fechar o menu",
+};
 export const rodape = { telefone: "WhatsApp e telefone:", legais: "Avisos" };
 export const mapa = {
   rotulo: "Mapa de São Francisco, em Niterói, com a casa na Avenida Quintino Bocaiúva e os bairros do leva e traz.",

@@ -47,8 +47,8 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
 }
 
 /**
- * Os sócios num painel só, um por linha (no celular) ou coluna (a partir
- * de 1024 px), com a foto de cada um (conteudo/site.ts, quemFaz.socios;
+ * Os sócios numa fileira só, entre dois filetes, um por linha (no celular)
+ * ou coluna (a partir de 1024 px), com a foto de cada um (conteudo/site.ts, quemFaz.socios;
  * arquivos em public/socios/) — e, enquanto a foto não existe, o
  * monograma das iniciais no mesmo lugar. Em desenvolvimento, a vaga sem
  * foto aparece com um traço tracejado e o caminho do arquivo esperado,
@@ -68,11 +68,13 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
  */
 export function QuemFaz() {
   return (
-    <Secao id="atlas" tom="branco">
+    // No creme da história, de cima (desde 14/10): o branco depois do creme ficava a 0,035 de L, uma emenda, não uma virada.
+    <Secao id="atlas" tom="claro">
       <Envelope>
         <Abertura titulo={quemFaz.titulo} lide={quemFaz.lide} />
 
-        <ul className="mt-16 grid rounded-xl bg-card md:mt-20 lg:grid-cols-3">
+        {/* Direto na névoa, entre dois filetes (até 16/10, num painel branco: mais um cartão na cena; o crítico de fora). */}
+        <ul className="mt-16 grid grid-cols-[minmax(0,1fr)] border-y border-border md:mt-20 lg:grid-cols-3">
           {quemFaz.socios.map((socio) => {
             const foto = fotoDe(socio.foto);
             const aviso = avisoDaVaga(socio.foto, foto);
@@ -84,7 +86,7 @@ export function QuemFaz() {
                 {/* O retrato: a foto, ou as iniciais enquanto ela não existe. Decorativo — o nome está ao lado. */}
                 <span
                   aria-hidden="true"
-                  className={`grid size-16 flex-none place-items-center overflow-hidden rounded-full bg-secondary font-display text-destaque text-secondary-foreground shadow-[0_0_0_0_transparent] transition-shadow duration-400 ease-atlas group-hover:shadow-[0_0_0_4px_var(--card),0_0_0_6px_var(--primary)] lg:size-24 ${
+                  className={`grid size-16 flex-none place-items-center overflow-hidden rounded-full bg-secondary font-display text-destaque text-secondary-foreground shadow-[0_0_0_0_transparent] transition-shadow duration-400 ease-atlas group-hover:shadow-[0_0_0_4px_var(--background),0_0_0_6px_var(--primary)] lg:size-24 ${
                     aviso && !foto ? "outline-1 outline-offset-4 outline-primary outline-dashed" : ""
                   }`}
                 >
@@ -123,7 +125,8 @@ export function QuemFaz() {
           data-tom="escuro"
           className="mov-giro relative mt-6 grid items-center gap-8 overflow-hidden rounded-xl bg-background p-4 md:grid-cols-[1fr_auto] md:gap-16 md:p-8"
         >
-          <Globo className="pointer-events-none absolute top-1/2 left-[22%] w-[34rem] -translate-y-1/2 opacity-80 md:left-[34%] md:w-[46rem]" />
+          {/* O traço mais apagado (0,45; até 16/10, 0,8): sob o vidro, onde passava sob o texto, o cinza do texto caía a 3,84:1 (Impeccable, Q1). */}
+          <Globo className="pointer-events-none absolute top-1/2 left-[22%] w-[34rem] -translate-y-1/2 opacity-45 md:left-[34%] md:w-[46rem]" />
           <div data-vidro-liquido data-vidro-desfoque="6" data-vidro-intensidade="1.8" className="vd-vidro-liquido relative rounded-xl p-4 md:p-7">
             <h3 className="font-display tracking-titulo text-numero font-normal">{quemFaz.nome.titulo}</h3>
             <p className="mt-4 max-w-[56ch] text-corpo text-muted-foreground">{quemFaz.nome.texto}</p>

@@ -3,6 +3,7 @@ import type { Viewport } from "next";
 import { corpoDaBarbearia, exibicaoDaBarbearia } from "@/components/demos/barbearia/fontes";
 import { capitulos, Monograma, paginaDe } from "@/components/demos/barbearia/pecas";
 import { Rodape } from "@/components/demos/barbearia/rodape";
+import { ToqueDaCasa } from "@/components/demos/barbearia/toque";
 import { CabecalhoFixo } from "@/components/transicao-de-pagina";
 import { BarraDaBarbearia } from "@/components/ilhas/demos/barra-da-barbearia";
 import { CenaDeRolagem } from "@/components/ilhas/demos/cena-de-rolagem";
@@ -18,7 +19,8 @@ import "./barbearia.css";
 // palco 3D (a ficha em cena vira na da página nova), a barra de navegação
 // constante e o rodapé com o índice dos capítulos; e as ilhas que refazem
 // a leitura a cada página (revelação, cenas de rolagem) ou que delegam
-// (luz do cursor, botões magnéticos).
+// (luz do cursor: o orbe da cena de couro; o ímã do botão da capa; desde
+// 16/10, o toque, que marca a peça sob o dedo por 500 ms).
 
 export const viewport: Viewport = { themeColor: "#0b0908" };
 
@@ -33,6 +35,7 @@ export default function LayoutDaBarbearia({ children }: { children: React.ReactN
           inicio={site.caminho}
           paginas={capitulos.map(({ id, caminho, numero, rotulo }) => ({ id, caminho, numero, rotulo }))}
           acao={site.acao}
+          acaoCurta={site.acaoCurta}
           agendar={paginaDe("agendar").caminho}
         />
       </CabecalhoFixo>
@@ -41,6 +44,7 @@ export default function LayoutDaBarbearia({ children }: { children: React.ReactN
       <Revelacao />
       <CenaDeRolagem />
       <LuzDoCursor />
+      <ToqueDaCasa />
     </div>
   );
 }

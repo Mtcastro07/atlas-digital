@@ -33,7 +33,8 @@ export const planos: Plano[] = [
       "Redação dos textos incluída",
       "Botão de WhatsApp e mapa",
       "Otimização para a busca local",
-      "Movimento: revelação e transições",
+      // Até 16/10, "Movimento: revelação e transições" (o jargão da agência; Impeccable, heurística 2). O mesmo fato.
+      "Conteúdo que aparece ao rolar e troca suave de página",
     ],
   },
   {
@@ -47,7 +48,8 @@ export const planos: Plano[] = [
       "Galeria e formulário",
       "Uma funcionalidade sob medida",
       "Relatório mensal de acessos",
-      "Movimento: galeria, vidro e navegação viva",
+      // Até 16/10, "Movimento: galeria, vidro e navegação viva". A navegação viva é o menu que marca a página aberta.
+      "Galeria de fotos que se passa com o dedo, cabeçalho de vidro e menu que marca a página aberta",
     ],
   },
   {
@@ -60,7 +62,8 @@ export const planos: Plano[] = [
       "Duas funcionalidades sob medida",
       "Revisões trimestrais de conteúdo",
       "Atendimento prioritário",
-      "Movimento: camada completa",
+      // Até 16/10, "Movimento: camada completa".
+      "Todos os efeitos de movimento",
     ],
   },
 ];

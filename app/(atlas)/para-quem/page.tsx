@@ -9,13 +9,15 @@ export const metadata = metadadosDaPagina("para-quem");
 
 /**
  * Para quem: a cidade antes do serviço. A abertura é a parede de bairros
- * de Niterói, com os três dos sites de exemplo acesos; depois, os três
+ * de Niterói, com os três dos sites de exemplo acesos — desde 14/10, ao
+ * lado do título, numa coluna (embaixo dele, a metade direita da abertura
+ * ficava vazia na mesa; o crítico de fora) —; depois, os três
  * públicos (com o exemplo pronto de cada um) e a vitrine dos nichos.
  */
 export default function PaginaParaQuem() {
   return (
     <>
-      <AberturaDePagina pagina="para-quem" disposicao="embaixo" figura={<ParedeDeBairros />} />
+      <AberturaDePagina pagina="para-quem" colunasDaFigura={4} figura={<ParedeDeBairros />} />
       <ParaQuem />
       <Vitrine />
       <ProximaPagina atual="para-quem" />

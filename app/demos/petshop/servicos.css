@@ -7,8 +7,8 @@
    duas tosas lado a lado; os acréscimos e o pelo com nó, na cartolina; o leva e traz no chapado; o pagamento na
    cartolina, com o carimbo. Na rodada 1, a folha de preços era um cartão só, de 3,45 telas; na rodada 2, sete faixas
    listradas, cada uma com um título e uma tabela (o documento listrado do crítico da rodada 3). Um movimento só, o desta
-   página: os cortes da régua assentam (400 ms), uma vez. As linhas das tabelas respondem com a régua de leitura
-   (petshop.css). */
+   página: os cortes da régua assentam (400 ms), uma vez. Só as linhas das três tabelas de preço respondem com a régua
+   de leitura (petshop.css), uma régua por vez na página; os acréscimos e o leva e traz ficam quietos (14.10.2026). */
 
 /* ---------- a abertura: o título e a régua de peso ----------
    O título no corpo dos números (102 px), em duas linhas, e como se pesa embaixo dele; ao lado, a régua de pé
@@ -23,12 +23,55 @@
 .bt-verso-abertura-grade {
   display: grid;
   grid-template-columns: minmax(0, 14fr) minmax(0, 10fr);
+  grid-template-areas: ". regua" "texto regua" "pelagens regua" ". regua";
+  grid-template-rows: 1fr auto auto 1fr;
   align-items: start;
   gap: 0 clamp(2rem, 4.44vw, 4rem);
 }
-/* O título e como se pesa no meio da altura da régua: o vazio fica repartido em cima e embaixo, e não num canto. */
+/* O título, como se pesa e como se reconhece a pelagem no meio da altura da régua: o vazio fica repartido em cima e
+   embaixo (as filas de 1fr), e não num canto. */
 .bt-verso-abertura-texto {
-  align-self: center;
+  grid-area: texto;
+}
+.bt-verso-regua {
+  grid-area: regua;
+}
+/* Como reconhecer a pelagem (o Impeccable, fechamento de 16.10.2026: a tabela pedia a pelagem, e nada dizia como
+   reconhecê-la): a outra entrada da tabela, ao lado da régua do peso. O nome na Overpass forte e, ao lado, o que se vê e as
+   raças de exemplo, numa linha cada; embaixo, a dúvida, que a casa resolve na pesagem. */
+.bt-verso-pelagens {
+  grid-area: pelagens;
+  max-width: 46rem;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid currentColor;
+}
+.bt-verso-pelagens-titulo {
+  --bt-largura: 100%;
+  font-size: var(--bt-destaque);
+  line-height: 1.2;
+}
+.bt-verso-pelagens dl {
+  display: grid;
+  grid-template-columns: minmax(0, 10.5rem) minmax(0, 1fr);
+  gap: 0.5rem 1.5rem;
+  margin: 1rem 0 0;
+}
+.bt-verso-pelagens dl > div {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: baseline;
+}
+.bt-verso-pelagens dt {
+  font-weight: 700;
+}
+.bt-verso-pelagens dd {
+  margin: 0;
+}
+.bt-verso-pelagens-duvida {
+  margin-top: 0.875rem;
+  font-weight: 700;
 }
 .bt-verso-titulo {
   max-width: 11ch;
@@ -118,16 +161,17 @@
   font-size: var(--bt-destaque);
   line-height: 1.35;
 }
-/* O corte: o filete alto na borda da faixa seguinte, vazado na fita e impresso na cartolina, da borda esquerda da fita
-   até a margem. */
+/* O corte: o filete alto na borda da faixa seguinte, vazado na fita só na largura da marca longa e impresso na
+   cartolina até a margem. Da borda esquerda da fita, ele riscava os números 10 e 25 pelo meio (crítico de fora,
+   14.10.2026; no celular, corrigido no passe do celular). */
 .bt-verso-portes li + li::before {
   content: "";
   position: absolute;
   top: 0;
-  left: calc(-1 * var(--bt-verso-fita));
+  left: -2.5rem;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--bt-cartolina) 0 var(--bt-verso-fita), var(--bt-uva) 0);
+  background: linear-gradient(90deg, var(--bt-cartolina) 0 2.5rem, var(--bt-uva) 0);
   translate: 0 -50%;
 }
 /* Os cortes assentam, uma vez, ao abrir a página: chegam 1,5 rem da direita até o lugar, na curva de entrada, sem passar
@@ -159,6 +203,22 @@
 @media (max-width: 1023.98px) {
   .bt-verso-abertura-grade {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    grid-template-rows: none;
+  }
+  .bt-verso-abertura-grade > * {
+    grid-area: auto;
+  }
+  /* A pelagem antes da régua (a fita continua a sangrar até o balcão): o nome em cima, o que se vê embaixo. */
+  .bt-verso-pelagens {
+    margin-top: 2.25rem;
+  }
+  .bt-verso-pelagens dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.875rem;
+  }
+  .bt-verso-pelagens dl > div {
+    gap: 0.125rem;
   }
   .bt-verso-abertura-texto {
     padding-top: 2.5rem;
@@ -191,7 +251,7 @@
   .bt-verso-faixa {
     margin-top: 0.25rem;
   }
-  /* O corte de 10 e de 25 kg entra na fita só na largura da marca longa: na fita estreita, ele riscava o número. */
+  /* O corte entra na fita na largura da marca longa do celular. */
   .bt-verso-portes li + li::before {
     left: -1.75rem;
     background: linear-gradient(90deg, var(--bt-cartolina) 0 1.75rem, var(--bt-uva) 0);
@@ -204,11 +264,18 @@
    lado a lado, para o tutor comparar a máquina e a tesoura na mesma pelagem (lapidação, rodada 3: as três tabelas iguais
    e seguidas, cada uma numa faixa). O nome de cada serviço a 80 px, com o que ele compreende logo embaixo; os preços na
    Overpass forte, a 24 px. */
-/* O balcão em volta do verso: as margens de tinta em cima e embaixo também são a virada de valor da página. */
+/* O balcão em volta do verso: a margem de tinta em cima também é a virada de valor da página. Embaixo, o verso passa da
+   borda do balcão e deita 96 px sobre a cartolina dos acréscimos, com a sombra nela (crítico de fora, segunda volta: depois
+   do cartão, três viradas seguidas em corte reto liam como faixas alternadas de fundo; é a peça sobre a borda das viradas
+   3→4 e 4→5 do Início, uma vez nesta página). O flow-root guarda a margem negativa dentro da cena (o overflow: clip não a
+   isola), e o z-index põe o cartão por cima da cena seguinte. */
 .bt-verso-mesa {
-  padding: clamp(4.5rem, 9.5vw, 8.5rem) var(--bt-balcao);
+  z-index: 1;
+  display: flow-root;
+  padding: clamp(4.5rem, 9.5vw, 8.5rem) var(--bt-balcao) 0;
 }
 .bt-verso-cartao {
+  margin-bottom: -6rem;
   border-radius: var(--bt-faca);
 }
 .bt-verso-folha {
@@ -277,9 +344,17 @@
 .bt-verso-banda {
   padding-block: clamp(3.5rem, 6.5vw, 6rem);
 }
+/* Em cima, os 96 px do verso deitado. */
+.bt-verso-extras {
+  padding-top: calc(clamp(3.5rem, 6.5vw, 6rem) + 6rem);
+}
 
-/* As tabelas (as da folha, a dos acréscimos e a do leva e traz): sem fundo nas linhas (o acetato fica por trás), os
-   fios na tinta a 12% (ou na clara a 22%, no chapado), o cabeçalho sobre um filete de tinta. */
+/* As tabelas (as da folha, a dos acréscimos e a do leva e traz): sem fundo nas linhas (nas de preço, o acetato fica por
+   trás), os fios na tinta a 12% (ou na clara a 22%, no chapado), o cabeçalho sobre um filete de tinta. O invólucro é o
+   bloco de contenção do cabeçalho escondido no celular (nas de preço, a .bt-regua já o era). */
+.bt-verso-tabela {
+  position: relative;
+}
 .bt-verso-tabela table {
   width: 100%;
   border-collapse: collapse;
@@ -379,7 +454,7 @@
    em cada linha); o "Pelagem" do canto fica só para o leitor de tela. Os acréscimos e o leva e traz viram fichas: o nome,
    o que compreende (ou os dias e a janela) e o valor, sem os cabeçalhos à vista (o valor e a duração se dizem sozinhos;
    o "ida e volta" vai junto do valor). As linhas continuam linhas de tabela para o leitor de tela (os papéis em
-   tabela-de-valores.tsx e na página) e respondem com a régua de leitura. */
+   tabela-de-valores.tsx e na página); só as de preço respondem com a régua de leitura. */
 @media (max-width: 767.98px) {
   .bt-verso-tabela :is(table, thead, tbody, caption) {
     display: block;
@@ -404,18 +479,17 @@
   /* Fora da vista, e não fora da árvore: a caixa no tamanho do texto, recortada inteira (a caixa de 1 px fazia o texto
      transbordar dela). */
   .bt-verso-precos thead th:first-child,
-  .bt-verso-acrescimos thead,
-  .bt-verso-bairros thead {
+  .bt-verso-acrescimos thead {
     position: absolute;
     clip-path: inset(50%);
     white-space: nowrap;
     pointer-events: none;
   }
-  :is(.bt-verso-acrescimos, .bt-verso-bairros) thead tr {
+  .bt-verso-acrescimos thead tr {
     display: flex;
     gap: 1rem;
   }
-  .bt-verso-tabela:is(.bt-verso-acrescimos, .bt-verso-bairros) thead th {
+  .bt-verso-tabela.bt-verso-acrescimos thead th {
     min-width: max-content; /* vence a largura em % da mesa, que vem depois nesta folha */
   }
   .bt-verso-precos tr {
@@ -454,32 +528,81 @@
     text-align: right;
     white-space: nowrap;
   }
-  .bt-verso-bairros tr {
-    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+/* As fichas, quando a tabela de preço não cabe (a letra do navegador a 200%, o Impeccable, fechamento de 16.10.2026: o
+   cabeçalho dos portes e os valores passavam da coluna e se cobriam, no celular e nas tosas lado a lado). Cada pelagem
+   vira uma ficha, e cada porte uma linha dela: o porte e o peso (data-rotulo, fora da árvore de acessibilidade: o
+   cabeçalho da coluna já o diz), embaixo o valor e a duração; o cabeçalho sai da vista e fica para o leitor de tela. O
+   contêiner é a tabela; o limite é o que as três colunas de valor pedem, em rem (crescem com a letra): 31 rem na tabela
+   da mesa e do tablet, 15,25 rem nas três colunas do celular. */
+.bt-verso-precos {
+  container: bt-tabela / inline-size;
+}
+@media (min-width: 768px) {
+  @container bt-tabela (width < 31rem) {
+    .bt-verso-precos :is(table, thead, tbody, caption) {
+      display: block;
+    }
+    .bt-verso-precos thead {
+      position: absolute;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .bt-verso-precos tr {
+      display: grid;
+      row-gap: 0.75rem;
+      padding-block: 1.25rem;
+      border-bottom: 1px solid var(--bt-fio);
+    }
+    .bt-verso-precos :is(th, td),
+    .bt-verso-precos tr[data-nota] :is(th, td) {
+      width: auto;
+      padding: 0;
+      border: 0;
+    }
+    .bt-verso-precos.bt-verso-tabela td[data-rotulo] {
+      text-align: start;
+    }
+    .bt-verso-precos td[data-rotulo]::before {
+      content: attr(data-rotulo) / "";
+      display: block;
+      font-weight: 600;
+      font-size: var(--bt-nota);
+      line-height: 1.35;
+    }
+    .bt-verso-precos td[data-rotulo] :is(.bt-verso-valor, .bt-verso-tempo) {
+      display: inline-block;
+      margin-right: 0.75rem;
+    }
   }
-  .bt-verso-bairros tbody th {
-    grid-area: 1 / 1;
-  }
-  .bt-verso-bairros tbody td:nth-child(2) {
-    grid-column: 1 / -1;
-    font-weight: 700;
-  }
-  .bt-verso-bairros tbody td:nth-child(3) {
-    grid-column: 1 / -1;
-  }
-  .bt-verso-bairros.bt-verso-tabela tbody td:last-child {
-    grid-area: 1 / 2;
-    width: auto;
-  }
-  .bt-verso-bairros tbody td:last-child::after {
-    content: attr(data-rotulo);
-    display: block;
-    font-family: var(--font-bt-texto), sans-serif;
-    font-weight: 400;
-    font-size: var(--bt-nota);
-    line-height: 1.3;
-    color: var(--bt-corpo-cor);
-    text-transform: lowercase;
+}
+@media (max-width: 767.98px) {
+  @container bt-tabela (width < 15.25rem) {
+    .bt-verso-precos thead {
+      position: absolute;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .bt-verso-precos tr {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .bt-verso-precos.bt-verso-tabela td[data-rotulo] {
+      text-align: start;
+    }
+    .bt-verso-precos td[data-rotulo]::before {
+      content: attr(data-rotulo) / "";
+      display: block;
+      font-weight: 600;
+      font-size: var(--bt-nota);
+      line-height: 1.35;
+    }
+    .bt-verso-precos td[data-rotulo] :is(.bt-verso-valor, .bt-verso-tempo) {
+      display: inline-block;
+      margin-right: 0.75rem;
+    }
   }
 }
 
@@ -546,51 +669,63 @@
 }
 
 /* ---------- o leva e traz (o chapado) ----------
-   O título, a condição e o que fica de fora numa coluna; a tabela na outra, mais larga (lapidação, rodada 2: o título
-   amarelo no alto à esquerda e as linhas com fio embaixo eram o molde das cenas de tinta). */
+   O quadro de itinerário (o Impeccable, fechamento de 16.10.2026: o título à esquerda e a tabela de seis linhas à
+   direita eram o mesmo molde do "Pelo com nó", logo acima, e a janela se repetia em cinco linhas). O título em cima, com
+   a condição e a janela embaixo dele, uma vez; depois, os dias de ponta a ponta, uma coluna por dia (o dia no corpo dos
+   portes, na cartolina; os bairros; o valor de ida e volta), cada uma com o fio da clara em cima; no pé, o que fica de
+   fora. No celular, os dias um embaixo do outro. */
 .bt-verso-leva {
   padding-block: clamp(4rem, 8vw, 7.5rem);
 }
-.bt-verso-leva-grade {
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-  align-items: start;
-  gap: 2.5rem clamp(2rem, 4.44vw, 4rem);
-}
 .bt-verso-leva-condicao {
-  max-width: 24ch;
+  max-width: 40ch;
   margin-top: 1.5rem;
 }
-.bt-verso-bairros thead th:nth-child(1) {
-  width: 22%;
+.bt-verso-leva-dias {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5rem clamp(2rem, 4.44vw, 4rem);
+  margin: clamp(3rem, 5.5vw, 4.5rem) 0 0;
 }
-.bt-verso-bairros thead th:nth-child(2) {
-  width: 19%;
+.bt-verso-leva-dia {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--bt-fio);
 }
-.bt-verso-bairros thead th:nth-child(4),
-.bt-verso-bairros td:last-child {
-  width: 15%;
-  text-align: right;
+.bt-verso-leva-dia dt {
+  font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
+  font-weight: 800;
+  font-stretch: 100%;
+  font-size: var(--bt-subtitulo);
+  line-height: 1.05;
+  color: var(--bt-cartolina);
 }
-.bt-verso-bairros td:last-child {
+.bt-verso-leva-dia dd {
+  margin: 0;
+}
+.bt-verso-leva-bairros {
+  margin-top: 0.875rem;
+  font-size: var(--bt-destaque);
+  line-height: 1.35;
+}
+.bt-verso-leva .bt-verso-leva-valor {
+  margin-top: 0.75rem;
   font-weight: 700;
   font-size: var(--bt-destaque);
   line-height: 1.2;
   color: var(--bt-cartolina);
   white-space: nowrap;
 }
-.bt-verso-fora {
-  max-width: 34ch;
-  margin-top: 1.5rem;
+.bt-verso-leva-sabado {
+  margin-top: 0.75rem;
+  max-width: 30ch;
 }
-@media (max-width: 1023.98px) {
-  .bt-verso-leva-grade {
+.bt-verso-fora {
+  max-width: 52ch;
+  margin-top: clamp(2.5rem, 4.5vw, 3.5rem);
+}
+@media (max-width: 767.98px) {
+  .bt-verso-leva-dias {
     grid-template-columns: minmax(0, 1fr);
-  }
-  /* No tablet, a coluna do valor com folga para "R$ 22,00" (a 15%, passava 4 px da célula a 768 px). */
-  .bt-verso-bairros thead th:nth-child(4),
-  .bt-verso-bairros td:last-child {
-    width: 19%;
   }
 }
 

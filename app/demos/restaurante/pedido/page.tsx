@@ -77,7 +77,7 @@ export default function Pedido() {
         <div className="rs-sem-script rs-pedido-sem-script">
           <p>{textos.semScript}</p>
           <p className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <Agata rotulo={casa.acao.whatsapp} />
+            <Agata rotulo={casa.acao.whatsapp} className="rs-agata-principal" />
             <Link href={daCasa("cardapio").caminho} className="rs-pontilhado">
               {daCasa("cardapio").titulo}
             </Link>

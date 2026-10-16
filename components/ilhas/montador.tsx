@@ -48,7 +48,7 @@ const PILULA =
 
 const ROTULO = "mb-2.5 block text-nota font-semibold";
 const CAPITULAR = "text-rotulo font-semibold tracking-wider text-muted-foreground uppercase";
-/** As caixas de dentro do painel: os totais, a mensagem, o plano escolhido e a condição de fundação. */
+/** As caixas de dentro do painel: os totais e a mensagem (até 16/10, também o plano escolhido e a condição de fundação). */
 const CAIXA = "rounded-[1.25rem] px-4 py-5";
 
 /**
@@ -135,6 +135,9 @@ export function Montador({ privacidade, completo }: Props) {
   const [moduloIds, setModuloIds] = useState<string[]>([]);
   const [mensagem, setMensagem] = useState<string | null>(null);
   const [previa, animate] = useAnimate<HTMLDivElement>();
+  const colunaDasEscolhas = useRef<HTMLDivElement>(null);
+  const caixaDosTotais = useRef<HTMLDListElement>(null);
+  const [faixa, setFaixa] = useState(false);
 
   const { plano, escolhidos, criacao, mensal } = somar(planoId, moduloIds);
 
@@ -169,6 +172,25 @@ export function Montador({ privacidade, completo }: Props) {
     if (!reduzir) animate(el, { opacity: [0, 1], transform: ["translateY(-8px)", "none"] }, { duration: 0.7, ease: SUAVE });
     el.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "nearest" });
   }, [mensagem, animate, previa]);
+
+  // A faixa do pé, na tabela completa abaixo de 1024 px (16/10, Impeccable): depois do toque num plano, os totais ficavam
+  // a ~1.400 px, fora da tela de 844, e o título promete "Dois toques, valor exato". Ela aparece enquanto as escolhas
+  // estão na tela e os totais de verdade não; chegando a eles, sai (sem os valores duas vezes à vista).
+  useEffect(() => {
+    const escolhas = colunaDasEscolhas.current;
+    const totais = caixaDosTotais.current;
+    if (!completo || !escolhas || !totais) return;
+    const vistos = new Map<Element, boolean>();
+    const observador = new IntersectionObserver((entradas) => {
+      for (const e of entradas) vistos.set(e.target, e.isIntersecting);
+      setFaixa(!!vistos.get(escolhas) && !vistos.get(totais));
+    });
+    observador.observe(escolhas);
+    observador.observe(totais);
+    return () => observador.disconnect();
+  }, [completo]);
+
+  const preparar = () => setMensagem(mensagemDeOrcamento({ plano: plano.nome, modulos: escolhidos.map((m) => m.nome), criacao, mensal }));
 
   function escolherPlano(id: string) {
     setPlanoId(id);
@@ -244,7 +266,7 @@ export function Montador({ privacidade, completo }: Props) {
 
   const acao = (
     <>
-      <Button variant="secondary" className="w-full" onClick={() => setMensagem(mensagemDeOrcamento({ plano: plano.nome, modulos: escolhidos.map((m) => m.nome), criacao, mensal }))}>
+      <Button variant="secondary" className="w-full" onClick={preparar}>
         Preparar mensagem
       </Button>
 
@@ -256,7 +278,7 @@ export function Montador({ privacidade, completo }: Props) {
             <p className="text-nota">{mensagem}</p>
             {/* No celular, os dois na largura toda, um sobre o outro; a partir de 640 px, lado a lado. */}
             <div className="mt-4 grid gap-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-              <a href={linkWhatsApp(mensagem)} target="_blank" rel="noopener" className={buttonVariants()}>
+              <a href={linkWhatsApp(mensagem)} target="_blank" rel="noopener" className={buttonVariants({ className: "vd-brilho" })}>
                 <IconeWhatsApp className="size-4.5" />
                 Enviar no WhatsApp
               </a>
@@ -267,13 +289,13 @@ export function Montador({ privacidade, completo }: Props) {
         )}
       </div>
 
-      <p className="mt-4 text-rotulo text-muted-foreground">{privacidade}</p>
+      <p className="mt-4 max-w-[60ch] text-rotulo text-muted-foreground">{privacidade}</p>
     </>
   );
 
   // Lado a lado a partir de 400 px; abaixo, um sobre o outro: em Archivo Black (05/10), "R$ 3.100" passava da caixa até 375 px.
   const totais = (
-    <dl className="my-6 grid gap-3 min-[25rem]:grid-cols-2">
+    <dl ref={caixaDosTotais} className="my-6 grid gap-3 min-[25rem]:grid-cols-2">
       <Total rotulo="Criação" valor={criacao} />
       <Total rotulo="Por mês" valor={mensal} />
     </dl>
@@ -281,7 +303,8 @@ export function Montador({ privacidade, completo }: Props) {
 
   // A sombra de 60 px saiu em 03/10 pela regra 3 das Diretrizes de Design Premium e voltou no mesmo dia,
   // a pedido do usuário: é parte da identidade do site.
-  const painel = "rounded-[2rem] border border-border bg-card px-6 py-8 shadow-[0_24px_60px_rgb(15_42_71/0.1)] sm:px-8";
+  // min-w-0: com a letra a 200% a 390 px, o painel não alarga a página (16/10, Impeccable).
+  const painel = "min-w-0 rounded-[2rem] border border-border bg-card px-6 py-8 shadow-[0_24px_60px_rgb(15_42_71/0.1)] sm:px-8";
 
   if (!completo) {
     return (
@@ -296,29 +319,63 @@ export function Montador({ privacidade, completo }: Props) {
   const { textos } = completo;
   return (
     <div className={`${painel} grid gap-10 lg:grid-cols-2 lg:gap-14 lg:p-10`}>
-      <div>{escolhas}</div>
-      <div>
-        <p className={CAPITULAR}>{textos.resumo}</p>
-        <dl className="mt-2 divide-y divide-border border-y border-border">
-          <Linha rotulo={`Plano ${plano.nome}`} valor={reais(plano.criacao)} detalhe={` e ${reais(plano.mensal)} por mês`} forte />
-          {escolhidos.map((m) => (
-            <Linha key={m.id} rotulo={m.nome} valor={reais(m.criacao)} detalhe={` e ${reais(m.mensal ?? 0)} por mês`} />
-          ))}
-        </dl>
+      <div ref={colunaDasEscolhas} className="min-w-0">
+        {escolhas}
+      </div>
+      {/* A faixa presa ao pé da tela, só no celular e no tablet: os dois totais e a ação. Fora de vista, inerte. */}
+      <div
+        inert={!faixa}
+        className={`fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-12px_32px_rgb(15_42_71/0.12)] backdrop-blur-md transition-[translate,visibility] duration-300 ease-atlas motion-reduce:transition-none lg:hidden ${faixa ? "visible translate-y-0" : "invisible translate-y-full"}`}
+      >
+        <div className="mx-auto flex max-w-xl flex-wrap items-center justify-between gap-x-4 gap-y-2">
+          <p className="text-nota tabular-nums">
+            <span className="whitespace-nowrap">
+              Criação <span className="font-semibold">{reais(criacao)}</span>
+            </span>
+            <span aria-hidden="true" className="px-1.5 text-muted-foreground">
+              ·
+            </span>
+            <span className="whitespace-nowrap">
+              Por mês <span className="font-semibold">{reais(mensal)}</span>
+            </span>
+          </p>
+          {/* Abaixo de 480 px, a ação desce para a linha de baixo, na largura toda: ao lado dos valores, não cabia. */}
+          <Button variant="secondary" size="sm" className="w-full min-[30rem]:w-auto" onClick={preparar}>
+            Preparar mensagem
+          </Button>
+        </div>
+      </div>
+      <div className="min-w-0">
+        {/* A conta item a item, só com módulos: sem eles, a única linha (o plano) repetia os dois totais logo abaixo. */}
+        {escolhidos.length > 0 && (
+          <>
+            <p className={CAPITULAR}>{textos.resumo}</p>
+            <dl className="mt-2 divide-y divide-border border-y border-border">
+              <Linha rotulo={`Plano ${plano.nome}`} valor={reais(plano.criacao)} detalhe={` e ${reais(plano.mensal)} por mês`} forte />
+              {escolhidos.map((m) => (
+                <Linha key={m.id} rotulo={m.nome} valor={reais(m.criacao)} detalhe={` e ${reais(m.mensal ?? 0)} por mês`} />
+              ))}
+            </dl>
+          </>
+        )}
         {totais}
         <p className={CAPITULAR}>{textos.pagamento}</p>
-        <dl className="mt-2 divide-y divide-border border-y border-border">
-          <Linha rotulo={textos.noBriefing} valor={reais(criacao / 2)} />
-          <Linha rotulo={textos.naPublicacao} valor={reais(criacao / 2)} />
+        {/* As duas parcelas são iguais: uma linha, com o valor uma vez (até 16/10, duas linhas com o mesmo valor). */}
+        <dl className="mt-2 border-y border-border">
+          <Linha rotulo={`${textos.noBriefing} e ${textos.naPublicacao.toLowerCase()}`} valor={`2 × ${reais(criacao / 2)}`} />
         </dl>
         <p className="mt-3 text-nota text-muted-foreground">
           {textos.inicioDaMensalidade} {textos.mensalidadeCompreende}
         </p>
-        <div className={`${CAIXA} my-6 border border-primary/45`}>
-          <p className="text-rotulo font-semibold text-accent">{textos.fundacao.rotulo}</p>
-          <p className="mt-1 text-nota">{textos.fundacao.texto}</p>
-          {/* O vínculo com seta do site (.vd-vinculo): no hover, o sublinhado aparece e a seta avança (até 03/10, não respondia). */}
-          <Link href={textos.fundacao.destino} className="vd-vinculo mt-2 min-h-11 gap-1.5 text-nota font-semibold">
+        {/* A condição de fundação numa nota, com o vínculo para ela (até 16/10, numa caixa com filete de bronze dentro do painel:
+            cartão dentro de cartão, e o terceiro bloco da condição no site, depois do início e de Planos). */}
+        <div className="mt-6 mb-6 text-nota">
+          <p>
+            <span className="font-semibold text-accent">{textos.fundacao.rotulo}.</span> {textos.fundacao.texto}
+          </p>
+          {/* O vínculo com seta do site (.vd-vinculo): no hover, o sublinhado aparece e a seta avança (até 03/10, não respondia).
+              Na linha de baixo: no meio do texto, os 44 px do alvo abriam a entrelinha da última linha. */}
+          <Link href={textos.fundacao.destino} className="vd-vinculo min-h-11 gap-1.5 font-semibold">
             Ver a condição
             <IconeSeta className="size-3.5" />
           </Link>
@@ -329,7 +386,13 @@ export function Montador({ privacidade, completo }: Props) {
   );
 }
 
-/** Na tabela completa, sob as pílulas: o preço do plano escolhido, o que ele inclui e o site feito nele. */
+/**
+ * Na tabela completa, sob as pílulas: o que o plano escolhido inclui e o
+ * site feito nele, sob um filete, direto no painel. Até 16/10, numa caixa
+ * creme, com o preço em cima: o mesmo valor aparecia três vezes no painel
+ * (aqui, na conta e nos totais) e a caixa era um cartão dentro do cartão
+ * (o crítico de fora).
+ */
 function DetalheDoPlano({
   plano,
   textos,
@@ -340,12 +403,8 @@ function DetalheDoPlano({
   site?: { nome: string; caminho: string };
 }) {
   return (
-    <div className={`${CAIXA} mt-4 bg-background`}>
-      <p className="text-nota tabular-nums">
-        <span className="font-semibold">{reais(plano.criacao)}</span>
-        <span className="text-muted-foreground"> de criação, e {reais(plano.mensal)} por mês</span>
-      </p>
-      <p className={`${CAPITULAR} mt-4`}>{textos.inclui}</p>
+    <div className="mt-5 border-t border-border pt-4">
+      <p className={CAPITULAR}>{textos.inclui}</p>
       <ul className="mt-2 space-y-2">
         {plano.itens.map((item) => (
           <li key={item} className="flex gap-2.5 text-nota">

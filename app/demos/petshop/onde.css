@@ -3,8 +3,9 @@
    contrato da fundação). Prefixo bt-.
 
    O verso do cartão: o mapinho em sangria, numa tinta só, com a baía em chapado; o h1 vazado na água, na linha da
-   casa; o endereço impresso na água. A baía deságua no chapado de baixo, onde vai o horário dia a dia. Nada se revela
-   e nada inclina aqui: o mapa é o dispositivo e o chão da página (identidade, seção 4.9, "Onde: nada"). */
+   casa; o endereço impresso na água. A baía deságua no chapado de baixo, onde vai o horário dia a dia. Nada inclina
+   aqui: o mapa é o dispositivo e o chão da página. O momento da página, uma vez, ao abrir: o mapa chega perto da casa
+   (abaixo; crítico de fora, 14.10.2026: era a única página sem momento próprio). */
 
 /* ---------- o verso: o mapinho em sangria ----------
    O quadro tem a proporção de 3:2 (o desenho de 1400 × 1000 cortado só em cima e embaixo, 33 unidades de cada lado: os
@@ -24,6 +25,58 @@
 }
 .bt-onde-mapa {
   height: 100%;
+  overflow: clip;
+}
+/* O momento de Onde ("o mapa que se desenha", 19-o-padrao-atlas.md, seção 6), uma vez, ao abrir a página: o mapa chega
+   perto da casa. O desenho abre um pouco mais longe (0,82: os bairros em volta, que o recorte de perto deixa fora do
+   quadro, à vista pela borda) e vem até o recorte em 600 ms, sem passar dele, em volta da casa (o
+   quadrado de tinta, a 47% e 40% do recorte). É o mapinho da cena 5 do Início visto de perto, chegando perto. Não é o
+   rolo nem a batida: nada corre de lado e nada desce. O título e o endereço não se movem (o título é o LCP), e a baía
+   fica embaixo deles do primeiro ao último quadro. Na troca de página (.ja-aberto), espera o cartão deslizar no
+   balcão, como os cortes de Serviços. Só transform; com movimento reduzido, o mapa já está de perto.
+   Crítico de fora, segunda volta: o mapa chegava perto 120 ms depois da primeira pintura, na curva de entrada (metade do
+   curso em ~40 ms), enquanto o olho ainda pousava na página, e o gesto não se via. Agora espera 400 ms, longe, e chega
+   perto na curva expressiva, que não gasta o curso no arranque. É do compositor: corre também durante a hidratação. */
+.bt-onde-mapa .bt-mapa-desenho {
+  overflow: visible;
+  transform-origin: 47.4% 40.4%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bt-onde-mapa .bt-mapa-desenho {
+    animation: bt-onde-chega 600ms var(--bt-expressivo) 400ms backwards;
+  }
+  html.ja-aberto .bt-onde-mapa .bt-mapa-desenho {
+    animation-delay: 480ms;
+  }
+}
+@keyframes bt-onde-chega {
+  from {
+    transform: scale(0.82);
+  }
+}
+/* A placa da casa e o nome da avenida, no corpo de leitura do mapa de perto (em unidades do desenho: a 1440 px, uma
+   unidade vale 1,85 px; no celular, a 390 px, 1,11 px). */
+.bt-onde-mapa {
+  --bt-mapa-rotulo-rua: 7.5px;
+}
+.bt-onde-mapa .bt-mapa-placa-casa {
+  font-size: 9px;
+}
+@media (max-width: 1023.98px) {
+  .bt-onde-mapa {
+    --bt-mapa-rotulo-rua: 10.25px;
+  }
+  .bt-onde-mapa .bt-mapa-placa-casa {
+    font-size: 13.5px;
+  }
+}
+@media (min-width: 600px) and (max-width: 1023.98px) {
+  .bt-onde-mapa {
+    --bt-mapa-rotulo-rua: 7.5px;
+  }
+  .bt-onde-mapa .bt-mapa-placa-casa {
+    font-size: 8.5px;
+  }
 }
 /* O crédito do OpenStreetMap no canto de baixo à direita, em terra: a nota sobre o próprio papel, que cobre as ruas. */
 .bt-onde-mapa .bt-mapa-credito {
@@ -79,8 +132,8 @@
    Os sete dias impressos um embaixo do outro, à esquerda, como a tabela colada na porta (lapidação, rodada 2: a grade de
    sete colunas, com "9h às 18h" partido em duas linhas quatro vezes, e o título amarelo no alto à esquerda, eram o
    molde das cenas de tinta): o dia na Overpass forte, a hora na Anybody larga, a 36 px, na cartolina (os números da
-   casa), numa linha só; o dia fechado sem tinta cheia, na Overpass, para os abertos se lerem primeiro. A régua de leitura
-   corre de dia em dia. Do outro lado, o título ("Terça a sábado"), o prazo de resposta e, no pé, o carimbo (o claro,
+   casa), numa linha só; o dia fechado sem tinta cheia, na Overpass, para os abertos se lerem primeiro. Sem régua de
+   leitura (14.10.2026): quatro grupos se leem sem ela. Do outro lado, o título ("Terça a sábado"), o prazo de resposta e, no pé, o carimbo (o claro,
    que a tinta troca sozinha) e o telefone. */
 .bt-onde-semana {
   padding-block: clamp(4.5rem, 8vw, 7.5rem);
@@ -161,6 +214,41 @@
 }
 .bt-onde-feriados {
   margin-top: 1.25rem;
+}
+/* Quando falta espaço (a letra do navegador a 200%, o Impeccable, fechamento de 16.10.2026: "9h às 18h" passava da tela,
+   cortado, e cobria "Sábado"), os dias e a hora se empilham, e a hora quebra se ainda não couber. O contêiner é a coluna
+   da semana; o limite é o dia, o vão e a hora, em rem: 24 rem na grade da mesa (a coluna dos dias tem 11 rem), 16,5 no
+   celular. */
+.bt-onde-semana-dias {
+  container: bt-semana / inline-size;
+}
+@media (min-width: 1024px) {
+  @container bt-semana (width < 24rem) {
+    .bt-onde-semana-dias .bt-onde-dia {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .bt-onde-semana-dias .bt-onde-dias .bt-onde-dia dd {
+      grid-column: 1;
+      grid-row: auto;
+      padding-left: 0;
+      border-left: 0;
+      white-space: normal;
+    }
+  }
+}
+@media (max-width: 1023.98px) {
+  @container bt-semana (width < 16.5rem) {
+    .bt-onde-semana-dias .bt-onde-dia {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .bt-onde-semana-dias .bt-onde-dias .bt-onde-dia dd {
+      grid-column: 1;
+      grid-row: auto;
+      padding-left: 0;
+      border-left: 0;
+      white-space: normal;
+    }
+  }
 }
 .bt-onde-pedir {
   grid-area: pedir;

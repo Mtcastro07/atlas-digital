@@ -55,6 +55,10 @@
   --od-vidrado: radial-gradient(130% 90% at 18% 0%, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0) 55%), radial-gradient(90% 70% at 100% 100%, rgb(43 40 38 / 0.06), transparent 70%);
   --od-traco: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'><path d='M2 6.5C30 4.2 52 7.6 84 5.4s58-2 82 .4 22-.6 32-.9' fill='none' stroke='%23a32319' stroke-width='2.4' stroke-linecap='round'/></svg>");
   --od-traco-claro: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 10' preserveAspectRatio='none'><path d='M2 6.5C30 4.2 52 7.6 84 5.4s58-2 82 .4 22-.6 32-.9' fill='none' stroke='%23fbfaf6' stroke-width='2.4' stroke-linecap='round'/></svg>");
+  /* O lápis que circula: a volta à mão, aberta, que passa do ponto de partida (o "Nenhum" do termo); a segunda volta,
+     um pouco torta, é a do lápis que passa de novo sob a mão. */
+  --od-circulo: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><path d='M58 9C130 2 236 3 274 13c22 6 24 30 21 50-3 22-26 31-82 33-66 3-152 2-186-8C4 81 3 54 6 36 9 18 30 9 92 6c34-2 66-1 92 2' fill='none' stroke='%23a32319' stroke-width='3' stroke-linecap='round'/></svg>");
+  --od-circulo-2: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 100' preserveAspectRatio='none'><path d='M30 18C96 4 228 2 280 16c18 6 18 36 12 54-6 18-30 26-88 27-70 2-150-1-182-12C4 79 4 52 8 38c4-14 22-22 76-26c32-2 62-1 84 1' fill='none' stroke='%23a32319' stroke-width='2.2' stroke-linecap='round' opacity='.75'/></svg>");
 
   font-family: var(--font-od-texto), "Segoe UI", system-ui, sans-serif;
   font-size: var(--od-corpo);
@@ -76,13 +80,22 @@ html:has([data-demo="odontologia"]) {
     --od-topo: 5.25rem;
   }
 }
-/* O "Ir para o conteúdo" (do layout raiz), na peça de cerâmica da clínica. */
-body:has([data-demo="odontologia"]) > a[href="#conteudo"] {
+/* O "Ir para o conteúdo" (do layout raiz, fora de [data-demo]: nem os tokens nem a fonte do site chegam a ele), na peça
+   de cerâmica da clínica, com o anel do lápis vermelho (antes, a pílula e o anel laranja do Atlas; o fechamento do
+   Impeccable, 16.10.2026). A fonte fica a do sistema: a variável da Red Hat Text só existe dentro do site. */
+html:has([data-demo="odontologia"]) body > a[href="#conteudo"] {
   border: 1px solid rgb(43 40 38 / 0.25);
-  background: #fdfcf9;
+  border-radius: 0.55rem;
+  background: linear-gradient(180deg, #fdfcf8, #e9e5dc);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 10px 18px -10px rgb(43 40 38 / 0.45);
   color: #2b2826;
-  font-family: var(--font-od-texto), system-ui, sans-serif;
-  font-weight: 600;
+  font-weight: 700;
+}
+html:has([data-demo="odontologia"]) body > a[href="#conteudo"]:focus-visible {
+  outline: 2px solid #a32319;
+  outline-offset: 3px;
 }
 [data-demo="odontologia"] ::selection {
   background: var(--marcador);
@@ -161,11 +174,17 @@ body:has([data-demo="odontologia"]) > a[href="#conteudo"] {
 .od-ancora {
   pointer-events: none;
 }
-/* A reserva: o mapa em traço, à vista sem script, sem WebGL e até o palco acender. */
-.od-reserva {
-  transition: opacity 600ms ease-out;
+/* A reserva: o mapa em traço, à vista sem script, sem WebGL e até a placa aparecer. Ela sai quando o canvas desenha o
+   primeiro quadro (data-pronto), e não quando o palco nasce: antes, saía um segundo antes da placa chegar, e a capa
+   ficava com o lado da placa vazio (o crítico de fora, 14.10.2026). A passagem é cruzada (identidade, seção 9), mas
+   curta: o mapa sai em 160 ms, e a placa acende de 100 a 400 ms (o motor, ESTREIA); em 600 ms, os dois desenhos, que não
+   coincidem, ficavam à vista juntos, com dois jogos de números (o crítico de fora, 15.10.2026). */
+@media (prefers-reduced-motion: no-preference) {
+  .od-reserva {
+    transition: opacity 160ms ease-out;
+  }
 }
-html[data-palco]:not([data-sem-ceramica]) .od-reserva {
+html:has(.od-palco[data-pronto]):not([data-sem-ceramica]) .od-reserva {
   opacity: 0;
 }
 
@@ -203,18 +222,20 @@ html[data-palco]:not([data-sem-ceramica]) .od-reserva {
     var(--od-grao),
     linear-gradient(180deg, #b02a20, #921f17);
 }
-html[data-tinta="escura"] .od-pasta::before,
+/* Antes da hidratação (sem data-tinta-lida), a pasta já nasce com a tinta da primeira cena da página: antes, nascia bege
+   sobre o grafite da capa e só escurecia depois (perto de 1,2 s com a CPU 4×; o crítico de fora, 14.10.2026). */
+:is(html[data-tinta="escura"], html:not([data-tinta-lida]):has(.od-troca > [data-tinta="escura"]:first-child)) .od-pasta::before,
 html[data-tinta="vermelha"] .od-pasta::after {
   opacity: 1;
 }
-html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta {
+:is(html[data-tinta], html:not([data-tinta-lida]):has(.od-troca > [data-tinta="escura"]:first-child)) .od-pasta {
   --foreground: #f3f1ec;
   --muted-foreground: #cfc8bf;
   --card: transparent;
   color: var(--foreground);
   box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.35);
 }
-html[data-tinta="escura"] .od-aba:not([aria-current]) {
+:is(html[data-tinta="escura"], html:not([data-tinta-lida]):has(.od-troca > [data-tinta="escura"]:first-child)) .od-aba:not([aria-current]) {
   background: linear-gradient(180deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0.04));
   box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.12);
 }
@@ -223,11 +244,11 @@ html[data-tinta="vermelha"] .od-aba:not([aria-current]) {
   box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.18);
 }
 /* A aba aberta tem a cor da cena de cima da página (o grafite, na página que abre no escuro). */
-html[data-tinta="escura"] .od-aba[aria-current] {
+:is(html[data-tinta="escura"], html:not([data-tinta-lida]):has(.od-troca > [data-tinta="escura"]:first-child)) .od-aba[aria-current] {
   background: #262321;
   box-shadow: inset 1px 1px 0 rgb(255 255 255 / 0.1);
 }
-html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta :focus-visible {
+html[data-tinta] .od-pasta :focus-visible {
   outline-color: #f3f1ec;
 }
 .od-pasta-miolo {
@@ -369,11 +390,6 @@ html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta :focus-visible
 .od-pasta-acao[aria-current] {
   visibility: hidden;
 }
-@media (max-width: 639px) {
-  .od-pasta-acao {
-    display: none;
-  }
-}
 /* O interruptor do refletor: a placa de interruptor com a tecla de balanço. Ligado (o ambiente correndo), a tecla
    baixa em cima, e a luz piloto acesa; pausado, a tecla vira e a luz apaga. O nome para o leitor de tela é o do
    botão (o controle de movimento). */
@@ -422,6 +438,11 @@ html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta :focus-visible
 .od-interruptor button[aria-pressed="true"]::after {
   background: #b3aca2;
   box-shadow: none;
+}
+/* Sem o que pausar (antes da hidratação, sem script, com movimento reduzido), a placa do interruptor não fica vazia na
+   pasta, em nenhuma largura (na mesa, ela nascia como um ladrilho branco vazio; o crítico de fora, 14.10.2026). */
+.od-interruptor:has(button:disabled) {
+  visibility: hidden;
 }
 
 /* ---------- a ação: a peça de cerâmica ----------
@@ -712,6 +733,9 @@ html:is([data-tinta="escura"], [data-tinta="vermelha"]) .od-pasta :focus-visible
   font-size: var(--od-miudo);
   color: var(--muted-foreground);
 }
+.od-receituario-fim > p:first-child {
+  max-width: 70ch;
+}
 .od-receituario-legais {
   display: flex;
   flex-wrap: wrap;
@@ -876,9 +900,17 @@ html[data-palco] .od-capa-titulo {
     grid-column: 2;
     grid-row: 1;
   }
+  /* Sem o respiro de baixo da cena: o fôlego do último passo, com a placa presa, já é o espaço até a ficha (eram ~400 px de
+     bege entre o último passo e o título da ficha; o fechamento do Impeccable, 16.10.2026). */
+  .od-percurso {
+    padding-bottom: 0;
+  }
   .od-percurso-texto {
     grid-column: 1;
     grid-row: 1;
+    /* O fôlego depois do último passo: com ele no meio da tela, a placa ainda está presa (sem ele, o fim da grade já a
+       empurrava para cima, e a placa girada para o fundo de baixo entrava sob a pasta; o crítico de fora, 14.10.2026). */
+    padding-bottom: 22svh;
   }
 }
 .od-ancora-do-percurso {
@@ -913,34 +945,17 @@ html[data-palco] .od-capa-titulo {
   line-height: 1;
   letter-spacing: -0.03em;
 }
-/* O lápis passa embaixo da região de agora. */
-.od-passo-nome::after {
-  content: "";
-  position: absolute;
-  left: -0.1em;
-  right: -0.1em;
-  bottom: -0.18em;
-  height: 0.16em;
-  background: var(--od-traco) left center / 0% 100% no-repeat;
-  transition: background-size 620ms var(--od-saida);
-}
-.od-passo[data-agora] .od-passo-nome::after {
-  background-size: 100% 100%;
-}
 .od-passo-frase {
   margin-top: 1.5rem;
   max-width: 44ch;
 }
-/* Os dentes da região, na numeração FDI, em cartaz: o número como imagem, gravado em grafite claro. */
+/* Os dentes da região, na numeração FDI, de legenda sob o nome leigo, como na ficha à mão (antes, em cartaz, 71 px
+   acima do nome: o número técnico vinha antes do que a pessoa entende; o fechamento do Impeccable, 16.10.2026). */
 .od-passo-dentes {
-  order: -1;
-  margin-bottom: 0.75rem;
-  font-family: var(--font-od-titulo), sans-serif;
-  font-size: clamp(2.6rem, 1.4rem + 3.4vw, 5.25rem);
-  font-weight: 200;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  color: #7a736b; /* 3,9:1 na cerâmica clara, letra grande */
+  margin-top: 0.6rem;
+  font-size: var(--od-nota);
+  font-weight: 600;
+  color: var(--muted-foreground);
 }
 .od-passo-tratamentos {
   display: flex;
@@ -953,7 +968,8 @@ html[data-palco] .od-capa-titulo {
    O papel; a ficha pautada de ponta a ponta, com a placa pequena e deitada na margem. A linha sob o ponteiro: o
    marcador passa, a região acende na placa, a miniatura do mapa vem junto do ponteiro. */
 .od-ficha-cena {
-  padding-block: clamp(5rem, 3rem + 6vw, 9rem);
+  /* Embaixo, só o respiro da mudança de cena (a faixa de papel vazio depois do pé da ficha passava de 130 px). */
+  padding-block: clamp(4rem, 2rem + 4vw, 6rem) clamp(2.5rem, 1.5rem + 2vw, 4rem);
 }
 .od-ficha-grade {
   display: grid;
@@ -1019,16 +1035,13 @@ html[data-palco] .od-capa-titulo {
 .od-ficha tbody > tr > * {
   transition: background-color 260ms ease-out;
 }
-.od-ficha tbody > tr > :first-child {
-  transition:
-    background-color 260ms ease-out,
-    box-shadow 200ms ease-out;
-}
 .od-ficha tbody > tr[data-marcada] > * {
   background-color: rgb(255 232 208 / 0.8);
 }
-.od-ficha tbody > tr[data-marcada] > :first-child {
-  box-shadow: inset 3px 0 0 var(--accent);
+/* A margem da ficha à mão: a coluna do nome recua um pouco, para a luz morna da linha marcada não encostar na primeira
+   letra. (O filete vermelho de 3 px à esquerda saiu: era o side-tab, a marca C11; o fechamento do Impeccable, 16.10.2026.) */
+.od-ficha tr > :first-child {
+  padding-left: 0.9rem;
 }
 .od-ficha-nome {
   display: inline-flex;
@@ -1066,41 +1079,12 @@ html[data-palco] .od-capa-titulo {
   .od-ficha th,
   .od-ficha td {
     border: 0;
-    padding: 0.15rem 0;
+    padding: 0.15rem 0 0.15rem 0.9rem;
   }
-}
-/* A miniatura: o mapa dos dentes pequeno, junto do ponteiro, com a região da linha. */
-.od-miniatura {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 40;
-  width: 11.5rem;
-  border-radius: 0.9rem;
-  background: var(--od-grao), var(--card);
-  box-shadow:
-    inset 0 0 0 1px var(--border),
-    0 18px 30px -18px rgb(43 40 38 / 0.5);
-  padding: 0.6rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 180ms ease-out;
-}
-.od-miniatura[data-mostra] {
-  opacity: 1;
-}
-.od-miniatura .od-faixa-passo {
-  opacity: 0;
-}
-.od-miniatura[data-ativas~="frente-superior"] [data-regiao="frente-superior"],
-.od-miniatura[data-ativas~="fundo-superior"] [data-regiao="fundo-superior"],
-.od-miniatura[data-ativas~="frente-inferior"] [data-regiao="frente-inferior"],
-.od-miniatura[data-ativas~="fundo-inferior"] [data-regiao="fundo-inferior"] {
-  opacity: 1;
 }
 
 /* ---------- 4 · os cartões de retorno ----------
-   A cerâmica média; a fila de cartões de cerâmica, que desliza de lado e sangra até a borda; o número grande conta. */
+   A cerâmica média; a fila de cartões de papel, que desliza de lado e sangra até a borda; o 30 das manutenções conta. */
 /* Na cerâmica média, o aço mais escuro (5,3:1). */
 .od-cartoes,
 .od-porta,
@@ -1179,7 +1163,9 @@ html[data-palco] .od-capa-titulo {
   scroll-padding-inline: var(--od-respiro);
   scrollbar-width: none;
   padding: 1rem var(--od-respiro) 2.5rem;
-  perspective: 1400px;
+  /* Cada cartão na altura dele: esticados à altura do mais alto, os de uma sessão ficavam com uns 250 px de papel em
+     branco antes de "Ver o tratamento" (o crítico de fora, 14.10.2026). */
+  align-items: flex-start;
 }
 .od-fila::-webkit-scrollbar {
   display: none;
@@ -1190,7 +1176,7 @@ html[data-palco] .od-capa-titulo {
   }
 }
 /* O cartão de retorno: o cartão de papel da clínica, impresso no alto, com o picote do bloco à esquerda (os furos) e
-   as linhas pautadas das sessões; inclina sob a mão, e a luz do refletor passa nele. */
+   as linhas pautadas das sessões; em repouso (o papel não inclina: a inclinação é das placas de cerâmica). */
 .od-cartao {
   position: relative;
   display: flex;
@@ -1208,13 +1194,8 @@ html[data-palco] .od-capa-titulo {
     0 1px 1px rgb(43 40 38 / 0.12),
     0 22px 30px -22px rgb(43 40 38 / 0.55);
   padding: 1.25rem 1.4rem 1.1rem 2.1rem;
-  transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
-  transition: transform 520ms var(--od-saida);
 }
-.od-cartao[data-sob-a-luz] {
-  transition-duration: 140ms;
-}
-/* A aresta de luz: o refletor na borda vidrada, onde o ponteiro está. */
+/* A aresta de luz na borda vidrada: no cartão de papel, parada; só na placa de nome ela vai aonde o ponteiro está. */
 .od-cartao::after,
 .od-placa::after {
   content: "";
@@ -1227,7 +1208,7 @@ html[data-palco] .od-capa-titulo {
   pointer-events: none;
   transition: opacity 220ms ease-out;
 }
-:is(.od-cartao, .od-placa)[data-sob-a-luz]::after {
+.od-placa[data-sob-a-luz]::after {
   opacity: 1;
 }
 .od-cartao-nome {
@@ -1279,9 +1260,65 @@ html[data-palco] .od-capa-titulo {
   margin-top: auto;
   padding-top: 1rem;
 }
+/* No celular e no tablet, onde se vê um cartão de cada vez, os cartões têm a altura do mais alto, e o espaço que sobra
+   abaixo das sessões são as linhas em branco do cartão de retorno, para as próximas datas, no mesmo pautado das
+   sessões. Cada um na altura dele (14.10.2026), o cartão curto deixava ~290 px de bege vazio entre ele e o termo, na
+   primeira vista da cena (o crítico de fora, 15.10.2026). Na mesa, com vários à vista, cada um fica na altura dele. */
+@media (max-width: 1023px) {
+  .od-fila {
+    align-items: stretch;
+  }
+  .od-cartao-pe {
+    display: flex;
+    flex: 1 0 auto;
+    align-items: flex-end;
+    background: repeating-linear-gradient(var(--border) 0 1px, transparent 1px 2.55rem) top / 100% calc(100% - 3.75rem) no-repeat;
+  }
+}
+/* O trilho do avanço (identidade, seção 9: "a galeria com trilho"): o fio a grafite sob a fila e, nele, o traço do lápis
+   do tamanho de um cartão, que anda com a fila, ao deslizar com o dedo, com as setas ou com o teclado. É a resposta à
+   mão da cena, uma só, e não uma por cartão (o crítico de fora, 15.10.2026). Só com a linha do tempo da rolagem (sem
+   ela, o trilho não aparece, e a fila desliza igual: 09-movimento.md, seção 5, item 7); só transform. */
+.od-trilho {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  /* Só com o movimento liberado: parado, o traço mentiria a posição da fila (o fechamento do Impeccable, 16.10.2026). */
+  @media (prefers-reduced-motion: no-preference) {
+    .od-cartoes {
+      timeline-scope: --fila;
+    }
+    .od-fila {
+      scroll-timeline: --fila inline;
+    }
+    .od-trilho {
+      position: relative;
+      display: block;
+      height: 3px;
+      background: linear-gradient(rgb(43 40 38 / 0.22), rgb(43 40 38 / 0.22)) center / 100% 1px no-repeat;
+    }
+    .od-trilho::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: calc(100% / var(--n, 6));
+      border-radius: 2px;
+      background: var(--accent);
+      animation: od-avanca linear both;
+      animation-timeline: --fila;
+    }
+  }
+}
+@keyframes od-avanca {
+  to {
+    translate: calc((var(--n, 6) - 1) * 100%) 0;
+  }
+}
 
 /* ---------- 5 · o termo ----------
-   O papel; as cláusulas do que não se faz aqui, cada uma com o "Nenhum" em cartaz, que o lápis circula ao entrar. */
+   O papel; as cláusulas do que não se faz aqui, cada uma com o "Nenhum" em cartaz, que o lápis circula ao entrar (a
+   volta do lápis, e não o traço embaixo: o traço é a resposta do vínculo, e os quatro "Nenhum" sublinhados liam como
+   quatro vínculos; o crítico de fora, 14.10.2026, e a identidade, seção 9: "circulado a lápis"). */
 .od-termo {
   padding-block: clamp(5rem, 3rem + 6vw, 9rem);
 }
@@ -1312,38 +1349,34 @@ html[data-palco] .od-capa-titulo {
   position: relative;
   isolation: isolate;
   display: inline-block;
-  margin-right: 0.15em;
+  margin-right: 0.3em;
   font-size: var(--od-cena);
   font-weight: 300;
   line-height: 1;
   letter-spacing: -0.035em;
 }
-/* Sob a mão, o lápis passa de novo: o segundo traço, logo abaixo do primeiro. */
+/* A volta do lápis em torno do "Nenhum"; sob a mão, o lápis passa de novo: a segunda volta, um pouco torta. */
+.od-circulo,
+.od-nenhum::before {
+  position: absolute;
+  inset: -0.13em -0.2em -0.02em -0.22em;
+  background: var(--od-circulo) center / 100% 100% no-repeat;
+  pointer-events: none;
+}
 .od-nenhum::before {
   content: "";
-  position: absolute;
-  right: 0.1em;
-  bottom: -0.1em;
-  left: 0.06em;
-  height: 0.1em;
-  background: var(--od-traco) left center / 100% 100% no-repeat;
-  scale: 0 1;
-  transform-origin: left center;
-  transition: scale 420ms var(--od-saida);
+  background-image: var(--od-circulo-2);
+  opacity: 0;
+  scale: 0.97;
+  transition:
+    opacity 200ms ease-out,
+    scale 200ms var(--od-saida);
 }
 @media (hover: hover) and (pointer: fine) {
   .od-clausula:hover .od-nenhum::before {
-    scale: 1 1;
+    opacity: 1;
+    scale: 1;
   }
-}
-.od-sublinha {
-  position: absolute;
-  left: -0.04em;
-  right: -0.04em;
-  bottom: 0.02em;
-  height: 0.12em;
-  background: var(--od-traco) left center / 100% 100% no-repeat;
-  transform-origin: left center;
 }
 .od-clausula-motivo {
   max-width: 44ch;
@@ -1409,10 +1442,12 @@ html[data-palco] .od-capa-titulo {
   gap: 0.5rem 1.5rem;
   margin-top: 1.5rem;
 }
-.od-placas {
-  display: grid;
-  gap: 1rem;
-  perspective: 1200px;
+/* A placa de quem atende: uma peça só, com os três nomes gravados um embaixo do outro, separados pelo filete (antes,
+   três placas iguais em coluna, ao lado da do horário: a série de peças idênticas; o crítico de fora, 14.10.2026). */
+.od-placas > li + li {
+  margin-top: 0.95rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.95rem;
 }
 /* A placa de cerâmica: a peça grossa, com o bisel claro em cima e escuro embaixo, a letra gravada (funda: a luz na
    borda de baixo do traço). */
@@ -1430,13 +1465,29 @@ html[data-palco] .od-capa-titulo {
     0 2px 2px rgb(43 40 38 / 0.18),
     0 18px 26px -18px rgb(43 40 38 / 0.55);
   padding: 1.25rem 1.4rem;
-  transform: rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
-  transition: transform 520ms var(--od-saida);
+  /* A perspectiva na própria peça: no pai, ela só valia para os filhos diretos, e a placa da Equipe e a de quem atende
+     (dentro de um item ou da margem) giravam chapadas, quase sem se ver. */
+  transform: perspective(1200px) rotateX(var(--giro-x, 0deg)) rotateY(var(--giro-y, 0deg));
+  transition:
+    transform 520ms var(--od-saida),
+    scale 120ms ease-out;
 }
 .od-placa[data-sob-a-luz] {
-  transition-duration: 140ms;
+  transition-duration: 140ms, 120ms;
+}
+/* No toque, sem inclinação (a identidade, a tabela do celular), a peça cede sob o dedo: a compressão de 0,97, que volta
+   ao soltar (09-movimento.md, seção 11); a luz sozinha, na cerâmica clara, mal se via (o crítico de fora, 15.10.2026). */
+.od-placa[data-premida] {
+  scale: 0.97;
+}
+/* A letra fica acima das luzes da peça (a aresta sob o ponteiro, o refletor da Equipe): a luz clareava metade do nome,
+   que ficava em dois tons (de 12,4:1 para 7,1:1; o crítico de fora, 14.10.2026). */
+.od-placa > :not(.od-placa-luz) {
+  position: relative;
+  z-index: 1;
 }
 .od-placa-nome {
+  display: block;
   font-family: var(--font-od-titulo), sans-serif;
   font-size: clamp(1.35rem, 1.15rem + 0.5vw, 1.65rem);
   font-weight: 500;
@@ -1573,9 +1624,12 @@ html[data-palco] .od-capa-titulo {
   .od-chamada-grade {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   }
-  .od-ancora-da-chamada {
-    order: -1;
-  }
+}
+/* A placa antes do texto, em toda largura (na mesa, à esquerda): no celular, ela vinha depois das ações, e no fim da
+   página sobrava uma faixa vermelha vazia entre a pasta e o pé, onde a placa já tinha apagado (o crítico de fora,
+   14.10.2026). Assim, a cena termina nas ações. */
+.od-ancora-da-chamada {
+  order: -1;
 }
 .od-chamada-titulo {
   font-size: var(--od-grande);
@@ -1603,8 +1657,11 @@ html[data-palco] .od-capa-titulo {
 
 /* ---------- a troca de página e os momentos ----------
    A página que chega assenta (só o conteúdo: a seção não cria contexto, o palco fica entre o fundo e o texto). A
-   capa, na primeira abertura: o título se compõe, palavra por palavra, em até 600 ms. Abaixo da dobra, cada cena tem o
-   seu momento, uma vez. */
+   capa, na primeira abertura: o título se compõe, palavra por palavra, em até 600 ms. Abaixo da dobra, as cenas não
+   entram em série (a marca M1; o pedido de 14.10.2026, lapidacao.md, "Repetição dentro do site"): cada uma já tem o seu
+   momento (a placa que gira, a região na arcada, o 30 que conta, a luz da placa, a placa que volta à luz). Só o termo
+   entra, uma vez: o lápis sob cada "Nenhum". A transição fica só no estado aceso, para que a figura que passa a
+   aguardar depois da hidratação não anime do fim para o começo, fora da vista. */
 @media (prefers-reduced-motion: no-preference) {
   /* Sem reter o fim (nada de "both"): a animação acabada não deixa contexto de empilhamento no bloco. */
   .od-troca > :first-child > .od-largura {
@@ -1618,95 +1675,25 @@ html[data-palco] .od-capa-titulo {
     animation: od-aparece 380ms ease-out 260ms both;
   }
 
-  /* 2 · Os passos chegam de baixo, um depois do outro. */
-  .od-percurso[data-aguarda] .od-passo {
+  /* 5 · O lápis circula cada "Nenhum", um depois do outro: a volta chega por opacidade e escala (de 0,94), como a faixa
+     da região no mapa, em 340 ms, 50 ms depois da anterior (490 ms no total: o token de escalonamento; antes, 1,4 s). */
+  .od-termo[data-aguarda] .od-circulo {
     opacity: 0;
-    translate: 0 2rem;
+    scale: 0.94;
   }
-  .od-percurso .od-passo {
+  .od-termo[data-acesa] .od-circulo {
     transition:
-      opacity 420ms ease-out,
-      translate 620ms var(--od-saida);
+      opacity 340ms ease-out,
+      scale 340ms var(--od-saida);
   }
-  /* 3 · A pauta da ficha se risca, linha por linha. */
-  .od-ficha-cena[data-aguarda] .od-ficha tbody tr {
-    opacity: 0;
+  .od-termo[data-acesa] .od-clausula:nth-child(2) .od-circulo {
+    transition-delay: 50ms;
   }
-  .od-ficha-cena .od-ficha tbody tr {
-    transition: opacity 360ms ease-out;
+  .od-termo[data-acesa] .od-clausula:nth-child(3) .od-circulo {
+    transition-delay: 100ms;
   }
-  .od-ficha-cena .od-ficha tbody tr:nth-child(2) {
-    transition-delay: 70ms;
-  }
-  .od-ficha-cena .od-ficha tbody tr:nth-child(3) {
-    transition-delay: 140ms;
-  }
-  .od-ficha-cena .od-ficha tbody tr:nth-child(4) {
-    transition-delay: 210ms;
-  }
-  .od-ficha-cena .od-ficha tbody tr:nth-child(5) {
-    transition-delay: 280ms;
-  }
-  .od-ficha-cena .od-ficha tbody tr:nth-child(6) {
-    transition-delay: 350ms;
-  }
-  /* 4 · Os cartões assentam na fila, em cascata. */
-  .od-cartoes[data-aguarda] .od-cartao {
-    opacity: 0;
-    translate: 3rem 0;
-  }
-  .od-cartoes .od-cartao {
-    transition:
-      opacity 400ms ease-out,
-      translate 700ms var(--od-saida),
-      transform 520ms var(--od-saida);
-    transition-delay: calc(var(--i, 0) * 80ms), calc(var(--i, 0) * 80ms), 0ms;
-  }
-  /* 5 · O lápis circula cada "Nenhum", um depois do outro. */
-  .od-termo[data-aguarda] .od-sublinha {
-    scale: 0 1;
-  }
-  .od-termo .od-sublinha {
-    transition: scale 680ms var(--od-saida) 200ms;
-  }
-  .od-termo .od-clausula:nth-child(2) .od-sublinha {
-    transition-delay: 380ms;
-  }
-  .od-termo .od-clausula:nth-child(3) .od-sublinha {
-    transition-delay: 560ms;
-  }
-  .od-termo .od-clausula:nth-child(4) .od-sublinha {
-    transition-delay: 740ms;
-  }
-  /* 6 · As placas são postas na parede, uma a uma. */
-  .od-porta[data-aguarda] :is(.od-placa-de-nome, .od-placa-horario) {
-    opacity: 0;
-    translate: 0 -1rem;
-  }
-  .od-porta :is(.od-placa-de-nome, .od-placa-horario) {
-    transition:
-      opacity 360ms ease-out,
-      translate 560ms var(--od-saida),
-      transform 520ms var(--od-saida);
-  }
-  .od-porta .od-placa-de-nome:nth-child(2) {
-    transition-delay: 90ms, 90ms, 0ms;
-  }
-  .od-porta .od-placa-de-nome:nth-child(3) {
-    transition-delay: 180ms, 180ms, 0ms;
-  }
-  .od-porta .od-placa-horario {
-    transition-delay: 300ms, 300ms, 0ms;
-  }
-  /* 7 · O título da chamada sobe do vermelho. */
-  .od-chamada[data-aguarda] .od-chamada-texto {
-    opacity: 0;
-    translate: 0 2.5rem;
-  }
-  .od-chamada .od-chamada-texto {
-    transition:
-      opacity 420ms ease-out,
-      translate 700ms var(--od-saida);
+  .od-termo[data-acesa] .od-clausula:nth-child(4) .od-circulo {
+    transition-delay: 150ms;
   }
 }
 @keyframes od-assenta {
@@ -1790,7 +1777,7 @@ html[data-palco] .od-capa-titulo {
   }
 }
 /* Com o palco de pé, a âncora fixa mostra a placa de cerâmica: do mapa, ficam só as áreas de toque. */
-html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sulco, .od-numero, .od-legenda-do-mapa, .od-faixa) {
+html:has(.od-palco[data-pronto]):not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sulco, .od-numero, .od-legenda-do-mapa, .od-faixa) {
   opacity: 0;
 }
 
@@ -1835,6 +1822,19 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+/* As regiões na grade 2 × 2 da boca (em cima, embaixo; a frente, o fundo), igual em Avaliação e em Tratamentos; a opção
+   sem região, na linha de cima, inteira. */
+.od-opcoes-regiao {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.od-opcoes-regiao > :first-child {
+  grid-column: 1 / -1;
+}
+.od-opcoes-regiao .od-opcao {
+  width: 100%;
+  height: 100%;
 }
 .od-opcoes-em-duas {
   display: grid;
@@ -1892,6 +1892,21 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
     background: color-mix(in srgb, currentColor 8%, transparent);
   }
 }
+/* Em cores forçadas, o box-shadow e o degradê do círculo somem: o círculo ganha a borda, o ponto da escolhida o
+   realce do sistema, e a cerâmica a borda (a auditoria do Impeccable, 16.10.2026). */
+@media (forced-colors: active) {
+  .od-opcao::before {
+    border: 1.5px solid CanvasText;
+  }
+  :checked + .od-opcao::before {
+    forced-color-adjust: none;
+    border-color: Highlight;
+    background: radial-gradient(circle, Highlight 0 0.22rem, Canvas 0.25rem);
+  }
+  .od-ceramica {
+    border: 1px solid ButtonText;
+  }
+}
 .od-sem-script {
   display: grid;
   max-width: 52ch;
@@ -1911,7 +1926,7 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
     radial-gradient(60% 70% at 30% 0%, rgb(255 240 220 / 0.12), rgb(255 240 220 / 0) 70%),
     var(--od-grao),
     linear-gradient(180deg, #262321, #1d1b1a);
-  padding-block: clamp(3rem, 2rem + 3vw, 5rem) clamp(4rem, 3rem + 3vw, 6rem);
+  padding-block: clamp(3rem, 2rem + 3vw, 5rem) clamp(2.5rem, 2rem + 1.5vw, 3.5rem);
 }
 /* No grafite, o círculo vazado em papel (a escolhida volta ao lápis, na etiqueta clara). */
 .od-prontuario :not(:checked) + .od-opcao::before {
@@ -1988,7 +2003,30 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 .od-plano-nome {
   font-size: clamp(1.35rem, 1.15rem + 0.5vw, 1.7rem);
 }
-.od-plano-nome .od-lapis {
+/* O item da lista responde como a linha da ficha da inicial, e não como vínculo (o traço do lápis): sob o ponteiro, com
+   o foco ou no toque, a luz morna acende na linha, o lápis risca a margem, e a placa do mapa ao lado acende a região
+   dela (consultorio-vivo.tsx). Só a opacidade anima (o crítico de fora, 15.10.2026). */
+.od-plano-linha {
+  position: relative;
+  padding-left: 0.9rem;
+}
+.od-plano-linha::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Só a luz morna, sem o filete vermelho de 3 px (a marca C11); um pouco mais acesa, para se ver sozinha no grafite. */
+  background: rgb(255 232 208 / 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-out;
+}
+.od-plano-linha[data-marcada]::before {
+  opacity: 1;
+}
+.od-plano-vinculo {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
   color: var(--foreground);
   font-weight: 500;
 }
@@ -2016,6 +2054,11 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 }
 .od-plano-seguir {
   margin-top: 1rem;
+}
+/* O vínculo da região, que só aparece com uma região escolhida, não guarda o lugar (a lista filtrada já muda de altura):
+   guardado, eram ~60 px de grafite vazio sob a lista, na mesa. */
+.od-plano-seguir.invisible {
+  display: none;
 }
 
 /* ---------- a ressalva e os outros ---------- */
@@ -2052,6 +2095,9 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 }
 .od-tratamento-grade {
   display: grid;
+  /* A coluna explícita: sem ela, a grade crescia até a palavra mais longa do título, e a cena cortava (overflow-x:
+     clip) o fim de "supervisionado" a 320 px (WCAG 1.4.10; a auditoria do Impeccable, 16.10.2026). */
+  grid-template-columns: minmax(0, 1fr);
   gap: 2.5rem;
 }
 @media (min-width: 1024px) {
@@ -2066,6 +2112,7 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 }
 .od-tratamento-nome {
   display: block;
+  hyphens: auto;
   font-size: var(--od-grande);
   font-weight: 300;
   line-height: 0.92;
@@ -2096,6 +2143,7 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   color: var(--muted-foreground);
 }
 .od-placa-rotulo-miudo {
+  display: block;
   margin-bottom: 0.35rem;
   font-family: var(--font-od-texto), sans-serif;
   font-size: var(--od-miudo);
@@ -2141,6 +2189,30 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 .od-evolucao-cuidados {
   margin-top: 0.8rem;
   max-width: 48ch;
+}
+/* Na mesa, os cuidados ao lado das sessões, como os dois campos da ficha: numa coluna só, a página de uma sessão (a
+   Limpeza, a Restauração) deixava uns 45% da largura vazios à direita (o crítico de fora, 14.10.2026). */
+@media (min-width: 1024px) {
+  .od-evolucao {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr);
+    column-gap: clamp(3rem, 1rem + 4vw, 6rem);
+    align-items: start;
+  }
+  .od-evolucao > * {
+    grid-column: 1 / -1;
+  }
+  .od-evolucao > .od-evolucao-lista {
+    grid-column: 1;
+  }
+  .od-evolucao > .od-evolucao-cuidados-bloco {
+    grid-column: 2;
+  }
+  .od-evolucao-cuidados-titulo {
+    margin-top: 2rem;
+    border-top: 2px solid var(--foreground);
+    padding-top: 1rem;
+  }
 }
 /* A linha do tempo: as sessões na régua dos dias, cada uma uma peça de cerâmica; o traço do lápis se desenha. */
 .od-linha {
@@ -2219,6 +2291,17 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   .od-linha-intervalo {
     animation: od-aparece 380ms ease-out both;
     animation-delay: calc(500ms + var(--i, 0) * 200ms);
+  }
+}
+/* A figura abaixo da dobra espera na pose de partida e se desenha ao entrar (antes, corria na carga, fora da vista). */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .od-linha[data-aguarda] .od-linha-traco {
+    animation: none;
+    scale: 0 1;
+  }
+  .od-linha[data-aguarda] :is(.od-linha-marco, .od-linha-intervalo) {
+    animation: none;
+    opacity: 0;
   }
 }
 @keyframes od-risca {
@@ -2374,7 +2457,6 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 .od-equipe-portas {
   margin-top: clamp(2.5rem, 2rem + 2vw, 4rem);
   border-top: 1px solid var(--border);
-  perspective: 1400px;
 }
 .od-equipe-portas > li {
   display: grid;
@@ -2429,27 +2511,20 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   font-size: var(--od-nota);
   color: var(--muted-foreground);
 }
-@media (prefers-reduced-motion: no-preference) {
-  /* O refletor acende cada placa, uma depois da outra: a luz morna passa por ela. */
-  .od-placa-acesa::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(70% 90% at 50% 40%, rgb(255 236 214 / 0.9), rgb(255 236 214 / 0) 70%);
-    opacity: 0;
-    pointer-events: none;
-    animation: od-acende 1400ms ease-in-out both;
-    animation-delay: calc(250ms + var(--i, 0) * 380ms);
-  }
+/* O refletor acende a placa da primeira porta (a da responsável técnica) ao abrir a página, e ela fica acesa: a luz
+   morna atrás do nome gravado. Antes, as três placas acendiam e apagavam em cascata, na carga, também abaixo da dobra,
+   1,4 s cada uma (o crítico de fora, 14.10.2026). Com movimento reduzido, já acesa. */
+.od-placa-acesa::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(85% 110% at 45% 30%, rgb(255 214 166 / 0.95), rgb(255 226 196 / 0) 75%);
+  pointer-events: none;
 }
-@keyframes od-acende {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
+@media (prefers-reduced-motion: no-preference) {
+  .od-placa-acesa::before {
+    animation: od-aparece 600ms ease-out 200ms both;
   }
 }
 .od-clinica {
@@ -2479,7 +2554,10 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   margin-top: 2.5rem;
 }
 
-/* ---------- as guias: as perguntas como campos da ficha ---------- */
+/* ---------- as guias: as perguntas como campos da ficha ----------
+   Os campos numerados da ficha (identidade, seção 9, "O momento de cada página interna"): o número do campo, a grafite,
+   muda para o lápis sob o ponteiro, com o foco e na aberta; a resposta assenta ao abrir (só pelo ponteiro e pelo toque:
+   o teclado não se anima). Antes, só a casa vazia escurecia (o crítico de fora, 15.10.2026). */
 .od-guias {
   padding-block: clamp(3rem, 2rem + 3vw, 5rem);
 }
@@ -2497,6 +2575,7 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 .od-perguntas {
   margin-top: 0.6rem;
   border-top: 2px solid var(--foreground);
+  counter-reset: campo;
 }
 .od-pergunta {
   border-bottom: 1px solid var(--border);
@@ -2505,11 +2584,43 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   display: grid;
   min-height: 3.5rem;
   cursor: pointer;
-  grid-template-columns: minmax(0, 1fr) 1.5rem;
+  grid-template-columns: 1.75rem minmax(0, 1fr) 1.5rem;
   align-items: center;
   gap: 1rem;
   padding-block: 0.85rem;
   list-style: none;
+}
+/* O número e a pergunta na mesma linha de base (a primeira, se a pergunta quebra); a casa, no meio. */
+.od-pergunta summary::before,
+.od-pergunta-texto {
+  align-self: baseline;
+}
+.od-pergunta summary::before {
+  counter-increment: campo;
+  content: counter(campo, decimal-leading-zero);
+  content: counter(campo, decimal-leading-zero) / "";
+  font-family: var(--font-od-titulo), sans-serif;
+  font-size: 1.15rem;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--muted-foreground);
+  transition: color 160ms ease-out;
+}
+.od-pergunta[open] > summary::before,
+.od-pergunta > summary:focus-visible::before {
+  color: var(--accent);
+}
+@media (hover: hover) and (pointer: fine) {
+  .od-pergunta > summary:hover::before {
+    color: var(--accent);
+  }
+}
+@media (hover: none) {
+  .od-pergunta > summary:active::before {
+    color: var(--accent);
+    transition-duration: 120ms;
+  }
 }
 .od-pergunta summary::-webkit-details-marker {
   display: none;
@@ -2556,9 +2667,20 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   stroke: var(--foreground);
 }
 .od-pergunta-resposta {
-  max-width: 60ch;
-  padding: 0 2.5rem 1.25rem 0;
+  max-width: calc(60ch + 2.75rem);
+  padding: 0 2.5rem 1.25rem 2.75rem;
   color: var(--muted-foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .od-pergunta[open]:not(:has(> summary:focus-visible)) > .od-pergunta-resposta {
+    animation: od-resposta 220ms var(--od-saida);
+  }
+}
+@keyframes od-resposta {
+  from {
+    opacity: 0;
+    translate: 0 -0.4rem;
+  }
 }
 /* O que levar: a nota da ficha sob a abertura, com o mesmo fio das perguntas. */
 .od-levar {
@@ -2607,6 +2729,7 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 }
 .od-onde-grade {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 2.5rem;
 }
 @media (min-width: 1024px) {
@@ -2768,11 +2891,6 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   .od-interruptor button[aria-pressed="true"]::before {
     background: linear-gradient(180deg, #fdfcf8 0 50%, #d9d3c7 50% 100%);
   }
-  /* Sem o que pausar (sem script, com movimento reduzido), a placa do interruptor não fica vazia na pasta. */
-  .od-interruptor:has(button:disabled) {
-    visibility: hidden;
-  }
-
   /* Os vínculos a lápis: nenhum alvo abaixo de 44 px de largura (Guias, Onde, Coroa). */
   :is(.od-lapis, .od-lapis-claro) {
     min-width: 2.75rem;
@@ -2786,9 +2904,6 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   }
   .od-ressalva {
     padding-bottom: 2.5rem;
-  }
-  .od-plano-seguir.invisible {
-    display: none;
   }
 
   /* A ação de cerâmica grande: na largura da coluna, ao alcance do polegar, numa linha só de 360 px para cima. */
@@ -2938,9 +3053,11 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
     align-content: start;
     border-top: 0;
     background: var(--od-ceramica-clara);
+    /* A sombra da folha cai na faixa da placa: a 0,5, ficava pesada sobre a faixa vazia quando a placa já tinha saído,
+       no fim da cena (o crítico de fora, 15.10.2026). */
     box-shadow:
       inset 0 1px 0 rgb(43 40 38 / 0.16),
-      0 -16px 22px -20px rgb(43 40 38 / 0.5);
+      0 -14px 20px -20px rgb(43 40 38 / 0.3);
   }
   .od-passo:first-child {
     box-shadow: inset 0 1px 0 rgb(43 40 38 / 0.16);
@@ -2972,9 +3089,9 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 }
 
 @media (max-width: 1023px) {
-  /* 3 · A ficha: a miniatura do mapa fica na linha, ao lado do "Onde", com a região a lápis (no toque, não há ponteiro
-     que a leve); o nome do tratamento fica com a largura inteira. As linhas que repetem a de cima ficam com as aspas,
-     como na ficha à mão. */
+  /* 3 · A ficha: a miniatura do mapa fica na linha, ao lado do "Onde", com a região a lápis, só quando a região é parte
+     da boca (a boca inteira daria o mapa em branco); o nome do tratamento fica com a largura inteira. As linhas que
+     repetem a de cima ficam com as aspas, como na ficha à mão. */
   .od-ficha tbody td:has(> .od-ficha-mini) {
     position: relative;
     min-height: 4.75rem;
@@ -3100,6 +3217,9 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
 @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
   .od-linha-regua {
     clip-path: inset(-1rem -1rem -1rem -1rem);
+  }
+  /* A transição só no estado aceso: a figura que passa a aguardar depois da hidratação não anima ao contrário. */
+  .od-linha[data-acesa] .od-linha-regua {
     transition: clip-path 1100ms var(--od-saida) 150ms;
   }
   .od-linha[data-aguarda] .od-linha-regua {
@@ -3145,6 +3265,15 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
     translate: 0 1px;
     padding-inline: 0.95rem;
   }
+  /* A ação no lugar do interruptor (que foi para o índice): à vista em toda a página, entre a capa e a chamada. O
+     interruptor da pasta não guarda lugar antes da hidratação (depois, a ilha o monta no índice). */
+  .od-pasta-direita > .od-interruptor {
+    display: none;
+  }
+  .od-pasta-acao {
+    align-self: center;
+    padding-inline: 0.8rem;
+  }
   /* O pé: as páginas em duas linhas arrumadas (três e duas), sem a última sozinha. */
   .od-receituario-paginas {
     display: grid;
@@ -3158,6 +3287,24 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   .od-outros ul {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+/* Abaixo de 420 px, o nome, a ação e "Páginas" cabem numa linha sem se cobrir: o monograma sai da pasta (o nome e o
+   registro ficam, como a norma pede em toda página), e a ação quebra em duas linhas, mais miúda. */
+@media (max-width: 419px) {
+  .od-pasta-miolo > .od-pasta-nome .od-pasta-monograma {
+    display: none;
+  }
+  .od-pasta-acao {
+    max-width: 6.25rem;
+    padding-inline: 0.65rem;
+    font-size: var(--od-miudo);
+    line-height: 1.15;
+    white-space: normal;
+    text-wrap: balance;
+  }
+  .od-indice-gatilho {
+    padding-inline: 0.75rem;
   }
 }
 
@@ -3179,7 +3326,8 @@ html[data-palco]:not([data-sem-ceramica]) .od-ancora-fixa :is(.od-dente, .od-sul
   overflow-y: auto;
   overscroll-behavior: contain;
   border: 0;
-  background: var(--od-grao), var(--background);
+  /* O papel é da folha, que desce; a borda da pasta, em cima, já é a cabeça. */
+  background: transparent;
   padding: 0;
   color: var(--foreground);
 }
@@ -3193,6 +3341,8 @@ html .od-pasta .od-indice :focus-visible {
   outline-color: var(--ring);
 }
 .od-indice-cabeca {
+  position: relative;
+  z-index: 1;
   display: flex;
   min-height: 4rem;
   align-items: stretch;
@@ -3225,6 +3375,7 @@ html .od-indice .od-aba.od-indice-fechar {
   flex: 1 0 auto;
   flex-direction: column;
   gap: 2rem;
+  background: var(--od-grao), var(--background);
   padding-block: 1.75rem 2rem;
 }
 .od-indice-abas {
@@ -3254,26 +3405,38 @@ html .od-indice .od-aba.od-indice-fechar {
 .od-indice-acao {
   margin-top: auto;
 }
+/* O interruptor do refletor no índice, com o nome à vista (na pasta da mesa, a dica no title). */
+.od-indice-pausa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  font-weight: 600;
+}
+.od-indice-pausa:has(button:disabled) {
+  display: none;
+}
 .od-indice-registro {
   font-size: var(--od-miudo);
   color: var(--muted-foreground);
 }
 @media (prefers-reduced-motion: no-preference) {
-  /* A pasta abre: a folha desce da borda dela, e as linhas assentam uma depois da outra (até 300 ms). */
-  .od-indice[open] {
-    transition: opacity 200ms ease-out;
-  }
-  @starting-style {
-    .od-indice[open] {
-      opacity: 0;
-    }
-  }
+  /* A pasta abre: a folha desce de baixo da borda dela, inteira e opaca, e as linhas assentam uma depois da outra (até
+     300 ms). Antes, o índice inteiro se dissolvia, e os nomes das páginas passavam sobre o título da página por trás
+     (o crítico de fora, 15.10.2026). */
   .od-indice[open] .od-indice-folha {
-    animation: od-folha-desce 300ms var(--od-saida);
+    animation: od-folha-abre 300ms var(--od-saida);
   }
   .od-indice[open] .od-indice-abas > li {
     animation: od-folha-desce 260ms var(--od-saida) both;
     animation-delay: calc(30ms + var(--i, 0) * 28ms);
+  }
+}
+@keyframes od-folha-abre {
+  from {
+    translate: 0 -100%;
   }
 }
 @keyframes od-folha-desce {
@@ -3299,7 +3462,7 @@ html .od-indice .od-aba.od-indice-fechar {
 
 /* No toque (sem hover), cada papel responde no :active, em 120 ms (identidade, seção 9, o vocabulário de interação,
    coluna "No toque"): a cerâmica acende por dentro (e comprime a 0,97, acima); o vínculo mostra o traço inteiro do
-   lápis; a cláusula do termo ganha o segundo traço; a aba tocada vem para a frente. */
+   lápis; a cláusula do termo ganha a segunda volta do lápis; a aba tocada vem para a frente. */
 @media (hover: none) {
   .od-ceramica:active::before {
     opacity: 1;
@@ -3315,8 +3478,9 @@ html .od-indice .od-aba.od-indice-fechar {
     transition-duration: 120ms;
   }
   .od-clausula:active .od-nenhum::before {
-    scale: 1 1;
-    transition-duration: 200ms;
+    opacity: 1;
+    scale: 1;
+    transition-duration: 120ms;
   }
   .od-aba:not([aria-current]):active {
     z-index: 1;

@@ -26,7 +26,24 @@ import { FRAGMENTO, VERTICE } from "./cena";
 // - na troca de página, a ficha em cena vira na da página nova (0,9 s); num
 //   salto da rolagem (âncora, tecla End), vira direto na face de destino,
 //   sem passar pelas do meio;
-// - segue o ponteiro (a ficha olha para ele) e a rolagem (a ficha gira);
+// - quando a mesma seção troca de ficha no lugar e traz data-virada (desde
+//   14/10: a lista de capítulos do início, sob o ponteiro, e a abertura do
+//   Agendar, com o serviço escolhido), a virada dura esse tanto (300 ms).
+//   Para saber a causa, guarda do quadro anterior a ficha de cada seção: na
+//   troca de página, as seções são outras, e a virada continua de 0,9 s. Se
+//   a ficha muda de novo no meio da virada, ainda na primeira metade, a
+//   moeda segue girando para a nova; na segunda, assenta e vira de novo;
+// - na mesa, apaga a ficha quando uma seção com data-palco-vazio sobe a um
+//   quarto da tela, até ela deixar o meio (desde a correção de 14/10: o
+//   painel das ferramentas, no Agendar e no Retorno, onde a ficha da
+//   abertura ficava presa atrás do vidro, cortada pela borda do painel; e,
+//   desde 16/10, o rodapé, que cortava a placa das cadeiras no fim do
+//   início). No celular, a ficha já anda com a sua seção e sai de cena
+//   rolando; desde 16/10, no lugar que a seção dá a ela ([data-lugar]);
+// - segue o ponteiro (a ficha olha para ele) e a rolagem (a ficha gira); no
+//   toque (desde 14/10), olha para o ponto tocado e, 400 ms depois, volta ao
+//   centro: o arrastar do dedo não conta (até então, o olhar ficava preso
+//   ao último ponto em que o dedo se moveu antes de rolar);
 // - desenha na resolução da tela (até 2× a do CSS) e só a baixa se a tela
 //   perde quadros, subindo de volta quando sobra tempo (ver o ajuste, em
 //   desenhar). Até 03/10, partia de 64% da resolução nativa no computador
@@ -34,7 +51,9 @@ import { FRAGMENTO, VERTICE } from "./cena";
 //   as fichas saíam borradas;
 // - para o tempo na pausa do botão (html.ambiente-pausado) e com movimento
 //   reduzido — aí só redesenha quando a rolagem muda a cena, sem giro nem
-//   ponteiro, e as viradas são imediatas;
+//   ponteiro, e as viradas são imediatas; desde 16/10, sem ficha à vista e
+//   na pausa (com a cena já parada), o laço também para, e o quadro só vem de
+//   um evento (ver o repouso, em desenhar);
 // - não grava nada no aparelho.
 
 export type Ficha = {
@@ -59,7 +78,9 @@ const UNIDADE = 512;
 /** Largura a partir da qual a ficha fica de lado, numa faixa medida em pixels (faixa, abaixo). */
 const LARGA = 1024;
 
-type Secao = { el: HTMLElement; ficha: number; lado: number; topo: number; meio: number; soComputador: boolean };
+type Secao = { el: HTMLElement; ficha: number; lado: number; topo: number; meio: number; soComputador: boolean; vazia: boolean; lugar: DOMRect | null };
+/** A virada da troca de página e do salto da rolagem, em segundos. */
+const VIRADA = 0.9;
 type Opcoes = { reduzir: boolean; fichas: readonly Ficha[]; familia: string };
 export type Palco = { trocarPagina: () => void; destruir: () => void };
 
@@ -245,12 +266,15 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
   if (!compilacao) return null;
 
   // A célula do atlas: 1.024 px no computador (a ficha passa de 1.000 px de
-  // tela, e a de 512 px saía ampliada mais de duas vezes), 512 px abaixo de
-  // 1.024 px de largura, onde a ficha é menor. Num canal só (luminância): o
-  // atlas de 1.024 px ocupa os mesmos 12,6 MB que o de 512 px em RGBA, até 03/10.
-  const celula = window.innerWidth >= LARGA && (gl.getParameter(gl.MAX_TEXTURE_SIZE) as number) >= 1024 * COLUNAS ? 1024 : 512;
+  // tela, e a de 512 px saía ampliada mais de duas vezes) e, desde 16/10, no
+  // celular de densidade 1,5 ou mais (a moeda da navalha, cortada pela borda,
+  // passa de 1.000 px do aparelho; com a de 512 px, saía ampliada duas vezes,
+  // borrada); 512 px só na tela de densidade 1 abaixo de 1.024 px. Num canal só
+  // (luminância): o atlas de 1.024 px ocupa os mesmos 12,6 MB que o de 512 px em RGBA, até 03/10.
+  const grande = window.innerWidth >= LARGA || window.devicePixelRatio >= 1.5;
+  const celula = grande && (gl.getParameter(gl.MAX_TEXTURE_SIZE) as number) >= 1024 * COLUNAS ? 1024 : 512;
 
-  const nomes = ["uRes", "uTempo", "uPonteiro", "uForma", "uMetal", "uCelula", "uVirada", "uDesloc", "uAltura", "uTamanho", "uTamanhoPlaca", "uVisivel", "uFaces", "uTexel"] as const;
+  const nomes = ["uRes", "uTempo", "uPonteiro", "uForma", "uMetal", "uCelula", "uVirada", "uDesloc", "uAltura", "uTamanho", "uTamanhoPlaca", "uVisivel", "uFaces", "uTexel", "uPequena"] as const;
   type Uniformes = Record<(typeof nomes)[number], WebGLUniformLocation | null>;
   let uni: Uniformes | null = null;
 
@@ -306,16 +330,22 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
   const cena = { virada: 0, desloc: 0, altura: 0, visivel: 0 };
   /** A sequência de faces da página (índices das fichas), refeita da geometria a cada quadro. */
   let faces: number[] = [];
-  let transicao: { de: number; para: number; t: number } | null = null;
+  let transicao: { de: number; para: number; t: number; dur: number } | null = null;
+  /** A ficha de cada seção no quadro anterior: a troca no lugar (data-virada) se distingue da troca de página. */
+  const fichaAnterior = new WeakMap<HTMLElement, number>();
   /** A ficha desenhada no último quadro, de onde parte a virada de uma troca de página. */
   let mostrada = -1;
-  /** No celular, a altura da ficha no quadro anterior (para perceber o salto de uma seção à outra). */
-  let alturaAnterior: number | null = null;
+  /** No celular, o centro da ficha no quadro anterior, em pixels (para perceber o salto de uma seção à outra). */
+  let poseAnterior: { x: number; y: number } | null = null;
+  /** No celular, o tamanho que a seção dá à ficha ([data-lugar]); sem ele, o da faixa. */
+  let tamanhoDaSecao: { moeda: number; placa: number } | null = null;
   /** No celular, a seção que tem a ficha agora (ela só passa à outra quando esta sai da tela). */
   let secaoNoCelular: HTMLElement | null = null;
   let sujo = true;
   let quadro = 0;
   let ultimaAssinatura = "";
+  /** O laço parou no quadro anterior (repouso): o primeiro quadro depois dele conta um intervalo só, e não a espera. */
+  let emRepouso = false;
 
   const medir = () => {
     const largura = Math.max(1, Math.round(window.innerWidth * dpr * escala));
@@ -328,8 +358,13 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     }
   };
 
+  /**
+   * As seções e as caixas delas, lidas num passe só no começo do quadro (desde 16/10, o Impeccable: o lugar da ficha
+   * no celular era relido a cada pose(), várias vezes por quadro). O motor não escreve no DOM durante o quadro, e o
+   * pedido de quadro da rolagem vem antes do da cena de rolagem (captura, abaixo): a leitura acha o leiaute limpo.
+   */
   const secoes = (): Secao[] =>
-    [...document.querySelectorAll<HTMLElement>("[data-objeto]")].map((el) => {
+    [...document.querySelectorAll<HTMLElement>("[data-objeto], [data-palco-vazio]")].map((el) => {
       const caixa = el.getBoundingClientRect();
       return {
         el,
@@ -339,6 +374,8 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
         meio: caixa.top + caixa.height / 2,
         // Seção de conteúdo longo (lista, linha do tempo): no celular, sem ficha.
         soComputador: el.hasAttribute("data-so-computador"),
+        vazia: !el.hasAttribute("data-objeto"),
+        lugar: el.querySelector("[data-lugar]")?.getBoundingClientRect() ?? null,
       };
     });
 
@@ -349,8 +386,22 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
    * altura (lá a posição é inteira: a ficha não vira, troca fora da tela).
    */
   const alvoDaRolagem = () => {
-    const estreita = window.innerWidth < LARGA;
-    const lista = secoes().filter((s) => !(estreita && s.soComputador));
+    const W = window.innerWidth;
+    const estreita = W < LARGA;
+    const todas = secoes();
+    // A troca no lugar: a mesma seção, com outra ficha que no quadro anterior, e com data-virada (em ms).
+    let duracao = VIRADA;
+    let noLugar = false;
+    for (const s of todas) {
+      if (s.vazia) continue;
+      const antes = fichaAnterior.get(s.el);
+      if (antes !== undefined && antes !== s.ficha && s.el.dataset.virada) {
+        duracao = Number(s.el.dataset.virada) / 1000 || VIRADA;
+        noLugar = true;
+      }
+      fichaAnterior.set(s.el, s.ficha);
+    }
+    const lista = todas.filter((s) => !s.vazia && !(estreita && s.soComputador));
     if (!lista.length) return null;
     const faces: number[] = [];
     const posicoes = lista.map((s) => {
@@ -370,22 +421,49 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       // a ficha de baixo sumia ainda na tela). Sem nenhuma por perto, ela
       // some onde está, com a face e a altura da mais perto (até 03/10, sumia
       // no meio da tela, com a primeira face da página).
-      const ancora = (s: Secao) => s.topo + 0.27 * H;
-      // Na tela: o raio da ficha chega a ~14% da altura; 20% de folga a deixa inteira fora antes da troca.
-      const naTela = (s: Secao) => ancora(s) > -0.2 * H && ancora(s) < 1.2 * H;
-      const perto = lista.filter((s) => ancora(s) > -0.25 * H && ancora(s) < 1.25 * H);
+      // Desde 16/10 (o crítico de fora: no celular, quatro telas com a mesma
+      // moldura, a ficha centrada no alto e o título embaixo), a seção pode
+      // dar à ficha o seu lugar: uma caixa [data-lugar] dentro dela, onde a
+      // ficha fica centrada, com o diâmetro da menor medida da caixa (a
+      // placa, inscrita nela). A navalha fica embaixo do texto, grande e
+      // cortada pela borda; a placa de A casa, entre o título e o texto; a do
+      // Onde, na quina da tela.
+      const pose = (s: Secao) => {
+        const caixa = s.lugar;
+        if (!caixa) return { x: W / 2, y: s.topo + 0.27 * H, raio: 0.14 * H, caixa: null };
+        return { x: caixa.left + caixa.width / 2, y: caixa.top + caixa.height / 2, raio: Math.min(caixa.width, caixa.height) / 2, caixa };
+      };
+      // Na tela: a ficha inteira fora antes da troca, com a folga de antes (o raio era ~14% da altura, e a folga, 20%).
+      const naTela = (s: Secao) => {
+        const { y, raio } = pose(s);
+        return y + raio > -0.06 * H && y - raio < 1.06 * H;
+      };
+      const perto = lista.filter((s) => {
+        const { y, raio } = pose(s);
+        return y + raio > -0.11 * H && y - raio < 1.11 * H;
+      });
       const atual = lista.find((x) => x.el === secaoNoCelular);
       const candidatas = perto.length ? perto : lista;
       const s =
-        atual && naTela(atual) ? atual : candidatas.reduce((m, x) => (Math.abs(ancora(x) - 0.3 * H) < Math.abs(ancora(m) - 0.3 * H) ? x : m));
+        atual && naTela(atual) ? atual : candidatas.reduce((m, x) => (Math.abs(pose(x).y - 0.3 * H) < Math.abs(pose(m).y - 0.3 * H) ? x : m));
       secaoNoCelular = s.el;
-      return { faces, virada: posicoes[lista.indexOf(s)], lado: 0, presente: perto.length > 0, alturaPx: ancora(s), imediata: true };
+      const { x, y, caixa } = pose(s);
+      // O tamanho da caixa, nas unidades do desenho (faixa, abaixo): a moeda pelo raio; a placa (2,16 × 1,4) inscrita.
+      const px = H / 2 / 2.144;
+      const tamanho = caixa && {
+        moeda: Math.min(caixa.width, caixa.height) / 2 / (0.98 * 1.32 * px),
+        placa: Math.min(caixa.width / 2 / 1.08, caixa.height / 2 / 0.7) / (1.32 * px),
+      };
+      return { faces, virada: posicoes[lista.indexOf(s)], lado: 0, xPx: x, tamanho, presente: perto.length > 0, alturaPx: y, imediata: true, duracao, noLugar };
     }
+    // Uma seção sem ficha (data-palco-vazio) que já subiu a um quarto da tela e ainda cobre o meio: a ficha se apaga
+    // onde está, antes de o painel passar por cima dela.
+    const presente = !todas.some((s) => s.vazia && s.topo <= 0.75 * H && 2 * s.meio - s.topo >= centro);
     let i = -1;
     lista.forEach((s, j) => {
       if (s.meio <= centro) i = j;
     });
-    const so = (j: number) => ({ faces, virada: posicoes[j], lado: lista[j].lado, presente: true, alturaPx: null, imediata: false });
+    const so = (j: number) => ({ faces, virada: posicoes[j], lado: lista[j].lado, xPx: null, tamanho: null, presente, alturaPx: null, imediata: false, duracao, noLugar });
     if (i < 0) return so(0);
     if (i === lista.length - 1) return so(i);
     const a = lista[i];
@@ -397,9 +475,13 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       faces,
       virada: posicoes[i] + (opcoes.reduzir ? Math.round(virada) : virada),
       lado: a.lado + (b.lado - a.lado) * passo(0.2, 0.8, t),
-      presente: true,
+      xPx: null,
+      tamanho: null,
+      presente,
       alturaPx: null,
       imediata: false,
+      duracao,
+      noLugar,
     };
   };
 
@@ -457,35 +539,47 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       prontoEm = agora;
       ultimo = agora;
     }
-    const dt = Math.min(0.1, (agora - ultimo) / 1000);
+    const dt = emRepouso ? 1 / 60 : Math.min(0.1, (agora - ultimo) / 1000);
+    emRepouso = false;
     ultimo = agora;
-    const parado = opcoes.reduzir || raiz.classList.contains("ambiente-pausado");
+    const pausado = raiz.classList.contains("ambiente-pausado");
+    const parado = opcoes.reduzir || pausado;
     if (!parado) tempo += dt;
 
     const alvo = alvoDaRolagem();
+    let meta = 0;
     if (alvo) {
       if (!faces.length) {
         // O primeiro quadro: a ficha já nasce na posição da rolagem (a página pode abrir no meio).
         cena.virada = alvo.virada;
       } else if (!iguais(alvo.faces, faces)) {
-        // Outra página (ou outra disposição, ao cruzar 1024 px): a ficha em
-        // cena vira na da posição nova. Percebido aqui, no quadro, e não no
-        // efeito da troca de rota: a página nova já está desenhada.
+        // Outra página (ou outra disposição, ao cruzar 1024 px), ou a mesma
+        // seção com outra ficha (a prévia dos capítulos, o serviço escolhido):
+        // a ficha em cena vira na da posição nova. Percebido aqui, no quadro, e
+        // não no efeito da troca de rota: a página nova já está desenhada.
         const destino = faceEm(alvo.faces, alvo.virada);
-        transicao = mostrada >= 0 && destino !== mostrada && !opcoes.reduzir ? { de: mostrada, para: destino, t: 0 } : null;
-        if (!transicao) cena.virada = alvo.virada;
+        if (transicao && alvo.noLugar && !opcoes.reduzir) {
+          // Já virando: na primeira metade, a moeda segue para a ficha nova; na
+          // segunda, assenta, e o fim da virada encadeia a seguinte (abaixo).
+          if (passo(0, 1, transicao.t) < 0.5) transicao.para = destino;
+          transicao.dur = alvo.duracao;
+        } else {
+          transicao = mostrada >= 0 && destino !== mostrada && !opcoes.reduzir ? { de: mostrada, para: destino, t: 0, dur: alvo.duracao } : null;
+          if (!transicao) cena.virada = alvo.virada;
+        }
       }
       faces = alvo.faces;
       if (transicao) {
-        transicao.t = Math.min(1, transicao.t + dt / 0.9);
+        transicao.t = Math.min(1, transicao.t + dt / transicao.dur);
         if (transicao.t >= 1) {
-          // Fim da virada: a sequência segue da face que ficou em cena; se a
-          // rolagem a levou para longe durante a virada, vira de novo.
-          const k = posicaoDe(faces, transicao.para, alvo.virada);
-          if (k >= 0) {
-            cena.virada = k;
+          // Fim da virada: se a face que ficou em cena é a da posição, a
+          // sequência segue dela; se não (a rolagem a levou para longe, ou a
+          // seção trocou de ficha de novo), vira de novo, no mesmo tempo.
+          const destino = faceEm(faces, alvo.virada);
+          if (transicao.para === destino) {
+            cena.virada = posicaoDe(faces, destino, alvo.virada);
             transicao = null;
-          } else transicao = { de: transicao.para, para: faceEm(faces, alvo.virada), t: 0 };
+          } else transicao = { de: transicao.para, para: destino, t: 0, dur: transicao.dur };
         }
       } else if (alvo.imediata || opcoes.reduzir) {
         cena.virada = alvo.virada;
@@ -493,25 +587,34 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
         // Um salto da rolagem (âncora, tecla End): uma virada só, direto na
         // face de destino, sem desfiar as do meio.
         const destino = faceEm(faces, alvo.virada);
-        if (destino !== mostrada) transicao = { de: mostrada, para: destino, t: 0 };
+        if (destino !== mostrada) transicao = { de: mostrada, para: destino, t: 0, dur: VIRADA };
         else cena.virada = posicaoDe(faces, destino, alvo.virada);
       } else {
         cena.virada = suave(cena.virada, alvo.virada, dt, 10);
       }
-      const desloc = alvo.lado * faixa().centro;
-      cena.desloc = opcoes.reduzir ? desloc : suave(cena.desloc, desloc, dt, 4);
+      // No celular, o centro vem do lugar da seção (xPx), sem suavizar, como a altura; na mesa, do lado, suavizado.
+      const desloc = alvo.xPx == null ? alvo.lado * faixa().centro : ((alvo.xPx - window.innerWidth / 2) / window.innerHeight) * 2 * 2.144;
+      cena.desloc = opcoes.reduzir || alvo.imediata ? desloc : suave(cena.desloc, desloc, dt, 4);
+      tamanhoDaSecao = alvo.tamanho;
       // No celular, a altura vem da seção, sem suavizar: a ficha anda junto com o texto.
       cena.altura = alvo.alturaPx == null ? 0 : (0.5 - alvo.alturaPx / window.innerHeight) * 2 * 2.144;
       // Quando passa à seção seguinte, a ficha salta de lugar (sai por cima,
       // a nova está na metade de baixo): nasce de novo, com a passagem da
       // opacidade, em vez de aparecer de uma vez (corrigido em 03/10).
-      if (alvo.alturaPx != null && alturaAnterior != null && Math.abs(alvo.alturaPx - alturaAnterior) > 0.25 * window.innerHeight && !opcoes.reduzir) cena.visivel = 0;
-      alturaAnterior = alvo.alturaPx;
-      const meta = alvo.presente ? 1 : 0;
-      cena.visivel = opcoes.reduzir ? meta : suave(cena.visivel, meta, dt, alvo.presente ? 2.5 : 4);
+      const pose = alvo.alturaPx == null || alvo.xPx == null ? null : { x: alvo.xPx, y: alvo.alturaPx };
+      if (pose && poseAnterior && (Math.abs(pose.y - poseAnterior.y) > 0.25 * window.innerHeight || Math.abs(pose.x - poseAnterior.x) > 0.25 * window.innerWidth) && !opcoes.reduzir)
+        cena.visivel = 0;
+      poseAnterior = pose;
+      meta = alvo.presente ? 1 : 0;
+      // Some em ~250 ms (rapidez 8; até a correção de 14/10, 4): no Agendar, a ficha passava ~400 ms atrás do vidro do painel.
+      cena.visivel = opcoes.reduzir ? meta : suave(cena.visivel, meta, dt, alvo.presente ? 2.5 : 8);
     } else {
-      cena.visivel = opcoes.reduzir ? 0 : suave(cena.visivel, 0, dt, 4);
+      // A página não tem ficha (Serviços, Equipe, Retorno): a ficha sai junto com a página antiga, em ~200 ms (correção
+      // de 14/10: com rapidez 4, a moeda da capa ficava 600 ms sobre os espelhos da Equipe, como um fantasma).
+      cena.visivel = opcoes.reduzir ? 0 : suave(cena.visivel, 0, dt, 12);
     }
+    // Apagada de vez: o quadro seguinte já é o do repouso (abaixo).
+    if (meta === 0 && cena.visivel < 0.005) cena.visivel = 0;
 
     if (!opcoes.reduzir) {
       ponteiro.x = suave(ponteiro.x, ponteiro.alvoX, dt, 3);
@@ -531,9 +634,17 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     const angulo = (posicao - n) * Math.PI;
     mostrada = face;
 
-    // Com movimento reduzido, só se redesenha quando a cena muda.
-    const assinatura = [face, angulo.toFixed(3), cena.desloc.toFixed(3), cena.altura.toFixed(3), cena.visivel.toFixed(2), canvas.width, canvas.height].join();
-    const precisa = !opcoes.reduzir || sujo || assinatura !== ultimaAssinatura;
+    // Com movimento reduzido, só se redesenha quando a cena muda. Desde 16/10 (o Impeccable: 61 quadros por segundo em
+    // repouso, mesmo sem ficha à vista e com a pausa), o mesmo caminho vale sem ficha à vista (apagada, sem virada) e
+    // com a pausa (html.ambiente-pausado), assim que a cena para de mudar: o quadro só vem de um evento (rolagem,
+    // tamanho, troca de página, a ficha trocada no lugar, a pausa que sai) e o laço volta quando a ficha reaparece.
+    const vazio = !transicao && meta === 0 && cena.visivel === 0;
+    const assinatura = vazio
+      ? `vazio,${canvas.width},${canvas.height}`
+      : [face, angulo.toFixed(3), cena.desloc.toFixed(3), cena.altura.toFixed(3), cena.visivel.toFixed(2), canvas.width, canvas.height].join();
+    const mudou = assinatura !== ultimaAssinatura;
+    const repouso = opcoes.reduzir || vazio || (pausado && !mudou && !transicao);
+    const precisa = !repouso || sujo || mudou;
     if (precisa && uni) {
       ultimaAssinatura = assinatura;
       sujo = false;
@@ -547,10 +658,11 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       gl.uniform1f(uni.uVirada, angulo);
       gl.uniform1f(uni.uDesloc, cena.desloc);
       gl.uniform1f(uni.uAltura, cena.altura);
-      const { moeda, placa } = faixa();
+      const { moeda, placa } = tamanhoDaSecao ?? faixa();
       gl.uniform1f(uni.uTamanho, moeda);
       gl.uniform1f(uni.uTamanhoPlaca, placa);
       gl.uniform1f(uni.uVisivel, cena.visivel);
+      gl.uniform1f(uni.uPequena, window.innerWidth < LARGA ? 1 : 0);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       if (!canvas.hasAttribute("data-pronto")) canvas.setAttribute("data-pronto", "");
       // O ajuste da resolução. O intervalo entre quadros mede também o
@@ -583,8 +695,9 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
         }
       }
     }
-    // Com movimento reduzido, o próximo quadro só vem de um evento (rolagem, tamanho, página).
-    if (!opcoes.reduzir || transicao) pedir();
+    // Em repouso, o próximo quadro só vem de um evento.
+    if (!repouso || transicao) pedir();
+    else emRepouso = true;
   };
 
   function pedir() {
@@ -614,9 +727,29 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     }
   })();
 
-  const aoMover = (e: PointerEvent) => {
+  const olharPara = (e: PointerEvent) => {
     ponteiro.alvoX = (e.clientX / window.innerWidth) * 2 - 1;
     ponteiro.alvoY = -((e.clientY / window.innerHeight) * 2 - 1);
+  };
+  // O arrastar do dedo não conta: o olhar ficaria preso onde o dedo se moveu antes de rolar. Com a ficha à vista e o
+  // laço parado (a pausa), o ponteiro acorda o desenho: a pausa não bloqueia o olhar, que é resposta.
+  const aoMover = (e: PointerEvent) => {
+    if (e.pointerType === "touch") return;
+    olharPara(e);
+    if (cena.visivel > 0) pedir();
+  };
+  // No toque, a ficha olha para o ponto tocado e, 400 ms depois, volta ao centro. O toque que vira rolagem dispara
+  // pointercancel, e não pointerup: não conta. A pausa do ambiente não bloqueia o olhar, que é resposta.
+  let voltaDoOlhar = 0;
+  const aoTocar = (e: PointerEvent) => {
+    if (e.pointerType !== "touch") return;
+    olharPara(e);
+    window.clearTimeout(voltaDoOlhar);
+    voltaDoOlhar = window.setTimeout(() => {
+      ponteiro.alvoX = 0;
+      ponteiro.alvoY = 0;
+    }, 400);
+    pedir();
   };
   const aoRedimensionar = () => {
     medir();
@@ -632,9 +765,18 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     raiz.setAttribute("data-sem-3d", "");
   };
 
-  if (!opcoes.reduzir) window.addEventListener("pointermove", aoMover, { passive: true });
+  if (!opcoes.reduzir) {
+    window.addEventListener("pointermove", aoMover, { passive: true });
+    window.addEventListener("pointerup", aoTocar, { passive: true });
+  }
   window.addEventListener("resize", aoRedimensionar, { passive: true });
-  window.addEventListener("scroll", pedir, { passive: true });
+  // Na captura (desde 16/10): o pedido de quadro do palco vem antes do da cena de rolagem (ilha CenaDeRolagem, que
+  // escreve o --p das cenas), e o palco lê as caixas antes dessa escrita, sem forçar o leiaute de novo.
+  window.addEventListener("scroll", pedir, { passive: true, capture: true });
+  // A seção que troca de ficha no lugar acorda o desenho (em repouso, ele não roda sozinho); a pausa que sai, também.
+  const trocaNoLugar = new MutationObserver(pedir);
+  trocaNoLugar.observe(document.body, { attributes: true, attributeFilter: ["data-objeto"], subtree: true });
+  trocaNoLugar.observe(raiz, { attributes: true, attributeFilter: ["class"] });
   document.addEventListener("visibilitychange", aoMudarVisibilidade);
   canvas.addEventListener("webglcontextlost", aoPerder);
   medir();
@@ -652,8 +794,11 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       vivo = false;
       cancelAnimationFrame(quadro);
       window.removeEventListener("pointermove", aoMover);
+      window.removeEventListener("pointerup", aoTocar);
+      window.clearTimeout(voltaDoOlhar);
       window.removeEventListener("resize", aoRedimensionar);
-      window.removeEventListener("scroll", pedir);
+      window.removeEventListener("scroll", pedir, { capture: true });
+      trocaNoLugar.disconnect();
       document.removeEventListener("visibilitychange", aoMudarVisibilidade);
       canvas.removeEventListener("webglcontextlost", aoPerder);
       gl.getExtension("WEBGL_lose_context")?.loseContext();

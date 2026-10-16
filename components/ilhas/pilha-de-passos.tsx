@@ -28,9 +28,12 @@ export function PilhaDePassos({ children, className }: { children: React.ReactNo
 
     const pintar = () => {
       quadro = 0;
+      // Todas as caixas lidas antes de qualquer escrita (16/10, Impeccable): ler e escrever intercalados forçava um
+      // recálculo do layout por caixa, a cada quadro da rolagem.
+      const caixasNaTela = caixas.map((c) => c.getBoundingClientRect());
       for (let i = 0; i < caixas.length - 1; i++) {
-        const atual = caixas[i].getBoundingClientRect();
-        const seguinte = caixas[i + 1].getBoundingClientRect();
+        const atual = caixasNaTela[i];
+        const seguinte = caixasNaTela[i + 1];
         // Quanto da caixa atual a seguinte já cobre, de 0 a 1.
         const p = Math.min(1, Math.max(0, (atual.bottom - seguinte.top) / Math.max(atual.height, 1)));
         const estilo = caixas[i].style;

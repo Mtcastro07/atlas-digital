@@ -16,6 +16,8 @@
 // agendador e a agenda de retorno. Estabelecimento fictício ("da Silva",
 // número 000).
 
+import type { Expediente } from "@/lib/demos/relogio";
+
 /**
  * As fichas do palco 3D: a forma da peça, o metal e o relevo da face —
  * o texto em volta (anel), o centro grande e o detalhe embaixo, ou as
@@ -54,7 +56,7 @@ export const barbeariaSite = {
       numero: "00",
       rotulo: "Início",
       titulo: "Barbearia Santa Rosa",
-      descricao: "Barbearia em Santa Rosa, Niterói, desde 1996: corte, barba e navalha, com o preço e a duração de cada serviço. Site de demonstração do plano Completo.",
+      descricao: "Barbearia em Santa Rosa, Niterói, desde 1996: corte na tesoura e barba na navalha, com hora marcada. Site de demonstração do plano Completo.",
       resumo: "",
     },
     {
@@ -64,7 +66,8 @@ export const barbeariaSite = {
       rotulo: "Serviços",
       titulo: "Serviços",
       descricao: "Os quatro serviços da casa, com o preço e a duração de cada um, e o que não se faz aqui.",
-      resumo: "Quatro serviços, com o preço e a duração de cada um.",
+      // Os resumos da lista de capítulos do início não repetem o título da página (fechamento com o Impeccable, 16/10).
+      resumo: "O que a casa faz, e o que não faz.",
     },
     {
       id: "a-casa",
@@ -73,7 +76,7 @@ export const barbeariaSite = {
       rotulo: "A casa",
       titulo: "A casa",
       descricao: "Desde 1996 na mesma esquina de Santa Rosa: de uma cadeira a três, sem mudar de endereço.",
-      resumo: "De uma cadeira a três, sem mudar de esquina.",
+      resumo: "De uma cadeira a três, no mesmo endereço.",
     },
     {
       id: "equipe",
@@ -82,7 +85,7 @@ export const barbeariaSite = {
       rotulo: "Equipe",
       titulo: "Equipe",
       descricao: "Três cadeiras, três especialidades: navalha, degradê e barba.",
-      resumo: "Três cadeiras, três especialidades.",
+      resumo: "Quem atende em cada cadeira, e em que dias.",
     },
     {
       id: "agendar",
@@ -109,63 +112,80 @@ export const barbeariaSite = {
       rotulo: "Onde",
       titulo: "Onde",
       descricao: "O endereço, o horário e o mapa da esquina de sempre, em Santa Rosa.",
-      resumo: "A esquina de sempre, o horário e o mapa.",
+      resumo: "O endereço, o horário e o mapa do bairro.",
     },
   ],
   acao: "Agendar horário",
+  /** O rótulo do botão da barra abaixo de 640 px, onde "Agendar horário" não cabe (o nome acessível continua `acao`). */
+  acaoCurta: "Agendar",
   horarioCurto: ["Terça a sexta, 9h às 20h", "Sábado, 8h às 17h"],
+  /** A mensagem do número do rodapé, que abre o WhatsApp (desde 16/10). */
+  contato: "Olá. Vim pelo site da barbearia.",
+  /**
+   * O expediente, dia a dia (0 = domingo), para o estado ao vivo do relógio comum (lib/demos/relogio.ts): o poste
+   * do rodapé, o título da cena de couro e o dia de hoje no Onde. O horário escrito (horarioCurto e local.horarios)
+   * continua sendo o texto; este é o dado. Os feriados nacionais vêm de conteudo/demos/comum.ts.
+   */
+  expediente: {
+    0: [],
+    1: [],
+    2: [{ abre: "09:00", fecha: "20:00" }],
+    3: [{ abre: "09:00", fecha: "20:00" }],
+    4: [{ abre: "09:00", fecha: "20:00" }],
+    5: [{ abre: "09:00", fecha: "20:00" }],
+    6: [{ abre: "08:00", fecha: "17:00" }],
+  } satisfies Expediente,
 
   // ---------- Início ----------
   capa: {
     rotulo: "Santa Rosa, Niterói",
     desde: "Desde 1996",
     titulo: ["Trinta anos", "na mesma", "esquina."],
-    // A palavra que a onda de latão atravessa depois de compor o título (Spell UI, Gradient Wave Text; desde 03/10).
-    destaque: "esquina.",
-    lide: "Três cadeiras em Santa Rosa, em funcionamento desde 1996. Corte, barba e navalha, com o preço e a duração de cada serviço informados antes.",
+    // Sem "Santa Rosa" nem "desde 1996", já no rótulo logo acima e no anel da moeda (correção de 14/10: o mesmo dado três vezes na primeira tela).
+    // Sem "Três cadeiras" nem "o preço e a duração de cada serviço" (fechamento com o Impeccable, 16/10): cada dado
+    // fica no seu capítulo, a Equipe e os Serviços.
+    lide: "Corte na tesoura e barba na navalha, com hora marcada.",
     secundaria: "Ver os serviços",
     objeto: "selo" as ObjetoDaCena,
   },
-  /** As cenas do início: cada uma com o seu objeto e o lado em que ele fica. */
-  cenas: [
-    {
-      id: "navalha",
+  /**
+   * As duas cenas do início, cada uma com a sua peça (desde a correção de 14/10, depois do crítico de fora): a
+   * navalha, com a ficha de alpaca em cena, e a tesoura, desenhada em latão sobre a bancada, sem ficha. Saíram o
+   * rótulo de cada cena (o preço e a duração, que a ficha já gravava ao lado: o mesmo dado duas vezes) e a cena de
+   * 1996 ("Gira na mesma esquina.", o título de A casa repetido, numa terceira cena seguida com o mesmo molde).
+   * Desde 15/10, a navalha termina no texto: o vínculo dela era "Ver os serviços", o mesmo da capa, uma tela acima.
+   */
+  cenas: {
+    navalha: {
       objeto: "navalha" as ObjetoDaCena,
-      lado: "esquerda" as LadoDaCena,
-      rotulo: "A Navalha · R$ 35 · 30 min",
       titulo: ["A navalha,", "sem pressa."],
       texto: "Barba feita na navalha, com toalha quente e óleo. A lâmina é trocada a cada cliente, à vista.",
-      vinculo: { rotulo: "Ver os serviços", pagina: "servicos" },
     },
-    {
-      id: "tesoura",
-      objeto: "classico" as ObjetoDaCena,
-      lado: "direita" as LadoDaCena,
-      rotulo: "O Clássico · R$ 45 · 40 min",
+    tesoura: {
       titulo: ["A tesoura", "antes da máquina."],
       texto: "Corte na tesoura e na máquina, com acabamento na navalha. A conferência no espelho encerra o atendimento.",
       vinculo: { rotulo: "Agendar o Clássico", pagina: "agendar" },
     },
-    {
-      id: "moeda",
-      objeto: "1996" as ObjetoDaCena,
-      lado: "esquerda" as LadoDaCena,
-      rotulo: "1996 · Santa Rosa",
-      titulo: ["Gira na mesma", "esquina."],
-      texto: "A casa abriu com uma cadeira e chegou a três sem mudar de endereço. O selo é o mesmo desde a abertura.",
-      vinculo: { rotulo: "Conhecer a casa", pagina: "a-casa" },
-    },
-  ],
-  capitulos: {
-    titulo: ["Seis capítulos,", "uma esquina."],
-    lide: "Cada página do site é um capítulo da casa. O objeto em cena muda junto.",
   },
-  faixa: ["O Clássico", "A Navalha", "O Conjunto", "O Acerto"],
+  /**
+   * A cena de couro (desde 14/10): o título é o estado ao vivo ("Aberto agora," / "fecha às 20h."); sem script e na
+   * primeira pintura, o fato do Onde. O texto de baixo é o horário curto, já escrito acima.
+   */
+  couro: {
+    semScript: ["Terça a sábado,", "com hora marcada."],
+    vinculo: "Ver o endereço e o horário",
+  },
+  capitulos: {
+    titulo: ["Seis capítulos,", "uma casa."],
+    lide: "Cada página do site é um capítulo da casa: o preço, a história, as cadeiras, o pedido, o retorno e o endereço.",
+    /** A ficha que vira em cena sob o ponteiro, linha a linha (e a miniatura de cada linha, abaixo de 1024 px). */
+    previas: { servicos: "classico", "a-casa": "1996", equipe: "almir", agendar: "selo", retorno: "retorno", onde: "onde" } as Record<string, ObjetoDaCena>,
+  },
 
   // ---------- Serviços ----------
   servicos: {
     titulo: ["Com o preço e a duração", "de cada serviço."],
-    lide: "Quatro serviços, cada um com a sua ficha: o preço no centro, a duração embaixo. Role: a ficha vira com o serviço.",
+    lide: "Do acerto entre um corte e outro ao conjunto de corte e barba, na mesma cadeira.",
     itens: [
       { id: "classico", nome: "O Clássico", preco: "45", duracao: "40 min", minutos: 40, objeto: "classico" as ObjetoDaCena, texto: "Corte na tesoura e na máquina, com acabamento na navalha." },
       { id: "navalha", nome: "A Navalha", preco: "35", duracao: "30 min", minutos: 30, objeto: "navalha" as ObjetoDaCena, texto: "Barba feita na navalha, com toalha quente e óleo." },
@@ -181,29 +201,35 @@ export const barbeariaSite = {
 
   // ---------- A casa ----------
   casa: {
-    titulo: ["Gira na mesma esquina", "desde 1996."],
-    texto: "A casa abriu com uma cadeira e chegou a três sem mudar de endereço. Cada profissional tem a sua especialidade, e a conferência no espelho encerra todos os atendimentos.",
+    titulo: ["De uma cadeira", "a três."],
+    texto: "No mesmo endereço desde a abertura. Cada profissional tem a sua especialidade, e a conferência no espelho encerra todos os atendimentos.",
+    linhaTitulo: "A linha da casa",
     linha: [
       { ano: "1996", titulo: "A primeira cadeira", texto: "Almir da Silva abre a casa na esquina de Santa Rosa, com uma cadeira e a navalha." },
       { ano: "2019", titulo: "O degradê chega", texto: "Téo da Silva, formado em 2014, passa a atender na casa." },
-      { ano: "Hoje", titulo: "Três cadeiras", texto: "Navalha, degradê e barba, cada um na sua cadeira, no mesmo endereço." },
+      // Sem "Três cadeiras" nem "Navalha, degradê e barba, cada um na sua cadeira", que são da Equipe (16/10).
+      { ano: "Hoje", titulo: "A barba ganha cadeira", texto: "Rui da Silva assume a barba, e a casa chega à terceira cadeira." },
     ],
+    // Os números da casa (desde 16/10, sem "4 serviços" e "0 pacotes", que repetiam os Serviços): o rótulo é o termo
+    // (dt) e o número, o valor (dd).
     numeros: [
-      { valor: "1996", rotulo: "ano de abertura, no mesmo endereço" },
-      { valor: "3", rotulo: "cadeiras, com três especialidades" },
-      { valor: "4", rotulo: "serviços, cada um com a duração" },
-      { valor: "0", rotulo: "pacotes ou planos de fidelidade" },
+      { valor: "30", rotulo: "Anos no mesmo endereço" },
+      { valor: "3", rotulo: "Cadeiras, uma por especialidade" },
     ],
   },
 
   // ---------- Equipe ----------
   equipe: {
     titulo: ["Três cadeiras,", "três especialidades."],
-    lide: "Cada um com a sua ficha, as iniciais no centro e a especialidade em volta. Role: a ficha vira com a pessoa.",
+    lide: "Navalha, degradê e barba, cada um na sua cadeira. O espelho aceso é o de quem está atendendo agora.",
+    agora: "Na cadeira agora",
+    // Com a casa fechada (desde 16/10), a plaqueta de quem atende quando ela abrir, com o espelho a meia-luz.
+    depois: "Na cadeira quando a casa abrir",
+    // Os dias de cada um (0 = domingo), dentro do expediente da casa: o espelho de quem atende agora fica aceso.
     pessoas: [
-      { id: "almir", nome: "Almir da Silva", iniciais: "AS", especialidade: "Navalha", detalhe: "Fundou a casa em 1996.", cadeira: "Cadeira 1", objeto: "almir" as ObjetoDaCena },
-      { id: "teo", nome: "Téo da Silva", iniciais: "TS", especialidade: "Degradê", detalhe: "Formado em 2014, na casa desde 2019.", cadeira: "Cadeira 2", objeto: "teo" as ObjetoDaCena },
-      { id: "rui", nome: "Rui da Silva", iniciais: "RS", especialidade: "Barba", detalhe: "Atende de quinta a sábado.", cadeira: "Cadeira 3", objeto: "rui" as ObjetoDaCena },
+      { id: "almir", nome: "Almir da Silva", iniciais: "AS", especialidade: "Navalha", detalhe: "Fundou a casa em 1996.", cadeira: "Cadeira 1", dias: [2, 3, 4, 5, 6] },
+      { id: "teo", nome: "Téo da Silva", iniciais: "TS", especialidade: "Degradê", detalhe: "Formado em 2014, na casa desde 2019.", cadeira: "Cadeira 2", dias: [2, 3, 4, 5, 6] },
+      { id: "rui", nome: "Rui da Silva", iniciais: "RS", especialidade: "Barba", detalhe: "Atende de quinta a sábado.", cadeira: "Cadeira 3", dias: [4, 5, 6] },
     ],
   },
 
@@ -214,11 +240,17 @@ export const barbeariaSite = {
     rotulos: { servico: "Serviço", profissional: "Profissional", dia: "Dia", periodo: "Período" },
     semPreferencia: "Sem preferência",
     dias: ["Terça", "Quarta", "Quinta", "Sexta", "Sábado"],
+    // A hora de cada período: o pedido padrão é o primeiro horário livre pelo relógio da casa (lib/demos/barbearia/pedido.ts).
     periodos: [
-      { nome: "Manhã", faixa: "9h às 12h" },
-      { nome: "Tarde", faixa: "13h às 17h" },
-      { nome: "Noite", faixa: "17h às 20h" },
+      { nome: "Manhã", faixa: "9h às 12h", inicio: "09:00", fim: "12:00" },
+      { nome: "Tarde", faixa: "13h às 17h", inicio: "13:00", fim: "17:00" },
+      { nome: "Noite", faixa: "17h às 20h", inicio: "17:00", fim: "20:00" },
     ],
+    // As trocas que o agendador anuncia (desde 16/10): "Rui não atende na terça: o pedido fica para quinta."; "No
+    // sábado, não há atendimento de noite: o pedido fica para a manhã."; e, sob os dias, "Rui atende de quinta a sábado.".
+    avisos: { atende: "atende", naoAtende: "não atende", semAtendimento: "não há atendimento", ficaPara: "o pedido fica para" },
+    /** "sexta, dia 16, de manhã": a data que a opção do dia mostra vai também no pedido. */
+    diaDoMes: "dia",
     acao: "Enviar pedido pelo WhatsApp",
     // O botão de copiar do bilhete (Spell UI, Copy Button; desde 03/10).
     copiar: "Copiar pedido",
@@ -241,7 +273,17 @@ export const barbeariaSite = {
       { id: "barba", nome: "Barba", minimo: 10, maximo: 15, servico: "navalha" },
     ],
     janela: "Janela sugerida",
-    estados: { antes: "A janela abre em", hoje: "A janela está aberta.", passou: "A janela fechou há", dias: "dias", dia: "dia" },
+    // Sem data e com data futura (desde 16/10), a régua some e o bilhete diz o que fazer; depois da janela, também.
+    estados: {
+      antes: "A janela abre em",
+      hoje: "A janela está aberta.",
+      passou: "A janela fechou há",
+      passouAcao: "Agende o primeiro horário livre.",
+      vazio: "Informe a data do último corte.",
+      futuro: "A data não pode ser depois de hoje.",
+      dias: "dias",
+      dia: "dia",
+    },
     nota: "A velocidade de crescimento varia de pessoa para pessoa; a confirmação ocorre no atendimento.",
     acao: "Agendar o retorno",
   },
@@ -249,11 +291,14 @@ export const barbeariaSite = {
   // ---------- Onde ----------
   local: {
     titulo: ["Na esquina", "de sempre."],
+    // Os dias de cada linha (0 = domingo): a linha de hoje ganha o ponto de latão e o estado ao vivo.
     horarios: [
-      { dia: "Terça a sexta", hora: "9h às 20h" },
-      { dia: "Sábado", hora: "8h às 17h" },
-      { dia: "Domingo e segunda", hora: "Fechado" },
+      { dia: "Terça a sexta", hora: "9h às 20h", dias: [2, 3, 4, 5] },
+      { dia: "Sábado", hora: "8h às 17h", dias: [6] },
+      { dia: "Domingo e segunda", hora: "Fechado", dias: [0, 1] },
     ],
     referencia: "Atendimento com hora marcada. Sem hora marcada, a vez é a do primeiro intervalo livre.",
+    // O endereço é fictício (número 000): "Como chegar" abre a busca do bairro no OpenStreetMap (desde 16/10).
+    comoChegar: { rotulo: "Como chegar", detalhe: "o bairro no OpenStreetMap, em outra aba" },
   },
 };

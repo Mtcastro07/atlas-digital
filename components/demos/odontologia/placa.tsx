@@ -5,12 +5,12 @@ import { diasJuntos } from "@/lib/demos/relogio";
 /**
  * A placa do horário, de cerâmica, presa na parede da porta: o horário gravado (o texto do servidor, do expediente), os
  * feriados e o estado ao vivo embaixo. A luz do refletor atravessa a placa devagar (.od-placa-luz: o ambiente contínuo
- * do Completo, só na tela, pausável pela pasta, nada com movimento reduzido); sob a mão, a placa inclina e a aresta de
- * luz vai aonde o ponteiro está ([data-ceramica], a ilha do consultório).
+ * do Completo, só na tela, pausável pela pasta, nada com movimento reduzido). É o momento dela: a placa não inclina sob
+ * a mão, para não somar a segunda luz na mesma peça (lapidacao.md, "Repetição dentro do site", 14.10.2026).
  */
 export function PlacaDoHorario({ className = "", comEstado = true }: { className?: string; comEstado?: boolean }) {
   return (
-    <div data-ceramica className={`od-placa od-placa-horario ${className}`}>
+    <div className={`od-placa od-placa-horario ${className}`}>
       <span aria-hidden="true" data-ambiente className="od-placa-luz" />
       <h3 className="od-placa-rotulo">{quandoEOnde.placa}</h3>
       <dl className="od-placa-dias">

@@ -86,6 +86,9 @@
   --bt-estado: cubic-bezier(0.2, 0, 0, 1);
   --bt-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
   --bt-saida: cubic-bezier(0.3, 0, 0.8, 0.15);
+  /* O momento que se vê correr (o rolo da cena 2, o mapa de Onde): sem o arranque da entrada, que gastava o curso nos
+     primeiros quadros (crítico de fora, 14.10.2026). IBM Carbon, "standard expressive" (09-movimento.md, seção 3). */
+  --bt-expressivo: cubic-bezier(0.4, 0.14, 0.3, 1);
   --bt-toque: 120ms;
   --bt-mao: 180ms; /* o hover */
   --bt-mao-sai: 135ms; /* a saída do hover, 25% mais curta */
@@ -143,8 +146,7 @@
   --bt-rebaixo: #fffdf0; /* a parede de baixo do sulco, na luz (a letra que afunda no cartão) */
   --bt-rebaixo-sombra: rgb(48 16 63 / 0.45); /* a parede de cima, na sombra */
   --bt-fio: rgb(48 16 63 / 0.12); /* os fios de tabela: não são limite de controle */
-  --bt-verniz: #8a6aa0; /* o miolo do reflexo no verniz da tinta uva: 3,4:1 contra a cartolina (o texto grande pede 3:1) */
-  --bt-verniz-halo: #5e3f74; /* o halo do reflexo: 6,5:1 */
+  --bt-verniz: #8a6aa0; /* o reflexo no verniz da tinta uva: 3,4:1 contra a cartolina (o texto grande pede 3:1) */
   --bt-relevo-luz: var(--bt-clara);
   --bt-relevo-sombra: #d8bd38;
   /* A régua de leitura na cartolina (lapidação, rodada 2): o violeta a 10% sobre o amarelo virava cáqui. O acetato é
@@ -245,7 +247,6 @@ html:has([data-demo="petshop"]) {
   --bt-rebaixo-sombra: rgb(8 1 14 / 0.85);
   --bt-fio: rgb(252 243 159 / 0.22);
   --bt-verniz: #fffbe0;
-  --bt-verniz-halo: #fdf6b8;
   --bt-relevo-luz: rgb(252 243 159 / 0.55);
   --bt-relevo-sombra: #12041a;
   --bt-acetato: rgb(196 167 240 / 0.14);
@@ -375,7 +376,7 @@ html:has([data-demo="petshop"]) {
     6px 30px 40px rgb(8 1 14 / 0.55),
     18px 64px 110px rgb(8 1 14 / 0.5);
 }
-/* A mesa da peça que inclina (o cartão da capa, o verso com o mapinho, o cartão de entrega): a perspectiva no pai da
+/* A mesa da peça que inclina (o cartão da capa e o verso com o mapinho; 14.10.2026): a perspectiva no pai da
    peça, nunca no main nem no body (ela vira o bloco de contenção do que é fixo). A origem (perspective-origin no pai,
    transform-origin na peça) vai no canto que sangra, posta pela página; quem corta o que passa da margem é a cena
    (.bt-cena). A 1.400 px (lapidação, rodada 2: a 2.400 px, a inclinação aprovada de até 1,5° não se via; o ângulo não
@@ -659,7 +660,6 @@ html:has([data-demo="petshop"]) {
 .bt-impresso {
   --bt-porta-x: 0.42;
   --bt-vx: clamp(0, var(--k-pointer-x, 0.5), 1);
-  --bt-vy: clamp(0, var(--k-pointer-y, 0.5), 1);
   --bt-lx: calc(var(--bt-porta-x) + (var(--bt-vx) - var(--bt-porta-x)) * var(--k-progress, 0));
   position: relative;
   isolation: isolate;
@@ -698,25 +698,33 @@ html:has([data-demo="petshop"]) {
   filter: blur(0.6px);
   opacity: calc(0.45 + var(--bt-lx) * 0.55);
 }
-/* O verniz (lapidação, rodada 3): o reflexo de uma luz só no verniz localizado, no ponto do ponteiro. Na rodada 2, a
-   elipse de 0,78 × 0,4 em virava uma mancha clara na palavra; o brilho de um verniz é estreito: um risco de luz deitado,
-   de 0,62 × 0,055 em (o miolo), num halo pouco mais alto (0,9 × 0,13 em), em dois degraus chapados, sem degradê. Só
-   existe dentro da letra e só sob a mão; clareia a tinta (na cartolina, #8a6aa0, 3,4:1 contra o papel; o texto grande
-   pede 3:1). */
+/* O verniz (crítico de fora, 14.10.2026): o reflexo da porta no verniz, na inclinação da luz da porta (108°, a mesma
+   do batente da capa), de alto a baixo da letra, que corre no x com a mão. Nas rodadas 2 e 3, uma elipse (a mancha
+   clara; depois, o risco deitado em dois degraus chapados) lia como mancha, ou como uma barra sobre a haste do "t", e,
+   no toque, caía na borda de baixo do número. Uma tinta só: o risco de luz de 0,12 em e, em volta dele, o brilho que se
+   apaga em 1 em de cada lado (a luz no verniz não tem a quina seca da tinta). O brilho atravessa duas ou três letras de
+   uma vez, e cada letra fica em degradê, nunca de outra cor inteira: lê-se como a luz que corre pela palavra envernizada.
+   Na primeira faixa (miolo de 0,18 em, borda de 0,2 em), ela cabia numa letra só e a tingia, como mancha (o crítico de
+   fora, segunda volta). Só existe dentro da letra e só sob a mão; clareia a tinta (na cartolina, #8a6aa0,
+   3,4:1 contra o papel; o texto grande pede 3:1). */
 .bt-impresso-verniz {
   --bt-verniz-x: calc(var(--bt-vx) * 100%);
-  --bt-verniz-y: calc(var(--bt-vy) * 100%);
   color: transparent;
-  background:
-    radial-gradient(ellipse 0.62em 0.055em at var(--bt-verniz-x) var(--bt-verniz-y), var(--bt-verniz) 0 94%, transparent 100%),
-    radial-gradient(ellipse 0.9em 0.13em at var(--bt-verniz-x) var(--bt-verniz-y), var(--bt-verniz-halo) 0 96%, transparent 100%);
+  background: linear-gradient(
+    108deg,
+    transparent calc(var(--bt-verniz-x) - 1em),
+    color-mix(in oklab, var(--bt-verniz) 50%, transparent) calc(var(--bt-verniz-x) - 0.3em),
+    var(--bt-verniz) calc(var(--bt-verniz-x) - 0.06em) calc(var(--bt-verniz-x) + 0.06em),
+    color-mix(in oklab, var(--bt-verniz) 50%, transparent) calc(var(--bt-verniz-x) + 0.3em),
+    transparent calc(var(--bt-verniz-x) + 1em)
+  );
   -webkit-background-clip: text;
   background-clip: text;
   opacity: var(--k-progress, 0);
 }
 
 /* ---------- a peça que responde à mão (o Kinesis 2.0.0; a ilha do balcão) ----------
-   [data-bt-peca]: o cartão da capa, o mapinho, a lista de preços. Sob o ponteiro fino, a reação (o "sob a mão", que
+   [data-bt-peca]: o cartão da capa, o verso com o mapinho, cada linha de preço. Sob o ponteiro fino, a reação (o "sob a mão", que
    acende o verniz); o rastreio do ponteiro no invólucro do que é envernizado. [data-bt-peca="inclina"]: a inclinação
    plana de até 1,5° (aprovada em 13.10.2026): 1,06° por eixo, porque na quina os dois eixos somam (1,5/√2). A mola é a do
    pacote em repouso (smooth, ζ 0,997: não passa do destino). Nada de transition em rotate, translate ou no verniz: quem
@@ -734,25 +742,24 @@ html:has([data-demo="petshop"]) {
     --k-tilt: 1.06deg;
   }
 }
-/* No toque (sem ponteiro que paire; a ilha do balcão escreve --bt-toque-x/y e data-bt-tocada por 400 ms): a peça assenta
-   sob o dedo, o ponto tocado desce até 1,06° por eixo (1,5° na quina), em 120 ms, e volta em 160 ms; o verniz acende no
-   ponto tocado e apaga em 160 ms. Sem giroscópio. Com movimento reduzido, nada inclina, e o verniz acende parado, na
-   pose média. */
+/* No toque (sem ponteiro que paire; a ilha do balcão escreve --bt-toque-x/y e data-bt-tocada por 400 ms): a peça cede
+   sob o dedo, a compressão de 0,97 em volta do ponto tocado (09-movimento.md, seção 11), em 120 ms, e volta em 160 ms;
+   o verniz acende no ponto tocado e apaga em 160 ms. Sem giroscópio. Crítico de fora, 14.10.2026: a inclinação de
+   1,06° por eixo não se via num cartão de 355 px (0,25° medidos), e o cartão inteiro, em 3D, amolecia o texto e o
+   relevo por 400 ms; a compressão se vê e, parada, o texto volta nítido. No cartão da capa, cede a pilha inteira
+   (inicio.css). Com movimento reduzido, nada cede, e o verniz acende parado. */
 @media (hover: none) {
   [data-demo="petshop"] [data-bt-peca] :is(.bt-impresso-verniz, .bt-impresso-luz, .bt-impresso-sombra) {
     transition: opacity 160ms var(--bt-estado);
   }
 }
 @media (hover: none) and (prefers-reduced-motion: no-preference) {
-  /* O pivô no meio da peça (o dedo afunda o lado dele, e o oposto sobe); na mesa, o pivô é o do Kinesis. */
   [data-demo="petshop"] [data-bt-peca="inclina"] {
-    --bt-toque-giro: 0deg;
-    transform-origin: 50% 50%;
-    transform: rotateX(calc((0.5 - var(--bt-toque-y, 0.5)) * var(--bt-toque-giro))) rotateY(calc((var(--bt-toque-x, 0.5) - 0.5) * var(--bt-toque-giro)));
-    transition: transform 160ms var(--bt-estado);
+    transform-origin: calc(var(--bt-toque-x, 0.5) * 100%) calc(var(--bt-toque-y, 0.5) * 100%);
+    transition: scale 160ms var(--bt-estado);
   }
   [data-demo="petshop"] [data-bt-peca="inclina"][data-bt-tocada] {
-    --bt-toque-giro: 2.12deg;
+    scale: 0.97;
     transition-duration: var(--bt-toque);
   }
 }
@@ -870,7 +877,9 @@ html:has([data-demo="petshop"]) {
   .js .bt-luz-batente[data-visivel] {
     animation: bt-luz-deriva 36s linear infinite;
   }
-  html.ambiente-pausado .bt-luz-batente,
+  /* A pausa vence a deriva (0,3,1 contra 0,3,0): com "html.ambiente-pausado .bt-luz-batente" (0,2,1), a regra da deriva
+     vencia e a luz não parava (o Impeccable, fechamento de 16.10.2026; WCAG 2.2.2). */
+  html.ambiente-pausado .bt-luz-batente[data-visivel],
   .bt-luz-batente[data-fora] {
     animation-play-state: paused;
   }
@@ -973,6 +982,25 @@ html:has([data-demo="petshop"]) {
   font-family: var(--font-bt-texto), sans-serif;
   font-weight: 600;
   font-size: 24px;
+}
+/* De perto (Onde): o nome da avenida vazado numa faixa de tinta que corre sobre o traço dela (a avenida engrossa onde
+   leva o nome, como no mapa impresso numa tinta só), na Overpass, a letra das placas de rua. */
+.bt-mapa-avenida-faixa {
+  fill: none;
+  stroke: var(--bt-uva);
+  stroke-width: 1.7em;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.bt-mapa-avenida-nome,
+.bt-mapa-avenida-faixa {
+  font-family: var(--font-bt-texto), sans-serif;
+  font-size: var(--bt-mapa-rotulo-rua, 8px);
+}
+.bt-mapa-avenida-nome {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  fill: var(--bt-clara);
 }
 /* O rótulo longo ("Vital Brazil e Santa Rosa") tem a versão de uma linha (a da mesa) e a de duas (a do celular, onde
    o rótulo sobe de corpo e, numa linha, encostaria no de Icaraí); a página escolhe qual mostra. */
@@ -1279,11 +1307,14 @@ html:not(.js) .bt-pausa,
 }
 
 /* ---------- o menu do celular: o cartão do índice (a ilha da tira, MenuDoCartao) ----------
-   Um <dialog> modal em tela cheia: o balcão de tinta (com a fibra e a queda da luz) e, deitado nele, um cartão que sangra
-   em cima e à esquerda, como o da capa, com a faca embaixo à direita e a sombra longa. No alto do cartão, a mesma linha
-   da tira (o nome e, no lugar do índice, o fechar); depois, as páginas em exibição, a Anybody 125 a 42 px, cada uma com
-   o quadrado da tira (a atual com a tinta violeta e o rótulo em violeta; sob o dedo, a batida a seco); embaixo, o carimbo
-   e o horário. Tocar no balcão fecha. Sem script, o mesmo menu aparece por :target. Nunca na mesa. */
+   Um <dialog> modal em tela cheia: a tinta do balcão, translúcida, sobre a página, e o cartão do índice como uma barra
+   na direita, do lado do gatilho (pedido do usuário em 14/10: "coloque na direita a barrinha no mobile, quando se aperta
+   nas três linhas"; até então, o cartão descia do alto, na largura inteira). O cartão sangra em cima, à direita e
+   embaixo; a borda da esquerda mostra a espessura da pilha (as bordas na sombra, com o fio do vão) e joga a sombra longa
+   na página. No alto do cartão, a mesma linha da tira (o nome e, no lugar do índice, o fechar); depois, as páginas em
+   exibição, cada uma com o quadrado da tira (a atual com a tinta violeta e o rótulo em violeta; sob o dedo, a batida a
+   seco); embaixo, o carimbo e o horário. Entra da borda direita (a ilha). Tocar fora do cartão fecha. Sem script, o mesmo
+   menu aparece por :target. Nunca na mesa. */
 .bt-menu {
   display: none;
 }
@@ -1302,33 +1333,37 @@ html:not(.js) .bt-pausa,
     height: 100dvh;
     max-height: none;
     margin: 0;
-    padding: 0 var(--bt-margem) 2.5rem 0;
+    padding: 0;
     border: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    background: var(--bt-fibra-tinta-img) 0 0 / var(--bt-fibra-tam), var(--bt-queda-tinta), var(--bt-campo-tinta);
+    overflow: hidden;
+    background: rgb(30 8 40 / 0.62);
     color: var(--bt-clara);
   }
   .bt-menu::backdrop {
     background: transparent;
   }
-  /* O cartão do índice, deitado sobre a pilha como o da capa: a espessura de três cartões (as bordas na sombra, com o fio
-     do vão) e a sombra que eles jogam no balcão. */
+  /* O cartão do índice, a barra da direita: a espessura de três cartões na borda da esquerda (as bordas na sombra, com o
+     fio do vão) e a sombra que eles jogam na página. Rola por dentro, se a tela for baixa. */
   .bt-menu-cartao {
-    padding: 0 var(--bt-recuo) 2.25rem var(--bt-margem);
-    border-radius: 0 0 2.25rem 0;
+    position: absolute;
+    inset-block: 0;
+    right: 0;
+    width: min(21.5rem, 100% - 3rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: env(safe-area-inset-top) var(--bt-recuo) max(2.25rem, env(safe-area-inset-bottom)) 1.375rem;
     background: var(--bt-fibra-img) 0 0 / var(--bt-fibra-tam), var(--bt-campo-claro);
     color: var(--bt-uva);
     box-shadow:
-      var(--bt-corte),
-      1px 4px 0 #dcc041,
-      1px 5px 0 #9a7f22,
-      2px 9px 0 #d5b93d,
-      2px 10px 0 #937920,
-      1px 14px 0 #ceb23a,
-      1px 15px 0 #3a2c07,
-      2px 22px 3px rgb(8 1 14 / 0.7),
-      12px 44px 40px -6px rgb(8 1 14 / 0.45);
+      inset 1.5px 0 0 rgb(150 118 18 / 0.55),
+      -4px 1px 0 #dcc041,
+      -5px 1px 0 #9a7f22,
+      -9px 2px 0 #d5b93d,
+      -10px 2px 0 #937920,
+      -14px 1px 0 #ceb23a,
+      -15px 1px 0 #3a2c07,
+      -22px 2px 3px rgb(8 1 14 / 0.7),
+      -44px 12px 40px -6px rgb(8 1 14 / 0.45);
   }
   .bt-menu-topo {
     display: flex;
@@ -1379,7 +1414,7 @@ html:not(.js) .bt-pausa,
     font-family: var(--font-bt-titulo), var(--font-bt-texto), sans-serif;
     font-weight: 800;
     font-stretch: 125%;
-    font-size: var(--bt-titulo);
+    font-size: min(var(--bt-titulo), 2.25rem, 10vw); /* na barra, mais estreita que a tela: 32 px a 320 */
     line-height: 1;
     letter-spacing: -0.01em;
     text-wrap: balance;
@@ -1551,7 +1586,6 @@ main:has(> div > :last-child.bt-tinta) + .bt-rodape {
   }
   .bt-impresso {
     --bt-vx: 0.5;
-    --bt-vy: 0.5;
   }
   .bt-acetato {
     display: none;
@@ -1593,4 +1627,17 @@ main:has(> div > :last-child.bt-tinta) + .bt-rodape {
   [data-demo="petshop"] :focus-visible {
     outline-color: Highlight;
   }
+}
+
+/* ---------- o "Ir para o conteúdo" (do layout raiz), no carimbo da casa (16.10.2026) ----------
+   Era a pílula do Atlas, no azul dele, fora do mundo do cartão (o Impeccable, fechamento de 16.10.2026). Agora, a borracha
+   do carimbo: o violeta com o rótulo na cartolina (6,96:1), o canto de 10 px e o contorno de corte da cartolina por
+   dentro. O atalho fica fora do [data-demo]: as cores vão escritas (o padrão do deposito.css). */
+html:has([data-demo="petshop"]) body > a[href="#conteudo"] {
+  border-radius: 10px;
+  background: #5f2c96;
+  color: #f9e151;
+  font-weight: 700;
+  outline: 2px solid #f9e151;
+  outline-offset: -5px;
 }

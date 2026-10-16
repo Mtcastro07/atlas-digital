@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 import { IconeMenu } from "@/components/icones";
 import { BarsSpinner } from "@/components/ui/spell/bars-spinner";
@@ -31,6 +31,7 @@ const importarPainel = () =>
     return modulo;
   });
 const preCarregar = () => void importarPainel().catch(() => undefined);
+const semInscricao = () => () => {};
 
 /**
  * Gatilho do menu no celular. É um vínculo para o índice do rodapé
@@ -41,6 +42,9 @@ export function MenuCelular({ itens, marca }: { itens: Item[]; marca?: React.Rea
   const [aberto, setAberto] = useState(false);
   const [montado, setMontado] = useState(false);
   const [esperando, setEsperando] = useState(false);
+  // Hidratado, o vínculo age como botão (16/10, Impeccable): o papel de botão e a barra de espaço, que antes rolava a
+  // página. No servidor e sem script, continua vínculo para o índice do rodapé.
+  const hidratado = useSyncExternalStore(semInscricao, () => true, () => false);
 
   const abrir = () => {
     setMontado(true);
@@ -51,12 +55,18 @@ export function MenuCelular({ itens, marca }: { itens: Item[]; marca?: React.Rea
     <>
       <a
         href="#indice"
+        role={hidratado ? "button" : undefined}
         aria-haspopup="dialog"
         aria-expanded={aberto}
         aria-busy={esperando || undefined}
         onPointerEnter={preCarregar}
         onPointerDown={preCarregar}
         onFocus={preCarregar}
+        onKeyDown={(evento) => {
+          if (evento.key !== " ") return;
+          evento.preventDefault();
+          evento.currentTarget.click();
+        }}
         onClick={(evento) => {
           evento.preventDefault();
           if (PainelMenu) return abrir();
@@ -74,7 +84,8 @@ export function MenuCelular({ itens, marca }: { itens: Item[]; marca?: React.Rea
         }}
         className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-nota font-semibold text-foreground no-underline transition-colors duration-300 hover:bg-foreground/10 lg:hidden"
       >
-        Menu
+        {/* Com a letra a 200% a 390 px, o rótulo recolhe e fica para o leitor de tela: a pílula não cabia na tela (16/10). */}
+        <span className="@max-[18rem]:sr-only">Menu</span>
         {/* Esperando o painel: as barras do Spell UI no lugar do ícone (03/10). */}
         {esperando ? <BarsSpinner tamanho={18} className="mx-px" /> : <IconeMenu className="size-5" />}
       </a>

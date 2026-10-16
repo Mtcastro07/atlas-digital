@@ -25,8 +25,20 @@
 //   uTamanhoPlaca o mesmo, para a placa, que é mais larga
 //   uVisivel      0 a 1: a ficha some quando a página não tem cena
 //   uFaces        o atlas das faces (branco é relevo), num canal só
-//   uTexel        um pixel da célula do atlas, em fração da célula (1/1024 no
-//                 computador, 1/512 no celular): o passo da rampa do relevo
+//   uTexel        um pixel da célula do atlas, em fração da célula (1/1024; 1/512
+//                 na tela de densidade 1 abaixo de 1024 px): o passo da rampa do relevo
+//   uPequena      1 abaixo de 1024 px de largura (a ficha pequena), onde o
+//                 relevo é menos polido e mais claro (até 16/10, o sinal era a
+//                 célula de 512 px; agora o celular também tem a de 1.024 px,
+//                 pela moeda grande da navalha). Correção de 14/10 (o
+//                 crítico de fora leu escuras e quase ilegíveis, a 390 px, a
+//                 palavra gravada no bronze, o "000" na alpaca e o "1996" na placa;
+//                 o relevo polido refletia o fundo escuro do estúdio, e, sem o
+//                 ponteiro para inclinar a ficha, quase nunca pegava a caixa de luz).
+//                 Na segunda correção de 14/10 (o relevo ainda media 1,45:1 sobre o
+//                 campo no bronze e 1,63:1 na alpaca), a letra da ficha pequena
+//                 ganhou luz própria, como a letra polida sobre o campo escovado
+//                 de uma placa de verdade (letraPolida); na mesa, nada muda.
 
 export const VERTICE = `
 attribute vec2 aPos;
@@ -50,6 +62,7 @@ uniform float uTamanhoPlaca;
 uniform float uVisivel;
 uniform sampler2D uFaces;
 uniform float uTexel;
+uniform float uPequena;
 
 #define PI 3.14159265
 #define ESPESSURA 0.085
@@ -170,6 +183,7 @@ void main() {
         vec3 base = corDoMetal(uMetal);
         float rugo = 0.28;
         float brilhoDoRelevo = 1.0;
+        float letraPolida = 0.0;
         float d2 = silhueta(q.xy, uForma);
         bool naFace = abs(q.z) > ESPESSURA - 0.004 && d2 < -0.02;
         if (naFace) {
@@ -181,9 +195,12 @@ void main() {
           float hc = relevo(st, uCelula);
           float hx = relevo(st + vec2(e, 0.0), uCelula) - relevo(st - vec2(e, 0.0), uCelula);
           float hy = relevo(st + vec2(0.0, e), uCelula) - relevo(st - vec2(0.0, e), uCelula);
-          brilhoDoRelevo = 0.5 + 0.5 * hc + 1.7 * dot(vec2(-hx, hy), normalize(vec2(-0.6, 0.7)));
-          // O campo é escovado (mais áspero); o relevo, polido.
-          rugo = mix(0.46, 0.13, hc);
+          float pequena = uPequena;
+          brilhoDoRelevo = 0.5 + (0.5 + 0.45 * pequena) * hc + 1.7 * dot(vec2(-hx, hy), normalize(vec2(-0.6, 0.7)));
+          // O campo é escovado (mais áspero); o relevo, polido (na ficha pequena, acetinado: claro sem a caixa de luz).
+          rugo = mix(0.46, mix(0.13, 0.34, pequena), hc);
+          // Na ficha pequena, a letra polida clareia por conta própria, sem depender do reflexo (ver o fim do cabeçalho).
+          letraPolida = pequena * hc;
         } else if (uForma < 0.5) {
           // A borda serrilhada das moedas redondas.
           float ang = atan(q.y, q.x);
@@ -199,7 +216,7 @@ void main() {
         vec3 fr = base + (1.0 - base) * pow(1.0 - nv, 5.0);
         vec3 amb = mix(estudio(refl), vec3(0.11, 0.085, 0.065), rugo * 0.9);
         float brilho = pow(max(dot(n, normalize(l1 - rd)), 0.0), mix(520.0, 18.0, rugo)) * mix(1.4, 0.25, rugo);
-        vec3 obj = amb * fr * brilhoDoRelevo + (d1 * 0.08 + dd2 * 0.05) * base + brilho * base;
+        vec3 obj = amb * fr * brilhoDoRelevo + (d1 * 0.08 + dd2 * 0.05) * base + brilho * base + letraPolida * 0.16 * base;
         obj = clamp((obj * (2.51 * obj + 0.03)) / (obj * (2.43 * obj + 0.59) + 0.14), 0.0, 1.0);
         obj = pow(obj, vec3(1.0 / 2.2));
         cor = mix(fundo, obj, uVisivel);

@@ -15,6 +15,11 @@ import { quemFaz } from "@/conteudo/site";
  * mesmo dia, a pedido do usuário: são parte da identidade do site.
  * Os títulos dos capítulos no degrau dos números (24 a 36 px): no do lide
  * (18 a 21 px), mal se destacariam do texto de 17 px.
+ * Com o ponteiro, o círculo do capítulo sob ele se enche de bronze (a
+ * lista que acende: 09-movimento.md, seção 13.2; desde 16/10, quando a cena
+ * não respondia à mão: o crítico de fora). Desde 16/10, é a única linha do
+ * tempo de círculos do site: as etapas de O trabalho, a página anterior do
+ * percurso, viraram um cronograma em linhas.
  */
 export function Historia() {
   const { historia } = quemFaz;
@@ -29,8 +34,8 @@ export function Historia() {
           <ol className="relative lg:col-span-7 lg:col-start-6">
             <span aria-hidden="true" className="absolute top-3 bottom-3 left-4.5 w-px bg-gradient-to-b from-accent via-accent/40 to-transparent md:left-6" />
             {historia.capitulos.map((capitulo) => (
-              <li key={capitulo.numero} className="relative grid grid-cols-[auto_1fr] gap-x-6 pb-14 last:pb-0 md:gap-x-9">
-                <span aria-hidden="true" className="relative z-10 grid size-9 place-items-center rounded-full border border-accent bg-background font-display text-nota tracking-wide text-accent tabular-nums md:size-12">
+              <li key={capitulo.numero} className="group relative grid grid-cols-[auto_1fr] gap-x-6 pb-14 last:pb-0 md:gap-x-9">
+                <span aria-hidden="true" className="relative z-10 grid size-9 place-items-center rounded-full border border-accent bg-background font-display text-nota tracking-wide text-accent tabular-nums transition-colors duration-300 ease-atlas group-hover:bg-primary group-hover:text-primary-foreground md:size-12">
                   {capitulo.numero}
                 </span>
                 {/* O recuo de cima põe a primeira linha do título no meio do círculo. */}

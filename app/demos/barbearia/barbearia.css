@@ -13,7 +13,29 @@
    equipe, o risco das ausências e o mapa que se levanta. A barra de
    navegação é constante: fica no layout, presa no topo, em todas as
    páginas. Decisões de 01/10, a pedido do usuário; a vedação da ESTEIRA,
-   VII, à tridimensionalidade em WebGL fica a ratificar. */
+   VII, à tridimensionalidade em WebGL fica a ratificar.
+
+   Desde 14/10 (pedido do usuário: "parecendo que você está spamando os
+   mesmos componentes"), nenhum efeito em série: um momento por cena. A
+   revelação ao rolar ficou só na lista de capítulos do início; o título
+   que se compõe e a entrada, só na capa, uma vez por visita; o reflexo do
+   botão, na ação principal de cada página, e o ímã, só na da capa; a faixa
+   de latão, só na lista do início (o índice do rodapé tem a sua resposta);
+   as letras que rolam, só na ação (a navegação tem o ponto de latão). As
+   listras do poste giram só com a casa aberta (o estado ao vivo). Entraram
+   a cena de couro (a luz da luminária sob o ponteiro), o grão da sala de
+   cinema e as respostas à escolha (a ficha do serviço, o bilhete, a régua).
+   O registro: registros/demos/barbearia/decisoes.md.
+
+   Correção de 14/10, depois do crítico de fora (o mesmo molde de cena em
+   série: a ficha de um lado, o rótulo, o título em itálico, o texto e o
+   vínculo do outro, em 19 seções e nas sete aberturas): a ficha fica numa
+   ou duas cenas por página, e as outras ganharam peça e fundo próprios. A
+   tesoura em traço sobre a bancada; o couro com o assento liso e o encosto
+   em capitonê, com o poste da casa; a tabela dos serviços com o relógio de
+   cada um; os espelhos da equipe, acesos para quem atende agora; a ficha
+   pequena em cada opção do agendador. Saíram o letreiro sem fim e as
+   listras como divisória (ficam no topo do rodapé e no poste). */
 
 [data-demo="barbearia"] {
   --background: #0b0908; /* noite */
@@ -45,9 +67,41 @@ html:has([data-demo="barbearia"]) {
   background: #0b0908;
   color-scheme: dark;
 }
-[data-demo="barbearia"] ::selection {
+/* O "Ir para o conteúdo" (do layout raiz), no latão da casa (desde 16/10, o
+   Impeccable: era a pílula azul do Atlas). O atalho fica fora do
+   [data-demo], antes dele: as cores vão escritas, as dos tokens (o latão, a
+   noite e o anel de latão claro). */
+body:has([data-demo="barbearia"]) > a[href="#conteudo"] {
   background: #c9a15a;
   color: #0b0908;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  outline-color: #e0c48a;
+}
+/* O grão de filme da sala de cinema (desde 14/10; catálogo, "Grão em SVG
+   (feTurbulence)", técnica nativa). Um só pseudo-elemento fixo, parado,
+   sem script: pinta depois do canvas do palco (os dois em z 0; ele vem
+   depois na árvore) e abaixo do conteúdo (z 1). O ruído é tingido de osso
+   e posto no alfa, em mistura normal. Desde 15/10, o alfa sai do vermelho
+   do ruído com contraste (0,6·R − 0,3): 0 onde o ruído é baixo e até ~0,15
+   onde é alto, um salpico de verdade. Até então (0,07 × o alfa do ruído,
+   quase constante), era um véu: num recorte liso da Equipe, a 1440 px, o
+   preto subia de 8,7 para 17,1 em 255, com desvio de 2,8; agora, média de
+   ~15 e desvio de ~10 (despoluir/barbearia-cetico2/grao2.mjs). As cenas de
+   fundo sólido (o couro, os números, as ausências, o mapa) e o rodapé o
+   cobrem; o vidro o desfoca. */
+[data-demo="barbearia"]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .94 0 0 0 0 .9 0 0 0 0 .84 .6 0 0 0 -.3'/></filter><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>");
+  background-size: 180px 180px;
+}
+[data-demo="barbearia"] ::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 /* Tudo o que não é o palco fica por cima dele. A barra fica fora da regra:
    esta folha não tem camada, e a regra venceria o fixed e o z-50 do
@@ -58,6 +112,18 @@ html:has([data-demo="barbearia"]) {
 :where([data-demo="barbearia"]) > :where(:not(.bb-palco, .bb-barra)) {
   position: relative;
   z-index: 1;
+}
+
+/* As cenas de fundo fundo antes do rodapé (os números de A casa, as
+   ausências dos Serviços, o mapa do Onde). Desde 16/10 (o crítico de fora:
+   o fundo sólido cortava o grão numa linha reta, de ~15 para ~7 em 255, e o
+   corte lia como emenda de renderização, não como virada de valor, nas três
+   páginas, logo antes do rodapé), a noite escurece em 9rem: o fundo nasce
+   transparente, com o grão e o palco por trás, e chega ao fundo fundo,
+   sólido, que cobre o palco dali para baixo. O rodapé (fora do main) fica
+   sólido, com as listras no topo. */
+main section.bg-deep {
+  background: linear-gradient(transparent, var(--deep) 9rem);
 }
 
 /* ---------- tipografia ---------- */
@@ -74,7 +140,7 @@ html:has([data-demo="barbearia"]) {
 }
 /* O latão em degradê, para os números e os títulos de destaque. */
 .bb-latao {
-  background: linear-gradient(176deg, #f3dfa8 0%, #c9a15a 42%, #8a6730 70%, #e6cc8e 100%);
+  background: linear-gradient(176deg, #f3dfa8 0%, var(--primary) 42%, #8a6730 70%, #e6cc8e 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -184,6 +250,44 @@ html:not(.js) .bb-reserva,
     --carga-x: 50%;
   }
 }
+/* O lugar da ficha no celular (desde 16/10; o crítico de fora: quatro telas
+   com a mesma moldura, a ficha centrada no alto e o título embaixo). A
+   seção pode dar à ficha uma caixa [data-lugar]: o motor a centra nela, com
+   o diâmetro da menor medida (palco-3d/motor.ts, alvoDaRolagem). A navalha
+   do início (.bb-cena-sangria): o texto em cima e a moeda embaixo, com o
+   raio de 68% da largura (até 35% da altura), o centro a 30% da largura e a
+   20% da altura acima do pé da seção, cortada pela borda esquerda e pela
+   bancada da cena seguinte. Enquanto o palco carrega, o halo fica no lugar;
+   sem script ou sem 3D, o lugar some e a seção fecha o espaço. */
+@media (max-width: 1023.98px) {
+  [data-objeto]:has([data-lugar]) {
+    --carga-diametro: 0px;
+  }
+  .bb-cena-sangria {
+    --raio: min(68vw, 35svh);
+    padding-bottom: calc(20svh + var(--raio) + 1rem);
+  }
+  .bb-lugar-sangria {
+    position: absolute;
+    left: 30%;
+    bottom: 20svh;
+    width: calc(2 * var(--raio));
+    aspect-ratio: 1;
+    translate: -50% 50%;
+  }
+  .js:not([data-sem-3d]) .bb-palco:not([data-pronto]) ~ main [data-lugar] {
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--primary) 14%, transparent), color-mix(in srgb, var(--primary) 6%, transparent) 60%, transparent);
+  }
+  html:not(.js) .bb-cena-sangria,
+  [data-sem-3d] .bb-cena-sangria {
+    padding-bottom: 3rem;
+  }
+  html:not(.js) [data-lugar],
+  [data-sem-3d] [data-lugar] {
+    display: none;
+  }
+}
 .js:not([data-sem-3d]) [data-objeto]:not([data-com-reserva]) {
   position: relative;
 }
@@ -248,14 +352,54 @@ html:not(.js) .bb-reserva,
   height: 5px;
   border-radius: 50%;
   background: var(--primary);
-  transform: translateX(-50%) scale(0);
-  transition: transform 450ms var(--ease-atlas);
+  opacity: 0;
+  transform: translateX(-50%) scale(0.6);
+  transition: opacity 150ms var(--ease-atlas), transform 150ms var(--ease-atlas);
+}
+/* A resposta da navegação (desde 14/10; até então, as letras que rolavam,
+   as mesmas do botão): o ponto de latão acende sob o item, já em 0,6, e o
+   número clareia, em 200 ms; ao sair, 150 ms. O ponto inteiro é a página
+   aberta. Foco do teclado: o mesmo estado, sem animação, e o anel. Toque:
+   o :active acende o ponto em 120 ms. Desde 15/10, o ponto nasce por
+   opacidade (até então, de scale(0) a 0,6: crescia do nada; 09-movimento,
+   seção 3). */
+.bb-nav-numero {
+  transition: color 150ms var(--ease-atlas);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-nav-item:hover::after {
+    opacity: 1;
+    transition-duration: 200ms;
+  }
+  .bb-nav-item:hover .bb-nav-numero {
+    color: var(--accent);
+    transition-duration: 200ms;
+  }
+}
+.bb-nav-item:active::after {
+  opacity: 1;
+  transition-duration: 120ms;
+}
+.bb-nav-item:focus-visible::after {
+  opacity: 1;
+  transition: none;
+}
+.bb-nav-item:focus-visible .bb-nav-numero {
+  color: var(--accent);
+  transition: none;
 }
 .bb-nav-item[aria-current="page"]::after {
+  opacity: 1;
   transform: translateX(-50%) scale(1);
 }
 .bb-nav-item[aria-current="page"] {
   color: var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-nav-item::after,
+  .bb-nav-numero {
+    transition: none !important;
+  }
 }
 
 /* O botão de latão: o brilho corre no hover, só por transform (só onde há
@@ -291,6 +435,82 @@ html:not(.js) .bb-reserva,
 .bb-botao:active {
   filter: brightness(0.9);
 }
+/* O botão da barra (desde 14/10): o latão, as letras que rolam e o latão
+   que clareia, sem o reflexo, que fica na ação principal do conteúdo de
+   cada página (a capa, o Onde, o envio pelo WhatsApp). */
+.bb-botao-barra::after {
+  display: none;
+}
+/* A barra cede ao botão do conteúdo (desde 15/10; pedido de 14/10: o mesmo
+   botão de latão duas vezes na mesma tela, a barra e a capa, a barra e o
+   Onde, lia como componente repetido). Enquanto um botão de latão do
+   conteúdo está na tela, o da barra fica em fio, como na página Agendar:
+   o latão, que aqui é uma camada (::before), se apaga por opacidade em 200
+   ms; o texto passa a latão claro e o brilho dourado sai na mesma
+   passagem; na volta, 150 ms. Quem decide é a ilha da barra
+   (data-acao-na-tela, por um IntersectionObserver); antes dela e sem
+   script, vale o estado inicial: a partir de 1024 px, nas páginas que têm
+   o botão do conteúdo, em fio, porque na mesa ele está na primeira tela
+   (o início e o Onde); abaixo, em latão, porque ali ele fica abaixo da
+   dobra, e a barra é a ação da primeira tela. Em fio, o hover é o da
+   página aberta: o texto clareia e as letras rolam. Com movimento
+   reduzido, a troca é seca. */
+.bb-botao-barra {
+  background: transparent;
+  transition: filter 300ms var(--ease-atlas), color 150ms var(--ease-atlas), box-shadow 150ms var(--ease-atlas);
+}
+.bb-botao-barra::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(180deg, #dcb978, #b8904c);
+  transition: opacity 150ms var(--ease-atlas);
+}
+.bb-barra[data-acao-na-tela="sim"] .bb-botao-barra,
+.bb-botao-barra[aria-current="page"] {
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 60%, transparent);
+  transition-duration: 300ms, 200ms, 200ms;
+}
+.bb-barra[data-acao-na-tela="sim"] .bb-botao-barra::before,
+.bb-botao-barra[aria-current="page"]::before {
+  opacity: 0;
+  transition-duration: 200ms;
+}
+@media (min-width: 1024px) {
+  [data-demo="barbearia"]:has(main .bb-botao:not(.bb-botao-barra)) .bb-barra:not([data-acao-na-tela]) .bb-botao-barra {
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 60%, transparent);
+  }
+  [data-demo="barbearia"]:has(main .bb-botao:not(.bb-botao-barra)) .bb-barra:not([data-acao-na-tela]) .bb-botao-barra::before {
+    opacity: 0;
+  }
+}
+/* !important pela regra do movimento reduzido de app/movimento.css, que
+   mantém as passagens de cor e de opacidade em todo elemento (e, nas
+   letras que rolam, as faria correr 600 ms depois do botão). */
+@media (prefers-reduced-motion: reduce) {
+  .bb-botao-barra,
+  .bb-botao-barra::before,
+  .bb-botao-barra .vd-rolo > span {
+    transition: none !important;
+  }
+}
+/* No toque, o reflexo cruza enquanto o dedo pressiona (250 ms) e volta sem
+   passagem; junto, o escurecer de sempre. Só CSS: ao soltar, o botão já
+   navega ou abre o WhatsApp, e um reflexo posto no pointerup não seria
+   visto. Com movimento reduzido, só o escurecer. */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .bb-botao::after {
+    transition-duration: 0s;
+  }
+  .bb-botao:active::after {
+    transform: translateX(320%) skewX(-18deg);
+    transition: transform 250ms var(--ease-atlas);
+  }
+}
 /* O botão da página aberta (o "Agendar" da barra, na página Agendar): em
    fio, sem o latão cheio — a página já é esta. Até 03/10, só o
    aria-current, sem marca à vista. */
@@ -323,6 +543,10 @@ html:not(.js) .bb-reserva,
   position: relative;
   isolation: isolate;
 }
+/* Só na lista de capítulos do início (desde 14/10; até então, também no
+   índice do rodapé, logo abaixo, com as mesmas seis páginas). A faixa e a
+   seta em 300 ms, junto da virada de 300 ms da ficha (até então, 700 e 600
+   ms); ao sair, 200 ms. */
 .bb-capitulo::before {
   content: "";
   position: absolute;
@@ -331,18 +555,19 @@ html:not(.js) .bb-reserva,
   background: linear-gradient(90deg, color-mix(in srgb, var(--primary) 16%, transparent), transparent 70%);
   transform: scaleX(0);
   transform-origin: 0 50%;
-  transition: transform 700ms var(--ease-atlas);
+  transition: transform 200ms var(--ease-atlas);
 }
 /* A linha acende no foco do teclado, no toque (de uma vez, sem a seta
    andar) e sob o ponteiro — só onde há ponteiro: no toque, o hover ficava
    preso depois do toque (até 03/10). */
 .bb-capitulo .bb-capitulo-seta {
-  transition: transform 600ms var(--ease-atlas);
+  transition: transform 200ms var(--ease-atlas);
 }
 .bb-capitulo:is(:focus-visible, :active)::before {
   transform: scaleX(1);
 }
-.bb-capitulo:active::before {
+.bb-capitulo:is(:focus-visible, :active)::before,
+.bb-capitulo:focus-visible .bb-capitulo-seta {
   transition-duration: 0ms;
 }
 .bb-capitulo:focus-visible .bb-capitulo-seta {
@@ -351,30 +576,191 @@ html:not(.js) .bb-reserva,
 @media (hover: hover) {
   .bb-capitulo:hover::before {
     transform: scaleX(1);
+    transition-duration: 300ms;
   }
   .bb-capitulo:hover .bb-capitulo-seta {
     transform: translateX(10px);
+    transition-duration: 300ms;
+  }
+}
+/* A lista entra em sequência ao rolar: o único bloco do site com a
+   revelação (app/demos/demos.css), no tempo dos tokens — 600 ms, 60 ms por
+   linha (até 14/10, 900 ms e 70 ms, em 30 blocos do site). */
+@media (prefers-reduced-motion: no-preference) {
+  .bb-capitulos [data-revelar] {
+    transition-duration: 600ms;
   }
 }
 
-/* ---------- a página que entra ---------- */
-@media (prefers-reduced-motion: no-preference) {
-  .bb-pagina {
-    animation: bb-pagina 1100ms var(--ease-atlas) both;
+/* O índice do rodapé: a resposta mínima do item de índice (desde 14/10).
+   O número passa de latão a latão claro e a seta anda 6 px, em 200 ms; ao
+   sair, 150 ms. Foco do teclado: o mesmo, sem animação, e o anel. Toque: o
+   número acende em 120 ms. Movimento reduzido: só a cor, seca. */
+.bb-rodape-numero {
+  transition: color 150ms var(--ease-atlas);
+}
+.bb-rodape-seta {
+  display: inline-block;
+  transition: transform 150ms var(--ease-atlas);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-capitulo-rodape:hover .bb-rodape-numero {
+    color: var(--accent);
+    transition-duration: 200ms;
   }
-  .ja-aberto .bb-pagina {
-    animation: none;
+  .bb-capitulo-rodape:hover .bb-rodape-seta {
+    transform: translateX(6px);
+    transition-duration: 200ms;
   }
 }
-@keyframes bb-pagina {
-  from {
-    opacity: 0;
-    transform: translateY(22px);
+.bb-capitulo-rodape:active .bb-rodape-numero {
+  color: var(--accent);
+  transition-duration: 120ms;
+}
+.bb-capitulo-rodape:focus-visible .bb-rodape-numero {
+  color: var(--accent);
+  transition: none;
+}
+.bb-capitulo-rodape:focus-visible .bb-rodape-seta {
+  transform: translateX(6px);
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-rodape-numero {
+    transition: none;
+  }
+  .bb-capitulo-rodape .bb-rodape-seta {
+    transform: none !important;
+    transition: none;
+  }
+}
+/* A página aberta no índice (desde 16/10, o Impeccable: abaixo de 1024 px, o
+   índice é a navegação, e nada dizia onde se estava): o nome e o número em
+   latão claro, e, no lugar da seta (não há para onde ir), o ponto de latão
+   de 5 px, a mesma marca da página aberta na navegação da barra. */
+.bb-capitulo-rodape[aria-current="page"],
+.bb-capitulo-rodape[aria-current="page"] .bb-rodape-numero {
+  color: var(--accent);
+}
+.bb-capitulo-rodape[aria-current="page"] .bb-rodape-seta {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  font-size: 0;
+  transform: none;
+}
+
+/* O vínculo de texto (desde 14/10, sem a seta): sob o sublinhado de latão,
+   sempre à vista, um fio de 1,5 px em latão claro se acende da esquerda no
+   hover e no foco (250 ms) e se recolhe para a direita ao sair (180 ms).
+   Toque: o :active o acende em 120 ms. Movimento reduzido: aparece sem
+   crescer. */
+.bb-vinculo-texto {
+  position: relative;
+  display: inline-block;
+}
+.bb-vinculo-texto::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + var(--bb-fio-acima, 4px));
+  height: 1.5px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+  transition: transform 180ms var(--ease-atlas);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-vinculo:hover .bb-vinculo-texto::after {
+    transform: scaleX(1);
+    transform-origin: 0 50%;
+    transition-duration: 250ms;
+  }
+}
+.bb-vinculo:focus-visible .bb-vinculo-texto::after {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+  transition-duration: 250ms;
+}
+.bb-vinculo:active .bb-vinculo-texto::after {
+  transform: scaleX(1);
+  transform-origin: 0 50%;
+  transition-duration: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-vinculo-texto::after {
+    transition: none !important;
+  }
+}
+
+/* ---------- a chegada ----------
+   Desde 14/10, sem a página inteira que subia (.bb-pagina, 1.100 ms), que
+   dobrava a transição de página: as aberturas internas pintam paradas, e o
+   momento da chegada é a ficha que vira no palco. A entrada fica só na
+   capa do início, uma vez por visita. No celular, a capa entra em até 600
+   ms (o rótulo, o lide e as ações em 400 ms, com os atrasos comprimidos: o
+   último termina em 598 ms) e a troca de página dura até 300 ms (09-
+   movimento, seções 2 e 11). */
+@media (prefers-reduced-motion: no-preference) and (max-width: 1023.98px) {
+  [data-demo="barbearia"] .mov-entra {
+    animation-duration: 400ms;
+    animation-delay: calc(var(--atraso, 0ms) * 0.18);
+  }
+  /* A saída termina antes de a entrada começar (correção de 14/10: os dois
+     títulos se sobrepunham num quadro): 100 ms e 200 ms depois, 300 ms no total. */
+  html:has([data-demo="barbearia"])::view-transition-new(.pagina-entra) {
+    animation-duration: 200ms;
+    animation-delay: 100ms;
+  }
+  html:has([data-demo="barbearia"])::view-transition-old(.pagina-sai) {
+    animation-duration: 100ms;
+  }
+}
+/* A barra durante a troca de página (desde 16/10; o crítico de fora: saindo
+   de um ponto rolado, o título da página antiga passava nítido por trás do
+   logotipo, de ~395 a 450 ms na mesa). Na transição, a barra vira uma imagem
+   (o grupo "cabecalho", app/movimento.css), e o desfoque do vidro, que lê a
+   página por trás dela, não vai na imagem: ela fica translúcida sobre a
+   página que sai. Por baixo da imagem, o grupo leva a noite, opaca (o
+   desfoque no grupo foi tentado e o Chrome não o aplica nos pseudoelementos
+   da transição); a barra em vidro, sobre a página escura, já lê quase assim. */
+html:has([data-demo="barbearia"])::view-transition-group(cabecalho) {
+  background-color: #0b0908;
+}
+/* Na mesa, a mesma folha compartilhada, com a saída em 150 ms, antes de a
+   entrada começar (160 ms), como no Atlas: o crítico de fora viu, da
+   capa para a Equipe, os dois títulos um sobre o outro (14/10). */
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  html:has([data-demo="barbearia"])::view-transition-old(.pagina-sai) {
+    animation-duration: 150ms;
+  }
+}
+/* O brilho de latão em "Desde 1996" passa três vezes depois que a capa
+   entra na tela, e para (até 14/10, a cada 3 s, sem fim). Volta a passar
+   três vezes a cada volta à capa (o data-visivel cai fora da tela). */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-demo="barbearia"] .mov-cintila[data-visivel] :is(.mov-cintila-janela, .mov-cintila-luz) {
+    animation-iteration-count: 3;
   }
 }
 
 /* ---------- as faixas do poste e o selo ---------- */
+/* Desde a correção de 14/10, só no topo do rodapé (até então, também dos
+   dois lados do letreiro do início e no topo do bilhete do Agendar: a
+   marca C9, listras como divisória), e correm por transform: o desenho fica
+   num pseudo-elemento uma volta mais largo, que anda uma volta (até então,
+   background-position, que repinta a cada quadro). */
 .bb-faixas {
+  position: relative;
+  overflow: hidden;
+}
+.bb-faixas::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 -90.5px;
   background-image: repeating-linear-gradient(
     -45deg,
     var(--secondary) 0 16px,
@@ -384,9 +770,17 @@ html:not(.js) .bb-reserva,
   );
   background-size: 90.5px 90.5px;
 }
+/* O poste é sinal (desde 14/10): todas as listras giram só com a casa
+   aberta, como o poste aceso de uma barbearia de verdade (o estado ao vivo,
+   LinhaDoPoste, põe data-casa-aberta na raiz). Fechada, sem script ou com
+   movimento reduzido, ficam paradas; a linha escrita ao lado do horário,
+   no rodapé, diz o mesmo. */
 @media (prefers-reduced-motion: no-preference) {
-  .js .bb-faixas[data-ambiente] {
+  .js [data-casa-aberta] .bb-faixas[data-ambiente]::before {
     animation: bb-faixas 3.2s linear infinite;
+  }
+  .js [data-casa-aberta] .bb-poste-listras[data-ambiente] {
+    animation: bb-poste 2.6s linear infinite;
   }
   .js .bb-selo-gira[data-ambiente] {
     animation: bb-gira 48s linear infinite;
@@ -394,7 +788,12 @@ html:not(.js) .bb-reserva,
 }
 @keyframes bb-faixas {
   to {
-    background-position: 90.5px 0;
+    transform: translateX(90.5px);
+  }
+}
+@keyframes bb-poste {
+  to {
+    transform: translateY(calc(-1 * var(--periodo)));
   }
 }
 @keyframes bb-gira {
@@ -406,9 +805,11 @@ html:not(.js) .bb-reserva,
   transform-box: view-box;
   transform-origin: 0 0;
 }
-.ambiente-pausado .bb-faixas,
+.ambiente-pausado .bb-faixas::before,
+.ambiente-pausado .bb-poste-listras,
 .ambiente-pausado .bb-selo-gira,
-.bb-faixas[data-fora],
+.bb-faixas[data-fora]::before,
+.bb-poste-listras[data-fora],
 .bb-selo-gira[data-fora] {
   animation-play-state: paused !important;
 }
@@ -417,11 +818,6 @@ html:not(.js) .bb-reserva,
 [data-cena] {
   --p: 1;
 }
-/* Os anéis de duração: cada um fecha, ao rolar, até a sua fração. */
-.bb-anel .bb-arco {
-  stroke-dasharray: 1;
-  stroke-dashoffset: calc(1 - var(--fracao) * clamp(0, calc(var(--p) * 1.5 - 0.1), 1));
-}
 /* Os números ganham volume: de chapados e inclinados a extrudados. */
 .bb-extrusao {
   position: relative;
@@ -429,21 +825,73 @@ html:not(.js) .bb-reserva,
   transform-style: preserve-3d;
   transform: perspective(900px) rotateX(calc((1 - var(--p)) * 32deg + 12deg)) rotateY(calc((1 - var(--p)) * -26deg - 16deg));
 }
+/* O número sob a mão se aprofunda (desde 15/10; a cena dos números, em A
+   casa, não respondia à mão; 09-movimento, 13.2): as dez camadas se
+   afastam mais em Z, e o latão estampado mostra o volume; os outros
+   números ficam. Desde 16/10, de 1,9 para 4,9 px por camada (até então,
+   3,4: o crítico de fora mediu 0,9% do número mudando na mesa, e nada no
+   toque). Só o fator --fundo tem transição (300 ms; ao sair, 200 ms; no
+   toque, 120 ms): a rolagem (--p) continua imediata. Hover só com ponteiro
+   fino; no toque, o :active e o data-tocado (ilha ToqueDaCasa, que segura
+   a marca 500 ms depois de soltar). Com movimento reduzido, nada muda. */
+@property --fundo {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
 .bb-extrusao-camada {
   position: absolute;
   inset: 0;
   color: color-mix(in srgb, var(--primary) calc(78% - var(--k) * 4%), black);
-  transform: translateZ(calc(var(--k) * -1.9px * var(--p)));
+  transform: translateZ(calc(var(--k) * -1.9px * var(--p) * var(--fundo)));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bb-extrusao-camada {
+    transition: --fundo 200ms var(--ease-atlas);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bb-numero:hover .bb-extrusao-camada {
+      --fundo: 2.6;
+      transition-duration: 300ms;
+    }
+  }
+  .bb-numero:is(:active, [data-tocado]) .bb-extrusao-camada {
+    --fundo: 2.6;
+    transition-duration: 120ms;
+  }
 }
 .bb-extrusao-face {
   position: relative;
   transform: translateZ(0.5px);
 }
-/* As moedas da equipe: giram de perfil para frente. */
-.bb-moeda {
-  transform: perspective(700px) rotateY(calc((1 - clamp(0, calc(var(--p) * 1.5), 1)) * 88deg));
+/* As ausências: o risco atravessa cada item ao rolar. Desde 15/10, o
+   item sob a mão recua: o texto vai a 55% de alfa em 200 ms (ao sair, 150
+   ms; no toque, 120 ms), e o risco de latão, que é o fundo do mesmo span,
+   fica inteiro e passa a ler por cima das letras: riscado de vez. É a
+   cor com alfa, e não a opacidade de um span interno (o plano), porque o
+   texto num span sem o risco no próprio fundo fazia a régua medir a linha
+   de latão como fundo (1,94:1, falso); no mesmo span, ela manda o risco à
+   conferência à mão. Os pixels são os mesmos: osso a 55% sobre o fundo
+   fundo dá 5,25:1. Com movimento reduzido, a troca é seca (!important:
+   app/movimento.css mantém as passagens de cor). */
+.bb-risco {
+  transition: color 150ms var(--ease-atlas);
 }
-/* As ausências: o risco atravessa cada item ao rolar. */
+@media (hover: hover) and (pointer: fine) {
+  .bb-ausencia:hover .bb-risco {
+    color: color-mix(in srgb, var(--foreground) 55%, transparent);
+    transition-duration: 200ms;
+  }
+}
+.bb-ausencia:is(:active, [data-tocado]) .bb-risco {
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  transition-duration: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-risco {
+    transition: none !important;
+  }
+}
 .bb-risco {
   background-image: linear-gradient(var(--primary), var(--primary));
   background-repeat: no-repeat;
@@ -451,6 +899,37 @@ html:not(.js) .bb-reserva,
   background-size: calc(clamp(0, calc(var(--p) * 1.5 - var(--i) * 0.25), 1) * 100%) 2px;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
+}
+/* A planta cede à mão (desde 15/10; a cena do mapa não respondia à mão):
+   o TiltCard do Spell UI, como está, com limite de 3°, envolve o mapa
+   dentro da caixa [data-cena], que não gira e é a que a cena de rolagem
+   mede. O brilho branco do componente fica escondido: a luz que segue o
+   ponteiro no site é a do couro. Desde 16/10, sob a mão e no toque, o
+   caminho até a casa acende: a Rua Mário Viana em latão claro, por cima
+   da rua (opacidade a 0,9 em 300 ms; no toque, 120 ms; ao sair, 200 ms).
+   Até então, no toque, a compressão de 0,985, que o crítico de fora não
+   viu no filme. Com movimento reduzido, a rua acende seca. */
+.bb-mapa-inclina .vd-inclina-brilho {
+  display: none;
+}
+.bb-rua-da-casa {
+  opacity: 0;
+  transition: opacity 200ms var(--ease-atlas);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-mapa:hover .bb-rua-da-casa {
+    opacity: 0.9;
+    transition-duration: 300ms;
+  }
+}
+.bb-mapa:is(:active, [data-tocado]) .bb-rua-da-casa {
+  opacity: 0.9;
+  transition-duration: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-rua-da-casa {
+    transition: none !important;
+  }
 }
 /* O mapa: sai inclinado como uma planta sobre a mesa, endireita e as ruas se desenham. */
 .bb-mapa-3d {
@@ -465,10 +944,47 @@ html:not(.js) .bb-reserva,
   opacity: clamp(0, calc(var(--p) * 2 - 1), 1);
   transform: translateY(calc((1 - var(--p)) * -46px));
 }
-/* A linha do tempo: o fio de latão desce com a rolagem. */
+/* A linha do tempo: o fio de latão desce com a rolagem, e o ponto de cada
+   marco acende quando a ponta do fio chega a ele (--limiar, no marco; desde
+   14/10, no lugar da revelação dos marcos). Só opacidade: nada cresce do
+   nada. Sem script e com movimento reduzido, --p = 1: os três acesos. */
 .bb-linha-fio {
   transform: scaleY(clamp(0, var(--p), 1));
   transform-origin: 50% 0;
+}
+.bb-marco-ponto {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: clamp(0, calc((var(--p) - var(--limiar, 0)) / 0.03), 1);
+}
+/* O ano do marco pega a luz sob a mão e no toque (desde 16/10; o crítico
+   de fora: os marcos não respondiam, 8 em 255 de diferença): a cópia do
+   ano em latão claro, por cima do degradê, sobe a 0,85 de opacidade em 250
+   ms (no toque, 120 ms; ao sair, 200 ms). Com movimento reduzido, seca. */
+.bb-marco-luz {
+  position: absolute;
+  inset: 0;
+  color: #f6e4b4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms var(--ease-atlas);
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-marco:hover .bb-marco-luz {
+    opacity: 0.85;
+    transition-duration: 250ms;
+  }
+}
+.bb-marco:is(:active, [data-tocado]) .bb-marco-luz {
+  opacity: 0.85;
+  transition-duration: 120ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-marco-luz {
+    transition: none !important;
+  }
 }
 
 /* ---------- traço que se desenha e texto que surge (a reserva do selo) ---------- */
@@ -491,7 +1007,587 @@ html:not(.js) .bb-reserva,
   }
 }
 
+/* ---------- a cena de couro (desde 14/10) ----------
+   A cadeira: o vinho de #6e2a20 a #5a2219, com a luz de cima. O ΔL em OKLab
+   da noite (0,142) ao couro (0,382) é de 0,24: a virada de valor que a
+   página não tinha. O texto em osso dá 8,4:1 no alto e 10,1:1 embaixo; o
+   secundário, em osso a 86% (o --muted-foreground da noite daria 4,0:1),
+   6,7:1.
+   Correção de 14/10, depois do crítico de fora (as tachas caíam sobre a
+   pontuação do título, "amanhã,•", a segunda camada de tachas desenhava só
+   um quarto de círculo, a luz era um borrão chapado e, na mesa, 60% da
+   cena era só padrão): o couro tem duas partes. O assento, liso, fica sob o
+   texto; o encosto, em capitonê, à direita na mesa e em cima no celular,
+   separado pelo vivo da costura (o pseudo-elemento ::before e a sombra
+   dele). No encosto, as tachas de latão ficam nos cruzamentos dos vincos
+   (no centro e nos cantos de cada losango: duas camadas iguais, a segunda
+   meia célula adiante; até então, circle at 0 0, um quarto de tacha), e o
+   poste da casa. A luz da luminária (o orbe da LuzDoCursor) é luz de
+   verdade: soft-light, quente e quase branca, acende o couro e as tachas
+   por onde passa (até então, latão a 20% em mistura normal: 1,7 em 255). */
+.bb-couro {
+  --muted-foreground: rgb(239 230 214 / 0.86);
+  --tacha: 104px;
+  background-color: var(--secondary);
+  background-image:
+    radial-gradient(120% 70% at 22% 0%, rgb(255 226 200 / 0.08), transparent 62%),
+    linear-gradient(180deg, var(--secondary), #5a2219);
+  box-shadow:
+    inset 0 1px 0 rgb(255 236 214 / 0.1),
+    inset 0 -1px 0 rgb(0 0 0 / 0.4);
+}
+.bb-couro::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  inset: 0 0 0 54%;
+  background-color: #6a281e;
+  background-image:
+    radial-gradient(circle at 50% 50%, #f6e4b4 0 0.9px, var(--primary) 1.8px, #7a5a28 3px, rgb(20 6 4 / 0.45) 3.6px, transparent 4.6px),
+    radial-gradient(circle at 50% 50%, #f6e4b4 0 0.9px, var(--primary) 1.8px, #7a5a28 3px, rgb(20 6 4 / 0.45) 3.6px, transparent 4.6px),
+    linear-gradient(45deg, transparent calc(50% - 2px), rgb(20 6 4 / 0.3) calc(50% - 1px), rgb(20 6 4 / 0.3) 50%, rgb(255 236 214 / 0.08) 50%, rgb(255 236 214 / 0.08) calc(50% + 1px), transparent calc(50% + 2px)),
+    linear-gradient(-45deg, transparent calc(50% - 2px), rgb(20 6 4 / 0.3) calc(50% - 1px), rgb(20 6 4 / 0.3) 50%, rgb(255 236 214 / 0.08) 50%, rgb(255 236 214 / 0.08) calc(50% + 1px), transparent calc(50% + 2px)),
+    radial-gradient(closest-side, rgb(255 226 200 / 0.09), transparent),
+    radial-gradient(closest-side, rgb(255 226 200 / 0.09), transparent),
+    linear-gradient(180deg, var(--secondary), #5a2219);
+  background-size:
+    var(--tacha) var(--tacha),
+    var(--tacha) var(--tacha),
+    var(--tacha) var(--tacha),
+    var(--tacha) var(--tacha),
+    var(--tacha) var(--tacha),
+    var(--tacha) var(--tacha),
+    100% 100%;
+  background-position:
+    0 0,
+    calc(var(--tacha) / 2) calc(var(--tacha) / 2),
+    0 0,
+    0 0,
+    calc(var(--tacha) / 2) 0,
+    0 calc(var(--tacha) / 2),
+    0 0;
+  /* O vivo da costura: o realce, o fundo do pesponto e a sombra do encosto sobre o assento. */
+  box-shadow:
+    -1px 0 0 rgb(255 236 214 / 0.12),
+    -5px 0 0 rgb(40 12 8 / 0.55),
+    -6px 0 0 rgb(255 236 214 / 0.07),
+    -22px 0 26px -14px rgb(0 0 0 / 0.55);
+}
+@media (max-width: 1023.98px) {
+  .bb-couro {
+    --tacha: 80px;
+  }
+  .bb-couro::before {
+    inset: 0 0 48% 0;
+    box-shadow:
+      0 1px 0 rgb(255 236 214 / 0.12),
+      0 5px 0 rgb(40 12 8 / 0.55),
+      0 6px 0 rgb(255 236 214 / 0.07),
+      0 22px 26px -14px rgb(0 0 0 / 0.55);
+  }
+}
+.bb-couro.vd-luz::after {
+  display: none;
+}
+.bb-couro > .vd-orbe {
+  width: 40rem;
+  height: 40rem;
+  margin: -20rem 0 0 -20rem;
+  mix-blend-mode: soft-light;
+  background: radial-gradient(closest-side, rgb(255 240 214 / 0.95), rgb(255 222 176 / 0.4) 55%, transparent);
+}
+
+/* O poste da casa, no encosto (desde a correção de 14/10): o capitel e a
+   base de latão, o cilindro de vidro com as listras de couro, osso e latão
+   e o sombreado redondo por cima. As listras, desenhadas uma volta mais
+   altas, sobem uma volta (--periodo: a volta de 72 px do degradê a 150°,
+   medida na vertical) com a casa aberta; fechada, ficam paradas, e o vidro
+   escurece. A luz de dentro acende com a casa aberta. Só transform e
+   opacity. */
+.bb-poste {
+  --largura: 72px;
+  --periodo: calc(72px / 0.8660254);
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  left: 77%;
+  display: flex;
+  height: min(68vh, 600px);
+  width: var(--largura);
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+@media (max-width: 1023.98px) {
+  .bb-poste {
+    --largura: 50px;
+    top: 26svh;
+    left: 50%;
+    height: 36svh;
+  }
+}
+.bb-poste-halo {
+  position: absolute;
+  z-index: -1;
+  inset: 8% -140%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(255 214 160 / 0.26), transparent);
+  opacity: 0.12;
+  transition: opacity 600ms var(--ease-atlas);
+}
+[data-casa-aberta] .bb-poste-halo {
+  opacity: 1;
+}
+.bb-poste-capitel,
+.bb-poste-base {
+  position: relative;
+  width: calc(var(--largura) + 18px);
+  flex: none;
+  background: linear-gradient(90deg, #5a3f1a, #d8b46c 32%, #f6e4b4 42%, #a8823f 68%, #5a3f1a);
+}
+.bb-poste-capitel {
+  height: 28px;
+  border-radius: 50% 50% 5px 5px / 80% 80% 5px 5px;
+  margin-top: 22px;
+}
+.bb-poste-capitel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin-left: -11px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 30%, #f6e4b4, var(--primary) 45%, #6e4f22);
+}
+.bb-poste-base {
+  height: 34px;
+  border-radius: 5px 5px 50% 50% / 5px 5px 70% 70%;
+}
+.bb-poste-vidro {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  overflow: hidden;
+  border-block: 6px solid #a8823f;
+  background: var(--foreground);
+  box-shadow: 0 24px 40px -18px rgb(0 0 0 / 0.75);
+}
+.bb-poste-listras {
+  position: absolute;
+  inset: 0 0 calc(-1 * var(--periodo)) 0;
+  background-image: repeating-linear-gradient(150deg, #7a2c21 0 18px, var(--foreground) 18px 36px, var(--primary) 36px 54px, var(--foreground) 54px 72px);
+}
+/* Fechada: o vidro a meia-luz. */
+.bb-poste-vidro::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: rgb(24 8 5 / 0.4);
+  transition: opacity 600ms var(--ease-atlas);
+}
+[data-casa-aberta] .bb-poste-vidro::before {
+  opacity: 0;
+}
+/* O cilindro: as bordas na sombra, o reflexo da janela à esquerda do meio. */
+.bb-poste-vidro::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgb(30 10 6 / 0.6),
+    rgb(30 10 6 / 0.12) 22%,
+    rgb(255 250 235 / 0.5) 33%,
+    rgb(255 250 235 / 0) 45%,
+    rgb(30 10 6 / 0) 62%,
+    rgb(30 10 6 / 0.62)
+  );
+}
+
+/* ---------- a cena da tesoura, sobre a bancada (desde a correção de 14/10) ----------
+   A bancada: outro fundo, de #2a221c a #1f1915 com a luz de cima (L de 0,26
+   a 0,22 em OKLab, contra 0,14 da noite e 0,33 a 0,38 do couro, que vem
+   depois). A tesoura de barbeiro em traço de latão: as metades giram em
+   volta do parafuso (transform-origin no parafuso, em unidades do desenho),
+   abertas até 28° cada quando a cena entra pelo pé da tela e fechadas até
+   4° quando chega ao meio (--p). Sob o ponteiro fino, e no toque
+   (:active), corta uma vez: fecha e abre em 280 ms. Com movimento
+   reduzido, nada corta; sem script, a pose final. */
+.bb-bancada {
+  background: linear-gradient(180deg, #2a221c, var(--muted) 72%);
+  box-shadow: inset 0 1px 0 rgb(239 230 214 / 0.06);
+}
+.bb-tesoura {
+  --abre: calc(4deg + (1 - clamp(0, var(--p), 1)) * 24deg);
+}
+.bb-lamina-a,
+.bb-lamina-b,
+.bb-corte-a,
+.bb-corte-b {
+  transform-box: view-box;
+  transform-origin: 330px 120px;
+}
+.bb-lamina-a {
+  transform: rotate(calc(var(--abre) * -1));
+}
+.bb-lamina-b {
+  transform: rotate(var(--abre));
+}
+.bb-tesoura-lamina {
+  fill: #241d17;
+  stroke: var(--primary);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.bb-tesoura-cabo {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.bb-tesoura-anel {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 6;
+}
+.bb-tesoura-fio {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1;
+  opacity: 0.55;
+}
+.bb-tesoura-parafuso {
+  fill: var(--primary);
+  stroke: #7a5a28;
+  stroke-width: 2;
+}
+.bb-tesoura-fenda {
+  stroke: #5a3f1a;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+@keyframes bb-corta-a {
+  50% {
+    transform: rotate(var(--abre));
+  }
+}
+@keyframes bb-corta-b {
+  50% {
+    transform: rotate(calc(var(--abre) * -1));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bb-tesoura:is(:active, [data-tocado]) .bb-corte-a {
+    animation: bb-corta-a 280ms var(--ease-atlas);
+  }
+  .bb-tesoura:is(:active, [data-tocado]) .bb-corte-b {
+    animation: bb-corta-b 280ms var(--ease-atlas);
+  }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .bb-tesoura:hover .bb-corte-a {
+    animation: bb-corta-a 280ms var(--ease-atlas);
+  }
+  .bb-tesoura:hover .bb-corte-b {
+    animation: bb-corta-b 280ms var(--ease-atlas);
+  }
+}
+
+/* ---------- o índice do rodapé, no início (desde a correção de 14/10) ----------
+   Fora: a cena dos capítulos, logo acima, é a mesma lista (no celular,
+   treze linhas seguidas). O "Índice" da barra, no início, leva à cena. */
+[data-demo="barbearia"]:has(.bb-capitulos) .bb-indice-rodape {
+  display: none;
+}
+
+/* ---------- a tabela dos serviços (desde a correção de 14/10) ----------
+   O relógio de cada serviço: o arco é a duração (o mais longo fecha a
+   volta), e o ponteiro corre o arco quando a tabela entra na tela, um
+   serviço depois do outro: 450 ms, 50 ms entre eles, sem atraso, com fim
+   em 600 ms, na mesa e no celular (até 15/10, 800 ms e 120 ms com 150 ms
+   de atraso na mesa, fim em 1,31 s, e 450 e 60 ms no celular, fim em 630
+   ms: os dois passavam do teto da abertura, 600 ms, e a mesa passava do
+   escalonamento, de 40 a 60 ms; 09-movimento, seção 2). Uma vez por chegada (o data-visivel do controle do movimento cai
+   fora da tela). Com script e antes de chegar, o ponteiro espera no alto;
+   sem script e com movimento reduzido, fica no fim do arco. A linha acende
+   o relógio sob o ponteiro fino, no foco e no toque. */
+.bb-relogio-arco {
+  stroke: var(--primary);
+  transition: stroke 150ms var(--ease-atlas);
+}
+.bb-relogio-ponteiro {
+  transform: rotate(calc(var(--fracao) * 360deg));
+}
+.bb-relogio-ponteiro line {
+  stroke: var(--foreground);
+  transition: stroke 150ms var(--ease-atlas);
+}
+.bb-relogio-eixo {
+  fill: var(--primary);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .bb-tabela:not([data-visivel]) .bb-relogio-ponteiro {
+    transform: rotate(0deg);
+  }
+  .js .bb-tabela[data-visivel] .bb-relogio-ponteiro {
+    animation: bb-varre 450ms var(--ease-atlas) calc(var(--i) * 50ms) both;
+  }
+}
+@keyframes bb-varre {
+  from {
+    transform: rotate(0deg);
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-servico:hover :is(.bb-relogio-arco, .bb-relogio-ponteiro line) {
+    stroke: var(--accent);
+    transition-duration: 200ms;
+  }
+}
+.bb-servico:is(:focus-within, :active, [data-tocado]) :is(.bb-relogio-arco, .bb-relogio-ponteiro line) {
+  stroke: var(--accent);
+  transition-duration: 120ms;
+}
+/* Desde 16/10 (o crítico de fora: sob a mão, só o relógio acendia, 0,1% da
+   linha), sob o ponteiro fino e no toque o ponteiro corre o arco de novo, do
+   alto até a duração, em 450 ms: a mão (.bb-relogio-mao, dentro do
+   ponteiro) parte da volta contrária e chega a zero; ao sair, nada a
+   desfazer. O foco do teclado fica com a cor. Com movimento reduzido, só a cor. */
+@keyframes bb-varre-de-novo {
+  from {
+    transform: rotate(calc(var(--fracao) * -360deg));
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) and (pointer: fine) {
+    .bb-servico:hover .bb-relogio-mao {
+      animation: bb-varre-de-novo 450ms var(--ease-atlas);
+    }
+  }
+  .bb-servico[data-tocado] .bb-relogio-mao {
+    animation: bb-varre-de-novo 450ms var(--ease-atlas);
+  }
+}
+
+/* ---------- os espelhos da equipe (desde a correção de 14/10) ----------
+   Cada cadeira, o seu espelho em arco: a moldura de latão, o vidro escuro
+   com o reflexo inclinado, as iniciais gravadas e a luz da bancada, em
+   cima. O estado ao vivo (EspelhosDaEquipe): aceso (data-aceso) o de quem
+   atende agora; apagado (data-apagado) o de quem não; sem estado (até a
+   hidratação, sem script), a meia-luz. Sob o ponteiro fino e no toque, a
+   luz sobe. Só opacidade. */
+.bb-espelho-moldura {
+  aspect-ratio: 4 / 5;
+  padding: 7px;
+  border-radius: 999px 999px 14px 14px;
+  background: linear-gradient(160deg, #f0d79c, #b8904c 30%, #7a5a28 60%, var(--primary) 85%, #8a6730);
+  box-shadow:
+    inset 0 1px 0 rgb(255 245 220 / 0.5),
+    0 30px 60px -30px rgb(0 0 0 / 0.9);
+}
+.bb-espelho-vidro {
+  position: relative;
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 999px 999px 8px 8px;
+  background:
+    linear-gradient(115deg, transparent 36%, rgb(239 230 214 / 0.07) 45%, transparent 54%),
+    linear-gradient(180deg, #2a231d, #120f0c 55%, #1a1512);
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.6),
+    inset 0 0 40px rgb(0 0 0 / 0.6);
+}
+.bb-espelho-luz {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(75% 55% at 50% 16%, rgb(255 222 170 / 0.42), rgb(224 196 138 / 0.12) 55%, transparent 78%);
+  opacity: 0.45;
+  transition: opacity 600ms var(--ease-atlas);
+}
+.bb-espelho[data-apagado] .bb-espelho-luz {
+  opacity: 0.1;
+}
+/* Com a casa fechada (desde 16/10), a meia-luz quente de quem atende quando
+   ela abrir: entre o apagado e o aceso. */
+.bb-espelho[data-a-postos] .bb-espelho-luz {
+  opacity: 0.5;
+}
+.bb-espelho-iniciais {
+  position: relative;
+  font-size: clamp(34px, 9vw, 150px);
+  line-height: 1;
+  color: rgb(239 230 214 / 0.16);
+  text-shadow:
+    0 1px 0 rgb(0 0 0 / 0.55),
+    0 -1px 0 rgb(255 245 220 / 0.06);
+}
+/* No celular, o espelho grande (desde 16/10; até então, a miniatura de 96 px
+   ao lado do nome), com as iniciais na mesma proporção da mesa. */
+@media (max-width: 639.98px) {
+  .bb-espelho-iniciais {
+    font-size: 20vw;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .bb-espelho:hover .bb-espelho-luz {
+    opacity: 0.8;
+    transition-duration: 250ms;
+  }
+}
+.bb-espelho:is(:active, [data-tocado]) .bb-espelho-luz {
+  opacity: 0.8;
+  transition-duration: 120ms;
+}
+.bb-espelho[data-aceso] .bb-espelho-luz {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-espelho-luz {
+    transition: none !important;
+  }
+}
+
+/* ---------- o Retorno no celular (desde 16/10) ----------
+   O crítico de fora: a primeira tela do Retorno, a 390 px, era a do
+   Agendar (o título, o texto, o mesmo painel de vidro, o rótulo espaçado e a
+   mesma grade 2 × 2 de opções em caixa, com a escolha na borda de latão).
+   Abaixo de 1024 px, a ferramenta fica sem o vidro; abaixo de 640 px, os
+   cortes são uma lista em linhas, como a tabela da casa: o nome à esquerda,
+   a janela à direita; a escolha, o nome em latão claro, o ponto de latão
+   pendurado à esquerda (opacidade, 200 ms) e o fio de baixo em latão. */
+@media (max-width: 1023.98px) {
+  .bb-vidro-mesa {
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+}
+@media (max-width: 639.98px) {
+  .bb-cortes {
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--border);
+  }
+  .bb-corte {
+    position: relative;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.5rem;
+    padding: 0.75rem 0 0.75rem 1.1rem;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    background: none;
+  }
+  .bb-corte::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    margin-top: -3px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0;
+    transition: opacity 150ms var(--ease-atlas);
+  }
+  input:checked + .bb-corte {
+    background: none;
+    box-shadow: none;
+  }
+  input:checked + .bb-corte::before {
+    opacity: 1;
+    transition-duration: 200ms;
+  }
+  input:checked + .bb-corte .bb-corte-nome {
+    color: var(--accent);
+  }
+}
+
+/* ---------- as respostas à escolha (Agendar e Retorno, desde 14/10) ---------- */
+/* O bilhete que se reimprime: a frase nova entra de 6 px abaixo em 200 ms
+   (a key muda com o pedido); a anterior some de uma vez. A primeira pinta
+   parada. */
+@media (prefers-reduced-motion: no-preference) {
+  .bb-bilhete-frase[data-reimpresso] {
+    animation: bb-reimprime 200ms var(--ease-atlas) both;
+  }
+}
+@keyframes bb-reimprime {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* A régua que abre a janela: o traço de latão de cada dia sobe da base
+   (scaleY de 0,5 a 1) e acende, em 220 ms, varrendo da esquerda em até 80
+   ms no total. Em repouso, as formas de sempre: o ponto curto fora da
+   janela, a barra cheia dentro. */
+.bb-regua-latao {
+  transform: scaleY(0.5);
+  transform-origin: 50% 100%;
+  opacity: 0;
+}
+.bb-regua-latao[data-aberto] {
+  transform: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .bb-regua-latao {
+    transition:
+      transform 220ms var(--ease-atlas),
+      opacity 220ms var(--ease-atlas);
+    transition-delay: calc(var(--d) / var(--total) * 80ms);
+  }
+}
+
+/* A ficha de cada opção de serviço (desde a correção de 14/10): apagada; a
+   da opção escolhida vira de frente em 300 ms, no ponto do toque (no
+   celular, a ficha grande virava fora da vista). Desde 16/10 (o Impeccable:
+   de perfil, a 68°, a ficha de 36 px tinha 13 px de largura e lia como
+   pílula), as outras ficam a 32°: a face à vista, com ~30 px de largura. */
+.bb-opcao-ficha {
+  transform: perspective(160px) rotateY(32deg);
+  opacity: 0.4;
+  transition:
+    transform 300ms var(--ease-atlas),
+    opacity 300ms var(--ease-atlas);
+}
+input:checked + .bb-opcao-servico .bb-opcao-ficha {
+  transform: none;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bb-opcao-ficha {
+    transition: none;
+  }
+}
+
 /* O campo de data no escuro. */
 [data-demo="barbearia"] input[type="date"] {
   color-scheme: dark;
+}
+
+/* O botão magnético, só aqui (16.10.2026, fechamento com o Impeccable): até então a regra e a curva com quique
+   (--ease-mola) ficavam no CSS global (app/vidro.css, app/globals.css), carregadas por todas as páginas do Atlas e dos
+   sites de nicho sem nenhum [data-magnetico]; o detector acusava bounce-easing em todas elas. A mesma camada
+   (components) de antes, para o botão continuar igual. O puxão vem de components/ilhas/luz-do-cursor.tsx. */
+@layer components {
+  [data-magnetico] {
+    transition-property: translate, background-color, color, border-color, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.34, 1.4, 0.5, 1);
+    transition-duration: 450ms;
+  }
 }

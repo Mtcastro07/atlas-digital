@@ -1,8 +1,20 @@
-import { Carimbo, ReguaDeLeitura, Telefone, metadadosDe, paginaDe } from "@/components/demos/petshop/pecas";
+import { Carimbo, Telefone, metadadosDe, paginaDe } from "@/components/demos/petshop/pecas";
 import { ReguaDePeso } from "@/components/demos/petshop/servicos/regua-de-peso";
 import { TabelaDeValores } from "@/components/demos/petshop/servicos/tabela-de-valores";
 import { HighlightedText } from "@/components/ui/spell/highlighted-text";
-import { acrescimos, condicaoDoNo, levaETraz, pagamento, pesagem, petshopSite as site, servicos, valoresDe } from "@/conteudo/demos/petshop";
+import {
+  acrescimos,
+  condicaoDoNo,
+  levaETraz,
+  pagamento,
+  pelagens,
+  pesagem,
+  petshopSite as site,
+  reconhecerPelagem,
+  servicos,
+  valoresDe,
+  type PelagemId,
+} from "@/conteudo/demos/petshop";
 import { real } from "@/lib/demos/petshop/valores";
 
 import "../servicos.css";
@@ -14,8 +26,9 @@ import "../servicos.css";
 // liam como documento, e o verso não existia na tela), com "Valores de outubro de 2026", o banho de ponta a ponta e as
 // duas tosas lado a lado (cada serviço com o que compreende, como pede o CDC, art. 31); os acréscimos e o pelo com nó (com
 // o marca-texto do plano, uma vez no site, em "antes de começar"); o leva e traz no chapado; e, no fim, a forma de
-// pagamento com o carimbo. Cada linha de tabela responde com a régua de leitura; cada célula leva o nome da coluna em
-// data-rotulo, para as tabelas virarem fichas no celular sem repetir títulos. O desenho é de servicos.css; os fatos, de
+// pagamento com o carimbo. Só as linhas das três tabelas de preço respondem com a régua de leitura (a leitura cruzada da
+// pelagem com o porte; 14.10.2026): os acréscimos e o leva e traz se leem linha a linha, como frases, e ficam quietos.
+// Cada célula leva o nome da coluna em data-rotulo, para as tabelas virarem fichas no celular sem repetir títulos. O desenho é de servicos.css; os fatos, de
 // conteudo/demos/petshop.ts.
 
 export const metadata = metadadosDe("servicos");
@@ -28,12 +41,16 @@ const rotulos = {
   valor: "Valor",
   duracao: "Duração",
   no: "Pelo com nó",
-  bairro: "Bairro",
-  dias: "Dias",
-  janela: "Busca e entrega",
-  idaEVolta: "Ida e volta",
   pagamento: "Pagamento",
 };
+
+/** "Charitas e Cachoeiras"; "Icaraí, Santa Rosa e Vital Brazil". */
+const emLista = new Intl.ListFormat("pt-BR", { type: "conjunction" });
+// O leva e traz por dia (o Impeccable, fechamento de 16.10.2026: seis linhas, a janela repetida em cinco): os bairros do
+// mesmo dia juntos, na ordem do conteúdo, com o valor do grupo (o mesmo em todos: o teste confere).
+const levaPorDia = [
+  ...levaETraz.bairros.reduce((grupos, b) => grupos.set(b.dias, [...(grupos.get(b.dias) ?? []), b]), new Map<string, (typeof levaETraz.bairros)[number][]>()),
+];
 
 /**
  * O valor escrito como a casa escreve ("+ R$ 30,00 no pequeno", "+ 15 min"), sem quebrar a linha entre o sinal, o
@@ -44,8 +61,9 @@ const semQuebra = (texto: string) => texto.replace(/(\+|R\$) /g, "$1\u00a0").rep
 export default function Servicos() {
   return (
     <>
-      {/* A abertura: a cartolina de ponta a ponta; o título no corpo dos números e, embaixo dele, como se pesa; ao lado,
-          a régua de peso de pé, que sangra em cima e embaixo. */}
+      {/* A abertura: a cartolina de ponta a ponta; o título no corpo dos números e, embaixo dele, como se pesa e como se
+          reconhece a pelagem (as duas entradas da tabela: o porte pelo peso, a pelagem pelo que se vê); ao lado, a régua
+          de peso de pé, que sangra em cima e embaixo (no celular, embaixo de tudo, sangrando até o balcão). */}
       <section aria-labelledby="titulo" className="bt-cena bt-cartolina bt-abaixo-da-tira bt-verso-abertura">
         <div className="bt-largura bt-verso-abertura-grade">
           <div className="bt-verso-abertura-texto">
@@ -56,6 +74,20 @@ export default function Servicos() {
               {pesagem}
             </p>
           </div>
+          <section aria-labelledby="pelagem" className="bt-verso-pelagens">
+            <h2 id="pelagem" className="bt-verso-pelagens-titulo">
+              {reconhecerPelagem.titulo}
+            </h2>
+            <dl>
+              {(Object.keys(pelagens) as PelagemId[]).map((id) => (
+                <div key={id}>
+                  <dt>{pelagens[id]}</dt>
+                  <dd>{reconhecerPelagem.itens[id]}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="bt-verso-pelagens-duvida">{reconhecerPelagem.duvida}</p>
+          </section>
           <ReguaDePeso legenda="pesagem" />
         </div>
       </section>
@@ -85,7 +117,7 @@ export default function Servicos() {
             <h2 id="acrescimos" className="bt-verso-servico">
               {rotulos.acrescimos}
             </h2>
-            <ReguaDeLeitura className="bt-verso-tabela bt-verso-acrescimos">
+            <div className="bt-verso-tabela bt-verso-acrescimos">
               <table role="table" aria-labelledby="acrescimos">
                 <thead role="rowgroup">
                   <tr role="row">
@@ -97,7 +129,7 @@ export default function Servicos() {
                 </thead>
                 <tbody role="rowgroup">
                   {acrescimos.map((a) => (
-                    <tr key={a.id} role="row" data-bt-linha="">
+                    <tr key={a.id} role="row">
                       <th scope="row" role="rowheader">{a.nome}</th>
                       <td role="cell" data-rotulo={rotulos.oQueE}>{a.compreende}</td>
                       <td role="cell" data-rotulo={rotulos.valor}>{semQuebra(a.valor)}</td>
@@ -106,7 +138,7 @@ export default function Servicos() {
                   ))}
                 </tbody>
               </table>
-            </ReguaDeLeitura>
+            </div>
           </div>
 
           <section aria-labelledby="no" className="bt-verso-nota-no">
@@ -121,38 +153,28 @@ export default function Servicos() {
         </div>
       </section>
 
-      {/* O leva e traz no chapado: o título, a condição e o que fica de fora numa coluna; a tabela na outra. */}
+      {/* O leva e traz no chapado, como o quadro de itinerário: o título, a condição e a janela (uma vez) em cima; embaixo,
+          os dias de ponta a ponta, cada um com os bairros e o valor (o Impeccable, fechamento de 16.10.2026: a tabela de
+          seis linhas, com o título à esquerda, era o molde do "Pelo com nó", logo acima). */}
       <section aria-labelledby="leva-e-traz" className="bt-cena bt-tinta bt-verso-leva">
-        <div className="bt-largura bt-verso-leva-grade">
-          <div className="bt-verso-leva-texto">
-            <h2 id="leva-e-traz" className="bt-titulo">
-              {levaETraz.titulo}
-            </h2>
-            <p className="bt-destaque bt-verso-leva-condicao">{levaETraz.condicao}</p>
-            <p className="bt-verso-fora">{levaETraz.fora}</p>
-          </div>
-          <ReguaDeLeitura className="bt-verso-tabela bt-verso-bairros">
-            <table role="table" aria-labelledby="leva-e-traz">
-              <thead role="rowgroup">
-                <tr role="row">
-                  <th scope="col" role="columnheader">{rotulos.bairro}</th>
-                  <th scope="col" role="columnheader">{rotulos.dias}</th>
-                  <th scope="col" role="columnheader">{rotulos.janela}</th>
-                  <th scope="col" role="columnheader">{rotulos.idaEVolta}</th>
-                </tr>
-              </thead>
-              <tbody role="rowgroup">
-                {levaETraz.bairros.map((b) => (
-                  <tr key={b.id} role="row" data-bt-linha="">
-                    <th scope="row" role="rowheader">{b.nome}</th>
-                    <td role="cell" data-rotulo={rotulos.dias}>{b.dias}</td>
-                    <td role="cell" data-rotulo={rotulos.janela}>{b.janela}</td>
-                    <td role="cell" data-rotulo={rotulos.idaEVolta}>{real(b.centavos)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </ReguaDeLeitura>
+        <div className="bt-largura">
+          <h2 id="leva-e-traz" className="bt-titulo">
+            {levaETraz.titulo}
+          </h2>
+          <p className="bt-destaque bt-verso-leva-condicao">
+            {levaETraz.condicao} <strong>{levaETraz.janela}</strong>
+          </p>
+          <dl className="bt-verso-leva-dias">
+            {levaPorDia.map(([dias, bairros]) => (
+              <div key={dias} className="bt-verso-leva-dia">
+                <dt>{dias}</dt>
+                <dd className="bt-verso-leva-bairros">{emLista.format(bairros.map((b) => b.nome))}</dd>
+                <dd className="bt-verso-leva-valor">{real(bairros[0].centavos)}</dd>
+                {bairros.some((b) => b.id === "sao-francisco") && <dd className="bt-verso-leva-sabado">{levaETraz.sabado}</dd>}
+              </div>
+            ))}
+          </dl>
+          <p className="bt-verso-fora">{levaETraz.fora}</p>
         </div>
       </section>
 

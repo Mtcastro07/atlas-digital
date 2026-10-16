@@ -46,6 +46,7 @@ export default function LayoutDaClinica({ children }: { children: React.ReactNod
           avaliacao={paginas.find((p) => p.id === "avaliacao")!.caminho}
           indice={barra.indice}
           fechar={barra.fechar}
+          pausa={barra.pausa}
         />
       </CabecalhoFixo>
       <PalcoDaArcada legendas={mapa.legendas} cabeca={[capa.folha.titulo, mapa.numeracao]} />

@@ -12,7 +12,10 @@
      painel —, declaradas junto de cada componente.
    Da branchCto (fusão de 01/10): o título da capa que se compõe palavra
    a palavra (a partir de 1024 px), o reflexo da chamada final e o
-   ambiente contínuo pausável. O que se move sem parar ([data-ambiente]:
+   ambiente contínuo pausável. Desde 14/10, as aberturas das páginas
+   internas não têm entrada própria (o texto chega com a transição de
+   página): cada uma tem o momento da sua figura, um por página (abaixo,
+   "os momentos das aberturas"). O que se move sem parar ([data-ambiente]:
    a esfera e o seu halo, a faixa, o reflexo, o globo de O Atlas) só roda
    com script (.js, posto pelo <head> de app/layout.tsx), porque é o
    script que oferece o botão de pausa do cabeçalho (WCAG 2.2.2,
@@ -41,13 +44,6 @@
     vertical-align: top;
     padding-bottom: 0.14em;
     margin-bottom: -0.14em;
-  }
-  /* Janela com folga dos lados (as linhas das aberturas): a tarja que
-     abre a linha avança 0,1 em sobre a margem (.mov-tarja-na-margem) e não
-     é cortada. A margem negativa devolve a folga: a linha não muda. */
-  .mov-janela-folgada {
-    padding-inline: 0.12em;
-    margin-inline: -0.12em;
   }
   .mov-palavra {
     display: inline-block;
@@ -196,13 +192,6 @@
     animation: mov-entra 1100ms var(--ease-atlas) forwards;
     animation-delay: var(--atraso, 0ms);
   }
-  /* Aberturas das páginas (rótulo, lide e figura): só se acendem, sem
-     crescer nem deslocar. */
-  .mov-surge {
-    opacity: 0;
-    animation: mov-surge 700ms var(--ease-atlas) forwards;
-    animation-delay: var(--atraso, 0ms);
-  }
   /* Título da capa: cada palavra sobe da própria janela, em sequência —
      o "título que se compõe" do plano Completo, que o rodapé diz aplicar.
      Só a partir de 1024 px: no celular, o título pinta parado, sem
@@ -214,19 +203,13 @@
       animation-delay: var(--atraso, 0ms);
     }
   }
-  /* O rótulo e o lide das aberturas das páginas: como o título, só se
-     acendem a partir de 1024 px. No celular, o lide de quatro linhas pode
-     ser o elemento do LCP e partia de opacidade 0, 320 ms depois
-     (15-desempenho.md; corrigido em 14/10). */
-  @media (min-width: 1024px) {
-    .mov-surge-mesa {
-      opacity: 0;
-      animation: mov-surge 700ms var(--ease-atlas) forwards;
-      animation-delay: var(--atraso, 0ms);
-    }
-  }
-  /* Reabertura (recarregar, voltar): a capa chega pronta. */
-  .ja-aberto :is(.mov-entra, .mov-surge, .mov-surge-mesa, .mov-palavra) {
+  /* Reabertura (recarregar, voltar): a capa chega pronta. As linhas do menu
+     do celular (num [role="dialog"]) ficam de fora desde 15/10: a entrada
+     delas é resposta ao toque, não abertura de página. Até então, depois de
+     uma recarga, o menu abria sem a entrada; e, com a ilha Ancoras tirando
+     o .ja-aberto na primeira troca de página, as linhas recomeçariam a
+     entrada no meio do fechamento. */
+  .ja-aberto :is(.mov-entra, .mov-palavra):not([role="dialog"] *) {
     animation: none;
     opacity: 1;
     transform: none;
@@ -325,11 +308,6 @@
     transform: none;
   }
 }
-@keyframes mov-surge {
-  to {
-    opacity: 1;
-  }
-}
 @keyframes mov-reflexo {
   0%,
   55% {
@@ -387,6 +365,151 @@
   }
 }
 
+/* ---------- os momentos das aberturas (desde 14/10) ----------
+   Até 14/10, as seis aberturas das páginas internas entravam iguais: o
+   rótulo e o lide que se acendiam, as linhas do título que subiam, a tarja
+   e a figura que se acendia (a marca M1, a mesma entrada em todas as
+   páginas; pedido do usuário, 14/10: "parecendo que você está spamando os
+   mesmos componentes"). Agora o texto chega com a transição de página, e
+   cada página tem o momento da sua figura, diferente de uma para outra:
+   a escada que sobe até o corrimão (Planos), a trena que se gradua e
+   escreve os trechos (O trabalho) e a chegada à pergunta (Dúvidas). O
+   Orçamento abre no próprio montador, que responde à mão (desde 16/10).
+   Saíram em 16/10 (o crítico de fora): os bairros que acendiam de 40% a
+   100% em Para quem (um esmaecimento, a entrada mais genérica que há; os
+   bairros respondem à mão) e a tarja no "UFF" de O Atlas (o segundo gesto
+   de texto do site, com a onda do "24h").
+   Na revisão de 15/10 (o mesmo pedido de 14/10), o traço que se riscava da
+   esquerda para a direita era o momento de três páginas seguidas (o
+   corrimão de Planos, a soma do Orçamento e a trena), a mesma entrada com
+   outro nome: ficou só na trena, onde a direção é o próprio conteúdo (o
+   eixo do tempo). O corrimão e a soma ficam desenhados, parados.
+   Todos cabem no token da entrada das aberturas (600 ms, com o
+   escalonamento até 500 ms; producao/esteira/09-movimento.md, seção 2) e
+   terminam até os 960 ms. Uma vez por visita (html:not(.ja-aberto); a
+   ilha Ancoras retira a classe na primeira troca de página); só transform
+   e opacity; em CSS, sem script, e com a pose final como estado de
+   repouso; com movimento reduzido, a pose final, sem animação.
+   A espera (--depois-da-troca): na navegação interna, a página nova só
+   aparece 160 ms depois do clique e entra em 700 ms; aos 360 ms ela já
+   está a 0,83 de opacidade, e o momento não se perde na transição. Na
+   carga direta, a espera é menor que os 420 ms da figura de antes. */
+:root {
+  --depois-da-troca: 360ms;
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* Planos: os três degraus sobem até o corrimão, que fica parado,
+     desenhado desde o primeiro quadro: o traçado primeiro, a obra depois.
+     Partem de 40% da própria altura, visíveis, com o nome do plano à vista
+     (o chão da figura recorta o resto), um depois do outro (--i), 480 ms
+     cada, 60 ms entre um e outro, na curva da casa; o texto sobe junto, sem
+     se deformar. Assentam aos 960 ms. Até 15/10, partiam de 101%,
+     escondidos (a metade direita da abertura ficava vazia por 360 ms), e o
+     corrimão se riscava depois deles, até os 1.500 ms. */
+  html:not(.ja-aberto) .mov-degrau {
+    animation: mov-degrau 480ms var(--ease-atlas) calc(var(--depois-da-troca) + var(--i, 0) * 60ms) backwards;
+  }
+  /* O trabalho: os traços de dia descem da linha da trena, um a um (--d),
+     150 ms cada, 30 ms entre um e outro (16 traços: 450 ms de
+     escalonamento, dentro dos 500 do token; a 40 ms, passava). É traço que
+     se desenha, como o sublinhado do vínculo, e não objeto que cresce do
+     nada. A centragem é a propriedade translate, que não briga com o
+     transform. No mesmo passo, a janela dos trechos corre em 450 ms,
+     linear: chega ao dia d aos 30·d ms, quando o traço dele começa a
+     descer. A janela corre da esquerda para a direita e o conteúdo, ao
+     contrário, dentro dela (os 101% se anulam): os trechos ficam parados e
+     aparecem onde a janela já passou. Só aqui o traço anda da esquerda
+     para a direita: é o eixo do tempo, do dia 0 ao 15. */
+  html:not(.ja-aberto) .mov-risca {
+    transform-origin: top;
+    animation: mov-risca 150ms cubic-bezier(0.05, 0.7, 0.1, 1) calc(var(--depois-da-troca) + var(--d, 0) * 30ms) backwards;
+  }
+  html:not(.ja-aberto) .mov-trena {
+    animation: mov-corrimao 450ms linear var(--depois-da-troca) backwards;
+  }
+  html:not(.ja-aberto) .mov-trena-conteudo {
+    animation: mov-corrimao-traco 450ms linear var(--depois-da-troca) backwards;
+  }
+}
+/* Dúvidas: a pergunta escolhida no mapa acende ao ser alcançada (mostra
+   para onde o clique levou). Uma camada de bronze atrás da pergunta, só de
+   opacidade, em 1.400 ms: acende em 200 ms, segura e se apaga nos últimos
+   150 ms. A espera (--chegada) é a duração da rolagem até lá, que a ilha
+   Ancoras escreve no <details> junto com data-chegou
+   (components/ilhas/ancoras.tsx); sem script, vale a chegada pelo salto
+   nativo (:target), sem espera. Com movimento reduzido, a rolagem é
+   instantânea, e a camada acende sem passagem e se apaga em 150 ms. */
+.vd-duvida > summary {
+  position: relative;
+  isolation: isolate;
+}
+.vd-duvida > summary::before {
+  content: "";
+  position: absolute;
+  inset: 0 -1rem;
+  z-index: -1;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.vd-duvida:is(:target, [data-chegou]) > summary::before {
+  animation: mov-chegada-reduzida 1400ms linear var(--chegada, 0ms);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vd-duvida:is(:target, [data-chegou]) > summary::before {
+    animation: mov-chegada 1400ms linear var(--chegada, 0ms);
+  }
+}
+/* A janela e o conteúdo da trena (o nome vem do corrimão, que os usou até 15/10). */
+@keyframes mov-corrimao {
+  from {
+    transform: translateX(-101%);
+  }
+}
+@keyframes mov-corrimao-traco {
+  from {
+    transform: translateX(101%);
+  }
+}
+@keyframes mov-risca {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes mov-degrau {
+  from {
+    transform: translateY(40%);
+  }
+}
+@keyframes mov-chegada {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  14.286% {
+    opacity: 1;
+    animation-timing-function: linear;
+  }
+  89.286% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes mov-chegada-reduzida {
+  0%,
+  89.286% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* ---------- transição entre páginas ----------
    O <ViewTransition> do React nos template.tsx de cada site
    (components/transicao-de-pagina.tsx), ligado sozinho pelo App Router a
@@ -402,6 +525,14 @@
   animation: 300ms cubic-bezier(0.4, 0, 1, 1) both vt-pagina-sai;
 }
 ::view-transition-new(.pagina-entra) {
+  animation: 700ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both vt-pagina-entra;
+}
+/* O Atlas (app/(atlas)/template.tsx, desde 14/10): a saída acaba antes de a
+   entrada começar, e os dois títulos não se sobrepõem. */
+::view-transition-old(.atlas-sai) {
+  animation: 150ms cubic-bezier(0.4, 0, 1, 1) both vt-pagina-sai;
+}
+::view-transition-new(.atlas-entra) {
   animation: 700ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both vt-pagina-entra;
 }
 ::view-transition-group(cabecalho) {
@@ -568,11 +699,14 @@
   }
 }
 
-/* Highlighted Text: a tarja de bronze das aberturas. A janela fica parada,
+/* Highlighted Text: a tarja de bronze (de 14 a 16/10, só no "UFF" da
+   abertura de O Atlas; desde 16/10, sem uso no Atlas, e a regra fica com o
+   componente; a variante marca-texto, abaixo, é dos sites de exemplo). A janela fica parada,
    rente à caixa da palavra e 0,12 em abaixo, para as descendentes; dentro,
    a faixa sobe e a cópia do texto em navy desce o mesmo tanto (as duas têm
    a altura da janela: os 101% se anulam). Só transform. Parada (ou ao
-   recarregar), já no lugar.
+   recarregar), já no lugar. Em 600 ms, o token da entrada das aberturas
+   (até 15/10, 800 ms): sobe aos 360 ms e assenta aos 960, com os momentos.
    A caixa da palavra tem entrelinha 1, qualquer que seja a do título: a
    tarja tem sempre a mesma altura (no Archivo Black, de 0,1 em acima do
    acento a 0,08 em abaixo do "g"), e o espaço entre ela e as linhas
@@ -585,11 +719,6 @@
 }
 .mov-tarja:not([data-marcador]) {
   line-height: 1;
-}
-/* A palavra que abre a linha ("Niterói,"): a tarja avança sobre a margem,
-   e a letra fica alinhada com as linhas de baixo (até 05/10, entrava 0,1 em). */
-.mov-tarja-na-margem {
-  margin-inline-start: -0.1em;
 }
 /* Cantos arredondados (pedido do usuário, 03/10: "priorizar arredondamentos
    na interface"): a janela recorta a faixa com eles. */
@@ -615,10 +744,10 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   html:not(.ja-aberto) .mov-tarja:not([data-marcador]) .mov-tarja-faixa {
-    animation: mov-tarja-faixa 800ms var(--ease-atlas) var(--atraso-tarja, 0ms) both;
+    animation: mov-tarja-faixa 600ms var(--ease-atlas) var(--atraso-tarja, 0ms) both;
   }
   html:not(.ja-aberto) .mov-tarja:not([data-marcador]) .mov-tarja-tinta {
-    animation: mov-tarja-tinta 800ms var(--ease-atlas) var(--atraso-tarja, 0ms) both;
+    animation: mov-tarja-tinta 600ms var(--ease-atlas) var(--atraso-tarja, 0ms) both;
   }
 }
 /* Variante marca-texto (data-marcador; na nutrição): a faixa por trás do
