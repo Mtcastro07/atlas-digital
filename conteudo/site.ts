@@ -27,7 +27,10 @@ export type IdDaSecao = "inicio" | "quem" | "planos" | "escada" | "vitrine" | "o
  * o rótulo no cabeçalho; `abertura`, o topo de cada página (rótulo,
  * título em linhas, a palavra do título que recebe a tarja de bronze e
  * lide); `porta`, a entrada dela no índice do início
- * (o número grande e o resumo).
+ * (o número grande e o resumo). `titulo` diz o que se vende e onde, com
+ * "· Atlas Digital" no fim (16/10, SEO e GEO: até então, "Planos e preços ·
+ * Atlas Digital" e afins, sem "sites" nem "Niterói"); só fatos que a página
+ * já mostra.
  */
 export const paginas = [
   {
@@ -41,7 +44,7 @@ export const paginas = [
     id: "para-quem",
     caminho: "/para-quem",
     menu: "Para quem",
-    titulo: "Para quem · Atlas Digital",
+    titulo: "Para quem: sites para negócios de Niterói · Atlas Digital",
     descricao: "Comércio de bairro, serviço com agenda e profissão regulamentada em Niterói: os públicos atendidos e o que cada nicho exige.",
     abertura: {
       rotulo: "Para quem",
@@ -55,7 +58,7 @@ export const paginas = [
     id: "planos",
     caminho: "/planos",
     menu: "Planos",
-    titulo: "Planos e preços · Atlas Digital",
+    titulo: "Planos e preços de sites em Niterói · Atlas Digital",
     descricao: "Três planos com preço publicado — Essencial, Profissional e Completo —, o site de cada um e a condição dos três primeiros contratos.",
     abertura: {
       rotulo: "Planos",
@@ -70,7 +73,7 @@ export const paginas = [
     id: "orcamento",
     caminho: "/orcamento",
     menu: "Orçamento",
-    titulo: "Orçamento · Atlas Digital",
+    titulo: "Orçamento de site com valor na hora · Atlas Digital",
     descricao: "Plano e módulos, com o valor exato na hora, em criação e mensalidade. A mensagem segue pronta para o WhatsApp; nada é registrado.",
     abertura: {
       rotulo: "Orçamento",
@@ -84,7 +87,7 @@ export const paginas = [
     id: "trabalho",
     caminho: "/o-trabalho",
     menu: "O trabalho",
-    titulo: "O trabalho · Atlas Digital",
+    titulo: "Como o site é feito, do briefing à publicação · Atlas Digital",
     descricao: "Visita e briefing, rascunho navegável em 24 horas, duas rodadas de revisão e publicação em 7 a 15 dias úteis.",
     abertura: {
       rotulo: "O trabalho",
@@ -98,7 +101,7 @@ export const paginas = [
     id: "atlas",
     caminho: "/o-atlas",
     menu: "O Atlas",
-    titulo: "O Atlas · Atlas Digital",
+    titulo: "O Atlas: três sócios, origem na UFF · Atlas Digital",
     descricao: "Formado por três estudantes de Ciência da Computação da Universidade Federal Fluminense, em Niterói: o método acadêmico aplicado a sites para o comércio local.",
     abertura: {
       rotulo: "O Atlas",
@@ -112,7 +115,7 @@ export const paginas = [
     id: "duvidas",
     caminho: "/duvidas",
     menu: "Dúvidas",
-    titulo: "Perguntas frequentes · Atlas Digital",
+    titulo: "Perguntas frequentes sobre sites · Atlas Digital",
     descricao: "Prazo, preço, contrato, conteúdo, verificação de qualidade e privacidade: as perguntas que costumam vir antes do orçamento.",
     abertura: {
       rotulo: "Dúvidas",
@@ -252,6 +255,17 @@ export const capa = {
     { valor: "1", rotulo: "visita presencial ao estabelecimento" },
     { valor: "2", rotulo: "rodadas de revisão incluídas" },
   ],
+  /**
+   * O demonstrativo ao lado dos destaques (16/10, decisão do aprovador: "Pôr o demonstrativo"): um site de
+   * nicho no celular, na primeira tela, aberto em nova aba. `site` é o id em `simulador.sites`; a imagem é
+   * public/simulador/<site>-inicio-{390,780}.webp. Mudou a capa do site? Refotografe, e reveja a descrição.
+   */
+  demonstrativo: {
+    site: "odontologia",
+    descricao:
+      "Primeira tela do site da Odontologia Boa Viagem no celular: o título, primeiro a avaliação e depois o tratamento, sobre o mapa dos dentes em 3D; o botão para pedir avaliação pelo WhatsApp e o aviso de aberto agora, até as 18h.",
+    aviso: "Estabelecimento fictício, criado para demonstração.",
+  },
 };
 
 /**
@@ -354,6 +368,8 @@ export const orcamento = {
     mensalidadeCompreende:
       "A mensalidade compreende hospedagem, domínio, certificado de segurança, cópias de segurança e alterações de texto, preço ou horário.",
     paginaAdicional: "Página adicional",
+    /** Junto do nome do site do plano, que é de um estabelecimento fictício (16/10, SEO e GEO). */
+    aviso: capa.demonstrativo.aviso,
     fundacao: {
       texto: "Nos três primeiros contratos: 50% de desconto na criação e mensalidade congelada por doze meses.",
       rotulo: "Condição de fundação",
@@ -483,7 +499,13 @@ export const fim = {
 };
 
 export const rodape = {
-  descricao: "Sites profissionais para o comércio local de Niterói.",
+  /**
+   * A definição do Atlas, em aposto (a agência nunca é sujeito), só com fatos que o site já mostra: os preços de
+   * conteudo/planos.ts, o prazo do lide da capa e o dos passos, a UFF de O Atlas. É também a `description` do
+   * negócio nos dados estruturados (lib/dados-estruturados.ts). 16/10, SEO e GEO; até então, "Sites profissionais
+   * para o comércio local de Niterói."
+   */
+  descricao: `Atlas Digital: sites para pequenos negócios de Niterói (RJ), feitos por três estudantes de Ciência da Computação da UFF. Criação de ${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}; primeiro rascunho em até 24 horas após o briefing completo; publicação em 7 a 15 dias úteis, em geral.`,
   selo: "Este site corresponde ao plano Completo. Essencial e Profissional seguem o mesmo padrão, com menos páginas e menos movimento. Nenhum cookie, nenhum rastreador: nada é gravado no aparelho de quem visita.",
   direitos: "© 2026 Atlas Digital",
 };

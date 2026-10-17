@@ -52,7 +52,7 @@ export function Passos() {
               <p className="mt-6 md:mt-0 md:text-right">
                 <span className="block font-display tracking-titulo text-numero whitespace-nowrap text-accent tabular-nums">
                   {passo.marca.valor}
-                </span>
+                </span>{" "}
                 <span className="mt-2 block text-nota text-muted-foreground">{passo.marca.rotulo}</span>
               </p>
             </li>

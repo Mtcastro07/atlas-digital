@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Autoconferência da régua: texto misturado</title>
+<style>
+  html, body { margin: 0; overflow-x: hidden; font-family: Arial, Helvetica, sans-serif; }
+  section { position: relative; height: 96px; }
+  span { position: absolute; left: 16px; top: 20px; color: #fff; white-space: nowrap; line-height: 1; }
+  .grande { font-size: 48px; font-weight: 700; }
+  .miudo { font-size: 16px; }
+  .dif { mix-blend-mode: difference; }
+</style>
+</head>
+<body>
+  <!-- Fundo branco, branco por diferença: desenha preto (21:1). Pela cor declarada, 1:1. A mistura no pai. -->
+  <section style="background:#fff"><div class="dif"><span id="claro" class="grande">Claro</span></div></section>
+  <!-- Fundo #808080: desenha #7f7f7f (≈1:1). Não pode aprovar. -->
+  <section style="background:#808080"><span id="cinza" class="grande dif">Cinza</span></section>
+  <!-- Fundo #555: desenha #aaa (≈3,2:1). Texto grande aprova; o miúdo (mínimo 4,5) reprova. -->
+  <section style="background:#555"><span id="medio" class="grande dif">Medio</span></section>
+  <section style="background:#555"><span id="miudo" class="miudo dif">Miudo, dezesseis pixels</span></section>
+  <!-- Metade branca, metade #808080: a palavra some na metade da direita. Não pode aprovar. -->
+  <section style="background:linear-gradient(90deg,#fff 0 110px,#808080 110px)"><span id="partido" class="grande dif">Partido</span></section>
+  <!-- Sem mistura: o caminho de antes (a cor declarada), #949494 sobre branco, 16 px: ≈3:1, reprova. -->
+  <section style="background:#fff"><span id="normal" class="miudo" style="color:#949494">Normal sem mistura</span></section>
+  <!-- A folga do 10º percentil (o crítico, 16.10.2026): "Odontologia" branca por diferença sobre o branco, com a
+       fração da direita da largura sobre #808080. Com 10%, o "a" final some e a palavra APROVA (21:1): é o limite
+       conhecido, que aguarda o aprovador (com o 5º, reprovaria). Com 12%, reprova. -->
+  <section style="background:#fff"><div class="cinza-folga" data-fracao="0.10" style="position:absolute;top:0;bottom:0;right:0;background:#808080"></div><span id="folga10" class="grande dif">Odontologia</span></section>
+  <section style="background:#fff"><div class="cinza-folga" data-fracao="0.12" style="position:absolute;top:0;bottom:0;right:0;background:#808080"></div><span id="folga12" class="grande dif">Odontologia</span></section>
+  <!-- Caixa de 1 px, misturada, com o texto transbordando à vista: a medida falha, vira aviso. -->
+  <section style="background:#fff"><span id="minimo" class="grande dif" style="width:1px;height:1px;overflow:visible">Minimo</span></section>
+  <!-- Caixa de 1 px recortada (só para leitor de tela), misturada: não se desenha, fica fora (nem falha nem aviso). -->
+  <section style="background:#fff"><span id="leitor" class="miudo dif" style="width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Só para leitor</span></section>
+  <!-- Só para leitor de tela dentro de um ancestral girado e misturado (o carimbo do depósito, .dp-carimbo): na tela,
+       a caixa de 1 px mede 1,05; recortada, não se desenha e fica fora (nem falha nem aviso). -->
+  <section style="background:#fff"><div class="miudo" style="position:absolute;left:16px;top:20px;mix-blend-mode:multiply;rotate:-3deg">Carimbo <span id="girado" style="position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)">Nº 0000</span></div></section>
+  <!-- Misturado e nunca inteiro na tela: vira aviso, nunca aprovação. -->
+  <section style="background:#fff"><span id="fora" class="grande dif" style="left:calc(100% - 60px)">Fora da tela</span></section>
+  <!-- A mistura que liga depois da primeira tela (a revelação ao rolar, o html[data-palco]): branco sobre #808080.
+       Pela cor declarada, aprovaria com 3,95:1; a tela desenha 1,01:1. Não pode aprovar. -->
+  <section style="background:#808080"><span id="tarde" class="grande">Tarde</span></section>
+<script>
+  addEventListener("scroll", () => document.getElementById("tarde").classList.add("dif"), { once: true });
+  for (const cinza of document.querySelectorAll(".cinza-folga")) {
+    const r = cinza.nextElementSibling.getBoundingClientRect();
+    cinza.style.left = r.right - Number(cinza.dataset.fracao) * r.width + "px";
+  }
+</script>
+</body>
+</html>

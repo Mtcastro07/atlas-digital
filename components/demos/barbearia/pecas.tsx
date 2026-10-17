@@ -12,11 +12,6 @@ import { metadadosDoExemplo } from "@/lib/metadados";
 export { MiniFicha } from "@/components/demos/barbearia/mini-ficha";
 
 export const envelope = "mx-auto w-full max-w-[1380px] px-5 md:px-10 lg:px-14";
-/**
- * O recuo dos cartões de vidro (serviços, equipe, agendador, retorno):
- * 24/40/48 px. Até 03/10, eram dois (esse e 32/48 px).
- */
-export const recuoDoVidro = "p-6 md:p-10 lg:p-12";
 export const atraso = (ms: number) => ({ "--atraso": `${ms}ms` }) as React.CSSProperties;
 
 type IdDaPagina = (typeof site.paginas)[number]["id"];

@@ -43,7 +43,7 @@ export function Fim() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
           <Link href={acaoOrcamento.destino} className={buttonVariants({ size: "lg" })}>
             {acaoOrcamento.rotulo}
-          </Link>
+          </Link>{" "}
           <a href={linkWhatsApp(mensagens.contato)} target="_blank" rel="noopener" className={buttonVariants({ variant: "link", size: "link" })}>
             {falarNoWhatsApp}
             <IconeSeta className="size-3.5" />

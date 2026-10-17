@@ -11,12 +11,14 @@
 //   quadro, o que recalculava o estilo e repintava a palavra: medido em 03/10
 //   com CPU 20×, 716 ms de linha principal e o LCP da capa ~0,25 s mais tarde.
 //   Foi trocado no mesmo dia;
-// - componente de servidor, sem script; a cópia é só desenho (fora da árvore
-//   de acessibilidade e dos trechos da busca). Com movimento reduzido, nada
-//   passa.
+// - componente de servidor, sem script; a cópia é só desenho e, desde 16/10,
+//   vem do CSS (o ::before lê o data-texto): fora do HTML, nenhum leitor de
+//   texto lê a palavra duas vezes (até então, "24h24h" para os robôs que não
+//   montam a página; o data-nosnippet só valia para o Google). Com movimento
+//   reduzido, nada passa.
 
 type Props = {
-  children: React.ReactNode;
+  children: string;
   className?: string;
   /** Espera, em ms, contada da primeira pintura (a palavra termina de subir antes). */
   atraso?: number;
@@ -26,8 +28,8 @@ export function GradientWaveText({ children, className = "", atraso = 0 }: Props
   return (
     <span className={`mov-onda ${className}`} style={{ "--atraso-onda": `${atraso}ms` } as React.CSSProperties}>
       {children}
-      <span aria-hidden="true" data-nosnippet="" className="mov-onda-janela">
-        <span className="mov-onda-tinta">{children}</span>
+      <span aria-hidden="true" className="mov-onda-janela">
+        <span className="mov-onda-tinta before:content-[attr(data-texto)]" data-texto={children} />
       </span>
     </span>
   );

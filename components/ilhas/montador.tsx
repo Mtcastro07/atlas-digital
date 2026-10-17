@@ -99,6 +99,7 @@ type TextosDaTabelaCompleta = {
   inicioDaMensalidade: string;
   mensalidadeCompreende: string;
   paginaAdicional: string;
+  aviso: string;
   fundacao: { texto: string; rotulo: string; destino: string };
 };
 
@@ -218,7 +219,7 @@ export function Montador({ privacidade, completo }: Props) {
               onClick={() => escolherPlano(p.id)}
               className={PILULA}
             >
-              {p.nome}
+              {p.nome}{" "}
             </button>
           ))}
         </div>
@@ -232,7 +233,7 @@ export function Montador({ privacidade, completo }: Props) {
         <div role="group" aria-labelledby="rotulo-modulos" className="flex flex-wrap gap-2">
           {modulosDoMontador.map((m) => (
             <button key={m.id} type="button" aria-pressed={moduloIds.includes(m.id)} onClick={() => alternarModulo(m.id)} className={PILULA}>
-              {m.nome}
+              {m.nome}{" "}
             </button>
           ))}
         </div>
@@ -241,7 +242,7 @@ export function Montador({ privacidade, completo }: Props) {
             {modulosDoMontador.map((m) => (
               <div key={m.id} className={`py-3 transition-colors duration-300 ${moduloIds.includes(m.id) ? "text-foreground" : "text-muted-foreground"}`}>
                 <dt className="flex items-baseline justify-between gap-4 text-nota font-semibold">
-                  {m.nome}
+                  {m.nome}{" "}
                   <span className="font-normal tabular-nums">
                     + {reais(m.criacao)} e {reais(m.mensal ?? 0)} por mês
                   </span>
@@ -252,7 +253,7 @@ export function Montador({ privacidade, completo }: Props) {
             {paginaAdicional && (
               <div className="py-3 text-muted-foreground">
                 <dt className="flex items-baseline justify-between gap-4 text-nota font-semibold">
-                  {completo.textos.paginaAdicional}
+                  {completo.textos.paginaAdicional}{" "}
                   <span className="font-normal tabular-nums">{reais(paginaAdicional.criacao)} por página</span>
                 </dt>
                 <dd className="mt-0.5 text-nota">{paginaAdicional.descricao} Sem recorrência, fora desta soma.</dd>
@@ -415,13 +416,16 @@ function DetalheDoPlano({
         ))}
       </ul>
       {site && (
-        // Vínculo comum, não <Link>: o site de exemplo é outro site, e a pré-busca traria as fontes dele.
-        // O vínculo com seta (.vd-vinculo), na cor do texto: no hover, o sublinhado e a seta que avança.
-        <a href={site.caminho} target="_blank" rel="noopener" className="vd-vinculo mt-4 min-h-11 gap-1.5 text-nota text-foreground">
-          <span className="text-muted-foreground">{textos.siteDoPlano}:</span>
-          <span className="font-semibold">{site.nome}</span>
-          <IconeSeta className="size-3.5 text-accent" />
-        </a>
+        <>
+          {/* Vínculo comum, não <Link>: o site de exemplo é outro site, e a pré-busca traria as fontes dele.
+              O vínculo com seta (.vd-vinculo), na cor do texto: no hover, o sublinhado e a seta que avança. */}
+          <a href={site.caminho} target="_blank" rel="noopener" className="vd-vinculo mt-4 min-h-11 gap-1.5 text-nota text-foreground">
+            <span className="text-muted-foreground">{textos.siteDoPlano}:</span>{" "}
+            <span className="font-semibold">{site.nome}</span>
+            <IconeSeta className="size-3.5 text-accent" />
+          </a>
+          <p className="mt-1 text-rotulo text-muted-foreground">{textos.aviso}</p>
+        </>
       )}
     </div>
   );

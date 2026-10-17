@@ -65,10 +65,10 @@ export function Cabecalho() {
             <NavegacaoDoAtlas itens={navegacao} />
 
             <div className="flex items-center gap-1.5 justify-self-end md:gap-2">
-              <ControleDoMovimento />
+              <ControleDoMovimento />{" "}
               <Link href={acaoOrcamento.destino} className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
                 {acaoOrcamento.rotulo}
-              </Link>
+              </Link>{" "}
               {/* O logotipo do painel vem pronto daqui: desenhado no servidor, sem levar o `cn` ao navegador. */}
               <MenuCelular itens={navegacao} marca={<Logotipo recorte="globo-menu" className="h-[31px] w-auto" decorativo />} />
             </div>

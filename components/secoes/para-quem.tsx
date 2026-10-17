@@ -40,7 +40,7 @@ export function ParaQuem() {
                     {/* A cor da marca do site: o ponto no tom do nicho (app/nichos.css). */}
                     <span data-tom={site.tom} aria-hidden="true" className="size-2.5 flex-none rounded-full bg-primary" />
                     <span className="flex flex-col">
-                      <span className="text-rotulo text-muted-foreground">{paraQuem.exemplo}</span>
+                      <span className="text-rotulo text-muted-foreground">{paraQuem.exemplo}</span>{" "}
                       <span className="font-semibold text-foreground transition-colors duration-300 group-hover/exemplo:text-accent group-active/exemplo:text-accent group-active/exemplo:duration-120">
                         {site.nome}
                       </span>

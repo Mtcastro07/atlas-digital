@@ -3,6 +3,7 @@ import { GloboDeNiteroi } from "@/components/paginas/figuras";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
 import { Historia } from "@/components/secoes/historia";
 import { QuemFaz } from "@/components/secoes/quem-faz";
+import { jsonLd, sociosDoAtlas } from "@/lib/dados-estruturados";
 import { metadadosDaPagina } from "@/lib/metadados";
 
 export const metadata = metadadosDaPagina("atlas");
@@ -23,6 +24,8 @@ export default function PaginaDoAtlas() {
       <Historia />
       <QuemFaz />
       <ProximaPagina atual="atlas" />
+      {/* Os sócios nos dados estruturados só aqui, a página que mostra o nome e a função de cada um. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(sociosDoAtlas)} />
     </>
   );
 }

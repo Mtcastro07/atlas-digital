@@ -4,6 +4,7 @@ import { EscadaDemo } from "@/components/ilhas/escada-demo";
 import { Simulador } from "@/components/ilhas/simulador";
 import { buttonVariants } from "@/components/ui/button";
 import { BarsSpinner } from "@/components/ui/spell/bars-spinner";
+import { Apoio } from "@/components/tipografia";
 import { TiltCard } from "@/components/ui/spell/tilt-card";
 import { planos } from "@/conteudo/planos";
 import { escada, planosSecao, simulador } from "@/conteudo/site";
@@ -40,7 +41,7 @@ export function Escada() {
                 <div key={site.id} className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
                   <div>
                     <p data-parte="texto" className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="text-rotulo font-semibold text-accent">{plano.nome}</span>
+                      <span className="text-rotulo font-semibold text-accent">{plano.nome}</span>{" "}
                       <span className="text-nota text-muted-foreground tabular-nums">
                         {reais(plano.criacao)} {textos.criacao}
                       </span>
@@ -74,7 +75,7 @@ export function Escada() {
                         <span aria-hidden="true" className="vd-espera">
                           <BarsSpinner tamanho={18} />
                         </span>
-                      </a>
+                      </a>{" "}
                       <a href={site.caminho} target="_blank" rel="noopener" className={buttonVariants({ variant: "link", size: "link" })}>
                         {textos.novaAba}
                         <IconeSeta className="size-3.5" />
@@ -145,6 +146,9 @@ export function Escada() {
             })}
           </EscadaDemo>
         </Simulador>
+        {/* Os sites do palco são de estabelecimentos fictícios: o aviso em texto, fora do diálogo que só abre com script,
+            centrado logo abaixo da nota do nível, como uma legenda só do palco (o da vitrine também é centrado). */}
+        <Apoio className="mx-auto mt-2 text-center text-nota">{textos.aviso}</Apoio>
       </Envelope>
     </Secao>
   );

@@ -6,6 +6,9 @@ type Marcador = { numero: number; x: number; y: number };
 type CelularProps = {
   /** Imagem da tela, 390 × 844 (public/telas/). */
   src: string;
+  /** A mesma tela em mais larguras (`srcSet` e `sizes` do img; desde 16/10, o demonstrativo do início). */
+  srcSet?: string;
+  sizes?: string;
   /** Descrição do que a tela mostra. */
   alt: string;
   /** Marcadores numerados, em % da tela (conteudo/telas-posicoes.json). */
@@ -23,12 +26,14 @@ type CelularProps = {
  * 03/10, ficava branca). A imagem é preguiçosa: os celulares ficam abaixo
  * da dobra desde que saíram da capa (03/10).
  */
-export function Celular({ src, alt, marcadores = [], inclina, className }: CelularProps) {
+export function Celular({ src, srcSet, sizes, alt, marcadores = [], inclina, className }: CelularProps) {
   const aparelho = (
     <div className="vd-celular">
       <div className="vd-tela">
         <img
           src={src}
+          srcSet={srcSet}
+          sizes={sizes}
           alt={alt}
           width={390}
           height={844}
@@ -45,7 +50,7 @@ export function Celular({ src, alt, marcadores = [], inclina, className }: Celul
             className="vd-marcador"
             style={{ left: `${m.x}%`, top: `${m.y}%` }}
           >
-            {m.numero}
+            {m.numero}{" "}
           </span>
         ))}
       </div>

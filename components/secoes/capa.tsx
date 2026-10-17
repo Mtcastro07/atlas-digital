@@ -57,7 +57,7 @@ export function Capa() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             <a href={capa.acaoPrincipal.destino} className={buttonVariants({ size: "lg" })}>
               {capa.acaoPrincipal.rotulo}
-            </a>
+            </a>{" "}
             <a href={capa.acaoSecundaria.destino} className={buttonVariants({ variant: "link", size: "link" })}>
               {capa.acaoSecundaria.rotulo}
               <IconeSeta className="size-3.5" />

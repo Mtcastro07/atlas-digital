@@ -2,17 +2,12 @@ import Link from "next/link";
 
 import { Abertura, Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta, IconeVisto } from "@/components/icones";
+import { Apoio } from "@/components/tipografia";
 import { buttonVariants } from "@/components/ui/button";
-import { modulos, planos, type Modulo } from "@/conteudo/planos";
+import { modulos, planos, precoDoModulo } from "@/conteudo/planos";
 import { acaoOrcamento, planosSecao, simulador } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
 import { cn } from "@/lib/utils";
-
-/** O preço do módulo, em criação e mensalidade (a página adicional é cobrada por página, sem recorrência). */
-function precoDoModulo(m: Modulo) {
-  if (m.porPagina) return { criacao: `${reais(m.criacao)} por página`, mensal: "sem recorrência" };
-  return { criacao: reais(m.criacao), mensal: `${reais(m.mensal ?? 0)} por mês` };
-}
 
 /**
  * Os planos lado a lado, o recomendado em navy. "Escolher" leva ao
@@ -73,13 +68,13 @@ export function Planos() {
                       </span>
                       <span className="mt-3 flex min-h-11 items-center justify-between gap-3">
                         <span className="flex flex-col">
-                          <span className="text-rotulo text-muted-foreground">{planosSecao.siteDoPlano}</span>
+                          <span className="text-rotulo text-muted-foreground">{planosSecao.siteDoPlano}</span>{" "}
                           <span className="text-nota font-semibold text-foreground transition-colors duration-300 group-hover/previa:text-accent group-active/previa:text-accent group-active/previa:duration-120">
                             {site.nome}
                           </span>
                         </span>
                         <IconeSeta className="size-3.5 flex-none text-accent transition-transform duration-300 group-hover/previa:translate-x-0.5" />
-                      </span>
+                      </span>{" "}
                     </a>
                   )}
                   {plano.destaque && (
@@ -114,6 +109,8 @@ export function Planos() {
           </div>
           <div aria-hidden="true" className="vd-galeria-trilho" />
         </div>
+        {/* Os nomes dos sites acima são de estabelecimentos fictícios: o aviso em texto, para nenhum leitor (nem uma IA) os tomar por clientes. */}
+        <Apoio className="mt-10 text-nota">{simulador.aviso}</Apoio>
 
         {/* Os módulos em linhas, direto no branco (até 16/10, num bloco creme, mais um cartão na cena: o crítico de fora). */}
         <div className="mt-16 md:mt-20">
@@ -126,9 +123,9 @@ export function Planos() {
                   key={m.id}
                   className="grid gap-x-8 gap-y-1 border-t border-border py-5 first:border-t-0 md:grid-cols-[13rem_1fr_auto] md:items-baseline"
                 >
-                  <span className="font-sub font-medium">{m.nome}</span>
+                  <span className="font-sub font-medium">{m.nome}</span>{" "}
                   {/* No máximo ~60 caracteres por linha (16/10, Impeccable; a 1440 px, a descrição corria a linha inteira). */}
-                  <span className="max-w-[60ch] text-nota text-muted-foreground">{m.descricao}</span>
+                  <span className="max-w-[60ch] text-nota text-muted-foreground">{m.descricao}</span>{" "}
                   <span className="text-nota tabular-nums md:text-right">
                     <span className="font-semibold">{preco.criacao}</span>
                     <span className="text-muted-foreground">, {preco.mensal}</span>

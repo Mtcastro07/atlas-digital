@@ -63,6 +63,11 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:caminho*", headers: seguranca },
+      // Os sites fictícios fora da busca também por cabeçalho: cobre imagens e arquivos que a meta não alcança (Google, block-indexing).
+      { source: "/demos/:caminho*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+      // As capturas dos sites fictícios, usadas nas páginas do Atlas, fora da busca de imagens.
+      { source: "/simulador/:caminho*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
+      { source: "/telas/:caminho*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       // Arquivos de public/ sem hash no nome: uma semana, com revalidação em segundo plano.
       {
         source: "/marca.svg",

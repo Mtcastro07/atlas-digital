@@ -306,9 +306,10 @@ async function verificar(navegador, caminho) {
     delete r.medidas.mesa;
     if (!RAPIDA) {
       const k = await medirContraste(pagina);
-      r.medidas.contrasteCelular = { medidos: k.medidos, semMedida: k.semMedida, manuais: k.manuais.length };
+      r.medidas.contrasteCelular = { medidos: k.medidos, semMedida: k.semMedida, manuais: k.manuais.length, desenhados: k.desenhados };
       for (const t of k.falhas) falha("contraste", `390 px · ${t}`);
       if (k.manuais.length) aviso("contraste", `conferir à mão (cópia decorativa, degradê ou desenho no fundo do texto): ${k.manuais.slice(0, 4).join("; ")}`);
+      if (k.aConferir.length) aviso("contraste", `390 px · conferir à mão (texto misturado ao fundo, sem medida nos pixels): ${k.aConferir.join("; ")}`);
     }
     for (const largura of LARGURAS_TOQUE) {
       await pagina.setViewportSize({ width: largura, height: largura <= 480 ? 844 : 1024 });
@@ -398,8 +399,9 @@ async function verificar(navegador, caminho) {
     if (linha.caracteres > CARACTERES_POR_LINHA) aviso("tipografia", `1440 px · linha de ${linha.caracteres} caracteres (teto ${CARACTERES_POR_LINHA}): ${linha.onde}`);
     if (!RAPIDA) {
       const k = await medirContraste(pagina);
-      r.medidas.contrasteMesa = { medidos: k.medidos, semMedida: k.semMedida };
+      r.medidas.contrasteMesa = { medidos: k.medidos, semMedida: k.semMedida, desenhados: k.desenhados };
       for (const t of k.falhas) falha("contraste", `1440 px · ${t}`);
+      if (k.aConferir.length) aviso("contraste", `1440 px · conferir à mão (texto misturado ao fundo, sem medida nos pixels): ${k.aConferir.join("; ")}`);
       const t = await percorrerTeclado(pagina);
       r.medidas.teclado = { paradas: t.paradas };
       for (const f of t.falhas) falha("teclado", f);

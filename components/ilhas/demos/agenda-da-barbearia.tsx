@@ -14,9 +14,13 @@ import { horaDeNiteroi, type Dia, type Expediente } from "@/lib/demos/relogio";
 type Site = typeof barbeariaSite;
 
 const rotulo = "bb-rotulo text-muted-foreground";
-/** A opção marcável: sob o ponteiro, o fio clareia — só se estiver habilitada (até 03/10, acendia também a desabilitada). */
+/**
+ * A opção marcável: sob o ponteiro, o fio clareia — só se estiver habilitada (até 03/10, acendia também a desabilitada).
+ * O fundo é a noite opaca, e a marcada, o latão a 12% sobre ela (desde 16/10, sem o vidro, que desfocava o grão: com
+ * 40% de noite e o latão translúcido, o grão por trás baixava o texto secundário da marcada a 4,7:1; opaco, ~6,5:1).
+ */
 const opcao =
-  "flex h-full min-h-12 flex-col justify-center rounded-[16px] border border-border bg-background/40 px-4 py-3 transition-[border-color,background-color,box-shadow] duration-300 peer-checked:border-primary peer-checked:bg-primary/12 peer-checked:shadow-[inset_0_0_0_1px_var(--primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-enabled:peer-hover:border-input peer-disabled:opacity-40";
+  "flex h-full min-h-12 flex-col justify-center rounded-[16px] border border-border bg-background px-4 py-3 transition-[border-color,background-color,box-shadow] duration-300 peer-checked:border-primary peer-checked:bg-[color-mix(in_srgb,var(--primary)_12%,var(--background))] peer-checked:shadow-[inset_0_0_0_1px_var(--primary)] peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ring peer-enabled:peer-hover:border-input peer-disabled:opacity-40";
 /**
  * O rádio cobre a opção inteira, invisível, por cima dela (desde 16/10, o Impeccable): era sr-only, um campo de 1 px
  * que o foco levava para a vista, e o toque numa opção meio coberta pela barra fazia a página saltar ~415 px.
@@ -26,9 +30,9 @@ const radio = "peer absolute inset-0 z-10 size-full cursor-pointer opacity-0 dis
 const naDia = (nome: string) => `${nome.endsWith("o") ? "no" : "na"} ${nome.toLowerCase()}`;
 const maiuscula = (texto: string) => texto.charAt(0).toUpperCase() + texto.slice(1);
 /**
- * O bilhete do resultado, dentro do cartão de vidro (recuoDoVidro, 24/40/48
- * px): o recuo dele nunca passa o do cartão, 24/32/40 px (até 03/10, 32 px
- * dentro de um cartão de 24 px, no celular).
+ * O bilhete do resultado, 24/32/40 px de recuo: desde 16/10 ("Tirar o
+ * vidro", decisão do aprovador), a única superfície da ferramenta; as opções
+ * ficam sobre a noite. Até então, ficava dentro do cartão de vidro.
  */
 const bilhete =
   "relative flex flex-col justify-between gap-8 overflow-hidden rounded-[28px] bg-card p-6 shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--primary)_45%,transparent)] md:p-8 lg:p-10";
@@ -40,7 +44,7 @@ const bilhete =
  * o serviço marcado quando o endereço traz #servico-<id> (a página dos
  * serviços e a agenda de retorno levam até aqui assim).
  * As respostas à escolha (desde 14/10, o momento da página):
- * - a ficha do serviço escolhido, atrás do vidro: o data-objeto da abertura
+ * - a ficha do serviço escolhido, ao lado do título: o data-objeto da abertura
  *   ([data-abertura-agendar]) passa a ser o do serviço, e o palco a vira em
  *   300 ms (data-virada). Endereço e ficha se leem num efeito de leiaute,
  *   antes do quadro seguinte do palco: quem chega com #servico-navalha não
@@ -198,7 +202,7 @@ export function Agendador({
           </div>,
         )}
         <div>
-          {/* Abaixo de 640 px, o dia e o período um embaixo do outro; os dias com 2 px entre si (4 px a partir de 640): a 320 px, cada um com 44,8 px. */}
+          {/* Abaixo de 640 px, o dia e o período um embaixo do outro; os dias com 2 px entre si (4 px a partir de 640): a 320 px, cada um com 54,4 px (44,8 até 16/10, dentro do vidro). */}
           <div className="grid gap-8 sm:grid-cols-[1.4fr_1fr]">
             {grupo(
               agendador.rotulos.dia,
@@ -258,8 +262,9 @@ export function Agendador({
         </div>
       </div>
 
-      {/* O pedido, como um bilhete de latão. */}
-      <div className={bilhete} aria-live="polite">
+      {/* O pedido, como um bilhete de latão. Na mesa, alinhado às opções de serviço, e não ao rótulo (18 px + 12 px; desde
+          16/10, sem o vidro: alinhado ao rótulo, o fio de latão do bilhete tocava a borda de baixo da ficha da abertura). */}
+      <div className={`${bilhete} lg:mt-[30px]`} aria-live="polite">
         <div>
           <p className="bb-rotulo text-accent">{agendador.resumo}</p>
           <p key={resumo} data-reimpresso={reimpresso} className="bb-bilhete-frase bb-exibicao mt-5 text-[clamp(32px,3.2vw,48px)] leading-[1.04]">
@@ -372,7 +377,7 @@ export function AgendaDeRetorno({ dados, agendar }: { dados: Site["retorno"]; ag
             onChange={(ev) => setUltimo(ev.target.value)}
             aria-invalid={situacao?.tipo === "futuro" || undefined}
             aria-describedby={problema ? `${id}-problema` : undefined}
-            className="mt-3 block w-full rounded-[16px] border border-border bg-background/40 px-4 py-3.5 text-[16px] text-foreground transition-[border-color] duration-300 hover:border-input focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:border-accent"
+            className="mt-3 block w-full rounded-[16px] border border-border bg-background px-4 py-3.5 text-[16px] text-foreground transition-[border-color] duration-300 hover:border-input focus:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:border-accent"
           />
         </label>
         <p className="max-w-[46ch] text-[13.5px] leading-snug text-muted-foreground">{dados.nota}</p>

@@ -47,7 +47,7 @@ export function Fundacao({ extrato = false, destino = acaoOrcamento.destino }: {
         <Link href={destino} className={buttonVariants({ size: "lg" })}>
           {acaoOrcamento.rotulo}
         </Link>
-      )}
+      )}{" "}
       <a href={linkWhatsApp(mensagens.contato)} target="_blank" rel="noopener" className={buttonVariants({ variant: "link", size: "link" })}>
         {falarNoWhatsApp}
         <IconeSeta className="size-3.5" />

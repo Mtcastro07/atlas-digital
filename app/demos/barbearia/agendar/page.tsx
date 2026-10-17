@@ -1,4 +1,4 @@
-import { cena, envelope, metadadosDe, palcoVazio, recuoDoVidro, TituloQueSeCompoe } from "@/components/demos/barbearia/pecas";
+import { cena, envelope, metadadosDe, palcoVazio, TituloQueSeCompoe } from "@/components/demos/barbearia/pecas";
 import { Agendador } from "@/components/ilhas/demos/agenda-da-barbearia";
 import { whatsappFicticio } from "@/conteudo/demos/comum";
 import { barbeariaSite as site } from "@/conteudo/demos/barbearia";
@@ -6,8 +6,8 @@ import { barbeariaSite as site } from "@/conteudo/demos/barbearia";
 export const metadata = metadadosDe("agendar");
 
 /**
- * 04 · Agendar. A funcionalidade 1 do plano Completo, num painel de vidro
- * escuro, quieto desde o HTML (ferramenta não entra em cena). Na mesa, a
+ * 04 · Agendar. A funcionalidade 1 do plano Completo, quieta desde o HTML
+ * (ferramenta não entra em cena). Na mesa, a
  * ficha do serviço escolhido fica ao lado do título: o agendador escreve o
  * data-objeto da abertura (data-abertura-agendar), e a ficha vira em 300 ms
  * a cada troca de serviço (data-virada). Chega com o serviço marcado quando
@@ -25,6 +25,11 @@ export const metadata = metadadosDe("agendar");
  * ficha (~80% da altura), e as opções de serviço entram na primeira tela.
  * Mais alto, ele passaria do quarto de baixo da tela já na carga, e o palco
  * apagaria a ficha do serviço, que é o momento da página (palcoVazio).
+ * Desde 16/10, pela decisão do aprovador ("Tirar o vidro"), sem o painel de
+ * vidro: as opções ficam direto sobre a noite, e o bilhete do pedido é a
+ * única superfície (era caixa dentro de caixa). A seção começa no mesmo
+ * lugar (y = 720 a 1440 × 900), e as opções de serviço sobem 48 px (de 798
+ * a 923 para 750 a 875).
  */
 export default function PaginaDoAgendamento() {
   const { agendador, servicos, equipe } = site;
@@ -46,9 +51,7 @@ export default function PaginaDoAgendamento() {
       </section>
       <section aria-label="Agendador" {...palcoVazio} className="pb-32">
         <div className={envelope}>
-          <div className={`bb-vidro rounded-[36px] ${recuoDoVidro}`}>
-            <Agendador agendador={agendador} servicos={servicos} equipe={equipe} expediente={site.expediente} whatsapp={whatsappFicticio} />
-          </div>
+          <Agendador agendador={agendador} servicos={servicos} equipe={equipe} expediente={site.expediente} whatsapp={whatsappFicticio} />
         </div>
       </section>
     </div>

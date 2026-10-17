@@ -826,8 +826,10 @@
 }
 
 /* As cópias são só desenho: fora da seleção, para quem copia o texto não
-   levar a palavra duas vezes (a árvore de acessibilidade e a busca já as
-   ignoram: aria-hidden, data-nosnippet). */
+   levar a palavra duas vezes. A cintilação e a tarja ficam fora da árvore
+   de acessibilidade e da busca por aria-hidden e data-nosnippet; a onda,
+   desde 16/10, nem está no HTML: a cópia pintada vem do ::before
+   (data-texto), e nenhum robô lê "24h24h" (SEO e GEO). */
 .mov-onda-janela,
 .mov-cintila-janela,
 .mov-tarja-janela {

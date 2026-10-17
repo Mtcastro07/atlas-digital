@@ -79,7 +79,7 @@ export function Rodape() {
         <div className="mt-16 border-t border-border pt-8 text-rotulo text-muted-foreground">
           <p className="max-w-[60ch]">{rodape.selo}</p>
           <p className="mt-3 flex flex-wrap gap-x-6 gap-y-1">
-            <span>{rodape.direitos}</span>
+            <span>{rodape.direitos}</span>{" "}
             <span>{metadados.slogan}</span>
           </p>
         </div>

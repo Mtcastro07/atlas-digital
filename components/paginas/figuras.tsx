@@ -35,7 +35,7 @@ export function ParedeDeBairros() {
               href={exemplo.caminho}
               className="flex min-h-11 flex-col py-4 text-foreground no-underline transition-colors duration-300 hover:text-accent active:text-accent active:duration-120"
             >
-              <span className="text-rotulo font-semibold tracking-wider text-accent uppercase">{exemplo.nicho}</span>
+              <span className="text-rotulo font-semibold tracking-wider text-accent uppercase">{exemplo.nicho}</span>{" "}
               <span className="mt-1.5">{exemplo.bairro}</span>
             </a>
           </li>
@@ -91,10 +91,10 @@ export function EscadaDePrecos() {
             <span aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/[0.07] to-transparent opacity-0 transition-opacity duration-500 ease-atlas group-hover:opacity-100" />
             <p className="text-rotulo font-semibold text-accent">{plano.nome}</p>
             <p>
-              <span className="block text-rotulo font-semibold text-muted-foreground">R$</span>
+              <span className="block text-rotulo font-semibold text-muted-foreground">R$</span>{" "}
               <span className="mt-1 block font-display tracking-titulo text-numero tabular-nums">
                 {plano.criacao.toLocaleString("pt-BR")}
-              </span>
+              </span>{" "}
               <span className="mt-2 block text-rotulo text-muted-foreground tabular-nums">
                 + {reais(plano.mensal)} <span className="block sm:inline">por mês</span>
               </span>
@@ -185,7 +185,7 @@ export function ReguaDoTrabalho() {
             className={`absolute top-0 whitespace-nowrap ${alinhamentoDaEscala(i, ultimo)}`}
             style={{ left: pos(d) }}
           >
-            {i === ultimo ? `${d} ${unidade}` : d}
+            {i === ultimo ? `${d} ${unidade}` : d}{" "}
           </span>
         ))}
       </p>
@@ -218,7 +218,7 @@ export function GloboDeNiteroi() {
         <Globo girando className="absolute inset-0 h-full w-full" />
       </div>
       <figcaption className="mt-6 text-center">
-        <span className="block font-display tracking-titulo text-numero">{lugar}</span>
+        <span className="block font-display tracking-titulo text-numero">{lugar}</span>{" "}
         <span className="mt-2 block text-nota text-muted-foreground tabular-nums">
           {latitude} · {longitude}
         </span>

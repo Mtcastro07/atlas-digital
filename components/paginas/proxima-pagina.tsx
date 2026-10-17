@@ -54,12 +54,12 @@ export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; to
           {/* minmax(0, 1fr) e a pílula que quebra: com a letra a 200% a 390 px, o nome e a ação saíam da tela (16/10). */}
           <span className="mt-10 grid grid-cols-[minmax(0,1fr)] items-end gap-x-10 gap-y-8 md:mt-14 lg:grid-cols-12">
             <span className="lg:col-span-7">
-              <span className="block text-rotulo font-semibold text-accent">{proxima ? proximaPagina.aSeguir : proximaPagina.fim}</span>
+              <span className="block text-rotulo font-semibold text-accent">{proxima ? proximaPagina.aSeguir : proximaPagina.fim}</span>{" "}
               <span className="mt-4 block font-display tracking-titulo text-display transition-colors duration-300 ease-atlas group-hover:text-accent">
                 {nome}
-              </span>
+              </span>{" "}
               <span className="mt-5 block max-w-[44ch] text-corpo text-muted-foreground">{porta.resumo}</span>
-            </span>
+            </span>{" "}
 
             <span className="flex flex-col gap-8 lg:col-span-5 lg:items-end lg:text-right">
               {/* A pílula é desenho: o vínculo é a área inteira. Sem compressão e sem deslocamento. */}

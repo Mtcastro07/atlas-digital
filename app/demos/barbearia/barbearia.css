@@ -523,20 +523,10 @@ html:not(.js) .bb-reserva,
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 60%, transparent);
 }
 
-/* ---------- vidro escuro (painéis sobre o palco) ----------
-   Separado da noite pelos fios de dentro (a luz de cima e a borda sutil)
-   e por uma sombra de 80 px a 90% (saiu em 03/10 pela regra 3 das
-   Diretrizes de Design Premium e voltou no mesmo dia, a pedido do
-   usuário: é parte da identidade do site). */
-.bb-vidro {
-  background: linear-gradient(160deg, rgb(26 21 17 / 0.78), rgb(11 9 8 / 0.72));
-  -webkit-backdrop-filter: blur(22px) saturate(130%);
-  backdrop-filter: blur(22px) saturate(130%);
-  box-shadow:
-    inset 0 1px 0 rgb(239 230 214 / 0.08),
-    inset 0 0 0 1px rgb(239 230 214 / 0.07),
-    0 40px 80px -40px rgb(0 0 0 / 0.9);
-}
+/* O vidro escuro (.bb-vidro), o painel do Agendar e do Retorno, saiu em
+   16/10 pela decisão do aprovador ("Tirar o vidro"): era caixa dentro de
+   caixa (L4) e vidro como decoração (C10). A ferramenta fica sobre a noite,
+   e o bilhete é a única superfície (registros/demos/barbearia/decisoes.md). */
 
 /* ---------- o capítulo: a linha que acende ---------- */
 .bb-capitulo {
@@ -1458,20 +1448,11 @@ html:has([data-demo="barbearia"])::view-transition-group(cabecalho) {
    O crítico de fora: a primeira tela do Retorno, a 390 px, era a do
    Agendar (o título, o texto, o mesmo painel de vidro, o rótulo espaçado e a
    mesma grade 2 × 2 de opções em caixa, com a escolha na borda de latão).
-   Abaixo de 1024 px, a ferramenta fica sem o vidro; abaixo de 640 px, os
-   cortes são uma lista em linhas, como a tabela da casa: o nome à esquerda,
-   a janela à direita; a escolha, o nome em latão claro, o ponto de latão
-   pendurado à esquerda (opacidade, 200 ms) e o fio de baixo em latão. */
-@media (max-width: 1023.98px) {
-  .bb-vidro-mesa {
-    padding: 0;
-    border-radius: 0;
-    background: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    box-shadow: none;
-  }
-}
+   Abaixo de 640 px, os cortes são uma lista em linhas, como a tabela da
+   casa: o nome à esquerda, a janela à direita; a escolha, o nome em latão
+   claro, o ponto de latão pendurado à esquerda (opacidade, 200 ms) e o fio
+   de baixo em latão. O vidro, que saía abaixo de 1024 px (.bb-vidro-mesa),
+   saiu de todas as larguras em 16/10 (acima, no lugar de .bb-vidro). */
 @media (max-width: 639.98px) {
   .bb-cortes {
     grid-template-columns: 1fr;

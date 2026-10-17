@@ -2,6 +2,8 @@
 // destaques da capa e dados estruturados leem daqui.
 // Fonte: ata de decisões, bloco 07 (desconto só na criação, nunca na mensalidade).
 
+import { reais } from "@/lib/moeda";
+
 export type Plano = {
   id: string;
   nome: string;
@@ -92,6 +94,15 @@ export const modulos: Modulo[] = [
     porPagina: true,
   },
 ];
+
+/**
+ * O preço do módulo, em criação e mensalidade (a página adicional é cobrada por página, sem recorrência). Aqui, e
+ * não na seção Planos, desde 16/10: o llms.txt (app/llms.txt/route.ts) repete o preço com as mesmas palavras.
+ */
+export function precoDoModulo(m: Modulo) {
+  if (m.porPagina) return { criacao: `${reais(m.criacao)} por página`, mensal: "sem recorrência" };
+  return { criacao: reais(m.criacao), mensal: `${reais(m.mensal ?? 0)} por mês` };
+}
 
 /** Módulos que entram no montador: os de cobrança recorrente. */
 export const modulosDoMontador = modulos.filter((m) => !m.porPagina);

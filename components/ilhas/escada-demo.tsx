@@ -101,7 +101,7 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
         <span aria-hidden="true" className="vd-segmento-cursor" />
         {niveis.map((n) => (
           <ToggleGroupItem key={n.id} value={n.id} variant="segmento">
-            {n.nome}
+            {n.nome}{" "}
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
@@ -120,7 +120,7 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
           <span aria-hidden="true" className="vd-segmento-cursor" />
           {doNivel.map((s) => (
             <ToggleGroupItem key={s.id} value={s.id} variant="segmento">
-              {s.rotulo}
+              {s.rotulo}{" "}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>

@@ -15,9 +15,10 @@ type TituloProps = React.ComponentProps<"h2"> & {
 export function Titulo({ linhas, className, ...props }: TituloProps) {
   return (
     <h2 className={cn("text-titulo", className)} {...props}>
+      {/* O espaço no fim da linha some no desenho, mas separa as palavras para quem lê o HTML sem montar a página. */}
       {linhas.map((linha) => (
         <span key={linha} className="block">
-          {linha}
+          {linha}{" "}
         </span>
       ))}
     </h2>

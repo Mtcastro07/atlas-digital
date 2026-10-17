@@ -38,7 +38,7 @@ export function Vitrine() {
                 <input type="radio" name="demonstrativo" value={d.id} defaultChecked={i === 0} className="peer sr-only" />
                 <span className="rounded-full px-3 py-1 text-nota font-semibold text-muted-foreground transition-colors duration-300 group-hover/opcao:text-foreground peer-checked:text-foreground peer-focus-visible:outline-2 peer-focus-visible:outline-ring">
                   {d.rotuloCurto}
-                </span>
+                </span>{" "}
               </label>
             ))}
           </div>
@@ -69,7 +69,7 @@ export function Vitrine() {
                         className="grid size-6 flex-none place-items-center rounded-full border border-accent text-rotulo font-bold text-accent tabular-nums"
                       >
                         {i + 1}
-                      </span>
+                      </span>{" "}
                       <span className="pt-0.5">{nota}</span>
                     </li>
                   ))}

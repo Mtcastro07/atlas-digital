@@ -11,7 +11,7 @@ const AJUDANTES = String.raw`
     return el.tagName.toLowerCase() + id + classe + (texto ? ' "' + texto + '"' : '');
   };
   // Fora da tela por regra: escondido, inerte, sem caixa ou só para leitor de tela.
-  const naoDesenhado = (el) => {
+  const escondido = (el) => {
     for (let a = el; a && a.nodeType === 1; a = a.parentElement) {
       if (a.hidden || a.inert) return true;
       const cs = getComputedStyle(a);
@@ -19,6 +19,10 @@ const AJUDANTES = String.raw`
       if (a.tagName === 'DETAILS' && !a.open && a !== el && !el.closest('summary')) return true;
       if (a.tagName === 'DIALOG' && !a.open) return true;
     }
+    return false;
+  };
+  const naoDesenhado = (el) => {
+    if (escondido(el)) return true;
     const r = el.getBoundingClientRect();
     return r.width <= 1 || r.height <= 1;
   };

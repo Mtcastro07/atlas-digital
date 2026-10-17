@@ -5,7 +5,7 @@ import { Fim } from "@/components/secoes/fim";
 import { Fundacao } from "@/components/secoes/fundacao";
 import { Orcamento } from "@/components/secoes/orcamento";
 import { Passos } from "@/components/secoes/passos";
-import { jsonLd, negocioLocal } from "@/lib/dados-estruturados";
+import { capaDoAtlas, jsonLd } from "@/lib/dados-estruturados";
 import { metadadosDaPagina } from "@/lib/metadados";
 
 export const metadata = metadadosDaPagina("inicio");
@@ -41,8 +41,8 @@ export default function Inicio() {
       <Fundacao destino="#orcamento" />
       <Portas />
       <Fim />
-      {/* O negócio local fica aqui, e não no layout raiz: os sites de demonstração (app/demos/) não são o Atlas. */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(negocioLocal)} />
+      {/* O site e o negócio local ficam aqui, e não no layout raiz: os sites de demonstração (app/demos/) não são o Atlas. */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(capaDoAtlas)} />
     </>
   );
 }

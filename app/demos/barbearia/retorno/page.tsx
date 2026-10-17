@@ -1,4 +1,4 @@
-import { envelope, metadadosDe, paginaDe, recuoDoVidro, TituloQueSeCompoe } from "@/components/demos/barbearia/pecas";
+import { envelope, metadadosDe, paginaDe, TituloQueSeCompoe } from "@/components/demos/barbearia/pecas";
 import { AgendaDeRetorno } from "@/components/ilhas/demos/agenda-da-barbearia";
 import { barbeariaSite as site } from "@/conteudo/demos/barbearia";
 
@@ -19,6 +19,8 @@ export const metadata = metadadosDe("retorno");
  * Desde 16/10 (o crítico de fora: no celular, a primeira tela era a do
  * Agendar, com o mesmo painel de vidro e a mesma grade 2 × 2 de opções), no
  * celular a ferramenta fica sem o vidro, e os cortes são uma lista em linhas.
+ * Desde a decisão do aprovador de 16/10 ("Tirar o vidro"), também na mesa:
+ * as opções ficam sobre a noite, e o bilhete é a única superfície.
  */
 export default function PaginaDoRetorno() {
   const { retorno } = site;
@@ -29,8 +31,7 @@ export default function PaginaDoRetorno() {
           <TituloQueSeCompoe id="titulo" italico={false} linhas={retorno.titulo} className="text-[clamp(64px,9vw,150px)] leading-[0.86]" />
           <p className="mt-8 max-w-[46ch] text-[18px] leading-relaxed text-muted-foreground">{retorno.lide}</p>
         </div>
-        {/* O vidro só na mesa (desde 16/10): no celular, a ferramenta fica sobre a noite, como um formulário impresso, e não no mesmo painel do Agendar (barbearia.css, .bb-vidro-mesa). */}
-        <div className={`bb-vidro bb-vidro-mesa rounded-[36px] lg:col-span-8 ${recuoDoVidro}`}>
+        <div className="lg:col-span-8">
           <AgendaDeRetorno dados={retorno} agendar={paginaDe("agendar").caminho} />
         </div>
       </div>

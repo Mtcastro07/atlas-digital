@@ -47,14 +47,14 @@ export function Portas() {
                   <span className="relative flex items-center justify-between gap-4 text-nota font-semibold">
                     {pagina.menu}
                     <IconeSeta className="size-3.5 flex-none text-accent transition-transform duration-500 ease-atlas group-hover:translate-x-1.5" />
-                  </span>
+                  </span>{" "}
                   <span className="relative mt-12 block">
                     <span className="flex flex-wrap items-baseline gap-x-2.5 tabular-nums">
                       <span className="font-display tracking-titulo text-numero whitespace-nowrap transition-colors duration-300 ease-atlas group-hover:text-accent group-focus-visible:text-accent group-active:text-accent group-active:duration-120">
                         {pagina.porta.dado}
-                      </span>
+                      </span>{" "}
                       {pagina.porta.unidade && <span className="text-destaque font-bold whitespace-nowrap text-muted-foreground">{pagina.porta.unidade}</span>}
-                    </span>
+                    </span>{" "}
                     <span className="mt-5 block max-w-[32ch] text-corpo text-muted-foreground">{pagina.porta.resumo}</span>
                   </span>
                 </Link>

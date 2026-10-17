@@ -58,14 +58,15 @@ export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = 
           <p className="flex items-center gap-4 text-rotulo font-semibold text-accent">
             <span className="tabular-nums">
               {String(indice + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-            </span>
+            </span>{" "}
             <span aria-hidden="true" className="h-px w-10 bg-accent/60" />
             {abertura.rotulo}
           </p>
           <h1 id="titulo-da-pagina" className="mt-8 text-display leading-[1.15]">
+            {/* O espaço no fim da linha some no desenho, mas separa as palavras para quem lê o HTML sem montar a página. */}
             {abertura.titulo.map((linha) => (
               <span key={linha} className="block">
-                {linha}
+                {linha}{" "}
               </span>
             ))}
           </h1>
