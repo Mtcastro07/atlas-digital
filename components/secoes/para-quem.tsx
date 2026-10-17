@@ -17,17 +17,22 @@ import { paraQuem, simulador } from "@/conteudo/site";
  * Até 14/10, o bloco também subia, a aresta acendia e um orbe de bronze
  * seguia o ponteiro (pedido do usuário, 14/10: "parecendo que você está
  * spamando os mesmos componentes").
+ * Desde 16/10 ("Identidade mais profunda"), sem os filetes entre as linhas
+ * (a linha entre filetes era o recipiente de quase toda cena clara; fica no
+ * extrato de Planos e na sanfona das Dúvidas): o grupo se faz pelo espaço e
+ * pela linha de base das 12 colunas. A carta da abertura projeta a sua
+ * sombra no alto desta cena.
  */
 export function ParaQuem() {
   return (
     <Secao id="quem" tom="claro">
       <Envelope>
         <Titulo linhas={paraQuem.titulo} />
-        <ul className="mt-14 border-t border-border md:mt-16">
+        <ul className="mt-6 md:mt-8">
           {paraQuem.publicos.map((publico) => {
             const site = simulador.sites.find((s) => s.plano === publico.plano);
             return (
-              <li key={publico.titulo} className="grid gap-x-14 gap-y-4 border-b border-border py-10 md:py-12 lg:grid-cols-12 lg:items-baseline">
+              <li key={publico.titulo} className="grid gap-x-14 gap-y-4 py-10 md:py-12 lg:grid-cols-12 lg:items-baseline">
                 <h3 className="text-numero lg:col-span-4">{publico.titulo}</h3>
                 <p className="max-w-[52ch] text-corpo text-muted-foreground lg:col-span-5">{publico.texto}</p>
                 {site && (
@@ -52,6 +57,13 @@ export function ParaQuem() {
             );
           })}
         </ul>
+        {/* Os nichos em linha parada, na coluna do texto dos públicos (desde 17/10; conteudo/site.ts, paraQuem.nichos). */}
+        <div className="gap-x-14 lg:grid lg:grid-cols-12">
+          <p className="max-w-[52ch] text-nota text-muted-foreground lg:col-span-5 lg:col-start-5">
+            <span className="font-semibold text-foreground">{paraQuem.nichos.rotulo}:</span>{" "}
+            {new Intl.ListFormat("pt-BR").format(paraQuem.nichos.lista)}.
+          </p>
+        </div>
       </Envelope>
     </Secao>
   );

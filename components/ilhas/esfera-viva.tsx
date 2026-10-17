@@ -63,15 +63,17 @@ export function EsferaViva({ children }: { children: React.ReactNode }) {
       aria-hidden="true"
       data-ambiente
       data-pausa={pausada || undefined}
-      className="pointer-events-none absolute inset-x-0 top-12 bottom-0 flex items-center justify-center"
+      className="mov-esfera-palco pointer-events-none absolute inset-x-0 top-12 bottom-0 flex items-center justify-center"
     >
       <span className="mov-esfera-brilho absolute" />
+      {/* Onde a esfera pousa, no papel da seção de baixo (desde 16/10): a sombra de contato, longe da luz. */}
+      <span className="mov-esfera-pouso absolute" />
       {/* Os traços num invólucro próprio, proporcional ao bloco de texto (a esfera inteira cabe
           nele): a máscara que os dissolve atrás do texto fica nas coordenadas do bloco, em qualquer
-          largura (app/movimento.css, .mov-esfera-tracos). O mt-12 devolve a esfera ao centro do
-          palco, 24 px abaixo do centro do bloco, onde ela sempre esteve. */}
+          largura (app/movimento.css, .mov-esfera-tracos). A esfera desce do centro do bloco
+          (--desce): desde 16/10, o bastante para atravessar a emenda e pousar na seção de baixo. */}
       <div className="mov-esfera-tracos">
-        <div ref={eixo} className="mov-esfera-eixo relative mt-12 flex-none">
+        <div ref={eixo} className="mov-esfera-eixo relative flex-none">
           {children}
         </div>
       </div>

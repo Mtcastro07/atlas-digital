@@ -27,11 +27,14 @@ export function Historia() {
     <Secao aria-labelledby="historia" tom="claro">
       <Envelope>
         <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <p className="text-rotulo font-semibold text-accent">{historia.rotulo}</p>
-            <Titulo id="historia" linhas={historia.titulo} className="mt-4 lg:sticky lg:top-32" />
+          {/* Cinco colunas para o título (até 16/10, quatro): a 68 px, na de quatro, "Da sala de aula ao balcão."
+              quebrava em quatro linhas, com o "ao" sozinho. */}
+          <div className="lg:col-span-5">
+            {/* O rótulo, só para o leitor de tela (17/10): à vista, era o sobretítulo (a marca T2). */}
+            <p className="sr-only">{historia.rotulo}</p>
+            <Titulo id="historia" linhas={historia.titulo} className="lg:sticky lg:top-32" />
           </div>
-          <ol className="relative lg:col-span-7 lg:col-start-6">
+          <ol className="relative lg:col-span-6 lg:col-start-7">
             <span aria-hidden="true" className="absolute top-3 bottom-3 left-4.5 w-px bg-gradient-to-b from-accent via-accent/40 to-transparent md:left-6" />
             {historia.capitulos.map((capitulo) => (
               <li key={capitulo.numero} className="group relative grid grid-cols-[auto_1fr] gap-x-6 pb-14 last:pb-0 md:gap-x-9">

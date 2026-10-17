@@ -72,7 +72,10 @@ function SheetContent({
               // resolve o conflito; sem o "!", o botão caía no fluxo, no pé do painel.
               <Button
                 variant="ghost"
-                className="absolute! top-3 right-3"
+                // No lugar do gatilho "Menu" da pílula (16/10, passe 3): o centro a 36 px do topo, mais a área segura
+                // (até então, top-3, sob o recorte da tela num aparelho com área segura; C4), e a borda direita na da
+                // pílula (16 px; 28 a partir de 768 px), com a área segura dos lados.
+                className="absolute! top-[calc(env(safe-area-inset-top)+0.875rem)] right-[calc(max(1.5rem,env(safe-area-inset-left),env(safe-area-inset-right))-0.5rem)] md:right-[calc(max(2.5rem,env(safe-area-inset-left),env(safe-area-inset-right))-0.75rem)]"
                 size="icon"
               />
             }

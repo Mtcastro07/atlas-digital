@@ -47,7 +47,8 @@ const PILULA =
   "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-border bg-transparent px-4 py-2.5 text-nota font-medium text-foreground transition-[background-color,color,border-color] duration-150 ease-atlas hover:border-foreground aria-pressed:border-secondary aria-pressed:bg-secondary aria-pressed:text-secondary-foreground";
 
 const ROTULO = "mb-2.5 block text-nota font-semibold";
-const CAPITULAR = "text-rotulo font-semibold tracking-wider text-muted-foreground uppercase";
+// Em letra comum desde o segundo fechamento com o Impeccable (17/10): até então, em caixa-alta espaçada (a marca T3).
+const CAPITULAR = "text-nota font-semibold text-muted-foreground";
 /** As caixas de dentro do painel: os totais e a mensagem (até 16/10, também o plano escolhido e a condição de fundação). */
 const CAIXA = "rounded-[1.25rem] px-4 py-5";
 
@@ -55,7 +56,7 @@ const CAIXA = "rounded-[1.25rem] px-4 py-5";
  * Total da tabela: quando muda, conta do valor anterior ao novo (380 ms, como em 28/08).
  * Com movimento reduzido, não conta: fica o valor novo, que o React já escreveu.
  */
-function Total({ rotulo, valor }: { rotulo: string; valor: number }) {
+function Total({ rotulo, valor, naChapa }: { rotulo: string; valor: number; naChapa?: boolean }) {
   const el = useRef<HTMLSpanElement>(null);
   const anterior = useRef(valor);
 
@@ -67,7 +68,10 @@ function Total({ rotulo, valor }: { rotulo: string; valor: number }) {
   }, [valor]);
 
   return (
-    <div className={`${CAIXA} min-w-0 bg-background`}>
+    // Na chapa (a tabela completa), o número fica direto nela, sem caixa própria: uma superfície só (17/10). No início,
+    // desde o segundo fechamento (17/10), também direto no painel, sobre o filete duplo: até então, cada total numa
+    // caixa arredondada dentro do painel (o cartão dentro do cartão, a marca L4; a avaliação A).
+    <div className={naChapa ? `${CAIXA} min-w-0` : "min-w-0"}>
       <dt className={CAPITULAR}>{rotulo}</dt>
       <dd className="mt-1.5 font-display tracking-titulo text-numero whitespace-nowrap tabular-nums">
         <span ref={el}>{reais(valor)}</span>
@@ -205,11 +209,13 @@ export function Montador({ privacidade, completo }: Props) {
 
   const escolhas = (
     <>
-      <div className="mb-6">
+      {/* @container: na coluna estreita (abaixo de 22 rem: o celular, ou a letra a 200%), os três planos um sobre o outro,
+          na largura toda (17/10, segundo fechamento com o Impeccable); até então, quebravam em dois e um, a 390 px. */}
+      <div className="@container mb-6">
         <span id="rotulo-plano" className={ROTULO}>
           Plano
         </span>
-        <div role="group" aria-labelledby="rotulo-plano" className="flex flex-wrap gap-2">
+        <div role="group" aria-labelledby="rotulo-plano" className="flex flex-wrap gap-2 @max-[22rem]:grid @max-[22rem]:*:justify-center">
           {planos.map((p) => (
             <button
               key={p.id}
@@ -295,8 +301,22 @@ export function Montador({ privacidade, completo }: Props) {
   );
 
   // Lado a lado a partir de 400 px; abaixo, um sobre o outro: em Archivo Black (05/10), "R$ 3.100" passava da caixa até 375 px.
-  const totais = (
-    <dl ref={caixaDosTotais} className="my-6 grid gap-3 min-[25rem]:grid-cols-2">
+  // O filete duplo contábil embaixo (16/10): o fecho da soma, o único do site, aqui no componente (início e Orçamento).
+  // Só na tabela completa (16/10), a marca da chapa: o relevo da gravura em volta da impressão, um retângulo afundado
+  // no papel, com a sombra na borda de cima e a luz na de baixo (o sol do meio-dia vem de cima). Desde 17/10
+  // (fechamento com o Impeccable), uma superfície só: os números direto na chapa, o filete duplo por dentro dela e a
+  // chapa dentro da coluna. Até então, a chapa passava 8 px fora da coluna, o filete cruzava a borda dela, e no
+  // celular eram três caixas arredondadas uma dentro da outra (o painel, a chapa e as caixas dos totais: a marca L4).
+  const totais = completo ? (
+    <dl
+      ref={caixaDosTotais}
+      className="relative my-6 grid rounded-[1.25rem] bg-[color-mix(in_srgb,var(--background)_45%,transparent)] pb-4 shadow-[inset_0_1px_0_rgb(15_42_71/0.14),inset_0_-1px_0_rgb(255_255_255/0.9)] after:absolute after:inset-x-4 after:bottom-4 after:border-b-[3px] after:border-double after:border-foreground/30 after:content-[''] min-[25rem]:grid-cols-2"
+    >
+      <Total rotulo="Criação" valor={criacao} naChapa />
+      <Total rotulo="Por mês" valor={mensal} naChapa />
+    </dl>
+  ) : (
+    <dl ref={caixaDosTotais} className="my-6 grid gap-4 border-b-[3px] border-double border-foreground/30 pb-5 min-[25rem]:grid-cols-2">
       <Total rotulo="Criação" valor={criacao} />
       <Total rotulo="Por mês" valor={mensal} />
     </dl>
@@ -305,7 +325,9 @@ export function Montador({ privacidade, completo }: Props) {
   // A sombra de 60 px saiu em 03/10 pela regra 3 das Diretrizes de Design Premium e voltou no mesmo dia,
   // a pedido do usuário: é parte da identidade do site.
   // min-w-0: com a letra a 200% a 390 px, o painel não alarga a página (16/10, Impeccable).
-  const painel = "min-w-0 rounded-[2rem] border border-border bg-card px-6 py-8 shadow-[0_24px_60px_rgb(15_42_71/0.1)] sm:px-8";
+  // Desde 16/10, uma ficha (o --card dos tons claros) com a sombra do lado da hora da página: média no início, onde
+  // sobe sobre os passos; curta na página Orçamento, onde o sol do meio-dia dá sombra curta (app/vidro.css).
+  const painel = `min-w-0 rounded-[2rem] border border-border bg-card px-6 py-8 sm:px-8 ${completo ? "shadow-[var(--sombra-curta)]" : "shadow-[var(--sombra-media)]"}`;
 
   if (!completo) {
     return (
@@ -329,13 +351,12 @@ export function Montador({ privacidade, completo }: Props) {
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-12px_32px_rgb(15_42_71/0.12)] backdrop-blur-md transition-[translate,visibility] duration-300 ease-atlas motion-reduce:transition-none lg:hidden ${faixa ? "visible translate-y-0" : "invisible translate-y-full"}`}
       >
         <div className="mx-auto flex max-w-xl flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <p className="text-nota tabular-nums">
+          {/* Os dois valores quebram de linha quando não cabem lado a lado (17/10, segundo fechamento): com a letra a 200%,
+              "Por mês R$ 250" passava da tela. O espaço os separa (até então, o ponto médio). */}
+          <p className="flex flex-wrap gap-x-4 text-nota tabular-nums">
             <span className="whitespace-nowrap">
               Criação <span className="font-semibold">{reais(criacao)}</span>
-            </span>
-            <span aria-hidden="true" className="px-1.5 text-muted-foreground">
-              ·
-            </span>
+            </span>{" "}
             <span className="whitespace-nowrap">
               Por mês <span className="font-semibold">{reais(mensal)}</span>
             </span>

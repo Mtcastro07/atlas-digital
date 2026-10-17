@@ -8,6 +8,20 @@ import { capa } from "@/conteudo/site";
 
 const atraso = (ms: number) => ({ "--atraso": `${ms}ms` }) as React.CSSProperties;
 
+// A luz da capa (16/10): a madrugada, o pico de luz do início. Fria, alta, do noroeste (no alto, à esquerda),
+// caindo para o fundo, embaixo à direita; navy mais claro no mesmo matiz (--agua-rasa), sem quente. O anteparo do
+// texto (app/movimento.css) é da cor da rampa na altura dele: o --meio, o mais claro que fica sob texto.
+const madrugada = {
+  "--cena-angulo": "155deg",
+  "--cena-topo": "var(--meio)",
+  "--cena-base": "var(--moldura)",
+  "--aurora-x": "4%",
+  "--aurora-y": "0%",
+  "--luz-fria": "color-mix(in oklch, var(--agua-rasa) 85%, transparent)",
+  "--luz-quente": "transparent",
+  "--anteparo": "var(--meio)",
+} as React.CSSProperties;
+
 /** Palavras do título, cada uma com a sua ordem, para escalonar a entrada. */
 const palavrasDoTitulo = capa.titulo.split(" ");
 
@@ -22,10 +36,16 @@ const palavrasDoTitulo = capa.titulo.split(" ");
  * luz, enquanto a da fundação tinha só o hover e a do fim, as letras que
  * rolam; a mesma ação respondia de três jeitos na mesma página, a marca M2,
  * e o ímã e as letras são a resposta da barbearia, não a do Atlas:
- * 19-o-padrao-atlas.md, seção 6). Fundo liso, do tom: o
- * anteparo da esfera, que segura o contraste do texto, é da cor do fundo.
+ * 19-o-padrao-atlas.md, seção 6). De 16/10 em diante ("Identidade mais
+ * profunda"; até então, "fundo liso, do tom"), a capa tem a luz da
+ * madrugada, a matéria da água e a esfera armilar de metal, com a frente e
+ * o verso e o anel graduado; o anteparo da esfera, que segura o contraste
+ * do texto, é da cor da rampa na altura dele. A esfera atravessa a emenda e
+ * pousa no papel dos destaques (a capa recorta só na horizontal e fica por
+ * cima da seção seguinte). O ímã e a faixa de luz continuam fora.
  * Título em Archivo Black (desde 05/10, de novo, a do site de 28/08), em
- * text-display (40 a 80 px; no site de 28/08, 92 px).
+ * text-display (48 a 96 px desde 16/10; de 40 a 80 até então; no site de
+ * 28/08, 92 px).
  * Desde 03/10 (pedido do usuário: "enxugue", "separe a seção dos
  * celulares"), só isso: os dois celulares saíram do início (seguem na
  * vitrine de Para quem), e os destaques e a faixa de nichos foram para a
@@ -38,7 +58,15 @@ export function Capa() {
   return (
     // No celular, 208 px de folga embaixo (contra 96 em cima) sobem o bloco 56 px, ao centro óptico: a ação principal
     // termina antes de 60% da primeira tela a 390 × 844 (até 14/10, em 66%; 07-composicao.md).
-    <Secao id="inicio" tom="escuro" className="flex min-h-[calc(100svh-72px)] items-center overflow-hidden max-md:pb-52">
+    // Desde 16/10, a capa sobe por baixo do cabeçalho de vidro, como as aberturas (-mt-18, e os 72 px dele somados ao
+    // respiro de cima): com a luz, a faixa do navy liso da página aparecia atrás da barra. O bloco fica onde estava.
+    <Secao
+      id="inicio"
+      data-sem-atalho
+      tom="escuro"
+      className="vd-cena relative z-[1] -mt-18 flex min-h-svh items-center overflow-x-clip pt-42 max-md:pb-52 md:pt-54"
+      style={madrugada}
+    >
       <div className="relative w-full">
         <Envelope className="mov-anteparo z-[1] text-center">
           <h1 className="mx-auto max-w-[13ch] text-display">

@@ -82,11 +82,14 @@ function textosNaTela() {
     if (!rects.length || !inteiro) continue;
     // Coberto por outra camada (o cabeçalho, o atalho do WhatsApp, a caixa empilhada de cima):
     // no centro de cada linha, o que está por cima precisa ser o próprio texto. O que não
-    // recebe o ponteiro (o grão, os halos) não conta: fica no fundo fotografado.
-    const coberto = rects.some((r) => {
-      const alvo = document.elementFromPoint((r.left + r.right) / 2, (r.top + r.bottom) / 2);
-      return !alvo || (alvo !== el && !el.contains(alvo));
-    });
+    // recebe o ponteiro (o grão, os halos) não conta: fica no fundo fotografado. Nas duas pontas e no
+    // centro de cada linha (17.10.2026): o atalho cobria só a ponta, e o bronze dele entrava como fundo.
+    const coberto = rects.some((r) =>
+      [0.04, 0.5, 0.96].some((f) => {
+        const alvo = document.elementFromPoint(r.left + (r.right - r.left) * f, (r.top + r.bottom) / 2);
+        return !alvo || (alvo !== el && !el.contains(alvo));
+      }),
+    );
     if (coberto) continue;
     const peso = parseInt(cs.fontWeight, 10) || 400;
     const tamanho = parseFloat(cs.fontSize);

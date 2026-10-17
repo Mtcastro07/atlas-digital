@@ -7,17 +7,6 @@ import { buttonVariants } from "@/components/ui/button";
 import { acaoOrcamento, falarNoWhatsApp, fim, mensagens } from "@/conteudo/site";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
-// A cena da chamada final (da branchCto) corre ao contrário da capa: do
-// navy da página à moldura, com a luz quente embaixo, à direita.
-const cenaDoFim = {
-  "--cena-topo": "var(--background)",
-  "--cena-base": "var(--moldura)",
-  "--luz-x": "82%",
-  "--luz-y": "78%",
-  "--aurora-x": "10%",
-  "--aurora-y": "100%",
-} as React.CSSProperties;
-
 /**
  * Chamada final, centrada, antes do rodapé, só no início. Da branchCto: a
  * cena (aurora, luz quente e grão) e um reflexo que atravessa o título a
@@ -29,6 +18,16 @@ const cenaDoFim = {
  * identidade do site. A ação responde como toda "Montar orçamento" do
  * site, com o hover do sistema (até 16/10, com as letras que rolam, a
  * resposta da barbearia: o crítico de fora).
+ * Desde 17/10 (passe 4b), o amanhecer é o horizonte (app/vidro.css,
+ * .vd-amanhecer): o céu, da noite ao navy mais claro, a linha do horizonte e
+ * o mar fundo embaixo. A luz que sobe do horizonte é navy mais claro, no
+ * mesmo matiz; o quente é só um fio sólido sobre o horizonte, onde o sol vai
+ * nascer. Até o passe 4b, a luz quente baixa a leste era o bronze em alfa
+ * baixo sobre o navy, e a cena se lia como uma névoa cinza-parda no canto
+ * (o fechamento com o Impeccable; a marca C14 do kit). Desde o segundo
+ * fechamento (17/10), o mar com 4 rem (até então, a 80% da cena na mesa e a
+ * 9 rem do pé no celular: uma faixa escura vazia de 180 a 290 px antes do
+ * rodapé) e o sol ao meio, sob a ação principal (até então, a 77%).
  * Até 16/10, a mesma chamada fechava também Dúvidas, colada à faixa "Fim
  * do percurso": duas chamadas seguidas, cada uma com a sua pílula de
  * bronze, e o mesmo bloco em duas páginas (o crítico de fora). Dúvidas
@@ -36,7 +35,12 @@ const cenaDoFim = {
  */
 export function Fim() {
   return (
-    <Secao aria-label="Chamada final" tom="escuro" className="vd-cena vd-grao overflow-hidden text-center" style={cenaDoFim}>
+    // Na mesa, a altura da tela (16/10): o amanhecer fecha a noite que a capa abriu. A matéria da água vem da Secao
+    // (até 16/10, o grão só aqui, .vd-grao, com as bordas apagadas por máscara).
+    // O pé maior que o alto: o texto fica no céu, acima do horizonte e da luz que sobe dele.
+    // O pé: o mar (4 rem) mais a luz que sobe do horizonte (app/vidro.css, --subida), para o texto ficar acima dela.
+    // data-sem-atalho (17/10, segundo fechamento): o "Falar no WhatsApp" da cena já está à vista, e o atalho o cobria.
+    <Secao aria-label="Chamada final" data-sem-atalho tom="escuro" className="vd-amanhecer overflow-hidden pb-40 text-center md:pb-44 lg:flex lg:min-h-svh lg:items-center lg:pb-[calc(4rem+20svh)]">
       <Envelope>
         <Titulo linhas={fim.titulo} data-ambiente className="mov-reflexo mx-auto -mb-[0.1em] pb-[0.1em]" />
         <Lide className="mx-auto mt-8">{fim.lide}</Lide>

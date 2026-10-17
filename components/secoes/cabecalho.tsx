@@ -31,7 +31,7 @@ import { cn } from "@/lib/utils";
  * partir de 1024 px (lg:pl-6); abaixo, 4 + 12 (o px-3 do botão Menu) = 16
  * px (pl-4). Até 03/10, a pílula tinha 56 px, com 6 px de folga e recuos
  * de 26 e 18 px, fora da escala. Ao lado da ação, o botão de pausa do
- * movimento contínuo (a esfera da capa, a faixa de nichos, o globo de O
+ * movimento contínuo (a esfera da capa, o globo de O
  * Atlas, o reflexo da chamada final). No celular, recolhe ao rolar para
  * baixo. Desde 01/10 o site tem uma página por assunto: o cabeçalho fica
  * no layout (app/(atlas)/layout.tsx), não remonta na troca de página, e o
@@ -50,7 +50,7 @@ export function Cabecalho() {
             data-vidro-liquido
             data-vidro-desfoque="20"
             data-vidro-intensidade="1.8"
-            className="vd-barra @container pointer-events-auto -mx-3 grid h-13 grow grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-full pr-1 pl-4 md:-mx-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6 lg:pl-6"
+            className="vd-barra @container pointer-events-auto relative top-[env(safe-area-inset-top)] -mx-3 grid h-13 grow grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-full pr-1 pl-4 md:-mx-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6 lg:pl-6"
           >
             {/* No hover, o globo gira; com movimento reduzido, sem o giro, o logotipo responde em cor. */}
             <Link
@@ -65,12 +65,17 @@ export function Cabecalho() {
             <NavegacaoDoAtlas itens={navegacao} />
 
             <div className="flex items-center gap-1.5 justify-self-end md:gap-2">
-              <ControleDoMovimento />{" "}
+              {/* Abaixo de 360 px, a pausa vai para o painel do menu (ilhas/painel-menu.tsx), com o rótulo que já tem: a 320,
+                  ela e o menu disputavam a pílula, e o rótulo "Menu" recolhia (16/10, passe 3; C5). A pausa de verdade
+                  continua sendo esta: a linha do painel aciona este botão. */}
+              <span className="contents max-[359.98px]:hidden">
+                <ControleDoMovimento />
+              </span>{" "}
               <Link href={acaoOrcamento.destino} className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
                 {acaoOrcamento.rotulo}
               </Link>{" "}
               {/* O logotipo do painel vem pronto daqui: desenhado no servidor, sem levar o `cn` ao navegador. */}
-              <MenuCelular itens={navegacao} marca={<Logotipo recorte="globo-menu" className="h-[31px] w-auto" decorativo />} />
+              <MenuCelular itens={navegacao} marca={<Logotipo recorte="globo-menu" className="h-[31px] w-auto md:h-[34px]" decorativo />} />
             </div>
           </div>
         </Envelope>

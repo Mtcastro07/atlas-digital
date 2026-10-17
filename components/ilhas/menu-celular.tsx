@@ -84,8 +84,10 @@ export function MenuCelular({ itens, marca }: { itens: Item[]; marca?: React.Rea
         }}
         className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-nota font-semibold text-foreground no-underline transition-colors duration-300 hover:bg-foreground/10 lg:hidden"
       >
-        {/* Com a letra a 200% a 390 px, o rótulo recolhe e fica para o leitor de tela: a pílula não cabia na tela (16/10). */}
-        <span className="@max-[18rem]:sr-only">Menu</span>
+        {/* Com a letra a 200% a 390 px, o rótulo recolhe e fica para o leitor de tela: a pílula não cabia na tela (16/10).
+            Até o passe 3 (16/10), a 18rem, que a 320 px recolhia também com a letra normal (a pílula mede 276 px por
+            dentro): sobravam dois sinais sem palavra (C5). A 16rem, recolhe só com a letra grande. */}
+        <span className="@max-[16rem]:sr-only">Menu</span>
         {/* Esperando o painel: as barras do Spell UI no lugar do ícone (03/10). */}
         {esperando ? <BarsSpinner tamanho={18} className="mx-px" /> : <IconeMenu className="size-5" />}
       </a>

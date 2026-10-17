@@ -26,6 +26,27 @@ import { paginasInternas, portas } from "@/conteudo/site";
  * levava também o número da página (01 a 06), como o menu do celular e o
  * pé de cada página: a numeração em série, em páginas que não são
  * sequência (as marcas L5 e T2; o crítico de fora).
+ * Desde 16/10 ("Identidade mais profunda"), na mesa, a folha de
+ * articulação de um atlas: uma folha só (a ficha, raio de 4 px, uma sombra
+ * só, do lado da hora), dividida em seis casas por fios de 1 px, sem cartão,
+ * raio ou sombra por casa (até então, seis cartões iguais: a marca C12). Os
+ * fios são o fundo da folha que aparece no vão de 1 px entre as casas. No
+ * celular, cada porta é uma ficha da galeria (raio de 4 px, sombra curta).
+ * Desde 17/10 (passe 4b, pelo pedido de 16/10), a folha dobrada: as seis
+ * casas são os painéis de uma folha só, dobrada em sanfona (as dobras
+ * verticais, ora crista, ora vale) e ao meio (a dobra de través, um vale),
+ * como a carta que se guarda no bolso da capa do atlas. Cada painel recebe a
+ * luz da madrugada pelo lado em que se inclina: os que olham para o oeste,
+ * acesos; os que olham para o leste, na sombra; a crista com o fio de luz, o
+ * vale com o fio escuro (app/vidro.css, .vd-painel). Saem os fios de 1 px
+ * entre as casas (o fundo da folha no vão). No celular, a mesma folha, aberta
+ * em tira: os painéis encostados, sem vão, e a galeria folheia a sanfona.
+ * Desde 17/10 (fechamento com o Impeccable), o dado no degrau da palavra
+ * (text-destaque, em negrito), e não mais em Archivo Black no dos números:
+ * as seis portas somavam cinco dos 13 numerais de 28 px ou mais do início
+ * (o número com legenda em série, a marca L2). O número em escala ficou só
+ * onde ele é o conteúdo (as durações das etapas, os totais do montador). A
+ * resposta é a mesma: o dado acende em bronze.
  */
 export function Portas() {
   return (
@@ -36,24 +57,29 @@ export function Portas() {
             {portas.rotulo}
           </span>
         </Abertura>
-        <div className="vd-galeria-quadro mt-16 md:mt-20" style={{ "--galeria-polegar": 1 / paginasInternas.length } as React.CSSProperties}>
-          <ul className="vd-galeria gap-5 md:grid md:grid-cols-2 md:gap-6 lg:grid-cols-3">
+        <div className="vd-galeria-quadro vd-dobrada mt-16 md:mt-20" style={{ "--galeria-polegar": 1 / paginasInternas.length } as React.CSSProperties}>
+          <ul className="vd-galeria md:grid md:grid-cols-2 md:overflow-hidden md:rounded-[4px] md:shadow-[var(--sombra-media)] lg:grid-cols-3">
             {paginasInternas.map((pagina) => (
               <li key={pagina.id}>
                 {/* Três camadas em todas as portas, na mesma posição: o nome da página, com a seta;
                     o dado em número e palavra; o resumo. O nome aparece uma vez (antes, no alto e no pé), e o dado
                     fica à mesma distância do topo em todas: os números de uma fileira se alinham. */}
-                <Link href={pagina.caminho} className="group vd-bloco vd-aresta relative flex h-full flex-col overflow-hidden rounded-xl p-8 no-underline md:p-10">
+                {/* @max-[16rem]: só com a letra a 200% a coluna da galeria fica tão estreita em rem (com a letra normal, 17 rem ou
+                    mais): o recuo cai à metade, e as palavras quebram em vez de passar do painel (17/10, segundo fechamento). */}
+                <Link
+                  href={pagina.caminho}
+                  className="group vd-bloco vd-painel relative flex h-full flex-col overflow-hidden p-8 no-underline shadow-[var(--sombra-curta)] [overflow-wrap:anywhere] focus-visible:outline-offset-[-6px] @max-[16rem]:p-4 md:p-10 md:shadow-none"
+                >
                   <span className="relative flex items-center justify-between gap-4 text-nota font-semibold">
                     {pagina.menu}
                     <IconeSeta className="size-3.5 flex-none text-accent transition-transform duration-500 ease-atlas group-hover:translate-x-1.5" />
                   </span>{" "}
                   <span className="relative mt-12 block">
-                    <span className="flex flex-wrap items-baseline gap-x-2.5 tabular-nums">
-                      <span className="font-display tracking-titulo text-numero whitespace-nowrap transition-colors duration-300 ease-atlas group-hover:text-accent group-focus-visible:text-accent group-active:text-accent group-active:duration-120">
+                    <span className="flex flex-wrap items-baseline gap-x-[0.3em] tabular-nums">
+                      <span className="text-destaque font-bold whitespace-nowrap transition-colors @max-[16rem]:whitespace-normal duration-300 ease-atlas group-hover:text-accent group-focus-visible:text-accent group-active:text-accent group-active:duration-120">
                         {pagina.porta.dado}
                       </span>{" "}
-                      {pagina.porta.unidade && <span className="text-destaque font-bold whitespace-nowrap text-muted-foreground">{pagina.porta.unidade}</span>}
+                      {pagina.porta.unidade && <span className="text-destaque font-bold whitespace-nowrap text-muted-foreground @max-[16rem]:whitespace-normal">{pagina.porta.unidade}</span>}
                     </span>{" "}
                     <span className="mt-5 block max-w-[32ch] text-corpo text-muted-foreground">{pagina.porta.resumo}</span>
                   </span>

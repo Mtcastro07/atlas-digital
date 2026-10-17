@@ -16,7 +16,7 @@
    internas não têm entrada própria (o texto chega com a transição de
    página): cada uma tem o momento da sua figura, um por página (abaixo,
    "os momentos das aberturas"). O que se move sem parar ([data-ambiente]:
-   a esfera e o seu halo, a faixa, o reflexo, o globo de O Atlas) só roda
+   a esfera e o seu halo, o reflexo, o globo de O Atlas) só roda
    com script (.js, posto pelo <head> de app/layout.tsx), porque é o
    script que oferece o botão de pausa do cabeçalho (WCAG 2.2.2,
    components/ilhas/controle-do-movimento.tsx); para fora da tela e com a
@@ -48,21 +48,27 @@
   .mov-palavra {
     display: inline-block;
   }
-  /* Faixa de nichos (secoes/faixa.tsx e a do site da barbearia): as pontas se apagam. */
-  .mov-faixa-pai {
-    -webkit-mask-image: linear-gradient(90deg, transparent, black 7%, black 93%, transparent);
-    mask-image: linear-gradient(90deg, transparent, black 7%, black 93%, transparent);
-  }
 
   /* ---------- esfera da capa (components/marca/esfera.tsx) ---------- */
-  /* 640 px no computador (700 no site de 28/08, cuja capa era só o
-     título): assim a esfera inteira cabe entre o cabeçalho e os aparelhos. */
-  /* Nunca maior que o invólucro da máscara (.mov-esfera-tracos, um contêiner) menos os 48 px do mt-12: o que passa
-     dele, a máscara corta em linha reta (a 768 px, o fundo saía 11 px e era cortado; corrigido em 14/10). */
+  /* O tamanho e a descida (desde 16/10, "Identidade mais profunda"): a esfera tem quase a altura da capa
+     (--lado, 94% de 100svh − 72 px, a altura mínima dela) e desce do centro do bloco de texto o bastante para a
+     metade de baixo atravessar a emenda e pousar no papel dos destaques: --pousa, 80 px na mesa (o pedido: de 64
+     a 112) e 48 no celular. Na mesa, o bloco fica no centro da capa (o mesmo respiro em cima e embaixo): a borda
+     de baixo da capa está a (100svh − 72 px)/2 do centro dele. Até 16/10, 640 px, centrada no bloco, 24 px abaixo,
+     inteira dentro da capa. Se o texto for mais alto que a tela (a capa cresce), a esfera para antes da emenda,
+     sem cobrir nada. */
+  .mov-esfera-palco {
+    --altura-da-capa: calc(100svh - 72px);
+    --lado: min(calc(var(--altura-da-capa) * 0.94), 1000px);
+    --pousa: 80px;
+    --desce: calc((var(--altura-da-capa) - var(--lado)) / 2 + var(--pousa));
+  }
+  /* Nunca maior que o invólucro da máscara (.mov-esfera-tracos, um contêiner) menos a descida dos dois lados: o que
+     passa dele, a máscara corta em linha reta (a 768 px, o fundo saía 11 px e era cortado; corrigido em 14/10). */
   .mov-esfera-eixo {
-    --lado: min(84vmin, 640px);
-    width: min(var(--lado), 100cqh - 48px);
-    height: min(var(--lado), 100cqh - 48px);
+    width: min(var(--lado), 100cqh - 2 * var(--desce));
+    height: min(var(--lado), 100cqh - 2 * var(--desce));
+    translate: 0 var(--desce);
   }
   .mov-esfera-eixo svg {
     overflow: visible;
@@ -70,17 +76,60 @@
     stroke: color-mix(in srgb, var(--primary) 62%, transparent);
     stroke-width: 1.5;
   }
-  .mov-esfera-eixo .mov-paralelo {
-    stroke: color-mix(in srgb, var(--primary) 48%, transparent);
+  /* O metal (16/10): os traços fixos no degradê do <defs> (aceso do noroeste); a frente inteira, o verso fino e a
+     35%. Os meridianos ficam no tom de antes: o degradê viraria com o scaleX. */
+  .mov-esfera-eixo .mov-metal {
+    stroke: url(#esfera-metal);
+  }
+  .mov-esfera-eixo .mov-contorno {
+    stroke-width: 1.7;
+  }
+  .mov-esfera-eixo .mov-frente {
     stroke-width: 1.3;
+  }
+  .mov-esfera-eixo .mov-tras {
+    stroke-width: 0.8;
+    opacity: 0.35;
+  }
+  .mov-esfera-eixo .mov-anel.mov-frente {
+    stroke-width: 1;
+  }
+  .mov-esfera-eixo .mov-graduacao {
+    stroke-width: 0.7;
+  }
+  /* Os meridianos em espessura de tela (16/10): o scaleX afinava também o traço, e o meridiano de perfil virava uma
+     linha tracejada. */
+  .mov-esfera-eixo .mov-meridiano {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 2.2px;
   }
   .mov-esfera-eixo .mov-acento {
     stroke: color-mix(in srgb, var(--accent) 92%, transparent);
-    stroke-width: 1.8;
+    stroke-width: 2.8px;
   }
   /* Parado, cada meridiano fica aberto na largura da sua fase. */
   .mov-meridiano {
     transform: scaleX(var(--estatico, 1));
+  }
+  /* As metades de cada meridiano (16/10) giram em torno do eixo da esfera (o centro do viewBox), e não da própria
+     caixa, que é deslocada; paradas, cada uma com a opacidade da sua face na pose (--face). */
+  .mov-meia-a,
+  .mov-meia-b {
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    opacity: var(--face, 1);
+  }
+  /* A sombra de contato onde a esfera pousa (16/10): no papel, sob o ponto mais baixo dela, a 60% da largura e 10%
+     da altura, deslocada para a direita e para baixo, longe da luz do noroeste. Não é halo centrado. O palco começa
+     48 px abaixo do topo do bloco: o centro dele fica 24 px abaixo do centro do bloco. */
+  .mov-esfera-pouso {
+    left: 50%;
+    top: 50%;
+    width: calc(var(--lado) * 0.6);
+    height: calc(var(--lado) * 0.1);
+    translate: calc(-50% + var(--lado) * 0.06) calc(-50% - 24px + var(--desce) + var(--lado) * 0.5 + var(--lado) * 0.015);
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(15 42 71 / 0.16), rgb(15 42 71 / 0.06) 60%, transparent);
   }
   /* Halo quente atrás da esfera. */
   .mov-esfera-brilho {
@@ -99,8 +148,8 @@
   .mov-esfera-veu {
     background: radial-gradient(
       70% 56% at 50% 47%,
-      color-mix(in srgb, var(--background) 46%, transparent) 0%,
-      color-mix(in srgb, var(--background) 20%, transparent) 62%,
+      color-mix(in srgb, var(--anteparo, var(--background)) 46%, transparent) 0%,
+      color-mix(in srgb, var(--anteparo, var(--background)) 20%, transparent) 62%,
       transparent 86%
     );
   }
@@ -122,17 +171,25 @@
      altura do bloco, uns 60 px), sem degrau. Na horizontal, a elipse tem a
      largura do palco: atrás do texto, a faixa vai de borda a borda da
      esfera. */
+  /* Desde 16/10, o invólucro vai do bloco mais 150% da altura dele em cima e embaixo (4 vezes o bloco; até então,
+     60%, 2,2 vezes), para caber a esfera que desce (a 768 px, com 3 vezes, ela encolhia e não chegava ao papel): o
+     bloco ocupa de 37,5% a 62,5% dele. O raio vertical da elipse passa de 29,6% a 18,75%: 0,75 vez o bloco (até
+     então, 0,651; com a esfera que desce, os meridianos cruzavam a borda de baixo de "Conhecer o método", a 3,9:1
+     no pior ponto). Na mesa, o raio horizontal deixa de ser a largura do palco (a faixa de borda a borda): fica em
+     480 px (o título de 96 px tem ±345), e os lados da esfera e o anel aparecem ao lado do texto, em vez de a esfera
+     virar duas calotas. */
   .mov-esfera-tracos {
     container-type: size;
     position: absolute;
     inset-inline: 0;
-    top: calc(-48px * 1.6 - 60%);
-    bottom: calc(-60% - 48px * 0.6);
+    top: calc(-48px * 2.5 - 150%);
+    bottom: calc(-150% - 48px * 1.5);
     display: flex;
     align-items: center;
     justify-content: center;
+    --mascara-rx: 100%;
     --mascara: radial-gradient(
-      100% 29.6% at 50% 50%,
+      var(--mascara-rx) 18.75% at 50% 50%,
       transparent 0%,
       transparent 76.9%,
       rgb(0 0 0 / 0.08) 81%,
@@ -164,11 +221,13 @@
     inset: -3rem -6% -16%;
     z-index: -1;
     pointer-events: none;
+    /* Desde 16/10, da cor da cena na altura do texto (--anteparo, que a capa define), e não do navy chapado: a capa
+       tem luz. */
     background: radial-gradient(
       closest-side,
-      color-mix(in srgb, var(--background) 92%, transparent) 0%,
-      color-mix(in srgb, var(--background) 86%, transparent) 50%,
-      color-mix(in srgb, var(--background) 52%, transparent) 78%,
+      color-mix(in srgb, var(--anteparo, var(--background)) 92%, transparent) 0%,
+      color-mix(in srgb, var(--anteparo, var(--background)) 86%, transparent) 50%,
+      color-mix(in srgb, var(--anteparo, var(--background)) 52%, transparent) 78%,
       transparent 100%
     );
   }
@@ -178,8 +237,20 @@
    100vmin: ficava inteira atrás do bloco de texto, e só a bacia de baixo aparecia); as laterais saem pela capa
    (overflow-hidden), e a altura do invólucro da máscara a limita (acima). */
 @media (max-width: 767.98px) {
-  .mov-esfera-eixo {
-    --lado: min(150vw, 600px);
+  /* No celular (16/10), a esfera em sangria e 48 px de pouso. O bloco fica acima do centro da capa (96 px de respiro
+     em cima, 208 embaixo, components/secoes/capa.tsx): a borda de baixo está a (100svh − 72 px)/2 + 56 px do centro
+     dele. Para o título ficar dentro da esfera e ela ainda pousar no papel, o lado vai do pouso até 260 px acima do
+     centro do bloco (a metade dele, ~200 px, mais 60): ~1,9 vez a largura da tela (750 px a 390 × 844). Com 1,6 vez,
+     como pedia a direção, a esfera inteira ficava abaixo do título, só a bacia à vista. */
+  .mov-esfera-palco {
+    --pousa: 48px;
+    --lado: calc(var(--altura-da-capa) / 2 + 56px + var(--pousa) + 260px);
+    --desce: calc((var(--altura-da-capa) - var(--lado)) / 2 + 56px + var(--pousa));
+  }
+}
+@media (min-width: 1024px) {
+  .mov-esfera-tracos {
+    --mascara-rx: 480px;
   }
 }
 
@@ -227,6 +298,16 @@
     animation: mov-meridiano 16s linear infinite;
     animation-delay: var(--fase, 0s);
   }
+  /* As metades (16/10): o mesmo giro, e a troca de face no meio e no fim da volta, quando o meridiano está todo
+     aberto. O atalho apaga o atraso: ele vem depois. */
+  .js .mov-meia-a {
+    animation: mov-meridiano 16s linear infinite, mov-face-a 16s steps(1, end) infinite;
+    animation-delay: var(--fase, 0s);
+  }
+  .js .mov-meia-b {
+    animation: mov-meridiano 16s linear infinite, mov-face-b 16s steps(1, end) infinite;
+    animation-delay: var(--fase, 0s);
+  }
   .js .mov-esfera-brilho {
     animation: mov-pulsa 8s var(--ease-atlas) infinite alternate;
   }
@@ -241,9 +322,20 @@
     animation: mov-longitude 36s linear infinite;
     animation-delay: var(--atraso-longitude, 0s);
   }
+  /* A frente e o verso do globo (16/10): cada metade troca de face no meio e no fim da volta, quando o meridiano está
+     todo aberto, no mesmo atraso do giro (herdado do meridiano). */
+  .js [data-visivel] .mov-longitude > .mov-face-a {
+    animation: mov-face-a 36s steps(1, end) infinite;
+    animation-delay: var(--atraso-longitude, 0s);
+  }
+  .js [data-visivel] .mov-longitude > .mov-face-b {
+    animation: mov-face-b 36s steps(1, end) infinite;
+    animation-delay: var(--atraso-longitude, 0s);
+  }
 
   /* Um reflexo atravessa o título da chamada final a cada 8 s, depois que
-     ele entra na tela (data-visivel), pela mesma razão da faixa. */
+     ele entra na tela (data-visivel): na carga, ele está abaixo da dobra, e
+     correr ali custaria um recálculo de estilo por quadro, sem ninguém ver. */
   .js .mov-reflexo[data-visivel] {
     background-image: linear-gradient(100deg, var(--foreground) 0 40%, #ffffff 50%, var(--foreground) 60% 100%);
     background-size: 260% 100%;
@@ -254,37 +346,23 @@
     animation: mov-reflexo 8s var(--ease-atlas) infinite;
   }
 
-  /* A faixa de nichos corre (o ponteiro sobre ela a detém: abaixo, só onde
-     há ponteiro). Só depois de entrar na tela (data-visivel,
-     ilhas/controle-do-movimento.tsx): na carga, ela está abaixo da dobra,
-     e correr ali custaria um recálculo de estilo por quadro, sem ninguém
-     ver. */
-  .js :is([data-visivel] .mov-faixa, .mov-faixa[data-visivel]) {
-    animation: mov-faixa 60s linear infinite;
-  }
-
   /* Pausa: fora da tela, ou pelo botão do cabeçalho. A lista nomeia as
      peças que correm (aqui e em app/demos/demos.css), em vez de "tudo
      dentro de [data-ambiente]": um seletor universal seria testado em
      cada elemento da página a cada recálculo de estilo. */
-  .ambiente-pausado :is(.mov-meridiano, .mov-esfera-brilho, .mov-faixa, .mov-reflexo, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude),
-  [data-fora] :is(.mov-meridiano, .mov-esfera-brilho, .mov-faixa, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude),
-  :is(.mov-faixa, .mov-reflexo)[data-fora] {
+  .ambiente-pausado :is(.mov-meridiano, .mov-esfera-brilho, .mov-reflexo, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude, .mov-longitude > *),
+  [data-fora] :is(.mov-meridiano, .mov-esfera-brilho, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude, .mov-longitude > *),
+  .mov-reflexo[data-fora] {
     animation-play-state: paused !important;
   }
 }
 
 /* ...e sob o ponteiro, só onde há ponteiro: no toque, quem dispara o giro
    é o aparecimento do logotipo (ilhas/giro-do-globo.tsx). .mov-giro marca
-   um bloco inteiro como área de hover (o símbolo de "O Atlas"). A faixa
-   para sob o ponteiro também só aqui: até 03/10, valia no toque, e a faixa
-   ficava parada depois de tocada. */
+   um bloco inteiro como área de hover (o símbolo de "O Atlas"). */
 @media (prefers-reduced-motion: no-preference) and (hover: hover) {
   .mov-globo:is(a:hover *, .mov-giro:hover *) ellipse {
     animation: mov-giro-completo 1.15s var(--ease-atlas) 1;
-  }
-  .mov-faixa-pai:hover .mov-faixa {
-    animation-play-state: paused;
   }
 }
 
@@ -325,6 +403,15 @@
   75% { transform: scaleX(0); }
   100% { transform: scaleX(1); }
 }
+/* A face de cada metade do meridiano: na frente (inteira) ou atrás (a 35%). */
+@keyframes mov-face-a {
+  0% { opacity: 1; }
+  50%, 100% { opacity: 0.35; }
+}
+@keyframes mov-face-b {
+  0% { opacity: 0.35; }
+  50%, 100% { opacity: 1; }
+}
 /* A largura aparente de um meridiano ao longo da volta é o cosseno da
    longitude: doze pontos, para a passagem não parecer um vaivém linear. */
 @keyframes mov-longitude {
@@ -358,11 +445,6 @@
   50% { transform: scaleX(-1); }
   75% { transform: scaleX(0.05); }
   100% { transform: scaleX(1); }
-}
-@keyframes mov-faixa {
-  to {
-    transform: translateX(-50%);
-  }
 }
 
 /* ---------- os momentos das aberturas (desde 14/10) ----------

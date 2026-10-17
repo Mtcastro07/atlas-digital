@@ -8,7 +8,8 @@ import { cva, type VariantProps } from "class-variance-authority"
 // fusão de classes custava ~9 ms de CPU na carga (180 ms com CPU 20×).
 // `className` acrescenta layout (largura, margem); não sobrepõe variante.
 // Da branchCto (fusão de 01/10): na ação principal, um brilho bronze a
-// envolve no hover (sombra de 30 px), e o bronze clareia. A faixa de luz
+// envolve no hover (sombra de 30 px), e o bronze clareia (desde 16/10, no
+// .vd-metal: a camada acesa do metal, por opacidade). A faixa de luz
 // que atravessa a pílula (.vd-brilho, app/vidro.css) saiu da variante em
 // 14/10 e vai por `className` só às ações que fecham a decisão: o
 // "Escolher" do plano recomendado (`plano.destaque`, components/secoes/planos.tsx)
@@ -25,18 +26,24 @@ import { cva, type VariantProps } from "class-variance-authority"
 // transição: no Tailwind 4, `active:scale-*` escreve a propriedade
 // `scale`, não `transform`, e sem ela na lista o botão estalava para 97% e
 // voltava, sem passagem (corrigido em 01/10).
+// A pílula quebra a linha só quando não cabe (17/10, fechamento com o
+// Impeccable): até então, `whitespace-nowrap`, e com a letra a 200% a
+// 390 px "Montar orçamento" passava da tela (410 px), cortada pelo
+// `overflow-x: clip` do body (a marca Q16). Com a letra normal, nada muda:
+// `max-w-full` só age onde a pílula antes transbordava.
 // Desabilitado: o apagado vem da base (app/globals.css); o cursor de "não
 // permitido" é repetido aqui porque o `cursor-pointer` do utilitário vence
 // a base; e o hover não responde (`not-disabled:`; a faixa de luz não vai
 // a <button>: as ações que a levam são vínculos). Até 03/10,
 // opacidade 50% e pointer-events: none, que escondia o cursor.
 const buttonVariants = cva(
-  "relative inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap no-underline transition-[background-color,color,border-color,box-shadow,transform,translate,scale] duration-300 ease-atlas select-none active:scale-[0.97] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "relative inline-flex shrink-0 cursor-pointer max-w-full items-center justify-center gap-2 rounded-full text-center font-semibold no-underline transition-[background-color,color,border-color,box-shadow,transform,translate,scale] duration-300 ease-atlas select-none active:scale-[0.97] disabled:cursor-not-allowed [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground not-disabled:hover:bg-primary-hover not-disabled:hover:shadow-[0_10px_30px_-10px_var(--primary)]",
+        // Desde 16/10, o bronze fundido (.vd-metal, app/vidro.css): o degradê, os fios de luz e de sombra, a sombra do
+        // lado da hora e, no hover, a camada acesa e o brilho bronze. O bg-primary fica por baixo (cores forçadas).
+        default: "vd-metal bg-primary text-primary-foreground",
         secondary: "bg-secondary text-secondary-foreground not-disabled:hover:bg-secondary/88",
         outline: "border border-input bg-transparent text-foreground not-disabled:hover:border-foreground not-disabled:hover:bg-foreground/[0.05]",
         vidro: "vd-vidro text-foreground not-disabled:hover:bg-foreground/[0.08]",

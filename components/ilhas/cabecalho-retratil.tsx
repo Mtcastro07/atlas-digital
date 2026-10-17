@@ -3,62 +3,17 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { fundoSob } from "@/lib/fundo-sob";
+
 /** Abaixo desta rolagem, o cabeçalho nunca se recolhe. */
 const TOPO = 280;
 /** Deslocamento mínimo, em px, para contar como mudança de direção. */
 const FOLGA = 6;
-/** Pontos da linha média da barra onde se lê o que passa por trás: um a cada ~8% da largura. */
-const PONTOS = Array.from({ length: 13 }, (_, i) => 0.04 + (i * 0.92) / 12);
 /** Intervalo mínimo entre duas leituras, em ms (a leitura vai a getComputedStyle). */
 const INTERVALO = 80;
 
-type Fundo = "claro" | "escuro" | "misto";
-
 /** A transição de página em curso, onde o navegador a expõe (o Chrome; os outros, ainda não). */
 const transicaoAtiva = () => (document as Document & { activeViewTransition?: ViewTransition | null }).activeViewTransition;
-
-/**
- * Se o fundo de um elemento é claro: sobe pelos ancestrais até achar uma
- * cor de fundo opaca e mede a luminância dela. Sem nada até a raiz, é o
- * navy da página.
- */
-function eClaro(elemento: Element | undefined): boolean {
-  for (let atual = elemento ?? null; atual && atual !== document.documentElement; atual = atual.parentElement) {
-    const cor = getComputedStyle(atual).backgroundColor;
-    const n = cor.match(/-?[\d.]+/g)?.map(Number);
-    if (!n || n.length < 3) continue;
-    if (cor.startsWith("rgb")) {
-      if (n.length > 3 && n[3] < 0.5) continue;
-      const [r, g, b] = n.map((c) => c / 255);
-      return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.45;
-    }
-    // oklab()/oklch() (as cores com opacidade do Tailwind): o primeiro número é a luminosidade.
-    if (cor.startsWith("ok")) {
-      if (/\/\s*0?\.[0-4]/.test(cor)) continue;
-      return (n[0] > 1 ? n[0] / 100 : n[0]) > 0.7;
-    }
-  }
-  return false;
-}
-
-/**
- * O que passa por trás da barra, lido nos elementos sob 13 pontos da sua
- * linha média. Todos claros: "claro"; todos escuros: "escuro"; mistura:
- * "misto".
- */
-function fundoSob(cabecalho: HTMLElement, barra: HTMLElement): Fundo {
-  const caixa = barra.getBoundingClientRect();
-  const y = caixa.top + caixa.height / 2;
-  if (y < 0) return "escuro";
-  let claros = 0;
-  for (const fracao of PONTOS) {
-    const sob = document.elementsFromPoint(caixa.left + caixa.width * fracao, y).find((el) => !cabecalho.contains(el));
-    if (eClaro(sob)) claros++;
-  }
-  if (claros === PONTOS.length) return "claro";
-  if (claros === 0) return "escuro";
-  return "misto";
-}
 
 /**
  * O cabeçalho, como no site de 28/08: no celular e no tablet (até 1023 px),
@@ -92,7 +47,12 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
     const lerFundo = () => {
       if (!elemento || !barra) return;
       lida = performance.now();
-      const fundo = fundoSob(elemento, barra);
+      // Lê-se o que fica sob a barra na posição de repouso (desde 16/10, passe 3): recolhida ou voltando, ela está
+      // acima dela, e até então a linha média acima do topo da tela valia "escuro" — num gesto curto para cima sobre o
+      // claro, a pílula voltava em vidro escuro e ficava assim (C1). O recolhimento é o translate do <header>.
+      const caixa = barra.getBoundingClientRect();
+      const recuo = Math.min(0, elemento.getBoundingClientRect().top);
+      const fundo = fundoSob(elemento, { left: caixa.left, width: caixa.width, top: caixa.top - recuo, height: caixa.height });
       if (elemento.dataset.fundo !== fundo) elemento.dataset.fundo = fundo;
     };
     // No máximo uma leitura a cada INTERVALO ms; a última posição é sempre lida. Durante a transição de página, nenhuma
@@ -131,10 +91,16 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
       lerFundo();
       if (!("activeViewTransition" in document)) pendente = window.setTimeout(lerFundo, 900);
     }
+    // E de novo quando a barra assenta (o fim do recolhimento ou da volta): o dedo pode parar antes dela.
+    const aoAssentar = (evento: TransitionEvent) => {
+      if (evento.target === elemento && !transicaoAtiva()) lerFundo();
+    };
+    elemento?.addEventListener("transitionend", aoAssentar);
     window.addEventListener("scroll", aoRolar, { passive: true });
     window.addEventListener("resize", aoRolar, { passive: true });
     return () => {
       viva = false;
+      elemento?.removeEventListener("transitionend", aoAssentar);
       window.removeEventListener("scroll", aoRolar);
       window.removeEventListener("resize", aoRolar);
       cancelAnimationFrame(quadro);
@@ -151,7 +117,7 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
       ref={cabecalho}
       data-fundo="escuro"
       data-recolhido={recolhido || undefined}
-      className="pointer-events-none sticky top-0 z-40 transition-transform duration-300 ease-atlas motion-reduce:transition-none max-lg:data-recolhido:[&:not(:has(:focus-visible))]:-translate-y-[calc(100%+2rem)]"
+      className="pointer-events-none sticky top-0 z-40 transition-transform duration-300 ease-atlas motion-reduce:transition-none max-lg:data-recolhido:[&:not(:has(:focus-visible))]:-translate-y-[calc(100%+2rem+env(safe-area-inset-top))]"
     >
       {children}
     </header>

@@ -92,13 +92,44 @@ function limparEndereco() {
 function posicaoDe(alvo: HTMLElement) {
   const caixa = alvo.getBoundingClientRect();
   const estilo = getComputedStyle(alvo);
-  const topo = caixa.top + parseFloat(estilo.paddingTop);
+  // O que sobe sobre a seção de cima ([data-sobe]: o painel do montador do início, desde 16/10) começa o conteúdo.
+  const sobe = alvo.querySelector("[data-sobe]")?.getBoundingClientRect().top ?? Infinity;
+  const topo = Math.min(caixa.top + parseFloat(estilo.paddingTop), sobe);
   const conteudo = caixa.bottom - parseFloat(estilo.paddingBottom) - topo;
   const cabecalho = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
   const livre = window.innerHeight - cabecalho;
   const acima = conteudo <= livre ? (livre - conteudo) / 2 : FOLGA;
   const maximo = document.documentElement.scrollHeight - window.innerHeight;
   return Math.max(0, Math.min(window.scrollY + topo - cabecalho - acima, maximo));
+}
+
+/** Até onde a galeria corre para o cartão ficar no encaixe: no centro (o celular, desde 16/10) ou na borda (o tablet). */
+function esquerdaNaGaleria(galeria: HTMLElement, alvo: HTMLElement) {
+  const centro = getComputedStyle(alvo).scrollSnapAlign.includes("center");
+  return (
+    galeria.scrollLeft +
+    alvo.getBoundingClientRect().left -
+    galeria.getBoundingClientRect().left -
+    (centro ? (galeria.clientWidth - alvo.offsetWidth) / 2 : 0)
+  );
+}
+
+/**
+ * A galeria que abre num cartão marcado ([data-inicial]; os planos, no
+ * celular): o CSS faz isso com scroll-initial-target (app/vidro.css); onde o
+ * navegador não o tem, a galeria corre até o cartão, instantânea, só se
+ * estiver fora da tela e no início (sem salto à vista, sem desfazer o gesto
+ * de ninguém). Desde 17/10 (passe 4).
+ */
+function abrirGaleriasNoCartaoMarcado() {
+  if (CSS.supports("scroll-initial-target", "nearest")) return;
+  document.querySelectorAll<HTMLElement>(".vd-galeria > [data-inicial]").forEach((cartao) => {
+    const galeria = cartao.parentElement!;
+    const caixa = galeria.getBoundingClientRect();
+    const foraDaTela = caixa.bottom < 0 || caixa.top > window.innerHeight;
+    if (!foraDaTela || galeria.scrollLeft !== 0 || !getComputedStyle(cartao).scrollSnapAlign.includes("center")) return;
+    galeria.scrollLeft = esquerdaNaGaleria(galeria, cartao);
+  });
 }
 
 /** Rola até o destino, centrado, e leva o foco com ele, como um vínculo de âncora comum. */
@@ -113,11 +144,11 @@ function irPara(id: string, instantaneo = false) {
   // A resposta de uma dúvida: o <details> abre antes de medir.
   const resposta = alvo.closest("details");
   if (resposta) resposta.open = true;
-  // Um destino numa galeria de deslizar (os planos, no celular): a galeria corre até ele; o encaixe o alinha.
+  // Um destino numa galeria de deslizar (os planos, no celular): a galeria corre até ele; o encaixe o alinha. Com o
+  // encaixe pelo centro (no celular, desde 16/10), o destino é o cartão no meio da galeria; pelo início (o tablet), na borda.
   const galeria = alvo.closest<HTMLElement>(".vd-galeria");
   if (galeria && galeria.scrollWidth > galeria.clientWidth) {
-    const esquerda = galeria.scrollLeft + alvo.getBoundingClientRect().left - galeria.getBoundingClientRect().left;
-    galeria.scrollTo({ left: esquerda, behavior: semMovimento ? "instant" : "smooth" });
+    galeria.scrollTo({ left: esquerdaNaGaleria(galeria, alvo), behavior: semMovimento ? "instant" : "smooth" });
   }
   const chegada = rolarAte(posicaoDe(alvo), semMovimento);
   if (resposta) marcarChegada(resposta, chegada);
@@ -172,6 +203,7 @@ export function Ancoras() {
       limparEndereco();
       requestAnimationFrame(() => irPara(destino, true));
     };
+    abrirGaleriasNoCartaoMarcado();
     aoChegarComAncora();
     window.addEventListener("hashchange", aoChegarComAncora);
 

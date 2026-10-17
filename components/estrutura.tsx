@@ -2,11 +2,11 @@ import { Lide, Titulo } from "@/components/tipografia";
 import type { IdDaSecao } from "@/conteudo/site";
 import { cn } from "@/lib/utils";
 
-export type Tom = "escuro" | "claro" | "branco";
+export type Tom = "escuro" | "claro" | "pedra";
 
 type SecaoProps = React.ComponentProps<"section"> & {
   id?: IdDaSecao;
-  /** escuro: navy · claro: névoa neutra · branco: superfície limpa. */
+  /** escuro: navy, a água · claro: névoa neutra, o papel · pedra: o segundo tom claro (16/10). O branco (superfície limpa) saiu em 16/10 como campo de cena: fica só como --ficha, o cartão dos tons claros. */
   tom?: Tom;
 };
 
@@ -16,19 +16,31 @@ type SecaoProps = React.ComponentProps<"section"> & {
  * seguidas no mesmo tom não somam os dois respiros — a segunda começa sem
  * o de cima (app/globals.css). Assim, todo intervalo entre dois conteúdos
  * no mesmo tom mede o mesmo em todo o site (padronizado em 03/10).
+ * Desde 16/10, toda seção leva a matéria do tom (.vd-materia, app/vidro.css):
+ * o grão e a rampa da água, a fibra do papel, o grão da pedra.
  */
 export function Secao({ tom = "escuro", className, ...props }: SecaoProps) {
-  return <section data-tom={tom} className={cn("relative py-24 md:py-36", className)} {...props} />;
+  return <section data-tom={tom} className={cn("vd-materia relative py-24 md:py-36", className)} {...props} />;
 }
 
 /**
  * Coluna central com largura máxima e margem lateral: 24 px no celular, 40
  * px a partir de 768 px. Até 03/10, 22 px no celular, fora da escala de 4
  * px (regra 2); a margem das galerias de deslizar acompanha
- * (--galeria-margem, app/vidro.css).
+ * (--galeria-margem, app/vidro.css). Desde 16/10 (passe 3), com a área
+ * segura dos lados: com o aparelho deitado, o viewport-fit=cover
+ * (app/layout.tsx) levava o texto e a pílula para baixo do recorte da tela.
  */
 export function Envelope({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("mx-auto w-full max-w-pagina px-6 md:px-10", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "mx-auto w-full max-w-pagina px-[max(1.5rem,env(safe-area-inset-left),env(safe-area-inset-right))] md:px-[max(2.5rem,env(safe-area-inset-left),env(safe-area-inset-right))]",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 type AberturaProps = {

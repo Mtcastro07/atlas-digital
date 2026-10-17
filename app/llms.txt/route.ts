@@ -21,6 +21,7 @@ export function GET() {
     }),
     ...trabalho.passos.map((p) => `- ${p.titulo}: ${p.marca.valor} ${p.marca.rotulo}. ${p.texto}`),
     `- Públicos: ${paraQuem.publicos.map((p) => p.titulo).join(", ")}.`,
+    `- ${paraQuem.nichos.rotulo}: ${new Intl.ListFormat("pt-BR").format(paraQuem.nichos.lista)}.`,
     `- Sócios: ${quemFaz.socios.map((s) => `${s.nome} (${s.funcao})`).join("; ")}.`,
     `- Sites de exemplo: ${simulador.aviso}`,
     "",

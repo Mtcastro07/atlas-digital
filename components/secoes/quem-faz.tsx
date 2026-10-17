@@ -2,7 +2,6 @@ import { existsSync, statSync } from "node:fs";
 import path from "node:path";
 
 import { Abertura, Envelope, Secao } from "@/components/estrutura";
-import { Globo } from "@/components/marca/globo";
 import { GloboDoLogotipo } from "@/components/marca/logotipo";
 import { quemFaz } from "@/conteudo/site";
 
@@ -47,8 +46,8 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
 }
 
 /**
- * Os sócios numa fileira só, entre dois filetes, um por linha (no celular)
- * ou coluna (a partir de 1024 px), com a foto de cada um (conteudo/site.ts, quemFaz.socios;
+ * Os sócios numa fileira só, um por linha (no celular) ou coluna (a
+ * partir de 1024 px), com a foto de cada um (conteudo/site.ts, quemFaz.socios;
  * arquivos em public/socios/) — e, enquanto a foto não existe, o
  * monograma das iniciais no mesmo lugar. Em desenvolvimento, a vaga sem
  * foto aparece com um traço tracejado e o caminho do arquivo esperado,
@@ -60,28 +59,40 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
  * outros. Depois, a origem do nome, num bloco navy com o símbolo da
  * marca — o globo solto sobre o ombro da letra, que gira como o do
  * logotipo. No celular, o símbolo abre o bloco, como o ícone dos cartões.
- * Da branchCto: ao fundo do bloco, o globo da marca ampliado, em traço de
- * bronze; o texto fica num cartão de vidro líquido que passa sobre ele —
- * no Chromium com ponteiro fino, os traços se dobram na borda do vidro
- * (ilha VidroLiquido). O cartão nunca tem mais folga por dentro que o
- * bloco em volta dele (até 03/10, 20 px dentro de 16 px, no celular).
+ * Da branchCto: o texto fica num vidro líquido; no Chromium com ponteiro
+ * fino, o que passa sob a borda do vidro se dobra nela (ilha VidroLiquido).
+ * Desde o segundo fechamento com o Impeccable (17/10), o vidro é uma janela
+ * da chapa navy, rente às bordas dela, com o fio só na borda de dentro; até
+ * então, um cartão de vidro com recuo, raio e contorno dentro do bloco
+ * navy (o cartão dentro do cartão, a marca L4).
+ * Desde 16/10 ("Identidade mais profunda"):
+ * - na pedra, o segundo tom claro: a história, logo acima, é a névoa (até
+ *   então, as duas cenas no mesmo creme);
+ * - os sócios sem os filetes (a linha entre filetes era o recipiente de
+ *   quase toda cena clara; fica no extrato de Planos e na sanfona das
+ *   Dúvidas): o grupo se faz pelo espaço;
+ * - ao fundo do bloco, no lugar do globo da marca ampliado (o globo da
+ *   página é o da abertura), o A do logotipo, grande, na água rasa, atrás
+ *   do canto do cartão de vidro e quase todo fora dele: o vidro o dobra na
+ *   borda. O mito contado pela marca medida. A tinta do vidro não muda.
  */
 export function QuemFaz() {
   return (
-    // No creme da história, de cima (desde 14/10): o branco depois do creme ficava a 0,035 de L, uma emenda, não uma virada.
-    <Secao id="atlas" tom="claro">
+    // Na pedra (16/10): a névoa da história, de cima, e a pedra ficam a 0,050 de L, uma virada de cena. De 14 a 16/10,
+    // no creme da história, porque o branco depois do creme ficava a 0,035, uma emenda.
+    <Secao id="atlas" tom="pedra">
       <Envelope>
         <Abertura titulo={quemFaz.titulo} lide={quemFaz.lide} />
 
-        {/* Direto na névoa, entre dois filetes (até 16/10, num painel branco: mais um cartão na cena; o crítico de fora). */}
-        <ul className="mt-16 grid grid-cols-[minmax(0,1fr)] border-y border-border md:mt-20 lg:grid-cols-3">
+        {/* Direto na pedra, sem filetes (16/10): o espaço agrupa. De 16/10, entre dois filetes; até então, num painel branco. */}
+        <ul className="mt-16 grid grid-cols-[minmax(0,1fr)] gap-y-8 md:mt-20 lg:grid-cols-3 lg:gap-x-8">
           {quemFaz.socios.map((socio) => {
             const foto = fotoDe(socio.foto);
             const aviso = avisoDaVaga(socio.foto, foto);
             return (
               <li
                 key={socio.nome}
-                className="group flex items-center gap-5 p-6 not-last:border-b md:px-8 lg:flex-col lg:gap-4 lg:py-10 lg:text-center lg:not-last:border-r lg:not-last:border-b-0"
+                className="group flex flex-wrap items-center gap-5 px-6 md:px-8 lg:flex-col lg:flex-nowrap lg:gap-4 lg:text-center"
               >
                 {/* O retrato: a foto, ou as iniciais enquanto ela não existe. Decorativo — o nome está ao lado. */}
                 <span
@@ -96,7 +107,9 @@ export function QuemFaz() {
                     socio.iniciais
                   )}
                 </span>
-                <div className="min-w-0">
+                {/* grow basis-32 e o flex-wrap do item: com a letra a 200%, o texto desce para baixo do retrato (17/10); ao
+                    lado dele, sobravam 30 px, e o nome e a função passavam da tela. Com a letra normal, cabe ao lado. */}
+                <div className="min-w-0 grow basis-32 lg:basis-auto">
                   {/* A função vem acima do nome, na leitura (no HTML, depois dele): as funções ficam na mesma linha nas
                       três colunas, e só o nome longo desce mais, sem desalinhar os outros. */}
                   <div className="flex flex-col-reverse">
@@ -121,17 +134,38 @@ export function QuemFaz() {
           })}
         </ul>
 
+        {/* A chapa (17/10, segundo fechamento com o Impeccable): o vidro é uma janela dela, rente às bordas, e não um
+            cartão dentro do bloco navy (a marca L4; a avaliação A). Até então, o vidro tinha recuo, raio e contorno próprios
+            dentro do bloco, que tinha os seus. O único fio do vidro é a borda de dentro, onde o A se dobra. A chapa tem os
+            cantos quase vivos (4 px, como a folha dobrada do início; até então, 12 px): no canto redondo, a refração do
+            vidro trazia a pedra de fora para dentro dele, num arco claro. As colunas com
+            minmax(0, 1fr): com a letra a 200%, "sustentava" alargava o vidro e a chapa cortava 7 das 15 linhas. */}
         <div
           data-tom="escuro"
-          className="mov-giro relative mt-6 grid items-center gap-8 overflow-hidden rounded-xl bg-background p-4 md:grid-cols-[1fr_auto] md:gap-16 md:p-8"
+          className="mov-giro relative mt-6 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-[4px] bg-background md:grid-cols-[minmax(0,1fr)_auto]"
         >
-          {/* O traço mais apagado (0,45; até 16/10, 0,8): sob o vidro, onde passava sob o texto, o cinza do texto caía a 3,84:1 (Impeccable, Q1). */}
-          <Globo className="pointer-events-none absolute top-1/2 left-[22%] w-[34rem] -translate-y-1/2 opacity-45 md:left-[34%] md:w-[46rem]" />
-          <div data-vidro-liquido data-vidro-desfoque="6" data-vidro-intensidade="1.8" className="vd-vidro-liquido relative rounded-xl p-4 md:p-7">
-            <h3 className="font-display tracking-titulo text-numero font-normal">{quemFaz.nome.titulo}</h3>
+          {/* O A do logotipo ao fundo (16/10), na água rasa: no celular, no alto, à direita do símbolo, com os pés sob a
+              borda de cima do cartão, na folga dele; na mesa, atrás do símbolo, com a perna da esquerda sob a borda do cartão, na folga dele,
+              longe do texto. Recortado pelo bloco. */}
+          <svg
+            viewBox="0 0 178 166"
+            aria-hidden="true"
+            className="pointer-events-none absolute -top-6 -right-14 h-[11rem] text-[color-mix(in_oklch,var(--agua-rasa)_80%,var(--background))] md:top-1/2 md:right-4 md:h-[135%] md:-translate-y-1/2"
+          >
+            <path d={LETRA_A} fill="currentColor" fillRule="evenodd" />
+          </svg>
+          <div
+            data-vidro-liquido
+            data-vidro-desfoque="6"
+            data-vidro-intensidade="1.8"
+            className="vd-vidro-liquido relative min-w-0 rounded-none border-0 border-t p-6 md:border-t-0 md:border-r md:p-10"
+          >
+            <h3 className="font-display tracking-titulo text-numero font-normal [overflow-wrap:anywhere]">{quemFaz.nome.titulo}</h3>
             <p className="mt-4 max-w-[56ch] text-corpo text-muted-foreground">{quemFaz.nome.texto}</p>
           </div>
-          <svg viewBox="-8 -8 204 184" data-globo className="mov-globo relative order-first ml-4 w-24 md:order-none md:mr-6 md:ml-0 md:w-50" aria-hidden="true">
+          {/* z-[1]: no celular, o order-first pinta o símbolo antes do A do fundo (a ordem de pintura segue a do order); com
+              a letra a 200%, os dois se cruzam, e o A do fundo cobria o símbolo. */}
+          <svg viewBox="-8 -8 204 184" data-globo className="mov-globo relative z-[1] order-first mx-6 my-6 w-24 self-center md:order-none md:mx-14 md:w-50" aria-hidden="true">
             <path d={LETRA_A} fill="currentColor" fillRule="evenodd" />
             <GloboDoLogotipo recorte="globo-do-nome" />
           </svg>

@@ -17,9 +17,11 @@ export const metadata = metadadosDaPagina("inicio");
  * 1. a capa — a proposta e a ação, sozinhas na primeira tela (o que vem
  *    primeiro e por último numa sequência é o que mais se retém: efeito de
  *    posição serial, Murdock, 1962);
- * 2. os destaques e os nichos — o padrão de execução, primeiro na ordem do
- *    argumento da ata (IV.1);
- * 3. o trabalho, em caixas que se empilham — o valor antes do preço
+ * 2. os destaques — o padrão de execução, primeiro na ordem do argumento
+ *    da ata (IV.1), com a prova ao lado (um site de nicho no celular; a
+ *    faixa corrida de nichos saiu em 17/10);
+ * 3. o trabalho, na derrota (desde 17/10; até então, em caixas que se
+ *    empilhavam) — o valor antes do preço
  *    (Karmarkar, Shiv e Knutson, 2015: o preço visto primeiro faz julgar
  *    pelo custo; o produto visto primeiro, pelo que ele entrega);
  * 4. o orçamento, na tabela de 28/08 — um passo pequeno, sem cadastro,
@@ -33,7 +35,8 @@ export const metadata = metadadosDaPagina("inicio");
  */
 export default function Inicio() {
   return (
-    <>
+    // A hora da página (16/10): dá o lado das sombras a toda a página (app/vidro.css). Um atributo, sem texto.
+    <div data-hora="madrugada" className="contents">
       <Capa />
       <Destaques />
       <Passos />
@@ -43,6 +46,6 @@ export default function Inicio() {
       <Fim />
       {/* O site e o negócio local ficam aqui, e não no layout raiz: os sites de demonstração (app/demos/) não são o Atlas. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={jsonLd(capaDoAtlas)} />
-    </>
+    </div>
   );
 }

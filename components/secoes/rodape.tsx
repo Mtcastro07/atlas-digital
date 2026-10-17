@@ -24,7 +24,7 @@ const [usuarioDoEmail, dominioDoEmail] = contato.email.split("@");
  */
 export function Rodape() {
   return (
-    <footer data-tom="claro" className="border-t border-border pt-16 pb-28 md:pt-20 lg:pb-16">
+    <footer data-tom="claro" className="vd-materia border-t border-border pt-16 pb-28 md:pt-20 lg:pb-16">
       <Envelope>
         <div className="grid gap-12 md:grid-cols-3 md:gap-10">
           <div>

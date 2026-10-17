@@ -28,15 +28,15 @@ function corDoTraco(k: number, atual: number) {
  * Design Premium e voltou no mesmo dia, a pedido do usuário: é parte da
  * identidade do site). O nome em text-display (40 a 80 px);
  * respiro de 64/96 px (até 03/10, 80/112). O tom alterna com o da seção
- * de cima (escuro por padrão; branco depois de seção escura).
+ * de cima (escuro por padrão; claro depois de seção escura; até 16/10, o branco).
  */
-export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; tom?: "escuro" | "branco" }) {
+export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; tom?: "escuro" | "claro" }) {
   const i = paginasInternas.findIndex((p) => p.id === atual);
   const proxima = paginasInternas[i + 1] ?? null;
   const porta = proxima ? proxima.porta : proximaPagina.portaDoInicio;
   const nome = proxima ? proxima.menu : paginaDe("inicio").menu;
   return (
-    <nav aria-label={proximaPagina.rotulo} data-tom={tom} className="border-t border-border">
+    <nav aria-label={proximaPagina.rotulo} data-tom={tom} className="vd-materia border-t border-border">
       <Envelope>
         <Link
           href={proxima ? proxima.caminho : "/"}
@@ -54,8 +54,10 @@ export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; to
           {/* minmax(0, 1fr) e a pílula que quebra: com a letra a 200% a 390 px, o nome e a ação saíam da tela (16/10). */}
           <span className="mt-10 grid grid-cols-[minmax(0,1fr)] items-end gap-x-10 gap-y-8 md:mt-14 lg:grid-cols-12">
             <span className="lg:col-span-7">
-              <span className="block text-rotulo font-semibold text-accent">{proxima ? proximaPagina.aSeguir : proximaPagina.fim}</span>{" "}
-              <span className="mt-4 block font-display tracking-titulo text-display transition-colors duration-300 ease-atlas group-hover:text-accent">
+              {/* "A seguir" e "Fim do percurso", só para o leitor de tela (17/10): à vista, eram o sobretítulo (a marca T2), e
+                  a régua do percurso, logo acima, já diz qual é a próxima página. */}
+              <span className="sr-only">{proxima ? proximaPagina.aSeguir : proximaPagina.fim}</span>{" "}
+              <span className="block font-display tracking-titulo text-display transition-colors duration-300 ease-atlas group-hover:text-accent">
                 {nome}
               </span>{" "}
               <span className="mt-5 block max-w-[44ch] text-corpo text-muted-foreground">{porta.resumo}</span>
@@ -65,7 +67,7 @@ export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; to
               {/* A pílula é desenho: o vínculo é a área inteira. Sem compressão e sem deslocamento. */}
               <span
                 className={buttonVariants({
-                  className: "pointer-events-none w-fit max-w-full whitespace-normal group-hover:bg-primary-hover group-hover:shadow-[0_10px_30px_-10px_var(--primary)]",
+                  className: "pointer-events-none w-fit max-w-full whitespace-normal group-hover:shadow-[0_10px_30px_-10px_var(--primary)] group-hover:before:opacity-100",
                 })}
               >
                 {proxima ? proximaPagina.acoes[proxima.id] : proximaPagina.inicio}

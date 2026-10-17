@@ -568,11 +568,14 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               títulos e os números do site de 28/08 (desde 05/10). */}
           <aside className="flex flex-col gap-6 overflow-y-auto border-border p-6 max-lg:border-t lg:border-l">
             <div>
-              <p className="text-rotulo font-semibold tracking-wider text-accent uppercase">{plano.nome}</p>
-              <h2 id="simulador-titulo" className="mt-3 text-numero">
+              {/* O plano na legenda, sob o nome (17/10, segundo fechamento com o Impeccable): até então, em caixa-alta acima
+                  do título, o rótulo sobre o título (as marcas T2 e T3 do kit). A frase é a da legenda dos destaques. */}
+              <h2 id="simulador-titulo" className="text-numero">
                 {site.nome}
               </h2>
-              <p className="mt-1.5 text-nota text-muted-foreground">{site.nicho}</p>
+              <p className="mt-1.5 text-nota text-muted-foreground">
+                {site.nicho}, plano <span className="font-semibold text-accent">{plano.nome}</span>.
+              </p>
               <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="font-display text-destaque tracking-titulo tabular-nums">{reais(plano.criacao)}</span>
                 <span className="text-nota text-muted-foreground">{textos.criacao}</span>
@@ -582,7 +585,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               </p>
             </div>
             <div>
-              <p className="text-rotulo font-semibold tracking-wider text-muted-foreground uppercase">{textos.inclui}</p>
+              <p className="text-nota font-semibold text-muted-foreground">{textos.inclui}</p>
               <ul className="mt-3 grid gap-2.5 text-nota">
                 {plano.itens.map((item) => (
                   <li key={item} className="flex gap-2.5">
@@ -595,7 +598,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               </ul>
             </div>
             <div>
-              <p className="text-rotulo font-semibold tracking-wider text-muted-foreground uppercase">{textos.experimente}</p>
+              <p className="text-nota font-semibold text-muted-foreground">{textos.experimente}</p>
               <p className="mt-2 text-nota">{site.experimente}</p>
               <p className="mt-3 flex items-baseline gap-2 text-nota text-muted-foreground">
                 <span className="font-display text-corpo text-foreground tabular-nums">{site.paginas}</span>
@@ -606,7 +609,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               <Link
                 href={`/orcamento#orcamento-${plano.id}`}
                 onClick={fechar}
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-6 text-nota font-semibold text-primary-foreground transition-colors duration-300 hover:bg-primary-hover"
+                className="vd-metal inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-6 text-nota font-semibold text-primary-foreground transition-[box-shadow] duration-300"
               >
                 {textos.escolher} {plano.nome}
               </Link>

@@ -29,7 +29,9 @@ export function Escada() {
   const { sites, abrir, ...textos } = simulador;
 
   return (
-    <Secao id="escada" tom="escuro">
+    // pb-12 md:pb-18 (17/10, passe 4): a seção termina em duas legendas (a nota do nível e o aviso), e depois delas vai
+    // meio respiro, e não o inteiro (sobravam 214 px de água abaixo do palco, na mesa).
+    <Secao id="escada" tom="escuro" className="pb-12 md:pb-18">
       <Envelope>
         <Abertura titulo={escada.titulo} lide={escada.lide} />
         <Simulador dados={{ textos, sites }}>
@@ -38,17 +40,20 @@ export function Escada() {
               const plano = planos.find((p) => p.id === site.plano)!;
               const palavras = site.nome.split(" ");
               return (
-                <div key={site.id} className="grid items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
-                  <div>
+                <div key={site.id} className="grid grid-cols-[minmax(0,1fr)] items-center gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">
+                  {/* min-w-0 e overflow-wrap (17/10, segundo fechamento): com a letra a 200% a 390 px, "WhatsApp à mão" e o
+                      "Abrir no site" passavam da largura do palco, que os cortava. Com a letra normal, nada quebra a palavra. */}
+                  <div className="min-w-0 [overflow-wrap:anywhere]">
                     <p data-parte="texto" className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                       <span className="text-rotulo font-semibold text-accent">{plano.nome}</span>{" "}
                       <span className="text-nota text-muted-foreground tabular-nums">
                         {reais(plano.criacao)} {textos.criacao}
                       </span>
                     </p>
-                    {/* Título grande de bloco: o nome do site em cena, em Archivo Black (de 03 a 05/10, na
-                        família do texto), no degrau dos títulos (até 03/10, de 30 a 44 px). */}
-                    <h3 data-parte="titulo" className="mt-3 font-display tracking-titulo text-titulo font-normal">
+                    {/* Título de bloco: o nome do site em cena, em Archivo Black (de 03 a 05/10, na família do texto), no
+                        degrau dos números. De 03 a 17/10, no dos títulos, o mesmo do h2 da seção (68 px na mesa): a
+                        hierarquia achatada (a marca T6; fechamento com o Impeccable, 17/10). */}
+                    <h3 data-parte="titulo" className="mt-3 font-display tracking-titulo text-numero font-normal">
                       {/* Cada palavra numa janela própria: no nível Completo, sobe de dentro dela. A folga de 0,08 em
                           embaixo guarda as descendentes. */}
                       {palavras.map((palavra, j) => (

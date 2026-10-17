@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 // usuário; app/globals.css) e nos degraus da escala tipográfica: títulos
 // em Archivo Black, lide em Archivo Light, subtítulos em Archivo Medium,
 // texto em Inter. As cores vêm do tom da seção, então o mesmo componente
-// serve no escuro, na névoa e no branco.
+// serve no escuro, na névoa e na pedra.
 
 type TituloProps = React.ComponentProps<"h2"> & {
   /** Uma entrada por linha: a quebra fica onde o texto pede, não onde a largura cai. */

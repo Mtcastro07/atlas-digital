@@ -21,21 +21,29 @@ function SemScript() {
  * O montador de orçamento, com o desenho da tabela do site de 28/08, na
  * névoa (o bloco claro de decisão), no início: o texto à esquerda e o
  * painel à direita. O aviso para quem está sem script fica sob o texto.
+ * Desde 16/10, o painel é uma ficha que sobe sobre o navy dos passos.
  */
 export function Orcamento() {
   return (
-    <Secao id="orcamento" tom="claro">
-      <Envelope className="grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+    // data-sem-atalho: o atalho do WhatsApp some enquanto o montador está na tela (ilhas/acao-flutuante.tsx).
+    <Secao id="orcamento" data-sem-atalho tom="claro">
+      <Envelope className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
         <div className="lg:sticky lg:top-28">
-          <p className="text-rotulo font-semibold text-accent">{orcamento.rotulo}</p>
+          {/* O rótulo, só para o leitor de tela (17/10): à vista, era o sobretítulo (a marca T2). */}
+          <p className="sr-only">{orcamento.rotulo}</p>
           {/* Num parágrafo só, que quebra onde couber: em linhas fixas, a coluna estreita partia cada uma em duas.
-              No degrau dos números (24 a 36 px), como era: no dos títulos de seção, quebraria em quatro ou cinco
-              linhas ao lado do painel. */}
-          <h2 className="mt-3.5 text-numero">{orcamento.titulo.join(" ")}</h2>
+              Desde 16/10, no degrau dos títulos, como os outros h2 da página (no dos números, a hierarquia ficava
+              achatada), com as duas colunas iguais a partir de 1024 px. */}
+          <h2 className="text-titulo">{orcamento.titulo.join(" ")}</h2>
           <Lide className="mt-6">{orcamento.lide}</Lide>
           <SemScript />
         </div>
-        <Montador privacidade={orcamento.privacidade} />
+        {/* O plano sobre o plano (16/10): na mesa, o painel sobe 96 px sobre o navy dos passos (os 144 do respiro
+            mais 96), por cima dele. A única emenda deste tipo no início. data-sobe: a âncora #orcamento conta com ele
+            (ilhas/ancoras.tsx). */}
+        <div data-sobe className="relative z-[1] min-w-0 lg:-mt-60">
+          <Montador privacidade={orcamento.privacidade} />
+        </div>
       </Envelope>
     </Secao>
   );
@@ -54,7 +62,10 @@ export function Orcamento() {
  */
 export function MontadorDaPagina() {
   return (
-    <>
+    // O atalho do WhatsApp some enquanto o montador está na tela (16/10, passe 3): sem nenhum dos ids que ele observava,
+    // aparecia sobre as opções e disputava o "Enviar pelo WhatsApp" (A5). A faixa fixa do montador só aparece com as
+    // escolhas na tela, que estão aqui dentro: fica coberta pela mesma marca.
+    <div data-sem-atalho>
       <SemScript />
       <Montador
         privacidade={orcamento.privacidade}
@@ -63,6 +74,6 @@ export function MontadorDaPagina() {
           sites: simulador.sites.map(({ plano, nome, caminho }) => ({ plano, nome, caminho })),
         }}
       />
-    </>
+    </div>
   );
 }

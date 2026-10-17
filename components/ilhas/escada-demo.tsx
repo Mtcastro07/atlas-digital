@@ -126,7 +126,9 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
         </ToggleGroup>
       )}
 
-      <div ref={palco} data-palco-sites data-nivel={nivel} className="mt-8 overflow-hidden rounded-xl bg-card px-6 py-12 md:px-12 md:py-16">
+      {/* O recuo dos lados em px no celular (17/10, segundo fechamento): o mesmo com a letra normal; com a letra a 200%, o
+          px-6 dobrava (48 px de cada lado), e o nome do site partia no meio da palavra ("Nutriçã-o"). */}
+      <div ref={palco} data-palco-sites data-nivel={nivel} className="mt-8 overflow-hidden rounded-xl bg-card px-[24px] py-12 md:px-12 md:py-16">
         {Children.toArray(children).map((filho, i) => (
           <div key={sites[i].id} data-site={sites[i].id} data-plano={sites[i].plano} data-em-cena={sites[i].id === emCena || undefined}>
             {filho}

@@ -1,38 +1,57 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { IconeWhatsApp } from "@/components/icones";
 import { mensagens } from "@/conteudo/contato";
+import { fundoSob } from "@/lib/fundo-sob";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
-/** Rolagem mínima, em pixels, para contar como mudança de direção. */
-const LIMIAR = 8;
+/** Intervalo mínimo entre duas leituras do fundo, em ms (como no cabeçalho: a leitura vai a getComputedStyle). */
+const INTERVALO = 80;
 
 /**
  * Atalho para o WhatsApp no celular e no tablet (some a partir de 1024 px).
- * Só aparece depois da primeira tela — a abertura de cada página fica
- * limpa — e acompanha o cabeçalho: some enquanto se rola para baixo (quem
- * lê fica com a tela inteira, sem o atalho sobre o texto) e volta ao rolar
- * para cima, junto com a barra (responde à direção, não à posição).
- * Fica oculto enquanto a capa ou o montador estão na tela: na capa, a
- * mesma ação já está à vista; no montador, cobriria as opções. Fica no
- * layout: a cada troca de página, observa a capa e o montador da página
- * nova. Sem script, permanece oculto. Flutua sobre uma sombra de 34 px a
- * 55% de preto (saiu em 03/10 pela regra 3 das Diretrizes de Design
- * Premium e voltou no mesmo dia, a pedido do usuário: é parte da
- * identidade do site).
+ * Só aparece depois de 60% da primeira tela — a abertura de cada página
+ * fica limpa — e, desde 17/10 (passe 4, fechamento com o Impeccable), fica
+ * à vista ao rolar para baixo e para cima. Até então, acompanhava o
+ * cabeçalho e sumia a cada gesto para baixo: quem lê rolando para baixo, com
+ * uma mão, ficava sem nenhuma ação de contato à vista (a persona do
+ * celular). No pé da página, ele fica na folga que o rodapé reserva (pb-28),
+ * 41 px abaixo do último texto: não cobre texto parado (medido de 320 a 768
+ * px, nas sete páginas), e por isso o rodapé não leva a marca.
+ * Fica oculto enquanto estiver na tela algo marcado com [data-sem-atalho]:
+ * a capa (a mesma ação já está à vista), os dois montadores, o do início
+ * e o de /orcamento, com a faixa fixa dele (cobriria as opções e disputaria
+ * o "Enviar pelo WhatsApp"), e, desde o segundo fechamento com o Impeccable
+ * (17/10), as cenas que já têm o "Falar no WhatsApp" à vista: a condição de
+ * fundação (no início e em /planos) e o Fim do início, onde o atalho cobria
+ * o vínculo da própria cena (dois WhatsApp na mesma tela, um sobre o outro). Até 16/10, só os ids #inicio e #orcamento: o
+ * montador de /orcamento, que desde 16/10 é a figura da abertura, ficou
+ * sem nenhum deles, e o atalho aparecia sobre as opções (o diagnóstico do
+ * celular, A5). Fica no layout: a cada troca de página, observa as marcas
+ * da página nova. Sem script, permanece oculto.
+ * Desde 16/10 (passe 3, "Identidade mais profunda"), o bronze fundido
+ * (.vd-metal) e a sombra pelo tom do que passa por trás (data-fundo, lido
+ * como no cabeçalho: lib/fundo-sob.ts): no papel e na pedra, uma sombra
+ * curta e tingida de navy, que cabe na margem; na água, dois aros (um
+ * escuro e um creme) e o fio de luz, sem sombra. Na margem do texto (24
+ * px), ou 12 px acima da área insegura, e fora dela com o aparelho deitado.
+ * Revoga a sombra de 34 px a 55% de preto de 03/10 ("parte da identidade
+ * do site"): ela saía cortada pela borda da tela em todas as amostras e
+ * sumia no navy, e o próprio aprovador a acusou em 16/10. A entrada e a
+ * saída nos tokens do movimento (app/vidro.css, .vd-atalho).
  */
 export function AcaoFlutuante() {
   const caminho = usePathname();
+  const atalho = useRef<HTMLAnchorElement>(null);
   const [livre, setLivre] = useState(false);
-  const [subindo, setSubindo] = useState(false);
   const [longe, setLonge] = useState(false);
 
   useEffect(() => {
     const naTela = new Set<Element>();
-    const alvos = ["inicio", "orcamento"].map((id) => document.getElementById(id)).filter(Boolean) as Element[];
+    const alvos = [...document.querySelectorAll("[data-sem-atalho]")];
     setLivre(alvos.length === 0);
     // A primeira leitura do IntersectionObserver informa também o que está
     // fora da tela, o que cobre a página aberta no meio por âncora.
@@ -48,36 +67,59 @@ export function AcaoFlutuante() {
   }, [caminho]);
 
   useEffect(() => {
-    let ultimo = window.scrollY;
     let quadro = 0;
+    let lida = 0;
+    let pendente = 0;
+    // O fundo só se lê com o atalho à vista; no máximo uma leitura a cada INTERVALO ms, e a última posição é sempre lida.
+    const lerFundo = () => {
+      const a = atalho.current;
+      if (!a?.hasAttribute("data-visivel")) return;
+      lida = performance.now();
+      const fundo = fundoSob(a, a.getBoundingClientRect());
+      if (a.dataset.fundo !== fundo) a.dataset.fundo = fundo;
+    };
+    const agendarLeitura = () => {
+      const espera = INTERVALO - (performance.now() - lida);
+      window.clearTimeout(pendente);
+      if (espera <= 0) lerFundo();
+      else pendente = window.setTimeout(lerFundo, espera);
+    };
     const ler = () => {
       quadro = 0;
-      const y = window.scrollY;
-      setLonge(y > window.innerHeight * 0.6);
-      if (Math.abs(y - ultimo) < LIMIAR) return;
-      setSubindo(y < ultimo);
-      ultimo = y;
+      agendarLeitura();
+      setLonge(window.scrollY > window.innerHeight * 0.6);
     };
     const aoRolar = () => {
       if (!quadro) quadro = requestAnimationFrame(ler);
     };
     window.addEventListener("scroll", aoRolar, { passive: true });
+    // A página aberta já rolada (a volta pelo histórico, a âncora): a posição se lê sem esperar um gesto.
+    aoRolar();
     return () => {
       window.removeEventListener("scroll", aoRolar);
       cancelAnimationFrame(quadro);
+      window.clearTimeout(pendente);
     };
   }, []);
 
-  const visivel = livre && subindo && longe;
+  const visivel = livre && longe;
+  // Ao ficar visível, o tom de trás antes do primeiro quadro da entrada.
+  useLayoutEffect(() => {
+    const a = atalho.current;
+    if (visivel && a) a.dataset.fundo = fundoSob(a, a.getBoundingClientRect());
+  }, [visivel]);
+
   return (
     <a
+      ref={atalho}
       href={linkWhatsApp(mensagens.flutuante)}
       target="_blank"
       rel="noopener"
       aria-hidden={!visivel}
       tabIndex={visivel ? undefined : -1}
       data-visivel={visivel || undefined}
-      className="invisible fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 inline-flex min-h-12 translate-y-3 items-center gap-2 rounded-full bg-primary px-5 py-3 text-nota font-semibold text-primary-foreground no-underline opacity-0 shadow-[0_14px_34px_-10px_rgb(4_14_28/0.55)] transition-[opacity,translate,visibility,background-color] duration-400 ease-atlas hover:bg-primary-hover data-visivel:visible data-visivel:translate-y-0 data-visivel:opacity-100 lg:hidden"
+      data-fundo="escuro"
+      className="vd-metal vd-atalho fixed right-[max(1.5rem,calc(env(safe-area-inset-right)+0.75rem))] bottom-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))] z-30 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-5 py-3 text-nota font-semibold text-primary-foreground no-underline lg:hidden"
     >
       <IconeWhatsApp className="size-4.5" />
       WhatsApp

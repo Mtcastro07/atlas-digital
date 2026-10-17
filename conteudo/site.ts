@@ -64,7 +64,9 @@ export const paginas = [
       rotulo: "Planos",
       titulo: ["Três", "degraus."],
       destaque: "degraus",
-      lide: "Cada degrau define o número de páginas, as funcionalidades sob medida e a camada de movimento. A mensalidade acompanha o degrau.",
+      // "os efeitos de movimento", e não "a camada de movimento", a língua da agência (17/10, Impeccable, heurística 2): o
+      // mesmo nome da lista dos planos ("Todos os efeitos de movimento").
+      lide: "Cada degrau define o número de páginas, as funcionalidades sob medida e os efeitos de movimento. A mensalidade acompanha o degrau.",
     },
     // A porta em número e palavra, como as outras; o preço vai no resumo, declarado (ata v3.0, IV.1: preço por último, nunca alardeado).
     porta: { dado: "3", unidade: "planos", resumo: `De ${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}, com o site de cada plano para abrir e usar.` },
@@ -268,28 +270,6 @@ export const capa = {
   },
 };
 
-/**
- * Faixa corrida sob os destaques (a do site de 28/08): os nichos atendidos,
- * com o globo da marca como separador (components/secoes/faixa.tsx). Em
- * ordem alfabética e com as palavras principais em maiúscula — artigos e
- * preposições em minúscula (pedido do usuário, 03/10).
- */
-export const faixa = {
-  nichos: [
-    "Barbearia",
-    "Imobiliária",
-    "Material de Construção",
-    "Medicina",
-    "Nutrição",
-    "Odontologia",
-    "Oficina Mecânica",
-    "Pet Shop",
-    "Pilates e Academia",
-    "Psicologia",
-    "Restaurante",
-  ],
-};
-
 export const paraQuem = {
   titulo: ["Reconhecidos no bairro,", "ausentes da internet."],
   /** Rótulo do exemplo pronto de cada público: um dos sites de demonstração (`plano`, em `simulador.sites`). */
@@ -312,6 +292,27 @@ export const paraQuem = {
       texto: "Nutrição, direito, odontologia. A norma do conselho de cada profissão é conferida na fonte antes do rascunho.",
     },
   ],
+  /**
+   * Os nichos atendidos, em linha parada sob os públicos (desde 17/10). Até então, na faixa corrida do início, que saiu
+   * pela marca K4 (o letreiro); os nomes ficam pelo texto que a busca e as IAs leem. Em ordem alfabética e com as
+   * palavras principais em maiúscula, artigos e preposições em minúscula (pedido do usuário, 03/10).
+   */
+  nichos: {
+    rotulo: "Nichos atendidos",
+    lista: [
+      "Barbearia",
+      "Imobiliária",
+      "Material de Construção",
+      "Medicina",
+      "Nutrição",
+      "Odontologia",
+      "Oficina Mecânica",
+      "Pet Shop",
+      "Pilates e Academia",
+      "Psicologia",
+      "Restaurante",
+    ],
+  },
 };
 
 export const planosSecao = {
@@ -346,8 +347,10 @@ export const vitrine = {
 
 export const orcamento = {
   rotulo: "Orçamento",
-  titulo: ["Componha o orçamento.", "O valor é apresentado na hora."],
-  lide: "Selecione o plano e os módulos. O total aparece em dois números — criação e mensalidade — e a mensagem segue pronta para o WhatsApp.",
+  // Desde 17/10 (passe 4b), "O valor é apresentado na hora." abre o lide, e não fecha o título: a 68 px, na metade da
+  // coluna, o título ocupava cinco linhas. O mesmo texto, reordenado.
+  titulo: ["Componha o orçamento."],
+  lide: "O valor é apresentado na hora. Selecione o plano e os módulos. O total aparece em dois números — criação e mensalidade — e a mensagem segue pronta para o WhatsApp.",
   privacidade:
     "Nada é registrado nesta página: a mensagem parte do próprio aparelho. Página adicional é orçada em separado.",
   semScript: "O montador requer JavaScript. A conversa pode começar direto pelo WhatsApp:",
@@ -379,8 +382,9 @@ export const orcamento = {
 };
 
 /**
- * Os passos do trabalho no início, em caixas que se empilham ao rolar (as
- * do site de 28/08; components/secoes/passos.tsx). Os textos são os da
+ * Os passos do trabalho no início, na derrota (desde 17/10; até então, em
+ * caixas que se empilhavam ao rolar, as do site de 28/08;
+ * components/secoes/passos.tsx). Os textos são os da
  * página O trabalho (`trabalho.passos`); aqui, o rótulo e o vínculo para ela.
  */
 export const passosDoInicio = {

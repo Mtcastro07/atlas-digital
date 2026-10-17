@@ -1,6 +1,7 @@
 import { Envelope, type Tom } from "@/components/estrutura";
 import { Lide } from "@/components/tipografia";
 import { paginasInternas, type PaginaInterna } from "@/conteudo/site";
+import { cn } from "@/lib/utils";
 
 type Props = {
   /** O id da página em `paginas` (conteudo/site.ts): de lá vêm o número, o rótulo, o título e o lide. */
@@ -12,12 +13,20 @@ type Props = {
   disposicao?: "lado" | "embaixo";
   /** "lado": quantas das 12 colunas a figura ocupa a partir de 1024 px; o texto fica com o resto. */
   colunasDaFigura?: keyof typeof COLUNAS;
+  /** A luz da página (16/10): a classe do pico (vd-cena na água, vd-papel no papel), a emenda (z-[1], quando algo
+   *  atravessa para a cena de baixo) e o estilo com as variáveis da hora. */
+  className?: string;
+  style?: React.CSSProperties;
+  /** O lugar da figura na abertura, quando ela pousa na emenda (Planos, O Atlas; 16/10). */
+  classeDaFigura?: string;
+  /** Uma camada da cena inteira, atrás do texto e da figura (a moldura graduada de O Atlas; 16/10). */
+  fundo?: React.ReactNode;
 };
 
 /** As colunas do texto e da figura, lado a lado (classes inteiras, para o Tailwind as achar). */
 const COLUNAS = {
-  4: ["lg:col-span-8", "lg:col-span-4"],
   6: ["lg:col-span-6", "lg:col-span-6"],
+  7: ["lg:col-span-5", "lg:col-span-7"],
 } as const;
 
 /**
@@ -41,28 +50,54 @@ const COLUNAS = {
  * md:pt-46 = 72 + 112 px. Título em Archivo Black, text-display, 40 a 80
  * px, com entrelinha 1,15 (os outros títulos têm 1; vem da tarja, que
  * passava da caixa da linha, e ficou: muda a medida das seis aberturas).
- * `colunasDaFigura` (14/10, o crítico de fora): Para quem dá 4 colunas à
- * figura. O Orçamento dava 5 (na metade da coluna, "Dois toques," não
+ * `colunasDaFigura` (14/10, o crítico de fora): Para quem dava 4 colunas à
+ * figura; desde 16/10, 7, para a carta da costa ao lado da lista dos
+ * bairros. O Orçamento dava 5 (na metade da coluna, "Dois toques," não
  * cabia numa linha); desde 16/10, a figura dele, o montador, vai embaixo.
+ * Título em text-display, 40 a 96 px desde 16/10.
+ * Desde 16/10 ("Identidade mais profunda"), a abertura leva a matéria do
+ * tom (.vd-materia), e o número da página com o rótulo saem de cima do
+ * título (o rótulo sobre o título, a marca T2) para o canto, como o número
+ * da prancha de um atlas: na mesa, no canto de cima, à direita, na margem
+ * da coluna, no respiro acima dela, em duas linhas alinhadas à direita; no
+ * celular e no tablet, desde 17/10 (passe 4, fechamento com o Impeccable),
+ * logo abaixo do lide, à esquerda, numa linha, no passo do texto (32 px,
+ * o do título ao lide). De 16 a 17/10, no pé da abertura, à direita, como
+ * o fólio de um livro: solto, longe do texto, lia como texto perdido. O
+ * mesmo texto, na mesma ordem e no mesmo lugar do HTML (antes do h1), sem
+ * o fio de 40 px.
  */
-export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = "lado", colunasDaFigura = 6 }: Props) {
+export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = "lado", colunasDaFigura = 6, className, style, classeDaFigura, fundo }: Props) {
   const indice = paginasInternas.findIndex((p) => p.id === pagina);
   const { abertura } = paginasInternas[indice];
   const total = paginasInternas.length;
   const lado = disposicao === "lado";
   const [colunasDoTexto, colunasDaFiguraLg] = COLUNAS[colunasDaFigura];
   return (
-    <section data-tom={tom} aria-labelledby="titulo-da-pagina" className="relative -mt-18 overflow-hidden pt-38 pb-24 md:pt-46 md:pb-36">
-      <Envelope className={lado ? "grid items-center gap-16 lg:grid-cols-12 lg:gap-14" : undefined}>
-        <div className={lado ? colunasDoTexto : "max-w-[58rem]"}>
-          <p className="flex items-center gap-4 text-rotulo font-semibold text-accent">
-            <span className="tabular-nums">
+    // Recorta só na horizontal (até 16/10, overflow-hidden): a figura que pousa na emenda passa para a cena de baixo.
+    <section
+      data-tom={tom}
+      aria-labelledby="titulo-da-pagina"
+      className={cn("vd-materia relative -mt-18 overflow-x-clip pt-38 pb-24 md:pt-46 md:pb-36", className)}
+      style={style}
+    >
+      {fundo}
+      <Envelope className={`lg:relative ${lado ? "grid items-center gap-16 lg:grid-cols-12 lg:gap-14" : ""}`}>
+        {/* Embaixo, a coluna do texto vai à largura da página (até 16/10, 58rem): a 96 px, "endereço próprio." não cabia
+            em 928 px e o título de O trabalho quebrava em três linhas. */}
+        <div className={cn(lado ? colunasDoTexto : "max-w-[66rem]", "max-lg:flex max-lg:flex-col")}>
+          {/* O fólio: até 1023 px, abaixo do lide (order-last), à esquerda; a partir de 1024, no canto de cima, preso ao
+              Envelope, 24 px acima dele, no respiro. Na altura da primeira linha do título, ele cobria o canto da
+              figura em Planos e em O Atlas, onde a figura começa no alto da coluna (medido a 1.440 px, 16/10). Na tinta
+              apagada, como o fólio de um livro, e não no bronze, que é do que se toca (17/10: em Planos, o bronze sobre
+              o pico da luz da manhã dava 4,17:1 na régua). */}
+          <p className="order-last mt-8 flex gap-x-3 text-rotulo font-medium tracking-[0.02em] text-muted-foreground tabular-nums lg:absolute lg:right-[max(2.5rem,env(safe-area-inset-left),env(safe-area-inset-right))] lg:bottom-[calc(100%+1.5rem)] lg:mt-0 lg:block lg:text-right">
+            <span className="block">
               {String(indice + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </span>{" "}
-            <span aria-hidden="true" className="h-px w-10 bg-accent/60" />
-            {abertura.rotulo}
+            <span className="block">{abertura.rotulo}</span>
           </p>
-          <h1 id="titulo-da-pagina" className="mt-8 text-display leading-[1.15]">
+          <h1 id="titulo-da-pagina" className="text-display leading-[1.15]">
             {/* O espaço no fim da linha some no desenho, mas separa as palavras para quem lê o HTML sem montar a página. */}
             {abertura.titulo.map((linha) => (
               <span key={linha} className="block">
@@ -72,7 +107,7 @@ export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = 
           </h1>
           <Lide className="mt-8">{abertura.lide}</Lide>
         </div>
-        <div className={lado ? colunasDaFiguraLg : "mt-20"}>{figura}</div>
+        <div className={cn(lado ? colunasDaFiguraLg : "mt-20", classeDaFigura)}>{figura}</div>
       </Envelope>
     </section>
   );

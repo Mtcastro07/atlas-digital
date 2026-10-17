@@ -10,10 +10,13 @@
    ATLAS DIGITAL — folha global
    Paleta da marca (contexto de produto, seção 3): navy, bronze e
    creme, acrescida de neutros quentes para as superfícies claras.
-   Três tons de seção, por atributo data-tom:
-     escuro — navy, a assinatura da marca (capa, demonstrador, fim);
-     claro  — névoa neutra quente, onde se lê e se decide;
-     branco — superfície limpa, para alternar com a névoa.
+   Tons de seção, por atributo data-tom:
+     escuro — navy, a água da carta (capa, demonstrador, fim);
+     claro  — névoa neutra quente, o papel da folha, onde se lê e se decide;
+     pedra  — o segundo tom claro (16/10), para alternar com a névoa sem
+              ir ao navy (ΔL de 0,050; o branco, que fazia esse papel até
+              16/10, ficava a 0,035). O branco saiu como campo de cena e
+              ficou só como --ficha, o cartão dos tons claros.
    Os tokens nomeiam função, no vocabulário do shadcn; a cor fica no
    valor. Contrastes medidos sobre o fundo do próprio tom.
    ============================================================ */
@@ -53,17 +56,24 @@
   --radius-xl: calc(var(--radius) * 1.55);
 }
 
-/* Coluna de 1.120 px, como no site de 28/08. */
+/* A coluna: 1.120 px até 1.440 px de tela, como no site de 28/08, e fluida dali até 1.344 px a 1.920 (desde 16/10,
+   "Identidade mais profunda": a 1.920, a coluna fixa deixava 800 px de margem vazia). As curvas do movimento viram
+   tokens (producao/esteira/09-movimento.md, seção 3): entrada, saída e mudança de lugar, do Material 3. O código novo
+   usa só estas; a curva da casa (ease-atlas) fica para o que já existia. */
 @theme {
-  --container-pagina: 70rem;
+  --container-pagina: clamp(70rem, 28rem + 46.67vw, 84rem);
   --ease-atlas: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-saida: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ease-lugar: cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* A escala tipográfica do Atlas (regra 1, "escalas rigorosas"): sete
    degraus, cada um com a sua entrelinha — text-rotulo, text-nota,
    text-corpo, text-destaque, text-numero, text-titulo, text-display.
    Nenhum tamanho fora deles nas páginas do Atlas (até 03/10, eram 62). Os
-   três maiores são fluidos e chegam ao teto perto de 1.150 px. Os sites de
+   três maiores são fluidos: o número chega ao teto perto de 1.150 px; o título
+   e o display, perto de 1.440 e 1.450 px (desde 16/10). Os sites de
    demonstração (app/demos/) e as telas dos nichos têm a escala da
    identidade de cada um. Espaçamento entre letras, o do site de 28/08:
    tracking-titulo no Archivo Black (h1, h2 e números), tracking-sub no
@@ -85,9 +95,13 @@
   --text-numero--line-height: 1.1;
   /* O teto em vw (16/10, Impeccable): com a letra do aparelho a 200%, o título não passa de 10vw e cabe na tela; com a
      letra normal, nunca alcança o teto (32 px a 320 px de tela = 10vw). Idem no display, 12,5vw = 40 px a 320 px. */
-  --text-titulo: min(clamp(2rem, 1.3rem + 3vw, 3.5rem), 10vw); /* 32 a 56 px: títulos de seção */
+  /* Desde 16/10 ("Identidade mais profunda"), o teto sobe de 56/80 px, os do site de 28/08, a 72/96 px: a capa passa da
+     razão 80/17 = 4,7 à 96/17 = 5,6 contra o corpo. 96 px (6rem) é o teto do display no piso do Impeccable. No
+     celular, o display fica onde estava (41 px a 390): a 48, como pedia a direção, "Sua empresa online em 24h" e
+     "Niterói, bairro a bairro." quebravam em três linhas a 390 px, com uma palavra sozinha (medido em 16/10). */
+  --text-titulo: min(clamp(2rem, 1.2rem + 3.4vw, 4.5rem), 10vw); /* 32 px a 390 · 45 a 768 · 68 a 1.440 · teto 72 */
   --text-titulo--line-height: 1.05;
-  --text-display: min(clamp(2.5rem, 1.4rem + 5vw, 5rem), 12.5vw); /* 40 a 80 px: a capa e as aberturas */
+  --text-display: min(clamp(2.5rem, 1.25rem + 5.4vw, 6rem), 12.5vw); /* 40 a 320 · 41 a 390 · 61 a 768 · 96 a 1.410 */
   --text-display--line-height: 1;
 }
 
@@ -97,9 +111,19 @@
    (regra 3 das diretrizes) e voltou no mesmo dia, a pedido do usuário. */
 :root {
   --moldura: #061729; /* fundo mais profundo: a base da chamada final */
-  --meio: #123457; /* passagem entre a moldura e o navy */
+  --meio: #123457; /* passagem entre a moldura e o navy: o mais claro que a água pode ficar sob texto */
   --luz-fria: rgb(35 90 150 / 0.42);
   --luz-quente: rgb(217 167 107 / 0.16);
+  /* A paleta funda (16/10, "Identidade mais profunda"; contrastes de juiz/cor.mjs, sobre as cores chapadas). Nomes
+     novos, no :root: nenhum site de demonstração os lê. Os tokens que já existiam só mudam sob [data-tom]. */
+  --agua-rasa: #1d4670; /* oklch(0.387 0.085 251): só luz e traço; o lide daria 4,47:1 sobre ela. Nunca sob texto */
+  --bronze-sombra: #6b4318; /* oklch(0.421 0.079 64): o lado escuro do metal */
+  --bronze-brilho: #f1d3a1; /* oklch(0.88 0.073 80): o lado aceso do metal, só em objeto */
+  --nevoa: #f5f3f0; /* o papel, com nome fixo, para quando o --background local é o navy */
+  --papel-folha: #fbf9f6; /* só o pico da luz no papel */
+  --papel-sombra: #ece6dd; /* a queda da luz no papel: o apagado a 5,30:1, o vínculo a 4,74 */
+  --pedra: #e9e2d9; /* oklch(0.916 0.014 74): o fundo do tom pedra; ΔL de 0,050 contra a névoa */
+  --ficha: #fefcf9; /* oklch(0.992 0.004 80): o cartão dos tons claros, a folha do índice */
 }
 
 /* Tom escuro: navy, o padrão da página. */
@@ -149,16 +173,29 @@
   --vidro-liquido-sombra: 0 18px 40px rgb(0 0 0 / 0.35);
 }
 
-/* Tons claros: o claro (névoa neutra quente) e o branco (superfície limpa).
-   Só o fundo, o cartão e o apagado mudam entre os dois (abaixo). */
+/* O cartão da água (16/10): #1a395b, a ΔL 0,059 do navy (o #132f50 de antes ficava a 0,021 e só se separava pela
+   aresta); o creme a 10,32:1, o lide a 5,42, o bronze a 5,44. Numa regra à parte, e não no :root: os sites de
+   demonstração leem o --card do :root. */
+[data-tom="escuro"] {
+  --card: #1a395b;
+  /* O apagado da água sobe de #9fb2c6 a #aebdcd (16/10, passe 2): o grão da matéria (até ~9% de branco por ponto)
+     e a luz de cada página clarearam o fundo, e o ponto mais claro sob o lide caía a 4,08–4,48:1 nos pixels. Com
+     #aebdcd, 4,6:1 ou mais no pior ponto medido; 6,63:1 sobre --meio chapado; 6,16 sobre o cartão. */
+  --muted-foreground: #aebdcd;
+}
+
+/* Tons claros: o claro (névoa neutra quente) e a pedra (16/10). Só o fundo, o cartão e o apagado mudam entre eles
+   (abaixo). Até 16/10, também o branco (superfície limpa), que saiu como campo de cena. */
 [data-tom="claro"],
-[data-tom="branco"] {
+[data-tom="pedra"] {
   --foreground: #0f2a47;
   --card-foreground: #0f2a47;
   --secondary: #0f2a47;
   --secondary-foreground: #f3efec;
-  --muted-foreground: #4b5f75; /* 5,9:1 no claro; 6,3:1 no branco */
-  --accent: #8a5a24; /* 5,3:1 no claro; 5,6:1 no branco */
+  --muted-foreground: #4b5f75; /* 5,9:1 no claro; 5,12:1 na pedra */
+  /* O vínculo: #7a4e1c, 6,5:1 chapado na névoa e 5,56 na pedra. Até 17/10, #8a5a24 no claro (5,3:1 chapado): com a
+     fibra nova do papel e o pico da luz, o fólio dava 4,17:1 no 5º percentil (régua, 1.440 px, /planos). */
+  --accent: #7a4e1c;
   /* Divisória translúcida (regra 3), no tom quente das opacas de antes
      (#e2ddd7 no claro, #e6e1db no branco): sobre a névoa dá #dfd9d3; sobre
      o branco e os cartões brancos, #e7e4e0. */
@@ -179,13 +216,18 @@
 }
 [data-tom="claro"] {
   --background: #f5f3f0;
-  --card: #ffffff;
+  --card: var(--ficha); /* até 16/10, #ffffff */
   --muted: #ebe7e2;
 }
-[data-tom="branco"] {
-  --background: #ffffff;
-  --card: #f5f3f0;
-  --muted: #f0ece7;
+/* A pedra: a tinta a 11,33:1, o apagado (#44566b) a 5,85, o vínculo (#7a4e1c) a 5,56. */
+[data-tom="pedra"] {
+  --background: var(--pedra);
+  --card: var(--ficha);
+  --muted: #e0d8cd;
+  /* O apagado mais fundo na pedra (16/10, passe 2): o grão grosso dela escurece o fundo, e, nos pixels, o apagado de
+     #4b5f75 dava 4,36:1 (o vínculo de #8a5a24, 3,91; desde 17/10 o vínculo fundo vale para os dois tons, acima).
+     Chapado sobre a pedra: 5,85:1. */
+  --muted-foreground: #44566b;
 }
 
 @layer base {
@@ -284,7 +326,7 @@
    seções podem não ser filhas diretas do <main> (transição de página). */
 section[data-tom="escuro"] + section[data-tom="escuro"],
 section[data-tom="claro"] + section[data-tom="claro"],
-section[data-tom="branco"] + section[data-tom="branco"] {
+section[data-tom="pedra"] + section[data-tom="pedra"] {
   padding-top: 0;
 }
 
