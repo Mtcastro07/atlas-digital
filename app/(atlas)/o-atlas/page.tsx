@@ -9,31 +9,19 @@ import { metadadosDaPagina } from "@/lib/metadados";
 export const metadata = metadadosDaPagina("atlas");
 
 // O pico de luz da página (16/10, "Identidade mais profunda"): o fim da tarde, rasante e baixo, do oeste, sobre a
-// baía. A água clareia à esquerda (--meio, o mais claro que fica sob texto) e cai para a água funda à direita; a luz
-// fria, navy mais claro no mesmo matiz, vem do pé do oeste. O quente fica só no metal aceso do globo, nunca no ar.
-const fimDaTarde = {
-  "--cena-angulo": "90deg",
-  "--cena-topo": "var(--meio)",
-  "--cena-base": "var(--deep)",
-  "--aurora-x": "0%",
-  // No pé do oeste (a direção pedia 82%: o lide caía a 4,3:1 no ponto mais claro, com a luz sob ele).
-  "--aurora-y": "100%",
-  "--luz-fria": "color-mix(in oklch, var(--agua-rasa) 85%, transparent)",
-  "--luz-quente": "transparent",
-} as React.CSSProperties;
+// baía. Desde 17/10, na tela (a rampa lisa de app/vidro.css): o pico em --meio, o mais claro que fica sob texto, no pé
+// do oeste, e a rampa cai para a água funda a leste. O quente fica só no metal aceso do globo, nunca no ar.
+const fimDaTarde = { "--luz-x": "0%", "--luz-y": "100%", "--angulo": "90deg" } as React.CSSProperties;
 
 /**
- * O Atlas: a abertura é o globo da marca sobre as coordenadas de Niterói;
- * depois, a história em quatro capítulos — da sala de aula da UFF ao
- * balcão do comércio da cidade —, os três sócios e a origem do nome.
- * A figura fica quieta na entrada, e o globo gira quando entra na tela. De
- * 14 a 16/10, a tarja de bronze subia no "UFF": o segundo gesto de texto
- * do site, com a onda do "24h" (09-movimento.md, seção 6.1; o crítico de
- * fora). Na história, a linha sob o ponteiro acende o círculo.
- * Desde 16/10, a abertura é a folha da marca: a luz do fim da tarde, a
- * moldura graduada em minutos de arco e o globo gravado, que, a partir de
- * 768 px, desce e atravessa a emenda (a abertura fica por cima da
- * história, z-[1]; a figura pousa na emenda, e o globo passa 22% dela).
+ * O Atlas: a abertura é a projeção que se desenrola, o globo gravado com a origem em Niterói que vira a grade de um
+ * grau (components/paginas/folha-do-atlas.tsx); depois, a história em quatro capítulos, da sala de aula da UFF ao
+ * balcão do comércio da cidade, como estações de um rumo sobre a grade cônica; os três sócios, cada um sobre a etapa de
+ * que responde, e a origem do nome.
+ * Desde 17/10 (a direção final do Atlas Digital, seções 2.5 e 2.6 e seção 3, itens 19 a 21), a abertura é uma tela
+ * inteira, centrada: o título na margem, o lide à direita, a projeção no meio, e a moldura graduada como o bisel da
+ * janela. De 16 a 17/10, a folha da marca na água do fim da tarde, com o globo que girava e descia pela emenda até o
+ * papel da história (z-[1]); antes, até 16/10, a tarja de bronze no "UFF", que saiu (um gesto de texto por site).
  */
 export default function PaginaDoAtlas() {
   return (
@@ -41,11 +29,13 @@ export default function PaginaDoAtlas() {
     <div data-hora="fim-da-tarde" className="contents">
       <AberturaDePagina
         pagina="atlas"
+        forma="tela"
+        disposicao="centrada"
         figura={<GloboDeNiteroi />}
         fundo={<MolduraGraduada />}
-        className="vd-cena z-[1]"
         style={fimDaTarde}
-        classeDaFigura="md:self-end md:-mb-36"
+        className="vd-atlas-tela"
+        classeDaFigura="mt-12"
       />
       <Historia />
       <QuemFaz />

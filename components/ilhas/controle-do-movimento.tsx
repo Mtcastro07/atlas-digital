@@ -47,15 +47,19 @@ export function ControleDoMovimento() {
     document.documentElement.classList.toggle("ambiente-pausado", pausado);
   }, [pausado]);
 
-  // Antes da hidratação, e com movimento reduzido, o lugar fica reservado e vazio.
+  // Antes da hidratação, e com movimento reduzido, o lugar fica reservado e vazio. O rótulo é um só, o mesmo no leitor
+  // de tela, na dica do ponteiro (title) e na linha do menu do celular (ilhas/painel-menu.tsx): "Pausar animações", com
+  // o estado em aria-pressed, que o painel lê. Desde 17/10 (o fechamento com o Impeccable, A, P3: o "II" sozinho se lia
+  // como tocador de mídia), a dica; e, pausado, o fundo aceso, além do ícone que troca, para o estado se ver sem a dica.
   return (
     <button
       type="button"
+      title="Pausar animações"
       aria-pressed={pausado}
       aria-hidden={!disponivel || undefined}
       onClick={() => setPausado((p) => !p)}
       disabled={!disponivel}
-      className="grid size-11 flex-none cursor-pointer place-items-center rounded-full text-foreground/85 transition-[color,background-color,opacity] duration-300 ease-atlas hover:bg-foreground/10 hover:text-foreground disabled:pointer-events-none disabled:opacity-0"
+      className="grid size-11 flex-none cursor-pointer place-items-center rounded-full text-muted-foreground transition-[color,background-color,opacity] duration-300 ease-atlas hover:bg-foreground/10 hover:text-foreground disabled:pointer-events-none disabled:opacity-0 aria-pressed:bg-foreground/10 aria-pressed:text-foreground"
     >
       <span className="sr-only">Pausar animações</span>
       {pausado ? (

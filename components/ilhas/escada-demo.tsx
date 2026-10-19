@@ -90,12 +90,15 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
   }
 
   return (
-    <div className="mt-12">
+    // vd-seletores: com a letra do leitor grande, os seletores empilham as opções (app/digital.css; 19/10).
+    <div className="vd-seletores mt-12">
       <ToggleGroup
         value={[nivel]}
         onValueChange={(valor) => escolherNivel(valor[0])}
         aria-label="Plano"
-        className="vd-vidro vd-segmento mx-auto grid w-full max-w-md auto-cols-fr grid-flow-col"
+        // Na mesa, os dois seletores centrados sobre o palco; fora dela, à esquerda, com o título e o texto do palco, e na
+        // mesma largura (18/10, o passe do celular: no tablet, um de 448 px centrado sobre outro de 576 desalinhava).
+        className="vd-vidro vd-segmento grid w-full max-w-xl auto-cols-fr grid-flow-col lg:mx-auto lg:max-w-md"
         style={{ "--n": niveis.length, "--i": posicao } as React.CSSProperties}
       >
         <span aria-hidden="true" className="vd-segmento-cursor" />
@@ -114,7 +117,7 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
           value={[emCena]}
           onValueChange={(valor) => escolherSite(valor[0])}
           aria-label={rotuloDosNichos}
-          className="vd-vidro vd-segmento mx-auto mt-4 grid w-full max-w-xl auto-cols-fr grid-flow-col"
+          className="vd-vidro vd-segmento mt-4 grid w-full max-w-xl auto-cols-fr grid-flow-col lg:mx-auto"
           style={{ "--n": doNivel.length, "--i": posicaoDoSite } as React.CSSProperties}
         >
           <span aria-hidden="true" className="vd-segmento-cursor" />
@@ -126,9 +129,11 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
         </ToggleGroup>
       )}
 
-      {/* O recuo dos lados em px no celular (17/10, segundo fechamento): o mesmo com a letra normal; com a letra a 200%, o
-          px-6 dobrava (48 px de cada lado), e o nome do site partia no meio da palavra ("Nutriçã-o"). */}
-      <div ref={palco} data-palco-sites data-nivel={nivel} className="mt-8 overflow-hidden rounded-xl bg-card px-[24px] py-12 md:px-12 md:py-16">
+      {/* O palco, direto na água (desde 17/10, a direção final do Atlas Digital, seção 3, item 14): o site fica no
+          instrumento (secoes/escada.tsx), e um cartão em volta dele seria a tela dentro do cartão (L4). Até 17/10, um
+          cartão de 37 px de raio, com o recuo dos lados em px no celular. Os 8 px de recuo, devolvidos pela margem
+          negativa, guardam o anel de foco das ações, que o recorte cortaria. */}
+      <div ref={palco} data-palco-sites data-nivel={nivel} className="-mx-2 mt-10 overflow-hidden px-2 py-6 md:mt-12">
         {Children.toArray(children).map((filho, i) => (
           <div key={sites[i].id} data-site={sites[i].id} data-plano={sites[i].plano} data-em-cena={sites[i].id === emCena || undefined}>
             {filho}
@@ -136,7 +141,8 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
         ))}
       </div>
 
-      <p className="mt-5 text-center text-nota text-muted-foreground" aria-live="polite">
+      {/* Na mesa, centrada sob o palco; fora dela, à esquerda, com o texto do site (18/10, o passe do celular). */}
+      <p className="mt-5 text-nota text-muted-foreground lg:text-center" aria-live="polite">
         {nota}
       </p>
     </div>
