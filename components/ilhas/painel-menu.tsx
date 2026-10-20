@@ -148,12 +148,9 @@ export default function PainelMenu({ aberto, aoMudar, itens, marca }: Props) {
         {/* As duas ações no tamanho comum (text-nota): no grande (text-corpo,
             03/10), "WhatsApp (21) 96801-4926" passava da largura a 320 px. */}
         <div className="mov-entra grid gap-2 px-6 pt-6 [@media(max-height:700px)]:pt-4" style={atraso(40 + paginas.length * 30)}>
-          {/* Em /orcamento, sem a ação que leva à própria página (18/10, como no cabeçalho). */}
-          {caminho !== acaoOrcamento.destino && (
-            <Link href={acaoOrcamento.destino} onClick={fechar} className={buttonVariants({ className: "w-full" })}>
-              {acaoOrcamento.rotulo}
-            </Link>
-          )}
+          <Link href={acaoOrcamento.destino} onClick={fechar} className={buttonVariants({ className: "w-full" })}>
+            {acaoOrcamento.rotulo}
+          </Link>
           <a href={linkWhatsApp()} target="_blank" rel="noopener" className={buttonVariants({ variant: "outline", className: "w-full" })}>
             <IconeWhatsApp className="size-4.5" />
             WhatsApp {contato.telefone}

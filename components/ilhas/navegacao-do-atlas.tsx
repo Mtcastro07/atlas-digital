@@ -25,17 +25,11 @@ export function NavegacaoDoAtlas({ itens }: { itens: Item[] }) {
           key={item.id}
           href={item.caminho}
           aria-current={caminho === item.caminho ? "page" : undefined}
-          className="relative flex min-h-11 min-w-11 items-center justify-center text-nota font-medium whitespace-nowrap text-muted-foreground no-underline transition-colors duration-300 ease-atlas after:absolute after:inset-x-0 after:bottom-1.5 after:h-px after:bg-accent after:opacity-0 after:transition-opacity after:duration-300 after:ease-atlas hover:text-foreground hover:after:opacity-100 aria-[current=page]:text-foreground aria-[current=page]:after:opacity-100"
+          className="relative flex min-h-11 min-w-11 items-center justify-center text-nota font-medium whitespace-nowrap text-foreground/75 no-underline transition-colors duration-300 ease-atlas after:absolute after:inset-x-0 after:bottom-1.5 after:h-px after:bg-accent after:opacity-0 after:transition-opacity after:duration-300 after:ease-atlas hover:text-foreground hover:after:opacity-100 aria-[current=page]:text-foreground aria-[current=page]:after:opacity-100"
         >
           {item.rotulo}{" "}
         </Link>
       ))}
     </nav>
   );
-}
-
-/** A ação do cabeçalho, que some na página a que leva (18/10: deitado, em /orcamento, "Montar orçamento" apontava para
- *  a própria página; o menu já marca a página aberta). */
-export function AcaoDoCabecalho({ href, ...props }: React.ComponentProps<typeof Link> & { href: string }) {
-  return usePathname() === href ? null : <Link href={href} {...props} />;
 }

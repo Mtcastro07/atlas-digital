@@ -306,10 +306,8 @@ async function verificar(navegador, caminho) {
     delete r.medidas.mesa;
     if (!RAPIDA) {
       const k = await medirContraste(pagina);
-      r.medidas.contrasteCelular = { medidos: k.medidos, semMedida: k.semMedida, manuais: k.manuais.length, desenhados: k.desenhados, figuras: k.figuras };
+      r.medidas.contrasteCelular = { medidos: k.medidos, semMedida: k.semMedida, manuais: k.manuais.length, desenhados: k.desenhados };
       for (const t of k.falhas) falha("contraste", `390 px · ${t}`);
-      // O texto das figuras (svg, aria-hidden e o meio-tom), desde 17/10: aviso até a calibração (02-regua.md, seção 10).
-      for (const t of k.figuras.abaixo) aviso("contraste", `390 px · texto de figura (svg, aria-hidden ou meio-tom): ${t}`);
       if (k.manuais.length) aviso("contraste", `conferir à mão (cópia decorativa, degradê ou desenho no fundo do texto): ${k.manuais.slice(0, 4).join("; ")}`);
       if (k.aConferir.length) aviso("contraste", `390 px · conferir à mão (texto misturado ao fundo, sem medida nos pixels): ${k.aConferir.join("; ")}`);
     }
@@ -401,9 +399,8 @@ async function verificar(navegador, caminho) {
     if (linha.caracteres > CARACTERES_POR_LINHA) aviso("tipografia", `1440 px · linha de ${linha.caracteres} caracteres (teto ${CARACTERES_POR_LINHA}): ${linha.onde}`);
     if (!RAPIDA) {
       const k = await medirContraste(pagina);
-      r.medidas.contrasteMesa = { medidos: k.medidos, semMedida: k.semMedida, desenhados: k.desenhados, figuras: k.figuras };
+      r.medidas.contrasteMesa = { medidos: k.medidos, semMedida: k.semMedida, desenhados: k.desenhados };
       for (const t of k.falhas) falha("contraste", `1440 px · ${t}`);
-      for (const t of k.figuras.abaixo) aviso("contraste", `1440 px · texto de figura (svg, aria-hidden ou meio-tom): ${t}`);
       if (k.aConferir.length) aviso("contraste", `1440 px · conferir à mão (texto misturado ao fundo, sem medida nos pixels): ${k.aConferir.join("; ")}`);
       const t = await percorrerTeclado(pagina);
       r.medidas.teclado = { paradas: t.paradas };

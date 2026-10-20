@@ -54,12 +54,8 @@ const texto = localFont({
 // - .js: há script, logo há o botão de pausa; só então o movimento
 //   contínuo roda (sem script, a esfera fica parada e a capa entra uma vez);
 // - .ja-aberto: recarregar ou voltar pelo histórico não repete a entrada
-//   da capa. Ver app/movimento.css;
-// - o pulso do esqueleto (vd-esqueleto, app/vidro.css) sai da <img> quando
-//   ela chega, e quando ele recomeça sobre uma que já chegou: a opacidade
-//   pulsaria a imagem. Cancela a animação, sem mudar atributo (a hidratação
-//   veria a diferença). O "load" da <img> não sobe: daí a captura.
-const primeiraAbertura = `(function(){var h=document.documentElement;h.classList.add("js");try{var n=performance.getEntriesByType("navigation")[0];if(n&&(n.type==="reload"||n.type==="back_forward"))h.classList.add("ja-aberto")}catch(e){}function c(e){var t=e.target;if(t.tagName==="IMG"&&t.complete&&t.naturalWidth)t.getAnimations().forEach(function(a){if(a.animationName==="vd-esqueleto")a.cancel()})}document.addEventListener("load",c,true);document.addEventListener("animationstart",c,true)})()`;
+//   da capa. Ver app/movimento.css.
+const primeiraAbertura = `(function(){var h=document.documentElement;h.classList.add("js");try{var n=performance.getEntriesByType("navigation")[0];if(n&&(n.type==="reload"||n.type==="back_forward"))h.classList.add("ja-aberto")}catch(e){}})()`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(contato.url),
@@ -91,11 +87,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: primeiraAbertura }} />
       </head>
       <body>
-        {/* max-w: com a letra a 200% a 320 px, a pílula quebra em duas linhas e encostava na borda direita, com o anel do
-            foco cortado; fica a 12 px dela, como da esquerda (18/10). */}
         <a
           href="#conteudo"
-          className="fixed top-3 left-3 z-[70] max-w-[calc(100%-1.5rem)] -translate-y-24 rounded-full bg-primary px-5 py-2.5 text-primary-foreground no-underline transition-transform duration-300 focus:translate-y-0"
+          className="fixed top-3 left-3 z-[70] -translate-y-24 rounded-full bg-primary px-5 py-2.5 text-primary-foreground no-underline transition-transform duration-300 focus:translate-y-0"
         >
           Ir para o conteúdo
         </a>

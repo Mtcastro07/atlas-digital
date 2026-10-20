@@ -35,15 +35,4 @@ assert.ok(achar(k.aConferir, "minimo") && !achar(k.desenhados, "minimo"), "caixa
 assert.ok(!achar(k.aConferir, "leitor") && !achar(k.falhas, "leitor"), "só para leitor de tela, recortado: fora");
 assert.ok(!achar(k.aConferir, "girado") && !achar(k.falhas, "girado"), "só para leitor de tela num ancestral girado e misturado: fora");
 naoAprova("tarde");
-// O texto das figuras (desde 17/10): volta em k.figuras, nunca em k.falhas (é aviso até a calibração).
-const figura = (id) => Number(achar(k.figuras.medidas, id)?.match(/: ([\d.]+):1/)?.[1]);
-const abaixo = (id) => !!achar(k.figuras.abaixo, id) && !achar(k.falhas, id);
-assert.ok(figura("fig-preto") > 15 && !abaixo("fig-preto"), "fig-preto: preto em SVG sobre o branco aprova");
-assert.ok(abaixo("fig-cinza"), "fig-cinza: ≈3:1 em SVG fica abaixo, e só em figuras");
-assert.ok(figura("fig-halo") > 15 && !abaixo("fig-halo"), "fig-halo: o halo de carta é o fundo da letra");
-assert.ok(abaixo("fig-html"), "fig-html: o bloco aria-hidden em HTML se mede");
-assert.ok(figura("fig-escala") > 3.3 && figura("fig-escala") < 3.6 && !abaixo("fig-escala"), "fig-escala: 30 px pela viewBox, texto grande");
-assert.ok(abaixo("fig-invisivel"), "fig-invisivel: a letra na cor do fundo não aprova");
-assert.ok(figura("mt-tela") > 6 && figura("mt-tela") < 7.5 && !abaixo("mt-tela"), "mt-tela: o meio-tom na tela, pela média, ≈6,8:1");
-assert.ok(figura("mt-papel") > 1.5 && figura("mt-papel") < 2.2 && abaixo("mt-papel"), "mt-papel: o meio-tom no papel, ≈1,8:1, fica abaixo");
-console.log("\nautoconferência: 23 verificações passaram");
+console.log("\nautoconferência: 15 verificações passaram");

@@ -171,21 +171,6 @@ html:has([data-demo="odontologia"]) body > a[href="#conteudo"]:focus-visible {
   height: 100%;
   pointer-events: none;
 }
-/* Desde 18/10, no toque, a altura do canvas é a maior da janela, e não a de agora: a barra do navegador do celular, que
-   some e volta no meio da rolagem, mudava a altura do canvas e o realocava a cada vez (o motor, medir(); medido na
-   emulação, com a altura da janela alternada durante a rolagem: uma realocação por mudança, de 3,7 ms a CPU 4×, mais o
-   redesenho). */
-@media (pointer: coarse) {
-  .od-palco {
-    height: 100lvh;
-  }
-  /* Desde 18/10, abaixo de 1024 px, o canvas rola com a página (o motor o leva para o meio da placa a cada quadro), e
-     não fica preso à tela: preso, a placa escorregava um quadro atrás da âncora (13 px a 800 px/s). A mesma altura e a
-     mesma largura dos dois modos: a troca não realoca o canvas. */
-  .od-palco[data-rola] {
-    position: absolute;
-  }
-}
 .od-ancora {
   pointer-events: none;
 }

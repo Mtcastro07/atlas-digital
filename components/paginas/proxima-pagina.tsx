@@ -5,16 +5,18 @@ import { IconeSeta } from "@/components/icones";
 import { buttonVariants } from "@/components/ui/button";
 import { paginaDe, paginasInternas, proximaPagina, type IdDaPagina } from "@/conteudo/site";
 
+/** O traço de cada página na régua do percurso: até a atual, em bronze; a seguinte acende no hover; as outras, apagadas. */
+function corDoTraco(k: number, atual: number) {
+  if (k <= atual) return "bg-accent";
+  if (k === atual + 1) return "bg-foreground/35 group-hover:bg-accent/70";
+  return "bg-foreground/12";
+}
+
 /**
  * O pé de cada página interna: a página seguinte (da última, a volta ao
- * início), na água em sangria, com o grão (a cena de água que toda página
- * guarda: a regra da janela, seção 2.6 da direção final do Atlas Digital).
- * O nome da página seguinte e o resumo, de um lado; do outro, a ação em
- * pílula, como as outras do site. Até 17/10, em cima, a régua do percurso:
- * as seis páginas em seis traços, as já percorridas em bronze, em fundo de
- * 12 a 35% de opacidade (a direção a cortou, J1 e J2: a leitura da visita
- * fica só nas portas do início, components/paginas/portas.tsx, em traço e
- * ponto).
+ * início). Em cima, a régua do percurso — as seis páginas em seis traços,
+ * as já percorridas em bronze. Embaixo, o nome da página seguinte e o
+ * resumo, de um lado; do outro, a ação em pílula, como as outras do site.
  * Até 14/10, ao lado da pílula, o número da porta dela no início, em
  * display (o mesmo "3 planos", "4 etapas"…): o número grande com unidade
  * em série, a marca L2, em seis fins de página e repetindo as portas (o
@@ -40,18 +42,22 @@ export function ProximaPagina({ atual, tom = "escuro" }: { atual: IdDaPagina; to
           href={proxima ? proxima.caminho : "/"}
           // O início não é pré-buscado: a pré-busca traria as imagens da capa a esta página.
           prefetch={proxima ? undefined : false}
-          className="group @container block py-16 no-underline md:py-24"
+          className="group block py-16 no-underline md:py-24"
         >
+          {/* A régua do percurso: uma página por traço. */}
+          <span aria-hidden="true" className="flex gap-1.5">
+            {paginasInternas.map((p, k) => (
+              <span key={p.id} className={`h-[3px] flex-1 rounded-full transition-colors duration-500 ease-atlas ${corDoTraco(k, i)}`} />
+            ))}
+          </span>
+
           {/* minmax(0, 1fr) e a pílula que quebra: com a letra a 200% a 390 px, o nome e a ação saíam da tela (16/10). */}
-          <span className="grid grid-cols-[minmax(0,1fr)] items-end gap-x-10 gap-y-8 lg:grid-cols-12">
+          <span className="mt-10 grid grid-cols-[minmax(0,1fr)] items-end gap-x-10 gap-y-8 md:mt-14 lg:grid-cols-12">
             <span className="lg:col-span-7">
               {/* "A seguir" e "Fim do percurso", só para o leitor de tela (17/10): à vista, eram o sobretítulo (a marca T2), e
-                  a ação em pílula já nomeia o destino ("Ver os planos"). */}
+                  a régua do percurso, logo acima, já diz qual é a próxima página. */}
               <span className="sr-only">{proxima ? proximaPagina.aSeguir : proximaPagina.fim}</span>{" "}
-              {/* O teto de 17% da coluna (18/10, o passe do celular): "Orçamento", a palavra mais longa (5,75 em), sempre cabe
-                  inteira. Só pesa a 320 px com a letra a 200% (a margem em rem estreita a coluna a 224 px, e ela partia em
-                  "Orçament/o"); com a letra normal, e na mesa, o teto fica acima do degrau. */}
-              <span className="block font-display tracking-titulo text-display transition-colors duration-300 ease-atlas group-hover:text-accent [font-size:min(var(--text-display),17cqi)]">
+              <span className="block font-display tracking-titulo text-display transition-colors duration-300 ease-atlas group-hover:text-accent">
                 {nome}
               </span>{" "}
               <span className="mt-5 block max-w-[44ch] text-corpo text-muted-foreground">{porta.resumo}</span>

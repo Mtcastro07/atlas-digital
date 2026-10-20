@@ -12,17 +12,14 @@ type Orcamento = {
   modulos: string[];
   criacao: number;
   mensal: number;
-  /** A criação sem a condição de fundação (17/10): o valor cheio, dito junto do valor da condição. */
-  cheio?: number;
 };
 
 /** Mensagem impessoal gerada pelo montador (contexto de produto, seção 2). */
-export function mensagemDeOrcamento({ plano, modulos, criacao, mensal, cheio }: Orcamento) {
+export function mensagemDeOrcamento({ plano, modulos, criacao, mensal }: Orcamento) {
   const partes = [`Orçamento composto no site. Plano ${plano}.`];
   if (modulos.length === 1) partes.push(`Módulo: ${modulos[0]}.`);
   if (modulos.length > 1) partes.push(`Módulos: ${modulos.join(" e ")}.`);
-  const condicao = cheio && cheio !== criacao ? ` (condição de fundação; valor cheio: ${reais(cheio)})` : "";
-  partes.push(`Criação: ${reais(criacao)}${condicao}. Mensalidade: ${reais(mensal)}.`);
+  partes.push(`Criação: ${reais(criacao)}. Mensalidade: ${reais(mensal)}.`);
   partes.push("Contato solicitado por esta mensagem.");
   return partes.join(" ");
 }

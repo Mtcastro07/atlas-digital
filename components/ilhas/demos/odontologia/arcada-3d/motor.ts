@@ -338,15 +338,9 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
   let quadros = 0;
   let somaDosQuadros = 0;
   let folga = 0;
-  /** A escala nova: aplicada no começo do quadro seguinte, antes de desenhar. */
-  let remedir = false;
   // A entrada só na primeira abertura; recarregar ou voltar pelo histórico chega aceso.
   const semEntrada = opcoes.reduzir || raiz.classList.contains("ja-aberto");
   const fino = window.matchMedia("(pointer: fine)").matches && !opcoes.reduzir;
-  /** O ponteiro grosso (o toque: o celular, o tablet), com ou sem movimento reduzido; o mesmo critério do CSS. */
-  const grosso = window.matchMedia("(pointer: coarse)").matches;
-  /** O canvas que rola com a página (data-rola): quanto ele foi levado, em px. */
-  let deslocamento = 0;
   const ponteiro = { x: REPOUSO.luzX, y: REPOUSO.luzY, alvoX: REPOUSO.luzX, alvoY: REPOUSO.luzY, ativo: false };
   const cena = { focoX: 0, focoY: 0, zoom: 1, inclina: REPOUSO.inclina, lado: REPOUSO.lado, regiao: [0, 0, 0, 0] };
   let primeiro = true;
@@ -358,23 +352,10 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
   let pilha: number | null = null;
   /** No toque, o halo espera a caixa da placa existir para acender sobre ela. */
   let acenderPendente = false;
-  /** O elemento preso (sticky) que leva cada âncora, e o topo em que ele para; null se nenhum. */
-  const presas = new Map<HTMLElement, { el: HTMLElement; topo: number } | null>();
   const lerPilha = () => {
     const el = document.querySelector<HTMLElement>("[data-passo]");
     const estilo = el ? getComputedStyle(el) : null;
     pilha = estilo?.position === "sticky" ? parseFloat(estilo.top) : null;
-    presas.clear();
-  };
-  /** A âncora parada agora, dentro de um elemento preso que chegou ao topo dele (a faixa da placa do percurso). */
-  const parada = (a: HTMLElement) => {
-    if (!presas.has(a)) {
-      let el: HTMLElement | null = a;
-      while (el && el !== caixa && getComputedStyle(el).position !== "sticky") el = el.parentElement;
-      presas.set(a, el && el !== caixa ? { el, topo: parseFloat(getComputedStyle(el).top) } : null);
-    }
-    const p = presas.get(a);
-    return p ? Math.abs(p.el.getBoundingClientRect().top - p.topo) < 1 : false;
   };
   /** O relógio do ambiente: só anda com a página parada, sem pausa e sem movimento reduzido. */
   let tempoAmbiente = 0;
@@ -591,38 +572,8 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
     const respiraInclina = opcoes.reduzir ? 0 : Math.sin(tempoAmbiente * 0.31) * 0.016;
 
     if (uni) {
-      // Desde 18/10, nunca no meio da rolagem: a escala sobe com os quadros leves da rolagem, e a realocação pesava no
-      // quadro dela (medido na M2, a CPU 4× e 800 px/s: 2 realocações em cada passada da página, de 686 × 1485 a
-      // 780 × 1688).
-      if (remedir && agora - ultimaRolagem > 200) {
-        remedir = false;
-        medir();
-      }
-      let r = canvas.getBoundingClientRect();
+      const r = canvas.getBoundingClientRect();
       const b = caixaRect();
-      // Desde 18/10, no celular, o canvas rola com a página (data-rola: absoluto, levado para o meio da placa a cada
-      // quadro), e só fica preso à tela com a âncora parada num elemento preso (a faixa do percurso). Preso à tela e
-      // redesenhado pela linha principal, ele chegava um quadro depois da âncora, que o compositor rola sozinho: a placa
-      // escorregava sobre a cena e voltava ao parar (medido na emulação, com a placa de vídeo M2: 13 px a 800 px/s e 40 a
-      // 42 px a 2400 px/s, um quadro inteiro de rolagem). Rolando junto, o compositor leva a placa com a cena: de 0 a 1 px
-      // nas mesmas medidas, também com o quadro atrasado. O tamanho é o mesmo nos dois modos: nada se realoca na troca.
-      if (ancorado && grosso) {
-        const rola = window.innerWidth < 1024 && principal !== null && !parada(principal);
-        if (rola !== canvas.hasAttribute("data-rola")) {
-          canvas.toggleAttribute("data-rola", rola);
-          canvas.style.translate = "";
-          deslocamento = 0;
-          r = canvas.getBoundingClientRect();
-        }
-        // Centrado na placa (a mesma folga para os dois lados da rolagem), sem passar do fim do consultório: passando, o
-        // canvas aumentaria a página que ele segue.
-        const d = rola ? Math.round(Math.min(b.top + b.height / 2 - r.height / 2, caixa.getBoundingClientRect().bottom - r.height) - r.top) : 0;
-        if (d) {
-          deslocamento += d;
-          canvas.style.translate = `0 ${deslocamento}px`;
-          r = new DOMRect(r.x, r.y + d, r.width, r.height);
-        }
-      }
       const k = canvas.width / Math.max(1, r.width);
       gl.uniform2f(uni.uRes, canvas.width, canvas.height);
       gl.uniform4f(uni.uCaixa, (b.left - r.left) * k, (r.bottom - (b.top + b.height)) * k, b.width * k, b.height * k);
@@ -645,13 +596,8 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
       if (ancorado) {
         const folgaX = b.width * (0.18 + 0.5 * (cena.zoom - 1)) + 0.4 * b.height;
         const folgaY = b.height * (0.18 + 0.62 * (cena.zoom - 1)) + 0.12 * b.height;
-        // No canvas que rola (maior que a parte da placa à vista), a placa fora da tela fica de fora, como no preso, menos
-        // uma faixa de 15% da altura da tela embaixo: o que a rolagem para baixo revela antes do quadro seguinte (100 px a
-        // 6000 px/s). Em cima, o que ela revela fica sob a pasta. Medido na M2, na passada da página: a tesoura mediana com
-        // 7% mais pixels que no canvas preso (0,58 contra 0,54 milhão a 800 px/s); com a placa inteira, 9%.
-        const rola = canvas.hasAttribute("data-rola");
-        const baixo = Math.min(b.top + b.height + folgaY, faixaDasCenas.base, rola ? 1.15 * window.innerHeight : Infinity);
-        const alto = Math.max(b.top - folgaY, faixaDasCenas.topo, rola ? 0 : -Infinity);
+        const baixo = Math.min(b.top + b.height + folgaY, faixaDasCenas.base);
+        const alto = Math.max(b.top - folgaY, faixaDasCenas.topo);
         const x0 = Math.max(0, Math.floor((b.left - r.left - folgaX) * k));
         const y0 = Math.max(0, Math.floor((r.bottom - baixo) * k));
         const x1 = Math.min(canvas.width, Math.ceil((b.left - r.left + b.width + folgaX) * k));
@@ -676,9 +622,7 @@ export function iniciarPalco(canvas: HTMLCanvasElement, opcoes: Opcoes): Palco |
             folga = 0;
           }
           somaDosQuadros = 0;
-          // Desde 18/10, a nova resolução entra num quadro seguinte, antes do desenho: realocado aqui, depois do desenho,
-          // o canvas ficava vazio até o desenho seguinte (a placa piscava).
-          if (escala !== antes) remedir = true;
+          if (escala !== antes) medir();
         }
       }
     }

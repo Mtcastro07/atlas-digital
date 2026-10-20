@@ -107,14 +107,6 @@ export function precoDoModulo(m: Modulo) {
 /** Módulos que entram no montador: os de cobrança recorrente. */
 export const modulosDoMontador = modulos.filter((m) => !m.porPagina);
 
-/**
- * A condição de fundação no preço (17/10, pedido do usuário: o preço cortado e, ao lado, o novo, pela metade, em todos
- * os planos): a metade da criação do plano nos três primeiros contratos. Só na criação do plano: os módulos e a
- * mensalidade ficam como estão (ata, bloco 07). A mensalidade congelada saiu da condição no mesmo pedido.
- */
-export const fundacaoNoPreco = { fator: 0.5, contratos: 3 } as const;
-export const criacaoNaFundacao = (p: Plano) => p.criacao * fundacaoNoPreco.fator;
-
 export const faixaDePreco = {
   minimo: Math.min(...planos.map((p) => p.criacao)),
   maximo: Math.max(...planos.map((p) => p.criacao)),

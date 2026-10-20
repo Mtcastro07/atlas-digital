@@ -41,32 +41,7 @@
   <!-- A mistura que liga depois da primeira tela (a revelação ao rolar, o html[data-palco]): branco sobre #808080.
        Pela cor declarada, aprovaria com 3,95:1; a tela desenha 1,01:1. Não pode aprovar. -->
   <section style="background:#808080"><span id="tarde" class="grande">Tarde</span></section>
-  <!-- O texto das figuras (desde 17/10): em SVG e em bloco aria-hidden, a cor declarada sobre o fundo sem a letra. -->
-  <!-- Preto em SVG sobre o branco, 16 px: 21:1, aprova. -->
-  <section style="background:#fff"><svg width="400" height="96" aria-hidden="true"><text id="fig-preto" x="16" y="50" font-size="16" fill="#000">Figura preta</text></svg></section>
-  <!-- #949494 em SVG sobre o branco, 16 px: ≈3:1, abaixo de 4,5. -->
-  <section style="background:#fff"><svg width="400" height="96" aria-hidden="true"><text id="fig-cinza" x="16" y="50" font-size="16" fill="#949494">Figura cinza</text></svg></section>
-  <!-- O halo de carta: o branco com o contorno preto de 4 px por baixo (paint-order: stroke), sobre o branco. O halo
-       é o fundo da letra e aprova; medido sem ele (o contorno sumido junto com a letra), daria 1:1. -->
-  <section style="background:#fff"><svg width="400" height="96" aria-hidden="true"><text id="fig-halo" x="16" y="50" font-size="16" font-weight="700" fill="#fff" stroke="#000" stroke-width="4" paint-order="stroke">Halo de carta</text></svg></section>
-  <!-- O bloco aria-hidden em HTML: #949494 sobre o branco, 16 px, abaixo. -->
-  <section style="background:#fff"><div aria-hidden="true"><span id="fig-html" class="miudo" style="color:#949494">Rotulo em html</span></div></section>
-  <!-- A escala da viewBox: 10 unidades × 3 = 30 px, texto grande (mínimo 3); #8a8a8a sobre o branco, 3,45:1, aprova.
-       Lido sem a escala (10 px, mínimo 4,5), ficaria abaixo. -->
-  <section style="background:#fff"><svg width="400" height="96" viewBox="0 0 133.3 32" aria-hidden="true"><text id="fig-escala" x="5" y="20" font-size="10" fill="#8a8a8a">Escala</text></svg></section>
-  <!-- A letra na cor do fundo: nada muda entre as fotos, e a medida cai na caixa inteira (1:1). Não pode aprovar. -->
-  <section style="background:#0f2a47"><svg width="400" height="96" aria-hidden="true"><text id="fig-invisivel" x="16" y="50" font-size="16" fill="#0f2a47">Invisivel</text></svg></section>
-  <!-- O número em meio-tom (o canvas .valor da leitura), pela média da cobertura: um bloco de 10 × 10 casas de 3 px,
-       cada uma com um ponto de 2 × 2 px (a cobertura, no bloco fechado, de 400 / 841 = 0,48). #fbf1de sobre #0f2a47
-       dá ≈6,8:1 e aprova; #0f2a47 sobre a névoa #f5f3f0 dá ≈1,8:1, o meio-tom no papel, e fica abaixo. -->
-  <section style="background:#0f2a47"><div class="vd-leitura" aria-hidden="true"><canvas id="mt-tela" class="valor meio-tom" width="60" height="40" data-tinta="#fbf1de"></canvas></div></section>
-  <section style="background:#f5f3f0"><div class="vd-leitura" aria-hidden="true"><canvas id="mt-papel" class="valor meio-tom" width="60" height="40" data-tinta="#0f2a47"></canvas></div></section>
 <script>
-  for (const tela of document.querySelectorAll("canvas.meio-tom")) {
-    const ctx = tela.getContext("2d");
-    ctx.fillStyle = tela.dataset.tinta;
-    for (let i = 0; i < 10; i++) for (let j = 0; j < 10; j++) ctx.fillRect(10 + 3 * i, 5 + 3 * j, 2, 2);
-  }
   addEventListener("scroll", () => document.getElementById("tarde").classList.add("dif"), { once: true });
   for (const cinza of document.querySelectorAll(".cinza-folga")) {
     const r = cinza.nextElementSibling.getBoundingClientRect();

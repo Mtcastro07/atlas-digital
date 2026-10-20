@@ -4,7 +4,7 @@ import { Envelope } from "@/components/estrutura";
 import { CabecalhoRetratil } from "@/components/ilhas/cabecalho-retratil";
 import { ControleDoMovimento } from "@/components/ilhas/controle-do-movimento";
 import { MenuCelular } from "@/components/ilhas/menu-celular";
-import { AcaoDoCabecalho, NavegacaoDoAtlas } from "@/components/ilhas/navegacao-do-atlas";
+import { NavegacaoDoAtlas } from "@/components/ilhas/navegacao-do-atlas";
 import { Logotipo } from "@/components/marca/logotipo";
 import { CabecalhoFixo } from "@/components/transicao-de-pagina";
 import { buttonVariants } from "@/components/ui/button";
@@ -71,9 +71,9 @@ export function Cabecalho() {
               <span className="contents max-[359.98px]:hidden">
                 <ControleDoMovimento />
               </span>{" "}
-              <AcaoDoCabecalho href={acaoOrcamento.destino} className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
+              <Link href={acaoOrcamento.destino} className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
                 {acaoOrcamento.rotulo}
-              </AcaoDoCabecalho>{" "}
+              </Link>{" "}
               {/* O logotipo do painel vem pronto daqui: desenhado no servidor, sem levar o `cn` ao navegador. */}
               <MenuCelular itens={navegacao} marca={<Logotipo recorte="globo-menu" className="h-[31px] w-auto md:h-[34px]" decorativo />} />
             </div>
