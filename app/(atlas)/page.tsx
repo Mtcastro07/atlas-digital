@@ -35,8 +35,10 @@ export const metadata = metadadosDaPagina("inicio");
  */
 export default function Inicio() {
   return (
-    // A hora da página (16/10): dá o lado das sombras a toda a página (app/vidro.css). Um atributo, sem texto.
-    <div data-hora="madrugada" className="contents">
+    // A hora da página (16/10): dá o lado das sombras a toda a página (app/vidro.css). Um atributo, sem texto. Desde
+    // 17/10 (a direção final do Atlas Digital, seção 2.3; com o aprovador, por omissão), o crepúsculo calculado, no
+    // lugar da madrugada simbólica: a capa mostra a Terra no pôr do sol de agora.
+    <div data-hora="crepusculo" className="contents">
       <Capa />
       <Destaques />
       <Passos />

@@ -44,3 +44,4 @@ export function Apoio({ className, ...props }: React.ComponentProps<"p">) {
 export function Subtitulo({ className, ...props }: React.ComponentProps<"h3">) {
   return <h3 className={cn("text-destaque", className)} {...props} />;
 }
+

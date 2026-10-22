@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { planos } from "@/conteudo/planos";
+import { criacaoNaFundacao, planos } from "@/conteudo/planos";
 import { reais } from "@/lib/moeda";
 
 type Aparelho = "computador" | "celular";
@@ -36,6 +36,7 @@ type TextosDoSimulador = {
   escolher: string;
   criacao: string;
   mensal: string;
+  fundacao: { cheio: string; metade: string; condicao: string };
   carregando: string;
   aviso: string;
   navegacao: { voltar: string; avancar: string; inicio: string; paginas: string; dica: string };
@@ -45,7 +46,7 @@ export type DadosDoSimulador = { textos: TextosDoSimulador; sites: readonly Site
 
 /** Janela que cada site vê dentro do quadro: a de um computador comum e a de um celular comum. */
 const JANELA = { computador: { largura: 1440 }, celular: { largura: 390, altura: 844 } };
-const BARRA = 44; // barra do navegador desenhada no modo computador
+const BARRA = 44; // a barra de navegação do site, em cima do quadro, no modo computador
 /**
  * Moldura do celular, em volta da tela: 12 px (até 03/10, 11, fora da grade
  * de 4 px). O raio de fora é o da tela mais ela (36 + 12 = 48 px): cantos
@@ -375,7 +376,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
       onClose={aoFecharDialogo}
       aria-labelledby="simulador-titulo"
       data-tom="escuro"
-      className="vd-simulador m-auto h-[min(94dvh,980px)] max-h-none w-[min(97vw,1680px)] max-w-none overflow-hidden rounded-[28px] border border-border bg-deep p-0 text-foreground"
+      className="vd-simulador m-auto h-[min(94dvh,980px)] max-h-none w-[min(97vw,1680px)] max-w-none overflow-hidden rounded-[var(--r-tela)] bg-deep p-0 text-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.06)]"
     >
       <div className="flex h-full flex-col">
         {/* Barra: planos, aparelho e fechar. Os recuos são os do palco e do
@@ -454,24 +455,22 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                 Ela e a moldura do celular flutuam sobre uma sombra de 90 px a 90% de preto (saiu em 03/10
                 pela regra 3 das Diretrizes de Design Premium e voltou no mesmo dia, a pedido do usuário:
                 é parte da identidade do site). */}
-            <div ref={casca} aria-hidden="true" className="pointer-events-none absolute border border-border bg-card opacity-0 shadow-[0_40px_90px_-30px_rgb(0_0_0/0.9)]" />
+            <div ref={casca} aria-hidden="true" className="pointer-events-none absolute border border-border bg-card opacity-0 shadow-[0_40px_90px_-30px_rgb(var(--tinta-sombra)/0.9)]" />
             {pronto && (
               <div
                 ref={moldura}
                 className={
                   computador
-                    ? "absolute inset-0 overflow-hidden rounded-[16px] border border-border bg-card"
-                    : "vd-moldura-de-celular absolute top-1/2 left-1/2 -translate-1/2 rounded-[48px] shadow-[0_40px_90px_-30px_rgb(0_0_0/0.9)] ring-1 ring-foreground/15"
+                    ? "vd-instrumento absolute inset-0 bg-card"
+                    : "vd-moldura-de-celular absolute top-1/2 left-1/2 -translate-1/2 rounded-[48px] shadow-[0_40px_90px_-30px_rgb(var(--tinta-sombra)/0.9)] ring-1 ring-foreground/15"
                 }
                 style={computador ? undefined : { padding: BORDA }}
               >
                 {computador && (
+                  // A barra de navegação do site no quadro: voltar, avançar, o início e a página aberta. Desde 17/10 (a
+                  // direção final do Atlas Digital, seção 3, item 14), sem as três bolinhas da janela (L8): o quadro é o
+                  // instrumento (.vd-instrumento, com o raio --r-instrumento e sem fio), e não um navegador desenhado.
                   <div className="flex items-center gap-3 border-b border-border px-3" style={{ height: BARRA }}>
-                    <span aria-hidden="true" className="flex gap-1.5 pl-1">
-                      {[0, 1, 2].map((k) => (
-                        <span key={k} className="size-2.5 rounded-full bg-foreground/20" />
-                      ))}
-                    </span>
                     <span className="flex">
                       {(
                         [
@@ -495,7 +494,8 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                         </button>
                       ))}
                     </span>
-                    <span role="status" aria-live="polite" className="mx-auto max-w-[62%] truncate rounded-full bg-background/60 px-4 py-1 text-rotulo text-muted-foreground">
+                    {/* A página aberta, como legenda do quadro, sem a pílula de barra de endereço (desde a revisão de 17/10). */}
+                    <span role="status" aria-live="polite" className="mx-auto max-w-[62%] truncate px-4 py-1 text-rotulo text-muted-foreground">
                       <span className="sr-only">Página aberta: </span>
                       {dominio}
                       <span className="text-foreground">{caminhoAberto}</span>
@@ -574,11 +574,23 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                 {site.nome}
               </h2>
               <p className="mt-1.5 text-nota text-muted-foreground">
-                {site.nicho}, plano <span className="font-semibold text-accent">{plano.nome}</span>.
+                {site.nicho}, plano <span className="font-semibold text-foreground">{plano.nome}</span>.
               </p>
               <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="font-display text-destaque tracking-titulo tabular-nums">{reais(plano.criacao)}</span>
-                <span className="text-nota text-muted-foreground">{textos.criacao}</span>
+                {/* O preço na condição de fundação (17/10): o valor cheio riscado (o fio de .vd-riscado, app/digital.css, o
+                    mesmo da escada e da tabela de /planos) e a metade, cada um com o rótulo para o leitor de tela. */}
+                <s className="vd-riscado text-nota">
+                  <span className="sr-only">{textos.fundacao.cheio}: </span>
+                  {reais(plano.criacao)}
+                </s>
+                {/* A metade chapada na anatomia da escada e da tabela (.vd-preco, app/digital.css): "R$" em Inter, à metade do corpo. */}
+                <span className="vd-preco font-display text-destaque tracking-titulo">
+                  <span className="sr-only">{textos.fundacao.metade}: </span>
+                  <span className="unidade">R$</span> {criacaoNaFundacao(plano).toLocaleString("pt-BR")}
+                </span>
+                <span className="text-nota text-muted-foreground">
+                  {textos.criacao} {textos.fundacao.condicao}
+                </span>
                 <span className="text-nota text-muted-foreground tabular-nums">
                   + {reais(plano.mensal)} {textos.mensal}
                 </span>
@@ -586,14 +598,11 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
             </div>
             <div>
               <p className="text-nota font-semibold text-muted-foreground">{textos.inclui}</p>
-              <ul className="mt-3 grid gap-2.5 text-nota">
+              {/* A lista com o traço gravado, a mesma da tabela de /planos (.vd-lista-gravada; até a revisão de 17/10, o tique
+                  em bronze, a marca de tabela de preços de SaaS, e outro formato para o mesmo dado). */}
+              <ul className="vd-lista-gravada mt-3 grid gap-2.5 text-nota">
                 {plano.itens.map((item) => (
-                  <li key={item} className="flex gap-2.5">
-                    <svg viewBox="0 0 16 16" aria-hidden="true" className="mt-1 size-3.5 flex-none text-accent" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="m3.5 8.4 2.9 2.8 6-6.4" />
-                    </svg>
-                    {item}
-                  </li>
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
@@ -602,7 +611,8 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               <p className="mt-2 text-nota">{site.experimente}</p>
               <p className="mt-3 flex items-baseline gap-2 text-nota text-muted-foreground">
                 <span className="font-display text-corpo text-foreground tabular-nums">{site.paginas}</span>
-                {textos.navegacao.paginas} · {textos.navegacao.dica}
+                {/* Dois pontos, e não o ponto médio entre metadados (a marca K2 do kit; a revisão de 17/10). */}
+                {textos.navegacao.paginas}: {textos.navegacao.dica}
               </p>
             </div>
             <div className="mt-auto grid gap-2.5">

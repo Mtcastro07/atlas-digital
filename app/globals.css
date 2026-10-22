@@ -2,6 +2,7 @@
 @import "shadcn/tailwind.css";
 @import "./vidro.css";
 @import "./movimento.css";
+@import "./digital.css";
 @import "./nichos.css";
 /* O kit de produção (producao/) mora na raiz, mas não é este site: as classes dele não entram na folha. */
 @source not "../producao";
@@ -124,6 +125,24 @@
   --papel-sombra: #ece6dd; /* a queda da luz no papel: o apagado a 5,30:1, o vínculo a 4,74 */
   --pedra: #e9e2d9; /* oklch(0.916 0.014 74): o fundo do tom pedra; ΔL de 0,050 contra a névoa */
   --ficha: #fefcf9; /* oklch(0.992 0.004 80): o cartão dos tons claros, a folha do índice */
+  /* O Atlas Digital (17/10, DIRECAO-DIGITAL.md, seções 2.1 e 2.6): a luz que a tela emite e a forma dela. Nomes novos,
+     como os de cima. --tela-luz é o ponto aceso sobre a tela (até 18/10, também o número em meio-tom), um branco quente e
+     nunca ciano (oklch 0,961 0,027 84): 12,99:1 sobre #0f2a47, 11,33 sobre --meio, 14,64 sobre --deep. Os três raios
+     são concêntricos: a tela (a janela navy recortada no papel), o instrumento (a tela pequena no papel, 40 − 16) e a
+     ficha (a folha de papel sobre outra superfície); a pílula fica em 999 px. --margem-tela é o papel em volta da tela.
+     No celular, abaixo. O --radius não muda. */
+  --tela-luz: #fbf1de;
+  --r-tela: 2.5rem;
+  --r-instrumento: 1.5rem;
+  --r-ficha: 0.75rem;
+  --margem-tela: 0.75rem;
+}
+@media (max-width: 767.98px) {
+  :root {
+    --r-tela: 1.75rem;
+    --r-instrumento: 1.25rem;
+    --margem-tela: 0.5rem;
+  }
 }
 
 /* Tom escuro: navy, o padrão da página. */
@@ -178,6 +197,9 @@
    demonstração leem o --card do :root. */
 [data-tom="escuro"] {
   --card: #1a395b;
+  /* O raio da tela (17/10, "o Atlas Digital"): as bordas arredondadas são as do vidro de um aparelho. De 18 a 24 px na
+     base (rounded-lg), 37 px nos painéis (rounded-xl). Só sob [data-tom]: os sites de demonstração leem o do :root. */
+  --radius: 1.5rem;
   /* O apagado da água sobe de #9fb2c6 a #aebdcd (16/10, passe 2): o grão da matéria (até ~9% de branco por ponto)
      e a luz de cada página clarearam o fundo, e o ponto mais claro sob o lide caía a 4,08–4,48:1 nos pixels. Com
      #aebdcd, 4,6:1 ou mais no pior ponto medido; 6,63:1 sobre --meio chapado; 6,16 sobre o cartão. */
@@ -188,11 +210,15 @@
    (abaixo). Até 16/10, também o branco (superfície limpa), que saiu como campo de cena. */
 [data-tom="claro"],
 [data-tom="pedra"] {
+  --radius: 1.5rem; /* o raio da tela (17/10; acima, no escuro) */
   --foreground: #0f2a47;
   --card-foreground: #0f2a47;
   --secondary: #0f2a47;
   --secondary-foreground: #f3efec;
-  --muted-foreground: #4b5f75; /* 5,9:1 no claro; 5,12:1 na pedra */
+  /* O apagado: #44566b, 6,80:1 chapado na névoa e 5,85 na pedra. Até 17/10, #4b5f75 no claro (5,9:1); desde 17/10 ("o
+     Atlas Digital", seção 2.1 da direção), o da pedra também no papel, para as duas superfícies claras terem a mesma
+     tinta. Na pedra, desde 16/10 (passe 2): o grão grosso dela escurece o fundo, e, nos pixels, #4b5f75 dava 4,36:1. */
+  --muted-foreground: #44566b;
   /* O vínculo: #7a4e1c, 6,5:1 chapado na névoa e 5,56 na pedra. Até 17/10, #8a5a24 no claro (5,3:1 chapado): com a
      fibra nova do papel e o pico da luz, o fólio dava 4,17:1 no 5º percentil (régua, 1.440 px, /planos). */
   --accent: #7a4e1c;
@@ -224,10 +250,6 @@
   --background: var(--pedra);
   --card: var(--ficha);
   --muted: #e0d8cd;
-  /* O apagado mais fundo na pedra (16/10, passe 2): o grão grosso dela escurece o fundo, e, nos pixels, o apagado de
-     #4b5f75 dava 4,36:1 (o vínculo de #8a5a24, 3,91; desde 17/10 o vínculo fundo vale para os dois tons, acima).
-     Chapado sobre a pedra: 5,85:1. */
-  --muted-foreground: #44566b;
 }
 
 @layer base {
@@ -316,6 +338,20 @@
       scroll-behavior: auto;
     }
   }
+}
+
+/* O foco segue a forma (17/10, "o Atlas Digital"; o fechamento com o Impeccable, A, P2: o anel quadrado dentro da barra
+   em pílula). O contorno do navegador já acompanha o raio de quem tem raio (a pílula de ação, as teclas, a pausa); o
+   que não tem forma própria, o vínculo de texto do Atlas, ganha uma só no foco: no vidro do cabeçalho, a marca e os
+   itens, a pílula, concêntrica à barra; os vínculos com seta e os do rodapé, o raio da ficha (na pílula, a 3 px do
+   texto, a curva encostava na primeira letra). Fora das camadas, para vencer o rounded-none da variante link
+   (components/ui/button.tsx). Os sites de demonstração não usam .vd-barra nem .vd-vinculo, e o rodapé deles não leva
+   data-tom. */
+.vd-barra a:focus-visible {
+  border-radius: 999px;
+}
+:is(.vd-vinculo, footer[data-tom] a):focus-visible {
+  border-radius: var(--r-ficha);
 }
 
 /* Duas seções seguidas no mesmo tom não somam dois respiros: a segunda
