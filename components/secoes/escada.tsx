@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { BarsSpinner } from "@/components/ui/spell/bars-spinner";
 import { Apoio } from "@/components/tipografia";
 import { TiltCard } from "@/components/ui/spell/tilt-card";
-import { criacaoNaFundacao, planos } from "@/conteudo/planos";
+import { planos } from "@/conteudo/planos";
 import { escada, planosSecao, simulador } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
 
@@ -26,16 +26,14 @@ import { reais } from "@/lib/moeda";
  */
 export function Escada() {
   // `abrir` é só do palco; o resto dos rótulos vai ao diálogo.
-  const { sites, abrir, abrirSite, abreEmNovaAba, ...textos } = simulador;
+  const { sites, abrir, ...textos } = simulador;
 
   return (
     // pb-12 md:pb-18 (17/10, passe 4): a seção termina em duas legendas (a nota do nível e o aviso), e depois delas vai
     // meio respiro, e não o inteiro (sobravam 214 px de água abaixo do palco, na mesa).
     <Secao id="escada" tom="escuro" className="pb-12 md:pb-18">
       <Envelope>
-        {/* No celular e no tablet, o título e o lide à esquerda, como o texto do palco (18/10, o passe do celular: o lide
-            de quatro linhas centrado era o parágrafo centrado do primeiro fechamento). Na mesa, centrados. */}
-        <Abertura titulo={escada.titulo} lide={escada.lide} className="max-lg:text-left max-lg:[&>p]:mx-0" />
+        <Abertura titulo={escada.titulo} lide={escada.lide} />
         <Simulador dados={{ textos, sites }}>
           <EscadaDemo niveis={escada.niveis} sites={sites.map(({ id, plano, rotulo }) => ({ id, plano, rotulo }))} rotuloDosNichos={escada.nichos}>
             {sites.map((site, i) => {
@@ -47,27 +45,9 @@ export function Escada() {
                       "Abrir no site" passavam da largura do palco, que os cortava. Com a letra normal, nada quebra a palavra. */}
                   <div className="min-w-0 [overflow-wrap:anywhere]">
                     <p data-parte="texto" className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="text-rotulo font-semibold">{plano.nome}</span>{" "}
-                      {/* O "Recomendado" ao lado do nome, como na tabela (17/10; até então, um selo no canto da prévia). */}
-                      {plano.destaque && (
-                        <>
-                          <span className="vd-cartela">{planosSecao.seloDestaque}</span>{" "}
-                        </>
-                      )}
-                      {/* O preço na condição de fundação (17/10): o valor cheio riscado (o fio de .vd-riscado, o mesmo da
-                          escada e da tabela) e a metade, cada um com o rótulo para o leitor de tela. O me-1.5 (19/10, a
-                          revisão): o fio passa 2 px de cada lado do valor, e só com o espaço ele quase encostava na metade
-                          ("R$ 900—R$ 450"). */}
+                      <span className="text-rotulo font-semibold text-accent">{plano.nome}</span>{" "}
                       <span className="text-nota text-muted-foreground tabular-nums">
-                        <s className="vd-riscado me-1.5">
-                          <span className="sr-only">{planosSecao.fundacao.cheio}: </span>
-                          {reais(plano.criacao)}
-                        </s>{" "}
-                        <span className="font-semibold text-foreground">
-                          <span className="sr-only">{planosSecao.fundacao.metade}: </span>
-                          {reais(criacaoNaFundacao(plano))}
-                        </span>{" "}
-                        {textos.criacao} {planosSecao.fundacao.condicao}
+                        {reais(plano.criacao)} {textos.criacao}
                       </span>
                     </p>
                     {/* Título de bloco: o nome do site em cena, em Archivo Black (de 03 a 05/10, na família do texto), no
@@ -95,71 +75,64 @@ export function Escada() {
                     </p>
                     <div data-parte="texto" className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                       <a href={site.caminho} target="_blank" rel="noopener" data-simulador={i} className={buttonVariants({ size: "lg" })}>
-                        {/* Na mesa, o simulador; fora dela, o próprio site, numa aba nova (17/10, ilhas/simulador.tsx). */}
-                        <span className="vd-espera-rotulo">
-                          <span className="so-na-mesa">{abrir}</span>{" "}
-                          <span className="fora-da-mesa">
-                            {abrirSite}
-                            <span className="sr-only"> {abreEmNovaAba}</span>
-                          </span>
-                        </span>
+                        <span className="vd-espera-rotulo">{abrir}</span>
                         {/* Enquanto o simulador baixa (aria-busy, ilhas/simulador.tsx): as barras no lugar do rótulo. */}
                         <span aria-hidden="true" className="vd-espera">
                           <BarsSpinner tamanho={18} />
                         </span>
                       </a>{" "}
-                      {/* Fora da mesa, a ação principal já abre o site numa aba nova: o segundo vínculo sai. */}
-                      <a href={site.caminho} target="_blank" rel="noopener" className={buttonVariants({ variant: "link", size: "link", className: "so-na-mesa" })}>
+                      <a href={site.caminho} target="_blank" rel="noopener" className={buttonVariants({ variant: "link", size: "link" })}>
                         {textos.novaAba}
                         <IconeSeta className="size-3.5" />
                       </a>
                     </div>
                   </div>
 
-                  {/* A prévia: o site no computador e no celular. Também abre o simulador, com o ponteiro; para o teclado e o
-                      leitor de tela, ela repete o "Abrir no simulador" e fica fora da ordem (17/10, o segundo fechamento: o
-                      Tab subia 333 px, do texto de volta à prévia, que fica ao lado dele e começa mais acima). */}
-                  {/* Fora da mesa, a prévia vem antes do texto (order-first; no HTML, continua depois dele): logo abaixo dos
-                      seletores, a troca de nível muda o site à vista (18/10, o passe do celular; até então, a prévia ficava
-                      embaixo do resumo e do botão, fora da tela de quem trocava o nível). */}
+                  {/* A prévia: o site no computador e no celular, sobre o tom do próprio site. Também abre o simulador. */}
                   <a
                     href={site.caminho}
                     target="_blank"
                     rel="noopener"
                     data-simulador={i}
                     data-parte="bloco"
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    className="group block max-lg:order-first"
+                    aria-label={`${abrir}: ${site.nome}`}
+                    className="group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                   >
                     {/* A prévia inclina em 3D sob o ponteiro, com um brilho (Spell UI, Tilt Card; desde 03/10). */}
-                    {/* Desde 17/10 (a direção final do Atlas Digital, seção 3, item 14), o site no instrumento (.vd-instrumento:
-                        a tela pequena, com o raio --r-instrumento, sem fio): a tela do computador cheia, sem a moldura de
-                        navegador com as três bolinhas (L8), e o celular por cima, no canto, inteiro dentro do instrumento e sobre o
-                        botão de WhatsApp da tela do computador, que ficava ao lado dele (até a revisão de 17/10, o celular
-                        descia 12% além da borda, que o decepava: a figura cortada pela caixa, I8), com o raio da ficha (--r-ficha, a tabela 2.6). As sombras na tinta do tom (--tinta-sombra), e não em preto. */}
-                    <TiltCard limite={6} raio="var(--r-instrumento)">
-                      <span data-tom={site.tom} className="vd-previa vd-instrumento block aspect-[16/10]">
+                    <TiltCard limite={6} raio="var(--radius-xl)">
+                      <span data-tom={site.tom} className="vd-previa relative block aspect-[16/11] overflow-hidden rounded-xl border border-border">
                         {/* Enquanto o simulador baixa, as barras num disco, no centro da prévia. */}
                         <span aria-hidden="true" className="vd-espera z-20">
                           <span className="grid size-14 place-items-center rounded-full bg-background/85 text-foreground">
                             <BarsSpinner tamanho={22} />
                           </span>
                         </span>
-                        {/* A tela do computador, cheia; enquanto a imagem não chega, o lugar dela pulsa devagar (vd-esqueleto),
-                            em vez de ficar vazio. O celular flutua por cima com a sombra (saiu em 03/10 pela regra 3 das
-                            Diretrizes de Design Premium e voltou no mesmo dia, a pedido do usuário: é parte da identidade do
-                            site). */}
-                        <img
-                          src={`/simulador/${site.id}-computador.webp`}
-                          alt=""
-                          width={720}
-                          height={450}
-                          loading="lazy"
-                          decoding="async"
-                          className="vd-esqueleto absolute inset-0 size-full object-cover object-top transition-transform duration-500 ease-atlas group-hover:scale-[1.015]"
-                        />
-                        <span className="vd-moldura-de-celular absolute right-[1.5%] bottom-[3%] w-[23%] overflow-hidden rounded-[var(--r-ficha)] border-[3px] shadow-[0_18px_36px_-16px_rgb(var(--tinta-sombra)/0.8)] transition-transform duration-500 ease-atlas group-hover:-translate-y-2">
+                        {plano.destaque && (
+                          <span className="absolute top-3 right-3 z-10 rounded-full bg-primary px-3 py-1 text-rotulo font-semibold text-primary-foreground">
+                            {planosSecao.seloDestaque}
+                          </span>
+                        )}
+                        {/* As duas telas flutuam com sombras de 75 e 80% de preto (saíram em 03/10 pela regra 3 das
+                            Diretrizes de Design Premium e voltaram no mesmo dia, a pedido do usuário: são parte da
+                            identidade do site); enquanto a imagem não chega, o lugar dela pulsa devagar (vd-esqueleto),
+                            em vez de ficar vazio. */}
+                        <span className="absolute top-[9%] left-[6%] w-[80%] overflow-hidden rounded-[10px] bg-deep shadow-[0_24px_50px_-24px_rgb(0_0_0/0.75)] ring-1 ring-foreground/10 transition-transform duration-500 ease-atlas group-hover:-translate-y-1">
+                          <span aria-hidden="true" className="flex h-4 items-center gap-1 bg-card px-2">
+                            {[0, 1, 2].map((k) => (
+                              <span key={k} className="size-1.5 rounded-full bg-foreground/25" />
+                            ))}
+                          </span>
+                          <img
+                            src={`/simulador/${site.id}-computador.webp`}
+                            alt=""
+                            width={720}
+                            height={450}
+                            loading="lazy"
+                            decoding="async"
+                            className="vd-esqueleto block aspect-[16/10] w-full object-cover object-top"
+                          />
+                        </span>
+                        <span className="vd-moldura-de-celular absolute right-[5%] bottom-[-12%] w-[23%] overflow-hidden rounded-[16px] border-[3px] shadow-[0_24px_50px_-20px_rgb(0_0_0/0.8)] transition-transform duration-500 ease-atlas group-hover:-translate-y-2">
                           <img
                             src={`/simulador/${site.id}-celular.webp`}
                             alt=""
@@ -167,7 +140,7 @@ export function Escada() {
                             height={633}
                             loading="lazy"
                             decoding="async"
-                            className="vd-esqueleto block w-full rounded-[calc(var(--r-ficha)-3px)]"
+                            className="vd-esqueleto block w-full rounded-[13px]"
                           />
                         </span>
                       </span>
@@ -179,9 +152,8 @@ export function Escada() {
           </EscadaDemo>
         </Simulador>
         {/* Os sites do palco são de estabelecimentos fictícios: o aviso em texto, fora do diálogo que só abre com script,
-            logo abaixo da nota do nível, como uma legenda só do palco: na mesa, centrado (o da vitrine também é); fora
-            dela, à esquerda, com o texto do palco (18/10). */}
-        <Apoio className="mt-2 text-nota lg:mx-auto lg:text-center">{textos.aviso}</Apoio>
+            centrado logo abaixo da nota do nível, como uma legenda só do palco (o da vitrine também é centrado). */}
+        <Apoio className="mx-auto mt-2 text-center text-nota">{textos.aviso}</Apoio>
       </Envelope>
     </Secao>
   );

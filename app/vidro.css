@@ -35,10 +35,8 @@
    tokens se declaram em [data-tom], e não no :root: uma variável que usa
    var() se resolve onde é declarada, e no :root o lado e a tinta da página
    nunca chegariam. Fora de [data-tom] (o cabeçalho), não existem: quem as
-   usa dá um valor de reserva. Desde 17/10, o início passa da madrugada ao
-   crepúsculo calculado (o Sol se põe a oeste, a esquerda da carta: a sombra
-   cai para a direita, como de madrugada). */
-[data-hora="crepusculo"],
+   usa dá um valor de reserva. */
+[data-hora="madrugada"],
 [data-hora="tarde"],
 [data-hora="fim-da-tarde"],
 [data-hora="hora-azul"] {
@@ -84,7 +82,7 @@
 [data-tom="escuro"] {
   --materia: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='m' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .2 -.07'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>");
 }
-/* A fibra do papel tem nome próprio (16/10, passe 2): a seção de fora da tela a pinta (abertura-de-pagina.tsx).
+/* A fibra do papel tem nome próprio (16/10, passe 2): a maré de Dúvidas a pinta dentro da água (.vd-mare).
    Desde 17/10 (passe 4b), papel, e não metal escovado: até então, um ruído só, esticado 75 vezes na horizontal
    (.012 × .9), que se lia em estrias finas e paralelas (a avaliação A do fechamento com o Impeccable). Agora, três
    camadas, como a folha de verdade: as fibras curtas, pouco deitadas (.07 × .2, quatro oitavas), e o grão fino, num
@@ -235,18 +233,16 @@
      Desde o segundo fechamento com o Impeccable (17/10): o mar com 4 rem em toda largura (até então, 9 rem no celular
      e 20% da cena na mesa, uma faixa escura vazia antes do rodapé, de 180 a 290 px, a avaliação A), e o sol ao meio,
      logo abaixo da ação principal, que o amanhecer passa a apontar (até então, a 77%, longe de tudo). Quem olha o
-     horizonte da costa olha o leste: o sol nasce à frente. components/secoes/fim.tsx dá ao pé o respiro da luz.
-     Desde 17/10 (a direção final do Atlas Digital, seção 3, item 8), o fio quente e a luz que sobe ficam no azimute
-     real do próximo nascer (--nascer, que ilhas/proximo-amanhecer.tsx põe na cena; sem script, ao meio). */
+     horizonte da costa olha o leste: o sol nasce à frente. components/secoes/fim.tsx dá ao pé o respiro da luz. */
   .vd-amanhecer {
     --horizonte: calc(100% - 4rem);
     --subida: 6rem;
     background-image:
       var(--materia, none),
-      linear-gradient(90deg, transparent calc(var(--nascer, 50%) - 14%), var(--bronze-brilho) var(--nascer, 50%), transparent calc(var(--nascer, 50%) + 14%)),
+      linear-gradient(90deg, transparent 36%, var(--bronze-brilho) 50%, transparent 64%),
       linear-gradient(90deg, transparent, rgb(243 239 236 / 0.24) 14%, rgb(243 239 236 / 0.24) 86%, transparent),
       linear-gradient(in oklch 180deg, var(--deep), var(--moldura)),
-      radial-gradient(in oklch 52% var(--subida) at var(--nascer, 50%) var(--horizonte), var(--agua-rasa), transparent),
+      radial-gradient(in oklch 52% var(--subida) at 50% var(--horizonte), var(--agua-rasa), transparent),
       linear-gradient(in oklch 180deg, var(--deep), var(--background) 45%, var(--meio));
     background-size:
       auto,
@@ -333,6 +329,62 @@
   .vd-metal:not(:disabled):active::before {
     opacity: 1;
     transition-duration: 120ms;
+  }
+
+  /* ---------- o atalho do WhatsApp (celular e tablet; 16/10, passe 3) ----------
+     O metal, com a sombra pelo tom do que passa por trás (data-fundo, ilhas/acao-flutuante.tsx). Na água e no misto,
+     dois aros (o escuro e o creme) e o fio de luz, sem sombra: sombra escura sobre navy não se lê. No papel e na
+     pedra, a sombra curta, tingida de navy, que desce 16 px e sai 10 px dos lados: cabe nos 24 px da margem (até
+     16/10, 0 14px 34px -10px a 55% de preto, cortada pela borda da tela em todas as amostras; A1 e A2).
+     A entrada e a saída nos tokens (09-movimento.md, seção 2; até 16/10, 400 ms nas duas, translúcido sobre o texto
+     durante a passagem; A4): entra em 300 ms, na curva de entrada, com a opacidade a 1 em 120 ms; sai em 200 ms, na
+     de saída, com a opacidade a 0 em 120 ms, e o visibility troca no fim. Com movimento reduzido, só se dissolve. */
+  .vd-atalho {
+    box-shadow:
+      inset 0 1px 0 rgb(255 240 215 / 0.6),
+      inset 0 -1px 0 rgb(107 67 24 / 0.35),
+      0 0 0 1px rgb(2 8 18 / 0.55),
+      0 0 0 2px rgb(243 239 236 / 0.16);
+    translate: 0 12px;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      translate 200ms var(--ease-saida),
+      opacity 120ms linear,
+      box-shadow 160ms var(--ease-lugar),
+      visibility 0s linear 200ms;
+  }
+  .vd-atalho[data-fundo="claro"] {
+    box-shadow:
+      inset 0 1px 0 rgb(255 240 215 / 0.6),
+      inset 0 -1px 0 rgb(107 67 24 / 0.35),
+      0 1px 1px rgb(15 42 71 / 0.16),
+      0 6px 14px -4px rgb(15 42 71 / 0.32);
+  }
+  .vd-atalho[data-visivel] {
+    translate: 0 0;
+    opacity: 1;
+    visibility: visible;
+    transition:
+      translate 300ms var(--ease-entrada),
+      opacity 120ms linear,
+      box-shadow 160ms var(--ease-lugar),
+      visibility 0s;
+  }
+  /* Com movimento reduzido, a lista das propriedades é a de app/movimento.css (com !important: color,
+     background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow,
+     visibility), e as durações seguem a ordem dela: só a opacidade anda, em 150 ms; o visibility troca no fim. */
+  @media (prefers-reduced-motion: reduce) {
+    .vd-atalho,
+    .vd-atalho[data-visivel] {
+      translate: none;
+      transition-duration: 0s, 0s, 0s, 0s, 0s, 0s, 0s, 150ms, 0s, 0s;
+      transition-timing-function: linear;
+      transition-delay: 0s, 0s, 0s, 0s, 0s, 0s, 0s, 0s, 0s, 150ms;
+    }
+    .vd-atalho[data-visivel] {
+      transition-delay: 0s;
+    }
   }
 
   /* ---------- bloco com aresta de luz ----------
@@ -557,25 +609,343 @@
     vector-effect: non-scaling-stroke;
   }
 
-  /* A rosa das perguntas (.vd-rosa, 16/10) e a maré de Dúvidas (.vd-mare, 16/10) saíram em 17/10 com a abertura em
-     água: a rosa do Sol e a tela que sangra pela esquerda moram em app/digital.css ("duvidas"). */
+  /* ---------- a rosa das perguntas, em Dúvidas (16/10) ----------
+     components/paginas/figuras.tsx, MapaDasDuvidas. Os eixos do cruzamento
+     (um fio de 1 px, na cor da divisória, que se apaga para fora), a rosa
+     (as metades acesas no vínculo do escuro, as escuras no do claro) e a
+     agulha, na luz do metal, que aponta o quadrante da palavra sob a mão:
+     200 ms, só girando, na curva da mudança de lugar; instantânea com
+     movimento reduzido. Parte do primeiro quadrante (noroeste, −45°). */
+  .vd-rosa {
+    --rumo: -45deg;
+  }
+  .vd-rosa:has([data-quadrante="ne"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: 45deg;
+  }
+  .vd-rosa:has([data-quadrante="so"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: -135deg;
+  }
+  .vd-rosa:has([data-quadrante="se"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: 135deg;
+  }
+  .vd-rosa-cruz {
+    background:
+      linear-gradient(var(--border), var(--border)) 50% 50% / 1px 100% no-repeat,
+      linear-gradient(var(--border), var(--border)) 50% 50% / 100% 1px no-repeat;
+    -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent);
+    mask-image: radial-gradient(closest-side, #000 30%, transparent);
+  }
+  .vd-rosa-desenho {
+    overflow: visible;
+  }
+  .vd-rosa-desenho .acesa {
+    fill: #d9a76b;
+  }
+  .vd-rosa-desenho .escura {
+    fill: #8a5a24;
+  }
+  .vd-rosa-agulha {
+    fill: none;
+    stroke: var(--bronze-brilho);
+    stroke-width: 1.5px;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    /* A origem do view-box é a do sistema do desenho (0, 0), o centro da rosa, e não o canto do viewBox. */
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transform: rotate(var(--rumo));
+    transition: transform 200ms var(--ease-lugar);
+  }
+  .vd-rosa-pino {
+    fill: var(--bronze-brilho);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vd-rosa-agulha {
+      transition: none;
+    }
+  }
 
-  /* A carta de Niterói de 16/10 (.vd-carta-folha, -aguas, -terra, -pontos) saiu em 17/10 com a figura: a carta
-     eletrônica mora em app/digital.css ("a carta de Niterói"). */
+  /* ---------- a maré, em Dúvidas (16/10) ----------
+     A única emenda deste tipo: os últimos 120 px da abertura se dissolvem
+     no papel da sanfona, de baixo, com a fibra dele por cima; nenhum texto
+     nessa faixa (na mesa, o fólio fica no alto da abertura). A névoa
+     tem nome próprio (--nevoa): aqui dentro, o --background é o navy. */
+  /* Só na mesa (17/10, fechamento com o Impeccable): a 390 px, a passagem se lia como uma faixa de ~200 px de névoa
+     cinza, e a direção manda voltar ao corte reto nesse caso (DIRECAO.md, cena 22). */
+  .vd-mare::after {
+    display: none;
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 120px;
+    pointer-events: none;
+    background-color: var(--nevoa);
+    background-image: var(--fibra);
+    /* A curva da maré: a água fica, e o papel chega no fim (em reta, o meio da faixa lia como névoa cinza). */
+    -webkit-mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.06) 30%, rgb(0 0 0 / 0.25) 55%, rgb(0 0 0 / 0.65) 80%, #000);
+    mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.06) 30%, rgb(0 0 0 / 0.25) 55%, rgb(0 0 0 / 0.65) 80%, #000);
+  }
+  @media (min-width: 1024px) {
+    .vd-mare::after {
+      display: block;
+    }
+  }
 
+  /* ---------- a carta de Niterói, em Para quem (16/10) ----------
+     components/paginas/figuras.tsx, CartaDeNiteroi. A terra em navy mais
+     claro que a água (desde 17/10; até então, na água funda, --moldura); as
+     linhas d'água na água rasa, só traço; a água da carta é
+     a da própria cena. A folha se dissolve na água da cena em cima, embaixo e
+     à esquerda (no celular, também à direita); à direita, na mesa, sangra
+     pela tela. Os pontos dos bairros: bronze, r = 4; sob a mão, o bairro da
+     lista acende o seu, em 120 ms, só na cor e no anel (r = 8,5, por fora do aro creme). */
+  /* A borda de cima se dissolve em 28% da altura (17/10, fechamento com o Impeccable): com 10%, a terra, que chega ao
+     alto da caixa, terminava numa reta, e a carta se lia como um retângulo escuro. */
+  .vd-carta-folha {
+    -webkit-mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.35) 14%, #000 28%, #000 86%, transparent), linear-gradient(90deg, transparent, #000 8%);
+    mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.35) 14%, #000 28%, #000 86%, transparent), linear-gradient(90deg, transparent, #000 8%);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+  @media (max-width: 1023.98px) {
+    .vd-carta-folha {
+      -webkit-mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.35) 14%, #000 28%, #000 86%, transparent), linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+      mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 0.35) 14%, #000 28%, #000 86%, transparent), linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    }
+  }
+  .vd-carta-aguas {
+    fill: var(--agua-rasa);
+  }
+  /* A terra mais clara que a água, como numa carta (17/10, passe 4, fechamento com o Impeccable, A, P5): navy mais
+     claro, no mesmo matiz, e deixa passar um pouco da luz da cena (a da manhã cedo, a leste), o relevo da hora. A
+     linha de costa, um fio mais claro ainda. Até 17/10, a terra em --moldura, mais escura que a água: a carta lia
+     como uma mancha escura. */
+  .vd-carta-terra {
+    fill: oklch(0.47 0.085 251);
+    fill-opacity: 0.88;
+    stroke: oklch(0.6 0.075 251);
+    /* Em metros da carta (o vector-effect não passa pelo <use>): ~1,2 px na mesa, ~0,9 px a 390. */
+    stroke-width: 12px;
+  }
+  .vd-carta-pontos {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .vd-carta-pontos text {
+    fill: var(--foreground);
+    text-anchor: end;
+  }
+  .vd-carta-pontos .credito {
+    fill: var(--muted-foreground);
+    text-anchor: start;
+  }
+  /* O aro creme, como o dos marcos de uma carta, separa o bronze da terra clara (o bronze, sozinho, dá 2,3:1 sobre ela;
+     o aro, 6:1 ou mais). Sob a mão, o anel de bronze aceso, por fora dele. */
+  .vd-carta-pontos .ponto {
+    fill: var(--primary);
+    stroke: var(--foreground);
+    stroke-width: 3px;
+    paint-order: stroke;
+    transition: fill 120ms var(--ease-lugar);
+  }
+  .vd-carta-pontos .anel {
+    fill: none;
+    stroke: var(--bronze-brilho);
+    stroke-width: 1.5px;
+    opacity: 0;
+    transition: opacity 120ms var(--ease-lugar);
+  }
+  .vd-carta:has([data-bairro="0"]:is(:hover, :active, :focus-visible)) [data-ponto="0"],
+  .vd-carta:has([data-bairro="1"]:is(:hover, :active, :focus-visible)) [data-ponto="1"],
+  .vd-carta:has([data-bairro="2"]:is(:hover, :active, :focus-visible)) [data-ponto="2"] {
+    & .ponto {
+      fill: var(--bronze-brilho);
+    }
+    & .anel {
+      opacity: 1;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vd-carta-pontos :is(.ponto, .anel) {
+      transition: none;
+    }
+  }
+
+  /* ---------- a régua da tarde de O trabalho (16/10) ----------
+     A quadrícula dos dias úteis (components/paginas/figuras.tsx,
+     ReguaDoTrabalho): uma coluna por dia (15), com o fio no traço de cada
+     dia, e cinco células de altura, em navy a 7%; o último fio, à direita,
+     é a borda. A trena, de metal, projeta a sombra curta para o leste. */
+  .vd-quadricula {
+    border-right: 1px solid rgb(15 42 71 / 0.07);
+    background-image:
+      linear-gradient(90deg, rgb(15 42 71 / 0.07) 1px, transparent 1px),
+      linear-gradient(180deg, rgb(15 42 71 / 0.07) 1px, transparent 1px);
+    background-size: calc(100% / 15) 20%;
+  }
+  .vd-trena-sombra {
+    filter: drop-shadow(calc(var(--sombra-dx, 0) * 1px) 1px 1px rgb(15 42 71 / 0.28));
+  }
+
+  /* ---------- a derrota do início (17/10, passe 4b) ----------
+     As quatro etapas plotadas na água como o rumo de uma carta
+     (components/secoes/passos.tsx): o arco do rumo, em bronze, gravado (o
+     sulco cai para o sudeste, longe da luz da madrugada), as estações com o
+     símbolo da posição (o círculo com o ponto) e as cotas em creme, com o
+     traço oblíquo nas pontas. --u é a unidade da prancha (1.120 na coluna).
+     Três arranjos, pela largura da coluna, e não da tela (a letra a 200%
+     estreita a coluna em rem): de 40 rem para cima, a prancha inteira, com
+     os rótulos no desenho; de 17 a 40 rem (o celular), o desenho compacto,
+     com os valores das cotas, e as estações em lista embaixo; abaixo de 17
+     rem, só a lista. É o único rumo, a única cota e a única estação do site. */
+  .vd-derrota {
+    container-type: inline-size;
+  }
+  .vd-derrota-prancha {
+    --u: calc(100cqi / 1120);
+    --uc: calc(100cqi / 342);
+    position: relative;
+  }
+  .vd-derrota-prancha svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .vd-derrota-prancha > .vd-derrota-mesa {
+    display: none;
+  }
+  .vd-derrota-rumo {
+    fill: none;
+    stroke-width: 1.5px;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(1px 1px 0 rgb(2 8 18 / 0.7));
+  }
+  .vd-derrota-cotas path {
+    fill: none;
+    stroke: color-mix(in srgb, var(--foreground) 40%, transparent);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+  .vd-derrota-cotas .chamada {
+    stroke: color-mix(in srgb, var(--foreground) 22%, transparent);
+  }
+  .vd-derrota-cotas .fim {
+    stroke: color-mix(in srgb, var(--foreground) 72%, transparent);
+    stroke-width: 1.25px;
+  }
+  .vd-fixo {
+    position: absolute;
+    left: calc(var(--xc) * var(--uc));
+    top: calc(var(--yc) * var(--uc));
+    width: 13px;
+    height: 13px;
+    translate: -50% -50%;
+    border: 1.5px solid var(--primary);
+    border-radius: 50%;
+    filter: drop-shadow(1px 1px 0 rgb(2 8 18 / 0.7));
+  }
+  .vd-fixo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 3px;
+    height: 3px;
+    margin: auto;
+    border-radius: 50%;
+    background: var(--foreground);
+  }
+  .vd-derrota-etapas {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+  .vd-estacao {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    align-items: baseline;
+  }
+  .vd-estacao > :not(:first-child),
+  .vd-cota {
+    grid-column: 2;
+  }
+  .vd-estacao-marca,
+  .vd-cota {
+    margin-top: 0.25rem;
+  }
+  .vd-cota {
+    padding-left: 2.5rem;
+  }
+  /* No celular, o número da estação e o valor da cota se desenham na prancha (o SVG, aria-hidden), e a lista leva a
+     marca inteira, o valor e a unidade juntos (17/10, segundo fechamento): até então, o valor ficava só no desenho, e
+     a lista dizia "dias úteis, em geral", sem o número. */
+  .vd-derrota-legendas text {
+    fill: var(--accent);
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-titulo);
+  }
+  .vd-derrota-legendas .numero {
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  .vd-derrota-legendas .valor {
+    font-size: 26px;
+  }
+  @container (min-width: 40rem) {
+    .vd-derrota-prancha > .vd-derrota-mesa {
+      display: block;
+    }
+    .vd-derrota-prancha > .vd-derrota-celular {
+      display: none;
+    }
+    /* Os rótulos das estações descem abaixo do desenho no tablet (o texto não escala com a prancha): a folga é a
+       diferença, nenhuma a 1.440 px e 62 px a 768. */
+    .vd-derrota-prancha {
+      margin-bottom: max(0px, calc(10rem - 160 * var(--u)));
+    }
+    .vd-fixo {
+      left: calc(var(--x) * var(--u));
+      top: calc(var(--y) * var(--u));
+    }
+    .vd-derrota-etapas {
+      display: block;
+      margin: 0;
+    }
+    .vd-estacao {
+      position: absolute;
+      left: calc(var(--x) * var(--u));
+      top: calc(var(--y) * var(--u) + 18px);
+      display: block;
+      width: calc(260 * var(--u));
+    }
+    .vd-estacao > :first-child {
+      margin-bottom: 0.25rem;
+    }
+    .vd-cota {
+      position: absolute;
+      left: calc(var(--x) * var(--u));
+      top: calc(var(--y) * var(--u) - 6px);
+      width: max-content;
+      max-width: calc(300 * var(--u));
+      margin: 0;
+      padding: 0;
+      translate: -50% -100%;
+      text-align: center;
+    }
+    .vd-cota :is(.valor, .rotulo) {
+      display: block;
+    }
+  }
   /* ---------- o carimbo do canto da prancha (a fundação do início, 17/10) ----------
      O bloco de campos do desenho técnico (components/secoes/fundacao.tsx): o
-     filete de bronze em volta (o de 03/10; desde a revisão de 17/10, o metal
-     chapado #8a5a24, e não mais --primary a 45%, o bronze em alfa baixo sobre
-     o navy que se lia pardo, a trava C14), com o raio da ficha
-     (--r-ficha, 12 px, desde 17/10, a direção final do Atlas Digital: o
-     carimbo é papel impresso, não tela; antes, 32 px e, até o primeiro
-     estudo de 17/10, cantos vivos), e os fios do tom entre os campos. Na água, sem fundo
+     filete de bronze a 45% em volta (o de 03/10), cantos vivos, como o
+     esquadro da folha, e os fios do tom entre os campos. Na água, sem fundo
      próprio: o carimbo é impresso na carta. É o único carimbo do site. */
   .vd-carimbo {
     container-type: inline-size;
-    border: 1px solid #8a5a24;
-    border-radius: var(--r-ficha);
+    border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent);
+    border-radius: 2px;
   }
   .vd-carimbo-campo {
     padding: 1.5rem 1.25rem;
@@ -619,11 +989,168 @@
     }
   }
 
-  /* A escada de pedra de Planos (16/10) saiu daqui em 17/10: a escada em dois estados mora em app/digital.css, na
-     seção "planos" (o nome .vd-degrau é dela). */
+  @container (max-width: 16.99rem) {
+    .vd-derrota-prancha svg,
+    .vd-fixo {
+      display: none;
+    }
+    .vd-derrota-etapas {
+      margin-top: 0;
+    }
+  }
 
-  /* A folha de O Atlas (16/10: a moldura graduada, a grade cônica e o pouso do globo) saiu daqui em 17/10: a moldura,
-     o bisel da tela, mora em app/digital.css, na seção "o-atlas", e a grade cônica passou à história. */
+  /* ---------- a escada de pedra de Planos (16/10) ----------
+     Cada degrau (components/paginas/figuras.tsx, EscadaDePrecos) é pedra
+     sob a luz da manhã, que vem do leste: a face de cima acesa, o lado do
+     leste claro, o do oeste em sombra. A sombra no chão (a partir de 1024
+     px, no papel de baixo): 38% da altura do degrau, no máximo 120 px,
+     inclinada para o oeste, que se apaga longe do pé. */
+  .vd-degrau {
+    box-shadow:
+      inset 0 3px 0 oklch(0.95 0.012 74),
+      inset -2px 0 0 rgb(255 255 255 / 0.35),
+      inset 2px 0 0 rgb(15 42 71 / 0.08);
+  }
+  .vd-sombra-do-degrau {
+    align-self: start;
+    height: min(calc(var(--altura) * 0.38), 96px);
+    transform-origin: top;
+    transform: skewX(-32deg);
+    /* A penumbra: a borda da sombra se esfuma longe do pé (o desfoque é de três elementos, parados). */
+    filter: blur(1.5px);
+    background: linear-gradient(in oklch 180deg, rgb(15 42 71 / 0.2), rgb(15 42 71 / 0.05) 65%, transparent);
+  }
+
+  /* ---------- a folha de O Atlas (16/10) ----------
+     A moldura graduada (components/paginas/figuras.tsx, MolduraGraduada):
+     faixas de 6 px, recuadas 24 px da cena (a de cima, abaixo dos 72 px do
+     cabeçalho; a de baixo, na emenda), com os fios dos dois lados e os
+     segmentos de um minuto de arco alternados (o bronze da ação a 70% e a
+     água). Cada faixa é um ladrilho de dois minutos, centrado: a fronteira
+     de dois segmentos cai no meio da faixa, em Niterói. No celular, a
+     moldura fica dentro dos 24 px da margem.
+     Desde 17/10 (passe 4, fechamento com o Impeccable), o recuo cresce até
+     32 px quando a margem da página deixa (a margem do Envelope menos 16 px:
+     a barra e 10 px de folga até o texto; 32 px a partir de 1.136 px de
+     cena), e o rótulo da latitude, que fica na faixa de fora da barra, só
+     aparece com os 32 px: com 24, ficava a 4,5 px da borda da tela e da
+     barra (e, no celular, com 11, encostava nela). Abaixo de 1.136 px, só o
+     rótulo da longitude. */
+  .vd-moldura {
+    container-type: inline-size;
+    --moldura-barra: 6px;
+    --minuto-lat: 40px;
+    --minuto-lon: 36.85px; /* 40 · cos 22,88° */
+    --moldura-seg: color-mix(in srgb, var(--primary) 70%, transparent);
+  }
+  /* Nos filhos: o cqi resolve contra a própria moldura (a cena inteira, sem a barra de rolagem). A margem do Envelope é
+     a sobra da coluna (--container-pagina) dividida por dois, mais os 2,5 rem dele (components/estrutura.tsx). */
+  .vd-moldura > * {
+    --moldura-recuo: clamp(24px, (100cqi - min(100cqi, var(--container-pagina))) / 2 + 2.5rem - 16px, 32px);
+  }
+  @container (max-width: 1135.98px) {
+    .vd-moldura-latitude {
+      display: none;
+    }
+  }
+  @media (max-width: 767.98px) {
+    .vd-moldura {
+      --moldura-barra: 4px;
+    }
+    .vd-moldura > * {
+      --moldura-recuo: 11px;
+    }
+  }
+  .vd-moldura-barra {
+    position: absolute;
+    border: 0 solid var(--moldura-seg);
+  }
+  .vd-moldura-esquerda,
+  .vd-moldura-direita {
+    top: calc(72px + var(--moldura-recuo));
+    bottom: 0;
+    width: var(--moldura-barra);
+    border-inline-width: 1px;
+    background: linear-gradient(180deg, var(--moldura-seg) 50%, transparent 50%) 0 50% / 100% calc(2 * var(--minuto-lat)) repeat-y;
+  }
+  .vd-moldura-esquerda {
+    left: var(--moldura-recuo);
+  }
+  .vd-moldura-direita {
+    right: var(--moldura-recuo);
+  }
+  .vd-moldura-topo,
+  .vd-moldura-base {
+    left: var(--moldura-recuo);
+    right: var(--moldura-recuo);
+    height: var(--moldura-barra);
+    border-block-width: 1px;
+    background: linear-gradient(90deg, var(--moldura-seg) 50%, transparent 50%) 50% 0 / calc(2 * var(--minuto-lon)) 100% repeat-x;
+  }
+  .vd-moldura-topo {
+    top: calc(72px + var(--moldura-recuo));
+  }
+  .vd-moldura-base {
+    bottom: 0;
+  }
+  .vd-moldura-rotulo {
+    position: absolute;
+    overflow: visible;
+    font-size: 12px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    fill: var(--muted-foreground);
+    stroke: var(--moldura-seg);
+  }
+  .vd-moldura-rotulo text {
+    stroke: none;
+    text-anchor: middle;
+  }
+  /* A latitude, na margem de fora da barra da esquerda, deitada ao longo dela, no meio. */
+  .vd-moldura-latitude {
+    left: 0;
+    top: calc(50% + (72px + var(--moldura-recuo)) / 2);
+    width: var(--moldura-recuo);
+    height: 80px;
+    translate: 0 -50%;
+  }
+  .vd-moldura-latitude text {
+    dominant-baseline: central;
+    transform: rotate(-90deg);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  /* A longitude, por dentro da barra de baixo, com o traço na fronteira do minuto: --minutos a oeste do meio. */
+  .vd-moldura-longitude {
+    bottom: var(--moldura-barra);
+    left: calc(50% - var(--minutos) * var(--minuto-lon));
+    width: 80px;
+    height: 30px;
+    translate: -50% 0;
+  }
+  /* O papel sob o globo que pousa: a grade da projeção cônica, que se apaga embaixo e nos lados, e a sombra de
+     contato, deslocada para o leste (a luz do fim da tarde vem do oeste). */
+  .vd-projecao {
+    fill: none;
+    stroke: rgb(138 90 36 / 0.14);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+    -webkit-mask-image: radial-gradient(50% 100% at 50% 0%, #000 45%, transparent 100%);
+    mask-image: radial-gradient(50% 100% at 50% 0%, #000 45%, transparent 100%);
+  }
+  .vd-projecao * {
+    vector-effect: non-scaling-stroke;
+  }
+  .vd-pouso-do-globo {
+    left: 50%;
+    top: 100%;
+    width: 60%;
+    height: 10%;
+    translate: calc(-50% + 8%) -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(15 42 71 / 0.18), rgb(15 42 71 / 0.07) 60%, transparent);
+  }
 
   /* ---------- aparelho ----------
      Moldura de celular em CSS, proporcional à largura (unidades cqw do
@@ -679,23 +1206,21 @@
     top: 36cqw;
     height: 22cqw;
   }
-  /* A tela do aparelho só como filha da moldura (desde 17/10): o nome .vd-tela passou a ser também a janela navy do
-     sistema (app/digital.css), e solto ele levaria a proporção, o branco e a ilha do celular para ela. */
-  .vd-celular > .vd-tela {
+  .vd-tela {
     position: relative;
     aspect-ratio: 390 / 844;
     overflow: hidden;
     border-radius: 11.6cqw;
     background: #ffffff;
   }
-  .vd-celular > .vd-tela > img {
+  .vd-tela > img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
   }
   /* Ilha superior do aparelho. */
-  .vd-celular > .vd-tela::before {
+  .vd-tela::before {
     content: "";
     position: absolute;
     z-index: 2;
@@ -708,7 +1233,7 @@
     transform: translateX(-50%);
   }
   /* Reflexo do vidro da tela. */
-  .vd-celular > .vd-tela::after {
+  .vd-tela::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -825,28 +1350,23 @@
 
   /* ---------- a folha dobrada, as portas do início (17/10, passe 4b) ----------
      As seis casas são os painéis de uma folha só (components/paginas/portas.tsx),
-     dobrada em sanfona na vertical e ao meio na horizontal. A luz (até a direção
-     final, logo abaixo, a da madrugada; desde ela, a do crepúsculo) vem do
-     oeste: o painel que se inclina para o oeste fica aceso, o que se
+     dobrada em sanfona na vertical e ao meio na horizontal. A luz da madrugada
+     vem do noroeste: o painel que se inclina para o oeste fica aceso, o que se
      inclina para o leste, na sombra (o navy da tinta a 6–13%, nunca abaixo
      do --papel-sombra sob o texto; até o segundo fechamento com o Impeccable,
      17/10, de 2,5 a 7,5%, e a folha se lia como seis cartões brancos iguais,
      a avaliação A); a crista leva o fio de luz, e o vale, o fio escuro. A sombra é camada de imagem sobre a cor do bloco, que continua a se
      tingir sob a mão. Na mesa, 3 × 2; no tablet, 2 × 3; no celular, a tira de
      seis, encostados (o vão da galeria a 0). É a única dobra do site. */
-  /* Desde 17/10 (o Atlas Digital), a luz do crepúsculo do início e a folha quase aberta: a sombra do painel que olha
-     para o leste de 3,5 a 6% (até então, de 6 a 13%, e a coluna do meio se lia como mancha cinza: o fechamento com o
-     Impeccable, A, P3), e cada dobra dita pelo vinco, em par: na crista, o fio de luz de um lado e o fio de tinta do
-     outro; no vale, o fio escuro a 16% (até então, 26%) e, do outro lado, a face acesa que pega a luz. */
   .vd-painel {
     --tinta: 15 42 71;
-    --acesa-a: linear-gradient(90deg, transparent 60%, rgb(255 255 255 / 0.45) calc(100% - 1px), rgb(255 255 255 / 0.95) calc(100% - 1px));
-    --acesa-b: linear-gradient(90deg, rgb(255 255 255 / 0.6) 1px, rgb(var(--tinta) / 0.05) 1px, transparent 32%, transparent 60%, rgb(255 255 255 / 0.45) calc(100% - 1px), rgb(255 255 255 / 0.95) calc(100% - 1px));
-    --acesa-fim: linear-gradient(90deg, rgb(255 255 255 / 0.6) 1px, rgb(var(--tinta) / 0.05) 1px, transparent 32%);
-    --sombra: linear-gradient(90deg, rgb(var(--tinta) / 0.09) 1px, rgb(var(--tinta) / 0.035) 1px, rgb(var(--tinta) / 0.06) calc(100% - 1px), rgb(var(--tinta) / 0.16) calc(100% - 1px));
-    --sombra-fim: linear-gradient(90deg, rgb(var(--tinta) / 0.09) 1px, rgb(var(--tinta) / 0.035) 1px, rgb(var(--tinta) / 0.05));
-    --vale-baixo: linear-gradient(180deg, transparent 72%, rgb(var(--tinta) / 0.04) calc(100% - 1px), rgb(var(--tinta) / 0.14) calc(100% - 1px));
-    --vale-alto: linear-gradient(180deg, rgb(255 255 255 / 0.55) 1px, rgb(var(--tinta) / 0.045) 1px, transparent 26%);
+    --acesa-a: linear-gradient(90deg, transparent 55%, rgb(255 255 255 / 0.55) calc(100% - 1px), rgb(255 255 255 / 0.95) calc(100% - 1px));
+    --acesa-b: linear-gradient(90deg, rgb(var(--tinta) / 0.08), transparent 40%, transparent 55%, rgb(255 255 255 / 0.55) calc(100% - 1px), rgb(255 255 255 / 0.95) calc(100% - 1px));
+    --acesa-fim: linear-gradient(90deg, rgb(var(--tinta) / 0.08), transparent 40%);
+    --sombra: linear-gradient(90deg, rgb(var(--tinta) / 0.06), rgb(var(--tinta) / 0.09) 70%, rgb(var(--tinta) / 0.13) calc(100% - 1px), rgb(var(--tinta) / 0.26) calc(100% - 1px));
+    --sombra-fim: linear-gradient(90deg, rgb(var(--tinta) / 0.06), rgb(var(--tinta) / 0.1));
+    --vale-baixo: linear-gradient(180deg, transparent 68%, rgb(var(--tinta) / 0.06) calc(100% - 1px), rgb(var(--tinta) / 0.2) calc(100% - 1px));
+    --vale-alto: linear-gradient(180deg, rgb(var(--tinta) / 0.07), transparent 30%);
     --crista-baixo: linear-gradient(180deg, transparent 80%, rgb(255 255 255 / 0.6) calc(100% - 1px), rgb(255 255 255 / 0.95) calc(100% - 1px));
     background-image: var(--dobra-y, none), var(--dobra-x, none);
   }
@@ -857,14 +1377,14 @@
     }
     li:first-child > .vd-painel {
       --dobra-x: var(--acesa-a);
-      border-radius: var(--r-ficha) 0 0 var(--r-ficha);
+      border-radius: 4px 0 0 4px;
     }
     li:nth-child(even) > .vd-painel {
       --dobra-x: var(--sombra);
     }
     li:last-child > .vd-painel {
       --dobra-x: var(--sombra-fim);
-      border-radius: 0 var(--r-ficha) var(--r-ficha) 0;
+      border-radius: 0 4px 4px 0;
     }
     .vd-galeria-quadro.vd-dobrada {
       --galeria-vao: 0px;
@@ -909,28 +1429,19 @@
      liso, com o raio do contêiner. Vai direto na peça que chega tarde — a
      <img> das prévias, da tela da vitrine e das fotos dos sócios (a imagem,
      ao chegar, cobre o fundo) — ou em blocos que desenham a forma do
-     conteúdo (o quadro do simulador enquanto o site abre). Pulsa pela
-     opacidade, de 1 a 0,55 (a leitura do fundo do tom), devagar, seis
-     vezes, e para. A opacidade fica no compositor, sem repintar: até 18/10,
-     o pulso era da cor do fundo, e repintava cinco imagens a cada quadro,
-     também fora da tela e depois de chegarem (de 10 a 18% da linha
-     principal, parada no topo de /planos a 390 com a CPU 4×). Na <img>, a
-     opacidade pulsaria a imagem já carregada (03/10): o script do <head>
-     (app/layout.tsx) cancela o pulso quando ela chega, e também quando ele
-     recomeça sobre uma imagem já chegada (a pausa desligada, a peça que
-     volta a aparecer). Sem script, não pulsa (.js). Com movimento reduzido
-     e com a pausa do cabeçalho (.ambiente-pausado), não pulsa. É
+     conteúdo (o quadro do simulador enquanto o site abre). Por isso o pulso
+     não mexe na opacidade, que faria pulsar a imagem já carregada: é a cor
+     do fundo que vai do apagado ao fundo do tom e volta (a mesma leitura de
+     uma opacidade de 1 a 0,55), devagar, seis vezes, e para — não repinta
+     para sempre o que já chegou. Com movimento reduzido, não pulsa. É
      decorativo: o que carrega vai escrito para leitor de tela, fora dele. */
   .vd-esqueleto {
     border-radius: inherit;
     background-color: var(--muted);
   }
   @media (prefers-reduced-motion: no-preference) {
-    .js .vd-esqueleto {
+    .vd-esqueleto {
       animation: vd-esqueleto 1.6s ease-in-out 6;
-    }
-    .ambiente-pausado .vd-esqueleto {
-      animation: none;
     }
   }
 }
@@ -980,42 +1491,12 @@
 
 @keyframes vd-esqueleto {
   50% {
-    opacity: 0.55;
+    background-color: color-mix(in srgb, var(--muted) 55%, var(--background));
   }
 }
 @keyframes vd-espera {
   50% {
     opacity: 0.55;
-  }
-}
-
-/* Os seletores em cores forçadas (desde 18/10, o fechamento): o cursor é um fundo translúcido, que o sistema apaga, e a
-   tinta da opção escolhida vira a das outras; na medida dos pixels, a escolhida diferia das irmãs em 1 (a vitrine, a
-   390) e de 16 a 20 (/planos), contra 157 a 188 no montador. O cursor no realce do sistema, e a escolhida na tinta
-   dele, como no montador. Fora da camada, para vencer o data-pressed:text-foreground e o peer-checked:text-foreground
-   dos utilitários. */
-@media (forced-colors: active) {
-  /* O vidro, que o sistema deixa translúcido (o alfa do fundo fica), na tela de /planos passava o navy: cinza por trás
-     das opções. Chapado no fundo do sistema. */
-  .vd-segmento {
-    background-color: Canvas;
-  }
-  .vd-segmento-cursor {
-    forced-color-adjust: none;
-    background: Highlight;
-    box-shadow: none;
-  }
-  /* Fora do ajuste do sistema: com ele, a placa clara atrás do texto apagava o HighlightText. O anel de foco no realce,
-     como o sistema o pinta; o da vitrine, que fica dentro do cursor, na tinta dele. */
-  .vd-segmento [aria-pressed="true"] {
-    forced-color-adjust: none;
-    color: HighlightText;
-    outline-color: Highlight;
-  }
-  .vd-segmento input:checked + span {
-    forced-color-adjust: none;
-    color: HighlightText;
-    outline-color: HighlightText;
   }
 }
 
@@ -1051,10 +1532,8 @@
    claro. Sobre os dois tons de uma vez, a tinta navy fica densa. */
 header[data-fundo="claro"] .vd-barra {
   --foreground: #0f2a47;
-  /* As tintas do papel e da pedra (DIRECAO-DIGITAL.md, 2.1; app/globals.css): até 18/10, o apagado #4b5f75 e o
-     vínculo #8a5a24, os do claro antes de 17/10. O anel de foco fica no #8a5a24, como nos tons claros. */
-  --muted-foreground: #44566b;
-  --accent: #7a4e1c;
+  --muted-foreground: #4b5f75; /* 5,9:1 sobre o vidro claro */
+  --accent: #8a5a24;
   --ring: #8a5a24;
   --card: #ffffff;
   --border: rgb(15 42 71 / 0.14);
@@ -1295,22 +1774,6 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
     animation: vd-galeria-avanco linear both;
     animation-timeline: --galeria;
   }
-  /* Com a pausa do cabeçalho e com movimento reduzido (18/10), o polegar não corre com a galeria, e o trilho guarda o
-     lugar vazio, como sem a linha do tempo de rolagem: parado, o polegar mentiria a posição. */
-  .ambiente-pausado .vd-galeria-trilho {
-    visibility: hidden;
-  }
-  .ambiente-pausado .vd-galeria-trilho::after {
-    animation: none;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .vd-galeria-trilho {
-      visibility: hidden;
-    }
-    .vd-galeria-trilho::after {
-      animation: none;
-    }
-  }
   @supports (animation-timeline: scroll()) {
     @media (max-width: 767.98px) {
       .vd-galeria-quadro:not(.vd-galeria-lg) > .vd-galeria-trilho {
@@ -1342,24 +1805,5 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
 @keyframes vd-galeria-avanco {
   to {
     translate: calc((1 / var(--galeria-polegar, 0.34) - 1) * 100%) 0;
-  }
-}
-
-/* ── a tela lisa (17/10, o Atlas Digital) ──
-   O segundo navy (DIRECAO-DIGITAL.md, seções 1.1 e 2.2): a água, em sangria e com grão, é o atlas, e fica como está
-   (:where([data-tom="escuro"]).vd-materia, acima); a tela, recortada no papel, é o digital, e é lisa: o acaso é do atlas,
-   a ordem é da tela, e na tela o ponto só existe onde há dado (nas figuras). Aqui, só a matéria da tela e do
-   instrumento; a forma (a margem de papel, os raios, o fio de luz) mora em app/digital.css. A matéria se desliga
-   (--materia: none: uma peça de pedra dentro da tela declara o próprio data-tom) e a rampa vai em oklch, do navy à água
-   funda, com o pico da hora da página em --meio, o mais claro que fica sob texto (--luz-x, --luz-y e --angulo, no
-   style da página; a .vd-cena não entra na tela). Pede data-tom="escuro" no mesmo elemento: a rampa sai do
-   --background dele. Depois da .vd-materia e da .vd-cena, para vencer as duas no mesmo peso; o :not() deixa de fora a
-   tela do aparelho (.vd-celular > .vd-tela, acima), que tem o mesmo nome. */
-@layer components {
-  :is(.vd-tela, .vd-tela-sangra-direita, .vd-tela-sangra-esquerda, .vd-instrumento):not(.vd-celular > *) {
-    --materia: none;
-    background-image:
-      radial-gradient(in oklch 62% 80% at var(--luz-x, 0%) var(--luz-y, 20%), var(--meio) 0%, transparent 72%),
-      linear-gradient(in oklch var(--angulo, 100deg), var(--background) 0%, #0b2340 62%, var(--deep) 100%);
   }
 }

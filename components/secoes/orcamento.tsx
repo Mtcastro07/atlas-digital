@@ -21,15 +21,11 @@ function SemScript() {
  * O montador de orçamento, com o desenho da tabela do site de 28/08, na
  * névoa (o bloco claro de decisão), no início: o texto à esquerda e o
  * painel à direita. O aviso para quem está sem script fica sob o texto.
- * Desde 16/10, o painel é uma ficha que sobe sobre o navy dos passos; desde
- * 17/10 (a direção final do Atlas Digital, seção 3, item 5), a ficha de
- * papel com o raio de 12 px, e os totais chapados que acendem em pontos na
- * troca. A conta em pontos e a carta dos pagamentos ficam só na página
- * Orçamento (um bloco não se repete).
+ * Desde 16/10, o painel é uma ficha que sobe sobre o navy dos passos.
  */
 export function Orcamento() {
   return (
-    // data-sem-atalho: a barra do polegar some enquanto o montador está na tela (ilhas/barra-do-polegar.tsx).
+    // data-sem-atalho: o atalho do WhatsApp some enquanto o montador está na tela (ilhas/acao-flutuante.tsx).
     <Secao id="orcamento" data-sem-atalho tom="claro">
       <Envelope className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
         <div className="lg:sticky lg:top-28">
@@ -57,10 +53,7 @@ export function Orcamento() {
  * A figura da página Orçamento (desde 16/10): o próprio montador, com a
  * tabela completa (ilhas/montador.tsx), logo abaixo do título "Dois
  * toques, valor exato." — a abertura e a ferramenta numa cena só, e a
- * primeira tela, na mesa, já com o plano para escolher. Desde 17/10 (a
- * direção final do Atlas Digital, seção 3, item 16), a ferramenta em duas
- * colunas no papel do meio-dia: as escolhas à esquerda e a conta num
- * instrumento à direita, com o total em pontos. Até 16/10, a
+ * primeira tela, na mesa, já com o plano para escolher. Até 16/10, a
  * figura era a equação (plano mais módulos é igual a criação mais
  * mensalidade), num cartão parado que repetia o lide, e o montador vinha
  * numa seção à parte, na mesma névoa, com a borda de cima no pé da

@@ -147,19 +147,6 @@ export const portas = {
   rotulo: "O site",
   titulo: ["O essencial,", "em seis páginas."],
   lide: "Uma página por assunto, com o dado principal à frente.",
-  /**
-   * O caminho desta visita no pé das portas (desde 17/10, a direção final do Atlas Digital, seção 3, item 7): a
-   * legenda da folha, na gramática das cartas do site (o traço é o que já passou; o ponto, o que falta), e o estado
-   * de cada porta para o leitor de tela.
-   */
-  visita: {
-    traco: "as páginas já abertas nesta visita.",
-    ponto: "as que faltam.",
-    /** O índice da rota da visita, sob a galeria do celular (desde 18/10): só onde ele existe, e só à vista. */
-    aqui: "a porta à vista.",
-    memoria: "O caminho fica só na memória desta aba e some ao recarregar.",
-    vista: "Já aberta nesta visita.",
-  },
 };
 
 /**
@@ -203,35 +190,6 @@ export const figuras = {
       { bairro: "Santa Rosa", nicho: "barbearia", caminho: "/demos/barbearia" },
     ],
     nota: "Os bairros dos três sites de exemplo (estabelecimentos fictícios).",
-    /**
-     * A carta eletrônica (desde 17/10, a direção final do Atlas Digital, seção 3, item 9;
-     * components/paginas/carta-de-niteroi.tsx): a carta desliza sob a lente parada, e a leitura diz o ponto dela.
-     */
-    carta: {
-      /** O nome da carta para o leitor de tela, com o que as teclas fazem (a região é focável). */
-      regiao: "Carta de Niterói. As setas movem a carta sob a lente; Início volta ao ponto de partida.",
-      /** A tecla do bairro leva a lente até o nó dele. */
-      irAoBairro: "Levar a lente a",
-      leitura: { rotulo: "Sob a lente", terra: "em terra", agua: "na água", no: "Sobre o nó de", carimbo: "O mais perto dos três bairros dos sites de exemplo, em linha reta até o nó do OpenStreetMap. Calculado neste aparelho." },
-      /** As três metades que quem visita separa com a mão: o traço gravado, o ponto de tela e a medida. */
-      camadas: [
-        { id: "gravura", rotulo: "Gravura" },
-        { id: "pontos", rotulo: "Pontos" },
-        { id: "graus", rotulo: "Graus" },
-      ],
-      rotuloDasCamadas: "Camadas da carta",
-      /**
-       * A legenda de carta (.vd-legenda-de-carta): o que é, a fonte, a escala e o crédito que a ODbL exige. Curta desde
-       * a revisão de 17/10: na mesa, ela fecha a coluna do título, e a tela inteira cabe na janela (a 1.366 × 768 também).
-       */
-      legenda: {
-        termo: "Carta de Niterói.",
-        // Com o espaço inseparável entre o número e a unidade (18/10): a 360, "8" e "m" caíam em linhas diferentes.
-        texto: "Ruas e costa simplificadas a 8\u00a0m, só no município. O minuto de longitude mede 1,71\u00a0km; o de latitude, 1,84\u00a0km.",
-        credito: "©\u00a0colaboradores do OpenStreetMap (ODbL)",
-        licenca: "https://www.openstreetmap.org/copyright",
-      },
-    },
   },
   /** Orçamento: a conta, em quatro termos. */
   equacao: [
@@ -241,76 +199,24 @@ export const figuras = {
     { termo: "Mensalidade", valor: "valor declarado por plano" },
   ],
   /**
-   * O trabalho: a folha das primeiras 72 horas (desde 17/10, a direção final do Atlas Digital; até então, a régua do
-   * prazo em escala, com o relógio em cartão; components/secoes/trabalho.tsx). A legenda da folha (o termo, na tinta,
-   * e o que ele quer dizer), o gesto, e a frase estável que o HTML do servidor traz no lugar da data viva de cada etapa.
+   * O trabalho: a régua do prazo, em escala — dias úteis contados do
+   * briefing completo. Os números de cada etapa ficam na seção (marcas);
+   * aqui, só a proporção: o rascunho é um traço no começo, e a maior
+   * parte do caminho é revisão e aprovação.
    */
-  folha: {
-    legenda: [
-      ["Traço:", "o firme e o que já passou: o briefing, as 24 horas do rascunho e o Sol de hoje até agora."],
-      ["Ponto:", "o que a folha calcula: o Sol das próximas horas, um ponto a cada 20 minutos, e a publicação, um por dia útil."],
-      ["Hachura:", "sábado, domingo e feriado nacional, fora da conta dos dias úteis."],
+  regua: {
+    descricao: "Do briefing à publicação, em dias úteis",
+    dias: 15,
+    trechos: [
+      { rotulo: "Rascunho", de: 0, ate: 1, tipo: "cheio" as const },
+      { rotulo: "Revisões e aprovação", de: 1, ate: 7, tipo: "tracejado" as const },
+      { rotulo: "Publicação, em geral", de: 7, ate: 15, tipo: "janela" as const },
     ],
-    gesto: "Arraste o marcador, ou use as setas, para mudar a hora em que o briefing fecha.",
-    datas: [
-      "O dia 0 da conta dos dias úteis.",
-      "24 horas corridas depois do briefing completo.",
-      "Os dias úteis 1 a 7 depois do briefing.",
-      "Os dias úteis 7 a 15, sem os feriados nacionais.",
-    ],
-    /** A legenda da faixa das etapas (desde 17/10): cada trecho na unidade que ele mede, e de onde vêm as datas. */
-    fita: [
-      ["Escala:", "na visita, nenhuma, porque o prazo ainda não corre; no rascunho, uma linha por hora; nas revisões e na publicação, uma casa por dia."],
-      ["Traço que se abre:", "as revisões, uma casa por dia útil, do 1º ao 7º."],
-      ["Ponto:", "a publicação, um por dia útil, até o 15º; a hachura é o dia fora da conta."],
-      ["Datas:", "contadas a partir do briefing da folha de cima, neste aparelho."],
-    ],
+    escala: [0, 5, 10, 15],
+    unidade: "dias úteis",
   },
-  /**
-   * A coordenada de Niterói, uma só no site (desde 17/10, "o Atlas Digital"): o texto, 22°53′ S 43°06′ O, e o decimal
-   * dele, (−22,8833; −43,1036), que as figuras desenham (a Terra, as cartas, o globo). Todo código lê daqui: até 17/10,
-   * a capa dizia 43°07′ O e O Atlas, 43°06′ O (o fechamento com o Impeccable). O mapa municipal do IBGE de 2020 dá
-   * −22,9 e −43,08, arredondados, e não confirma o minuto: conferir na IBGE Cidades (3303302) antes de publicar.
-   */
-  coordenadas: { lugar: "Niterói, RJ", latitude: "22°53′ S", longitude: "43°06′ O", decimal: { latitude: -22.8833, longitude: -43.1036 } },
-  /**
-   * O Atlas: a projeção que se desenrola (desde 17/10, a direção final do Atlas Digital, seção 3, item 19;
-   * components/ilhas/projecao.tsx). O nome da caixa, as teclas dos dois estados, a leitura da casa e a legenda de carta.
-   */
-  projecao: {
-    regiao: "A Terra em uma casa por grau. As setas movem a casa lida; com Shift, dez graus; Início volta a Niterói.",
-    teclas: { rotulo: "Projeção", esfera: "Esfera", grade: "Grade" },
-    leitura: {
-      niteroi: "Na casa de Niterói",
-      apontada: "Na casa apontada",
-      terra: "em terra",
-      mar: "no mar",
-      carimbo: "Em graus inteiros, como a grade guarda. Calculado neste aparelho.",
-    },
-    // Em partes desde 18/10 (o passe do celular): na mesa, um parágrafo só, como até então; no celular, a legenda de
-    // carta, com o traço da esfera e o ponto da grade antes de cada uma, e a frase da janela, que só ele mostra (desde a
-    // revisão de 18/10, dita para a tela estreita: o robô a lê no HTML de toda tela; até então, "Aqui, ...").
-    legenda: {
-      termo: "A Terra em duas projeções.",
-      esfera: "A esfera é a ortográfica, o globo como o olho o vê, com a origem em Niterói.",
-      grade: "A grade é a equirretangular, de 360 colunas por 180 linhas. Uma casa por grau: a imagem que o computador guarda da Terra.",
-      janela: "Na tela estreita, 120 colunas por vez: arraste a grade para o lado.",
-      fonte: "Terra e mar do Natural Earth 1:110 milhões, de domínio público, reduzidos a um grau.",
-    },
-  },
-  /**
-   * Planos: a escada em dois estados (desde 17/10, a direção final do Atlas Digital, seção 3, item 12;
-   * components/paginas/escada-de-precos.tsx). O nome da figura, a unidade da régua de reais e a legenda de carta: o que
-   * a figura é e a frase estável das sombras, que a ilha completa com o Sol de agora depois de montar. A nota da
-   * condição de fundação sai dos preços (conteudo/planos.ts), na figura.
-   */
-  escada: {
-    descricao: "Os três planos em escala, do Essencial ao Completo",
-    regua: "criação, em reais",
-    escala: "Em escala:",
-    altura: "a altura de cada degrau é o preço da criação.",
-    sombras: "Sombras pelo Sol de agora em Niterói.",
-  },
+  /** O Atlas: as coordenadas da cidade sob o globo. */
+  coordenadas: { lugar: "Niterói, RJ", latitude: "22°53′ S", longitude: "43°06′ O" },
   /**
    * Dúvidas: as perguntas pelo momento em que costumam aparecer. Cada
    * palavra leva à resposta (o número é o da pergunta na lista).
@@ -321,17 +227,6 @@ export const figuras = {
     { momento: "Durante o trabalho", itens: [{ rotulo: "As 24 horas", duvida: 1 }, { rotulo: "Textos", duvida: 5 }, { rotulo: "Verificação", duvida: 9 }] },
     { momento: "Com o site no ar", itens: [{ rotulo: "Mensalidade", duvida: 2 }, { rotulo: "Privacidade", duvida: 10 }] },
   ],
-  /**
-   * Dúvidas: a rosa do Sol (desde 17/10, a direção final do Atlas Digital, seção 3, item 22;
-   * components/paginas/mapa-das-duvidas.tsx). A legenda de carta: o que a rosa é e a frase estável do Sol, que a ilha
-   * troca pela posição dele em Niterói depois de montar (o servidor não sabe que horas são para quem lê).
-   */
-  rosa: {
-    legenda: "Acesa do lado do Sol, calculado agora.",
-    // Desde a revisão de 18/10: depois do crepúsculo civil, a rosa não tem lado aceso.
-    legendaDaNoite: "Toda em ponto à noite, calculado agora.",
-    solAntes: "Em Niterói, a posição do Sol se calcula neste aparelho, a cada minuto.",
-  },
 };
 
 export const capa = {
@@ -343,31 +238,6 @@ export const capa = {
   // No início, as duas ações levam às seções da própria página: o montador e os passos.
   acaoPrincipal: { rotulo: "Montar orçamento", destino: "#orcamento" },
   acaoSecundaria: { rotulo: "Conhecer o método", destino: "#trabalho" },
-  /**
-   * O mostrador do prazo e a legenda da Terra (desde 17/10, a direção final do Atlas Digital, seção 3, itens 1 e 2). O
-   * valor e a leitura do Sol se calculam no aparelho: `antes` é a frase estável que o servidor serve no lugar deles. O
-   * carimbo do mostrador é REGRA_DO_RASCUNHO (lib/prazo.ts), que muda junto com a regra.
-   */
-  mostrador: {
-    rotulo: "Se o briefing completo fechar agora, o rascunho chega até",
-    antes: "amanhã, a esta hora",
-  },
-  terra: {
-    titulo: "A Terra agora,",
-    // Desde 18/10 (o fechamento), a legenda nomeia o anel: os três desconhecidos não leram 12 h, 18 h e 24 h. "No
-    // equador": só ali o pôr do sol cai sempre nas 18 h solares.
-    legenda:
-      "do Natural Earth (1:110m): o lado do dia em traço gravado, o da noite em ponto de tela. O anel das horas marca a hora solar: as 18 h ficam no meridiano onde o Sol se põe agora, no equador.",
-    solAntes: "Em Niterói, a altura do Sol se calcula neste aparelho, a cada minuto.",
-    // Desde 18/10 (a revisão da capa), duas frases: a do giro, que o servidor serve, e a do globo parado (a pausa, o
-    // movimento reduzido), que a ilha põe no lugar. As duas dizem o arraste e as setas, "do teclado" (no celular, que
-    // não tem setas, a frase dizia um gesto que não existia: a revisão do celular, 18/10).
-    giro: "O giro é acelerado, um dia a cada dois minutos; arraste o globo, ou use as setas do teclado, para correr o dia.",
-    parado: "O giro está parado; arraste o globo, ou use as setas do teclado, para correr o dia.",
-    controle: "Correr o dia no globo",
-    // A prova de vida: o foco e o Enter (ou o toque em Niterói) abrem no rótulo a coordenada e a fonte do desenho.
-    fonte: "Natural Earth, 1:110m",
-  },
   /**
    * Faixa de destaques sob a capa: valor curto e o que ele mede, na ordem
    * do argumento (ata v3.0, IV.1: padrão de execução, eficiência, preço
@@ -382,43 +252,11 @@ export const capa = {
       valor: "10",
       rotulo: "blocos de verificação antes de cada entrega",
       detalhe: "Do celular ao computador: leitura em cada tela, contraste, uso pelo teclado, velocidade, privacidade e texto.",
-      // Desde 18/10 (o passe do celular; DIRECAO-DIGITAL.md, seção 4, item 5), no celular, os dez em legenda numerada,
-      // ao lado do aparelho e no lugar do detalhe: a ordem e o que cada um mede são os da régua (02-regua.md, seção 5).
-      blocos: [
-        "Nada sai da tela, em 14 larguras",
-        "Inteira sem script e sem animação",
-        "Os títulos e o cartão do link",
-        "O contraste e o teclado",
-        "O peso, a velocidade e a privacidade",
-        "A ação na primeira tela",
-        "Nada some no celular",
-        "Cada função, de ponta a ponta",
-        "Os avisos e as normas",
-        "O texto, em frases curtas",
-      ],
     },
     { valor: "0", rotulo: "cookies e rastreadores neste site" },
     { valor: "1", rotulo: "visita presencial ao estabelecimento" },
     { valor: "2", rotulo: "rodadas de revisão incluídas" },
   ],
-  /**
-   * A chapa da carga desta visita, sob o "0 cookies" (desde 17/10, a direção final do Atlas Digital; até então, a
-   * medição em quatro números, `medicao`): o rótulo do número e o carimbo. As contas (os arquivos, os KB, os cookies e
-   * a hora) entram no desenho, components/paginas/chapa-da-carga.tsx. A reprise é a carga gravada que o servidor
-   * desenha antes da medida (a lista, em components/secoes/destaques.tsx): se for regravada, mude a data e a hora aqui.
-   */
-  carga: {
-    zero: "pedidos a outros domínios",
-    nestaVisita: "nesta visita",
-    naReprise: "na reprise",
-    reprise: "Reprise:",
-    gravada: "a carga do início do Atlas na produção local, gravada em 18.10.2026, às 17h21, sem estrangulamento",
-    agora: "Medida agora,",
-    regra: "A chapa mede esta visita, no navegador deste aparelho, e nada sai dele.",
-    regraNaReprise: "No site, a chapa mede esta visita, no navegador deste aparelho, e nada sai dele.",
-    // No celular (desde 18/10, a revisão), a chapa vai sem os rótulos dos grupos: o carimbo diz o que cada chave junta.
-    chaves: "As chaves, de cima para baixo:",
-  },
   /**
    * O demonstrativo ao lado dos destaques (16/10, decisão do aprovador: "Pôr o demonstrativo"): um site de
    * nicho no celular, na primeira tela, aberto em nova aba. `site` é o id em `simulador.sites`; a imagem é
@@ -474,19 +312,6 @@ export const paraQuem = {
       "Psicologia",
       "Restaurante",
     ],
-    /**
-     * Os nichos que já têm site de exemplo (desde 17/10, o símbolo cheio na lista; os outros, vazio): o nicho e o id do
-     * site em `simulador.sites`. O dado que até então não se via.
-     */
-    comSite: {
-      Barbearia: "barbearia",
-      "Material de Construção": "deposito",
-      Nutrição: "nutricao",
-      Odontologia: "odontologia",
-      "Pet Shop": "petshop",
-      Restaurante: "restaurante",
-    } as Record<string, string>,
-    simbolos: { cheio: "com site de exemplo", vazio: "ainda sem site de exemplo" },
   },
 };
 
@@ -494,10 +319,6 @@ export const planosSecao = {
   titulo: ["O preço está publicado.", "Sem proposta, sem reunião."],
   lide: "Todos os planos compreendem domínio, hospedagem, certificado de segurança e manutenção mensal. Criação paga em duas parcelas.",
   seloDestaque: "Recomendado",
-  /** O preço na condição de fundação (17/10): o valor cheio cortado e a metade ao lado (conteudo/planos.ts). */
-  // `metade` (17/10, o Atlas Digital): o rótulo do valor pela metade para o leitor de tela, que antes ouvia os dois
-  // valores em seguida, sem dizer qual era o da condição (o segundo fechamento com o Impeccable).
-  fundacao: { cheio: "Valor cheio", metade: "Na condição de fundação", condicao: "nos três primeiros contratos" },
   /** Rótulo da prévia do site feito em cada plano (simulador.sites). */
   siteDoPlano: "O site deste plano",
   acaoPlano: "Escolher",
@@ -506,9 +327,7 @@ export const planosSecao = {
 
 export const escada = {
   titulo: ["A distância não está na lista.", "Está na tela."],
-  // Desde 19/10 (a revisão do passe do celular), sem "no simulador": fora da mesa não há simulador, e o site abre numa
-  // aba nova (components/secoes/escada.tsx). A frase vale nos dois.
-  lide: "Sites completos, um por nicho, agrupados por plano. Selecione um nível e um nicho para comparar; aberto, o site funciona por inteiro.",
+  lide: "Sites completos, um por nicho, agrupados por plano. Selecione um nível e um nicho para comparar; no simulador, o site funciona por inteiro.",
   /** Rótulo do seletor dos sites de um plano (os nichos), abaixo do seletor de nível. */
   nichos: "Nicho",
   niveis: [
@@ -555,8 +374,7 @@ export const orcamento = {
     /** Junto do nome do site do plano, que é de um estabelecimento fictício (16/10, SEO e GEO). */
     aviso: capa.demonstrativo.aviso,
     fundacao: {
-      // Desde 17/10, sem a mensalidade congelada (pedido do usuário: "retire o fator da mensalidade estar congelada").
-      texto: "Nos três primeiros contratos: 50% de desconto na criação do plano.",
+      texto: "Nos três primeiros contratos: 50% de desconto na criação e mensalidade congelada por doze meses.",
       rotulo: "Condição de fundação",
       destino: "/planos#fundacao",
     },
@@ -564,21 +382,15 @@ export const orcamento = {
 };
 
 /**
- * Os passos do trabalho no início, na carta do prazo (desde 17/10, a direção final do Atlas Digital; de 17/10, na
- * derrota em arco; até então, em caixas que se empilhavam ao rolar, as do site de 28/08; components/secoes/passos.tsx).
- * Os nomes das etapas são os da página O trabalho (`trabalho.passos`); aqui, o lide, a legenda da carta (o termo, na
- * tinta, e o que ele quer dizer) e o vínculo para a página.
+ * Os passos do trabalho no início, na derrota (desde 17/10; até então, em
+ * caixas que se empilhavam ao rolar, as do site de 28/08;
+ * components/secoes/passos.tsx). Os textos são os da
+ * página O trabalho (`trabalho.passos`); aqui, o rótulo e o vínculo para ela.
  */
 export const passosDoInicio = {
   rotulo: "O trabalho",
-  lide: "Se o briefing completo fechar agora, cada etapa cai num dia real. Cada faixa da carta é um dia de Niterói.",
-  legenda: [
-    ["Traço:", "o que é firme e o que já passou (o briefing, as 24 horas, o Sol de hoje)."],
-    ["Ponto:", "o que a carta calcula: a janela da publicação e o Sol dos próximos dias, vinte minutos por ponto, neste aparelho."],
-    ["Hachura:", "sábado, domingo e feriado nacional, fora da conta dos dias úteis."],
-  ],
   vinculo: { rotulo: "Ver o trabalho em detalhe", destino: "/o-trabalho" },
-} as const;
+};
 
 export const trabalho = {
   titulo: ["Quatro etapas.", "Nenhuma delas opcional."],
@@ -626,18 +438,10 @@ export const quemFaz = {
    * celular (de qualquer tamanho) em WebP de 480 px:
    * node ferramentas/preparar-fotos.mjs <foto> <nome do arquivo>.
    */
-  /**
-   * `etapa` (desde 17/10, a direção final do Atlas Digital, seção 3, item 21): a etapa do trabalho de que o sócio
-   * responde, na ordem dela (`ordem`) e com os trechos da faixa de O trabalho (components/secoes/trabalho.tsx: o anel da
-   * visita, o firme das 24 horas, o traço que se abre das revisões, os pontos da publicação). Em O Atlas, os três ficam
-   * na ordem das etapas, sobre a mesma faixa; no JSON-LD e no llms.txt, na ordem desta lista.
-   * `nomeCompleto` (desde a revisão de 17/10): o nome que a página mostra, quando o `nome` (o do JSON-LD e do
-   * llms.txt, que ficam como estão) é o curto; os sócios aparecem sempre pelo nome completo.
-   */
   socios: [
-    { iniciais: "GY", nome: "Gabriel Yida", nomeCompleto: "Gabriel Ribeiro Ota Yida", funcao: "Direção e vendas", foto: "gabriel-ribeiro-ota-yida", etapa: { ordem: 1, nome: "Visita e briefing", trechos: ["visita"] } },
-    { iniciais: "MA", nome: "Matheus Azevedo Abreu", funcao: "Suporte ao cliente e parte legal", foto: "matheus-azevedo-abreu", etapa: { ordem: 3, nome: "Publicação e suporte", trechos: ["pontos"] } },
-    { iniciais: "MC", nome: "Matheus Castro Oliveira de Luna Garcia", funcao: "Desenvolvimento dos sites", foto: "matheus-castro-oliveira-de-luna-garcia", etapa: { ordem: 2, nome: "Rascunho e revisões", trechos: ["firme", "abre"] } },
+    { iniciais: "GY", nome: "Gabriel Yida", funcao: "Direção e vendas", foto: "gabriel-ribeiro-ota-yida" },
+    { iniciais: "MA", nome: "Matheus Azevedo Abreu", funcao: "Suporte ao cliente e parte legal", foto: "matheus-azevedo-abreu" },
+    { iniciais: "MC", nome: "Matheus Castro Oliveira de Luna Garcia", funcao: "Desenvolvimento dos sites", foto: "matheus-castro-oliveira-de-luna-garcia" },
   ],
   /** A história, em capítulos: da sala de aula ao balcão. */
   historia: {
@@ -681,30 +485,21 @@ export const quemFaz = {
 export const fundacao = {
   rotulo: "Condição de fundação",
   titulo: ["Os três primeiros contratos", "têm condição própria."],
-  // A condição da ata (IV.3: metade do valor de criação e três contratos; a mensalidade congelada por doze meses saiu
-  // em 17/10, a pedido do usuário) em percentual: "50%" se lê mais depressa que "½" e é a forma habitual de um desconto.
-  // Em reais (R$ 450 a R$ 1.200), desde 17/10, nos planos: o preço cortado e a metade ao lado, a pedido do usuário (até
-  // então, não: os valores constavam como [A CONFIRMAR] no contexto comercial, §2).
+  // A condição da ata (IV.3: metade do valor de criação, mensalidade congelada por doze meses, três
+  // contratos) em percentual: "50%" se lê mais depressa que "½" e é a forma habitual de um desconto.
+  // Em reais (R$ 450 a R$ 1.200), não: os valores constam como [A CONFIRMAR] no contexto comercial, §2.
   lide: "O risco de contratar uma agência sem histórico é reconhecido no preço. São três contratos, e a condição se encerra com eles. Em troca, cada um vira estudo de caso, com autorização assinada no início.",
   termos: [
     { valor: "50%", rotulo: "de desconto na criação" },
-    { valor: "3", rotulo: "contratos com esta condição" },
+    { valor: "12 meses", rotulo: "de mensalidade congelada" },
+    /** selos: o número desenhado ao lado, um globo da marca por contrato. */
+    { valor: "3", rotulo: "contratos com esta condição", selos: 3 },
   ],
 };
 
 export const fim = {
   titulo: ["Comece pelo orçamento."],
   lide: "Dois toques para o valor exato. A conversa ocorre em seguida, sem compromisso.",
-  /**
-   * A hora real no amanhecer pintado (desde 17/10, a direção final do Atlas Digital, seção 3, item 8): o próximo nascer
-   * do Sol em Niterói, calculado no aparelho de quem lê (lib/sol.ts). O servidor não sabe a hora: o HTML traz a frase
-   * estável (`antes`), e a ilha a troca, depois de montar, por `rotulo` + o instante + `carimbo`.
-   */
-  amanhecer: {
-    antes: "O próximo amanhecer em Niterói é calculado neste aparelho.",
-    rotulo: "O próximo amanhecer em Niterói:",
-    carimbo: ", calculado neste aparelho.",
-  },
 };
 
 export const rodape = {
@@ -725,11 +520,7 @@ export const falarNoWhatsApp = "Falar no WhatsApp";
 // escada (components/secoes/escada.tsx), e os rótulos do diálogo.
 export const simulador = {
   abrir: "Abrir no simulador",
-  /** Fora da mesa, o simulador abre o próprio site, numa aba nova (17/10; ilhas/simulador.tsx). */
-  abrirSite: "Abrir o site",
   novaAba: "Abrir em nova aba",
-  /** Para o leitor de tela, nos vínculos que abrem o site numa aba nova sem dizer (17/10, o segundo fechamento). */
-  abreEmNovaAba: "(abre em nova aba)",
   fechar: "Fechar o simulador",
   aparelhos: { computador: "Computador", celular: "Celular" },
   planos: "Planos",
@@ -737,12 +528,8 @@ export const simulador = {
   inclui: "O plano inclui",
   experimente: "Experimente",
   escolher: "Escolher o",
-  // "na criação," (19/10, a revisão): o palco e o diálogo diziam "de criação nos três primeiros contratos", e a tabela
-  // dos planos, "na criação, nos três primeiros contratos". As mesmas palavras nos três.
-  criacao: "na criação,",
+  criacao: "de criação",
   mensal: "por mês",
-  /** O preço na condição de fundação, no diálogo (17/10). */
-  fundacao: planosSecao.fundacao,
   carregando: "Abrindo o site",
   aviso: "Estabelecimentos fictícios, criados para demonstração.",
   navegacao: {

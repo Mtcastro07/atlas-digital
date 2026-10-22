@@ -16,11 +16,8 @@ const meioDia = { "--luz-x": "56%", "--luz-y": "-12%" } as React.CSSProperties;
  * cartão parado que repetia o lide, e o montador vinha numa seção à parte,
  * na mesma névoa (o crítico de fora). O plano chega marcado de
  * /orcamento#orcamento-<plano> (o "Escolher" dos planos e do simulador).
- * Desde 16/10, a mesa ao meio-dia: a luz de cima no papel. Desde 17/10 (a
- * direção final do Atlas Digital), a conta num instrumento, a tela pequena
- * no papel, com o total em meio-tom, a composição e a carta dos pagamentos
- * (ilhas/montador.tsx); até então, a sombra curta do painel e a marca da
- * chapa em volta dos totais.
+ * Desde 16/10, a mesa ao meio-dia: a luz de cima no papel, a sombra curta
+ * do painel e a marca da chapa em volta dos totais (ilhas/montador.tsx).
  */
 export default function PaginaDoOrcamento() {
   return (

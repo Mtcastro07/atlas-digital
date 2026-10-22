@@ -27,23 +27,12 @@ const importarPainel = () =>
 const preCarregar = () => void importarPainel().catch(() => undefined);
 const PainelDoSimulador = dynamic(importarPainel, { ssr: false });
 
-/**
- * O simulador é da mesa (17/10, pedido do usuário: "os simuladores estão muito pesados dentro do celular... vejo valer a
- * pena deixar essa feature apenas para a versão do computador e adaptar na versão do celular"): abaixo de 1024 px, ou
- * sem ponteiro fino (o tablet, o celular deitado), o vínculo faz o que faz sem script e abre o próprio site, em tela
- * cheia, numa aba nova. Medido em 17/10 com o processador 4× mais lento, abrir o site no quadro custava no máximo
- * 165 ms de tarefa, e rolar não tinha quadro lento: o peso no aparelho é de memória e de pintura (dois sites inteiros e
- * o quadro em escala, refeito a cada rolagem), que a emulação não mede, e os sites de demonstração não mudam. No
- * celular, o site aberto direto é o próprio simulador: a tela é a do aparelho.
- */
-const naMesa = () => window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)").matches;
-
 const cartaoDe = (alvo: EventTarget | null) =>
   (alvo as Element | null)?.closest?.<HTMLAnchorElement>("a[data-simulador]") ?? null;
 
 /** Sinal de intenção (ponteiro ou foco) sobre um cartão: o diálogo começa a baixar. */
 function preCarregarNoCartao(evento: React.SyntheticEvent) {
-  if (cartaoDe(evento.target) && naMesa()) preCarregar();
+  if (cartaoDe(evento.target)) preCarregar();
 }
 
 /**
@@ -64,7 +53,7 @@ export function Simulador({ dados, children }: { dados: DadosDoSimulador; childr
       onFocus={preCarregarNoCartao}
       onClick={(evento) => {
         const cartao = cartaoDe(evento.target);
-        if (!cartao || evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey || !naMesa()) return;
+        if (!cartao || evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey) return;
         evento.preventDefault();
         const pedido = { indice: Number(cartao.dataset.simulador), chave: evento.timeStamp };
         if (painelPronto) return setAberto(pedido);

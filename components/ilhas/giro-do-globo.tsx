@@ -29,9 +29,7 @@ const naTela = new WeakSet<Element>();
  * tela (ilhas/cabecalho-retratil.tsx) e quando o rodapé ou o símbolo de
  * "O Atlas" entram na tela. Para girar de novo, o globo precisa antes sair
  * de vista por inteiro. Observa todo elemento com data-globo; não desenha nada.
- * Com ponteiro, quem dispara é o hover, em CSS. Com movimento reduzido e com a pausa do cabeçalho
- * (html.ambiente-pausado, ilhas/controle-do-movimento.tsx), nada gira: lidos a cada aparição, e não só na montagem
- * (até 18/10, o globo do rodapé girava com a pausa ligada); a pausa apertada no meio de uma volta a leva ao fim.
+ * Com ponteiro, quem dispara é o hover, em CSS. Com movimento reduzido, nada gira.
  * Procura os globos de novo a cada troca de página: até 07/10, procurava só
  * na carga, e os globos de uma página aberta pela navegação interna (o de O
  * Atlas, o do rodapé novo) não giravam ao aparecer.
@@ -40,8 +38,7 @@ export function GiroDoGlobo() {
   const caminho = usePathname();
   useEffect(() => {
     if (!window.matchMedia("(hover: none)").matches) return;
-    const raiz = document.documentElement;
-    const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const observador = new IntersectionObserver(
       (entradas) => {
@@ -49,21 +46,13 @@ export function GiroDoGlobo() {
           if (intersectionRatio === 0) naTela.delete(target);
           if (intersectionRatio < VISIVEL || naTela.has(target)) continue;
           naTela.add(target);
-          if (reduzir.matches || raiz.classList.contains("ambiente-pausado")) continue;
           target.querySelector("ellipse")?.animate(GIRO, { duration: 1150, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
         }
       },
       { threshold: [0, VISIVEL] }
     );
     document.querySelectorAll("[data-globo]").forEach((globo) => observador.observe(globo));
-    const pausa = new MutationObserver(() => {
-      if (raiz.classList.contains("ambiente-pausado")) document.querySelectorAll("[data-globo] ellipse").forEach((e) => e.getAnimations().forEach((a) => a.finish()));
-    });
-    pausa.observe(raiz, { attributes: true, attributeFilter: ["class"] });
-    return () => {
-      observador.disconnect();
-      pausa.disconnect();
-    };
+    return () => observador.disconnect();
   }, [caminho]);
 
   return null;

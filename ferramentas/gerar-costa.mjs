@@ -219,8 +219,7 @@ const ts = `// ${SAIDA} — GERADO por ferramentas/gerar-costa.mjs em ${hoje}, d
 // simplificado a ${TOLERANCIA} m; passa ${MARGEM} m da caixa, para o traço das linhas d'água não marcar a borda.
 // Os lugares: os nós place=* do OpenStreetMap (${pontos.map((p) => `${p.nome}, nó ${p.id}`).join("; ")}), em % da caixa.
 
-// A caixa também em graus (17/10): a carta eletrônica de /para-quem lê a coordenada sob a lente.
-export const CARTA = { largura: ${LARGURA}, altura: ${ALTURA}, norte: ${N.toFixed(5)}, sul: ${S.toFixed(5)}, oeste: ${W.toFixed(5)}, leste: ${E.toFixed(5)} } as const;
+export const CARTA = { largura: ${LARGURA}, altura: ${ALTURA} } as const;
 
 export const TERRA = "${TERRA}";
 

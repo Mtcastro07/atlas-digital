@@ -46,86 +46,75 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
 }
 
 /**
- * O enquadramento de cada retrato (desde 17/10, a direção final do Atlas Digital, e o fechamento com o Impeccable, A:
- * "três retratos sem relação entre si"; sem foto nova): a mesma escala de rosto, pela distância dos olhos ao queixo
- * (120, 125 e 145 px nas fotos de 480 px), e a linha dos olhos na mesma altura, a 40% do quadro. `escala` é o lado da
- * foto em quadros; `x` e `y`, o meio do rosto e a linha dos olhos na foto, de 0 a 1. Medido nas fotos de public/socios/
- * em 17/10; uma foto nova pede a medida nova.
- */
-const ENQUADRAMENTO: Record<string, { escala: number; x: number; y: number }> = {
-  "gabriel-ribeiro-ota-yida": { escala: 1.28, x: 0.5, y: 0.375 },
-  "matheus-azevedo-abreu": { escala: 1.23, x: 0.51, y: 0.396 },
-  "matheus-castro-oliveira-de-luna-garcia": { escala: 1.06, x: 0.51, y: 0.396 },
-};
-
-/** As revisões na faixa: as colunas do traço que se abre, cada uma com a casa mais curta que a anterior (--c, de 1 a 1/4). */
-const ABRE = 24;
-
-/** O trecho da faixa, na convenção de O trabalho, deitada: o tempo corre para a direita (app/digital.css, "o-atlas").
- *  `outro`: o trecho de outro sócio, que só o celular mostra, num fio (a faixa inteira em cada sócio). */
-function Trecho({ tipo, outro }: { tipo: string; outro?: boolean }) {
-  return (
-    <span data-trecho={tipo} data-outro={outro || undefined}>
-      {tipo === "abre" &&
-        !outro &&
-        Array.from({ length: ABRE }, (_, k) => <span key={k} style={{ "--c": 1 - (0.75 * k) / (ABRE - 1) } as React.CSSProperties} />)}
-    </span>
-  );
-}
-
-/**
- * Os três sócios, pelo nome completo, na ordem das etapas do trabalho, cada um sobre o trecho da etapa de que responde
- * (desde 17/10, a direção final do Atlas Digital, seção 3, item 21): a faixa corre de um sócio ao outro, na convenção da
- * faixa de O trabalho, deitada (o tempo para a direita): o anel e o fio da visita e do briefing (Gabriel Ribeiro Ota Yida), o firme
- * das 24 horas e o traço que se abre das revisões (Matheus Castro Oliveira de Luna Garcia), os pontos da publicação, um
- * por dia útil, e o suporte que segue (Matheus Azevedo Abreu). Embaixo do trecho, o nome da etapa. A ordem é a das
- * etapas (quemFaz.socios[].etapa.ordem); a lista de conteudo/site.ts, que o JSON-LD e o llms.txt seguem, não muda.
- * O nome vem inteiro (`nomeCompleto`, quando o `nome` dos dados estruturados é o curto; desde a revisão de 17/10: a
- * fileira mostrava "Gabriel Yida" ao lado dos dois nomes completos).
- * Os retratos (sem foto nova): o mesmo quadro, a mesma escala de rosto e a mesma linha dos olhos (ENQUADRAMENTO), e o
- * mesmo tratamento, em duas tintas, do navy ao papel (o duotom, app/digital.css), para as três fotos de lugares e luzes
- * diferentes lerem como uma série; o quadro com o raio da ficha. Enquanto a foto não existe, o monograma das iniciais
- * no mesmo quadro; em desenvolvimento, a vaga sem foto aparece tracejada, com o caminho do arquivo esperado, e a foto
- * acima de 200 KB, com o aviso para convertê-la (ferramentas/preparar-fotos.mjs).
- * Até 17/10, os retratos em círculo, centrados sobre a função e o nome, na ordem da lista (a fileira de avatares de
- * modelo, e a selfie ao lado do retrato de estúdio: o fechamento com o Impeccable, A).
- * Depois, a origem do nome, num bloco navy com o símbolo da marca, o globo solto sobre o ombro da letra, que gira como
- * o do logotipo. Da branchCto: o texto fica num vidro líquido; no Chromium com ponteiro fino, o que passa sob a borda do
- * vidro se dobra nela (ilha VidroLiquido). Desde o segundo fechamento com o Impeccable (17/10), o vidro é uma janela da
- * chapa navy, rente às bordas dela, com o fio só na borda de dentro. Desde 16/10, na pedra, o segundo tom claro (a
- * história, logo acima, é a névoa), e, ao fundo do bloco, o A do logotipo, grande, na água rasa, atrás do canto do vidro
- * e quase todo fora dele: o vidro o dobra na borda.
+ * Os sócios numa fileira só, um por linha (no celular) ou coluna (a
+ * partir de 1024 px), com a foto de cada um (conteudo/site.ts, quemFaz.socios;
+ * arquivos em public/socios/) — e, enquanto a foto não existe, o
+ * monograma das iniciais no mesmo lugar. Em desenvolvimento, a vaga sem
+ * foto aparece com um traço tracejado e o caminho do arquivo esperado,
+ * e a foto acima de 200 KB, com o aviso para convertê-la
+ * (ferramentas/preparar-fotos.mjs). Enquanto a foto carrega, o círculo
+ * pulsa devagar (vd-esqueleto). No hover, o retrato ganha um anel
+ * de bronze. Nas colunas, monograma e nome ficam centrados um
+ * sobre o outro: o nome longo quebra em duas linhas sem desalinhar os
+ * outros. Depois, a origem do nome, num bloco navy com o símbolo da
+ * marca — o globo solto sobre o ombro da letra, que gira como o do
+ * logotipo. No celular, o símbolo abre o bloco, como o ícone dos cartões.
+ * Da branchCto: o texto fica num vidro líquido; no Chromium com ponteiro
+ * fino, o que passa sob a borda do vidro se dobra nela (ilha VidroLiquido).
+ * Desde o segundo fechamento com o Impeccable (17/10), o vidro é uma janela
+ * da chapa navy, rente às bordas dela, com o fio só na borda de dentro; até
+ * então, um cartão de vidro com recuo, raio e contorno dentro do bloco
+ * navy (o cartão dentro do cartão, a marca L4).
+ * Desde 16/10 ("Identidade mais profunda"):
+ * - na pedra, o segundo tom claro: a história, logo acima, é a névoa (até
+ *   então, as duas cenas no mesmo creme);
+ * - os sócios sem os filetes (a linha entre filetes era o recipiente de
+ *   quase toda cena clara; fica no extrato de Planos e na sanfona das
+ *   Dúvidas): o grupo se faz pelo espaço;
+ * - ao fundo do bloco, no lugar do globo da marca ampliado (o globo da
+ *   página é o da abertura), o A do logotipo, grande, na água rasa, atrás
+ *   do canto do cartão de vidro e quase todo fora dele: o vidro o dobra na
+ *   borda. O mito contado pela marca medida. A tinta do vidro não muda.
  */
 export function QuemFaz() {
-  const socios = [...quemFaz.socios].sort((a, b) => a.etapa.ordem - b.etapa.ordem);
   return (
     // Na pedra (16/10): a névoa da história, de cima, e a pedra ficam a 0,050 de L, uma virada de cena. De 14 a 16/10,
     // no creme da história, porque o branco depois do creme ficava a 0,035, uma emenda.
     <Secao id="atlas" tom="pedra">
       <Envelope>
-        {/* Na margem, como o resto da página (desde a revisão de 17/10; até então, centrado sobre as três colunas). */}
-        <Abertura titulo={quemFaz.titulo} lide={quemFaz.lide} margem />
+        <Abertura titulo={quemFaz.titulo} lide={quemFaz.lide} />
 
-        <ol className="vd-socios mt-16 md:mt-20">
-          {socios.map((socio) => {
+        {/* Direto na pedra, sem filetes (16/10): o espaço agrupa. De 16/10, entre dois filetes; até então, num painel branco. */}
+        <ul className="mt-16 grid grid-cols-[minmax(0,1fr)] gap-y-8 md:mt-20 lg:grid-cols-3 lg:gap-x-8">
+          {quemFaz.socios.map((socio) => {
             const foto = fotoDe(socio.foto);
             const aviso = avisoDaVaga(socio.foto, foto);
-            const quadro = ENQUADRAMENTO[socio.foto];
             return (
-              <li key={socio.nome}>
-                {/* O retrato: a foto, ou as iniciais enquanto ela não existe. Decorativo: o nome está ao lado. */}
+              <li
+                key={socio.nome}
+                className="group flex flex-wrap items-center gap-5 px-6 md:px-8 lg:flex-col lg:flex-nowrap lg:gap-4 lg:text-center"
+              >
+                {/* O retrato: a foto, ou as iniciais enquanto ela não existe. Decorativo — o nome está ao lado. */}
                 <span
                   aria-hidden="true"
-                  className={`vd-retrato font-display text-destaque ${aviso && !foto ? "outline-1 outline-offset-4 outline-primary outline-dashed" : ""}`}
-                  style={quadro && ({ "--escala": quadro.escala, "--x": quadro.x, "--y": quadro.y } as React.CSSProperties)}
+                  className={`grid size-16 flex-none place-items-center overflow-hidden rounded-full bg-secondary font-display text-destaque text-secondary-foreground shadow-[0_0_0_0_transparent] transition-shadow duration-400 ease-atlas group-hover:shadow-[0_0_0_4px_var(--background),0_0_0_6px_var(--primary)] lg:size-24 ${
+                    aviso && !foto ? "outline-1 outline-offset-4 outline-primary outline-dashed" : ""
+                  }`}
                 >
-                  {foto ? <img src={foto.src} alt="" width={480} height={480} loading="lazy" decoding="async" /> : socio.iniciais}
+                  {foto ? (
+                    <img src={foto.src} alt="" width={480} height={480} loading="lazy" decoding="async" className="vd-esqueleto size-full object-cover" />
+                  ) : (
+                    socio.iniciais
+                  )}
                 </span>
-                <div className="min-w-0">
-                  {/* A função vem acima do nome, na leitura (no HTML, depois dele). */}
+                {/* grow basis-32 e o flex-wrap do item: com a letra a 200%, o texto desce para baixo do retrato (17/10); ao
+                    lado dele, sobravam 30 px, e o nome e a função passavam da tela. Com a letra normal, cabe ao lado. */}
+                <div className="min-w-0 grow basis-32 lg:basis-auto">
+                  {/* A função vem acima do nome, na leitura (no HTML, depois dele): as funções ficam na mesma linha nas
+                      três colunas, e só o nome longo desce mais, sem desalinhar os outros. */}
                   <div className="flex flex-col-reverse">
-                    <h3 className="mt-1.5 text-destaque">{"nomeCompleto" in socio ? socio.nomeCompleto : socio.nome}</h3>
-                    <p className="text-rotulo font-semibold text-muted-foreground">{socio.funcao}</p>
+                    <h3 className="mt-1.5 text-destaque">{socio.nome}</h3>
+                    <p className="text-rotulo font-semibold text-accent">{socio.funcao}</p>
                   </div>
                   {aviso && (
                     <p className="mt-1.5 font-mono text-rotulo text-accent">
@@ -140,37 +129,20 @@ export function QuemFaz() {
                     </p>
                   )}
                 </div>
-                <div className="vd-socio-etapa">
-                  {/* A faixa inteira, com o trecho dele aceso e os dos outros num fio (desde a revisão de 18/10: no
-                      celular, empilhados, os trechos de largura toda não liam como uma faixa só); na mesa, só o dele. */}
-                  <span aria-hidden="true" className="vd-socio-trecho">
-                    {socios.flatMap((dono) =>
-                      dono.etapa.trechos.map((t) => <Trecho key={t} tipo={t} outro={dono !== socio} />),
-                    )}
-                  </span>
-                  <p className="text-nota font-medium">
-                    <span className="sr-only">Responde pela etapa: </span>
-                    {socio.etapa.nome}
-                  </p>
-                </div>
               </li>
             );
           })}
-        </ol>
+        </ul>
 
         {/* A chapa (17/10, segundo fechamento com o Impeccable): o vidro é uma janela dela, rente às bordas, e não um
             cartão dentro do bloco navy (a marca L4; a avaliação A). Até então, o vidro tinha recuo, raio e contorno próprios
-            dentro do bloco, que tinha os seus. O único fio do vidro é a borda de dentro, onde o A se dobra. A chapa tem o raio
-            do instrumento desde a direção final de 17/10 (--r-instrumento, 24 px na mesa: a tela pequena no papel; de manhã,
-            32 px; de 16 a 17/10, 4 px, e até então 12 px: no canto redondo, a refração do vidro trazia a pedra de fora para
-            dentro dele, num arco claro). Desde a revisão de 17/10, a chapa é a raiz do fundo do vidro (will-change: filter,
-            a "backdrop root" do Chromium): a refração só vê o que a chapa pinta, e fora do raio dela não há pedra a trazer;
-            e o vidro tem o canto vivo (o mapa da refração usa um raio só, e o canto redondo junto da divisória dobrava a
-            perna do A numa mancha clara): quem arredonda é a chapa. As colunas com minmax(0, 1fr): com a letra a 200%,
-            "sustentava" alargava o vidro e a chapa cortava 7 das 15 linhas. */}
+            dentro do bloco, que tinha os seus. O único fio do vidro é a borda de dentro, onde o A se dobra. A chapa tem os
+            cantos quase vivos (4 px, como a folha dobrada do início; até então, 12 px): no canto redondo, a refração do
+            vidro trazia a pedra de fora para dentro dele, num arco claro. As colunas com
+            minmax(0, 1fr): com a letra a 200%, "sustentava" alargava o vidro e a chapa cortava 7 das 15 linhas. */}
         <div
           data-tom="escuro"
-          className="mov-giro relative mt-16 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-[var(--r-instrumento)] bg-background [will-change:filter] md:mt-20 md:grid-cols-[minmax(0,1fr)_auto]"
+          className="mov-giro relative mt-6 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-[4px] bg-background md:grid-cols-[minmax(0,1fr)_auto]"
         >
           {/* O A do logotipo ao fundo (16/10), na água rasa: no celular, no alto, à direita do símbolo, com os pés sob a
               borda de cima do cartão, na folga dele; na mesa, atrás do símbolo, com a perna da esquerda sob a borda do cartão, na folga dele,

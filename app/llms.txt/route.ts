@@ -1,4 +1,4 @@
-import { criacaoNaFundacao, fundacaoNoPreco, modulos, planos, precoDoModulo } from "@/conteudo/planos";
+import { modulos, planos, precoDoModulo } from "@/conteudo/planos";
 import { contato, metadados, paginas, paraQuem, quemFaz, simulador, trabalho } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
 
@@ -14,8 +14,7 @@ export function GET() {
     `> ${metadados.descricao}`,
     "",
     `- Contato: WhatsApp ${contato.telefone}, ${contato.email}; ${contato.cidade}, ${contato.estado}.`,
-    // O preço na condição de fundação, como no site (17/10): a metade da criação nos três primeiros contratos.
-    ...planos.map((p) => `- Plano ${p.nome}: ${reais(p.criacao)} de criação (${reais(criacaoNaFundacao(p))} nos ${fundacaoNoPreco.contratos} primeiros contratos), e ${reais(p.mensal)} por mês. ${p.itens.join("; ")}.`),
+    ...planos.map((p) => `- Plano ${p.nome}: ${reais(p.criacao)} de criação, e ${reais(p.mensal)} por mês. ${p.itens.join("; ")}.`),
     ...modulos.map((m) => {
       const preco = precoDoModulo(m);
       return `- Módulo ${m.nome}: ${m.descricao} ${preco.criacao}, ${preco.mensal}.`;
