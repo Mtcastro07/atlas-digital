@@ -1,0 +1,49 @@
+/* app/identidade.css — a camada da marca: os tokens por função, a escala e a forma
+   (producao/esteira/04-direcao-de-arte.md, seção 4.1; producao/esteira/06-cor-forma-e-superficie.md).
+   É o que muda de um cliente para outro: a direção de arte (identidade.md) escreve os valores, pela
+   tradução de producao/03-da-identidade-ao-codigo.md, seção 2, e o `npm run paleta` confere o contraste.
+   Os nomes dizem a função, nunca a cor. O contraste de cada par vai anotado, medido por
+   ferramentas/conferir-paleta.mjs (npm run paleta) em 08.10.2026; a régua confere de novo na página.
+
+   De fábrica: o banho e tosa de exemplo (producao/esteira/nichos/pet-shop.md, seção 6) —
+   branco quente, a tinta escura e o acento da cor das toalhas da casa; cantos macios. */
+
+@theme {
+  /* A escala, com a entrelinha de cada degrau. Postura de exibição: o display passa de
+     5 vezes o corpo na mesa (producao/esteira/05-tipografia.md, seção 6). */
+  --text-rotulo: 0.8125rem;
+  --text-rotulo--line-height: 1.4;
+  --text-nota: 0.9375rem;
+  --text-nota--line-height: 1.5;
+  --text-corpo: 1.0625rem;
+  --text-corpo--line-height: 1.6;
+  --text-destaque: clamp(1.125rem, 1.02rem + 0.5vw, 1.375rem);
+  --text-destaque--line-height: 1.45;
+  --text-numero: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+  --text-numero--line-height: 1.1;
+  --text-titulo: clamp(1.875rem, 1.35rem + 2.6vw, 3.25rem);
+  --text-titulo--line-height: 1.08;
+  --text-display: clamp(2.5rem, 1.5rem + 5vw, 5.75rem);
+  --text-display--line-height: 1;
+
+  /* A forma, por hierarquia: pílula na ação, raio generoso no cartão, pequeno na marcação. */
+  --radius-cartao: 1.5rem;
+  --radius-marcacao: 0.5rem;
+
+  /* A largura da página. */
+  --container-pagina: 72rem;
+}
+
+:root {
+  --background: oklch(0.985 0.008 80); /* branco quente */
+  --foreground: oklch(0.27 0.03 320); /* tinta: 14,6:1 sobre o fundo; 15,2 sobre o cartão; 13,3 sobre o suave */
+  --card: oklch(1 0 0);
+  --muted: oklch(0.955 0.012 80);
+  --muted-foreground: oklch(0.45 0.03 320); /* texto secundário: 7,3:1 sobre o fundo; 6,6 sobre o suave */
+  --primary: oklch(0.46 0.15 352); /* a cor das toalhas: fundo da ação */
+  --primary-foreground: oklch(0.99 0 0); /* texto da ação: 7,6:1 sobre --primary */
+  --accent: oklch(0.44 0.15 352); /* vínculo e destaque: 8,1:1 sobre o fundo; 7,4 sobre o suave */
+  --marcador: oklch(0.9 0.06 352); /* o marca-texto, por trás da palavra: a tinta por cima, 11,0:1 */
+  --border: oklch(0.27 0.03 320 / 0.14);
+  --ring: oklch(0.46 0.15 352); /* o anel de foco: 7,4:1 sobre o fundo (mínimo 3) */
+}

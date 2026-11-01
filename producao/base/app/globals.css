@@ -1,0 +1,202 @@
+/* app/globals.css — o que vale para todo site do Atlas; a marca fica em identidade.css.
+   Regras e objetivos: producao/esteira/05, 06, 07, 09, 16. Só transform e opacity no movimento. */
+@import "tailwindcss";
+/* O kit (producao/, ao lado do site) fica fora da varredura do Tailwind: os documentos e os módulos guardados
+   geravam classes que o site não usa — 39 KB de CSS contra 24 KB, no exemplo (medido em 08.10.2026). */
+@source not "../producao";
+@import "./identidade.css";
+
+/* As famílias (app/fontes.ts: --font-texto e --font-titulo) e as cores por função.
+   A reserva dentro do var() vale onde a variável não existe (a global-error, por exemplo):
+   sem ela, um var() indefinido invalida a declaração inteira (producao/esteira/05-tipografia.md, seção 4.1). */
+@theme inline {
+  --font-sans: var(--font-texto, ui-sans-serif), system-ui, sans-serif;
+  /* Identidade de uma família só: tire o "titulo" de app/fontes.ts, e os títulos usam a de texto. */
+  --font-display: var(--font-titulo, var(--font-texto, ui-sans-serif)), system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-marcador: var(--marcador);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-corpo);
+    line-height: var(--text-corpo--line-height);
+    font-synthesis-weight: none; /* só os pesos que o arquivo tem: o navegador não inventa negrito */
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+  /* A âncora não para sob o cabeçalho fixo (producao/esteira/13-tecnologia-e-estrutura.md, seção 3.7). */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+  /* Nem o foco: no Shift+Tab, o navegador alinha o elemento ao topo, sob o cabeçalho (WCAG 2.4.11, foco não
+     encoberto; producao/qualidade/06-acessibilidade.md, seção 4). Achado do teste de 08.10.2026; a régua avisa. */
+  html {
+    scroll-padding-top: 5rem;
+  }
+  /* O foco sempre visível, ≥ 2 px e ≥ 3:1 (producao/esteira/16-acessibilidade.md). */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--marcador);
+    color: var(--foreground);
+  }
+  a {
+    text-underline-offset: 0.2em;
+  }
+}
+
+/* O envelope das páginas: o recuo lateral (24 px; 40 px a partir de 768 px), nunca menor que a área
+   segura do celular com recorte — o layout usa viewportFit: "cover" (producao/esteira/13-tecnologia-e-estrutura.md,
+   seção 6, regra 4). Sem isto, no iPhone deitado, o texto passa por baixo do recorte. */
+@utility envelope {
+  padding-left: max(--spacing(6), env(safe-area-inset-left));
+  padding-right: max(--spacing(6), env(safe-area-inset-right));
+  @media (width >= 48rem) {
+    padding-left: max(--spacing(10), env(safe-area-inset-left));
+    padding-right: max(--spacing(10), env(safe-area-inset-right));
+  }
+}
+
+/* Algarismos tabulares em preço, horário e telefone. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- movimento (producao/esteira/09-movimento.md: camada do Essencial) ----------
+   1. A revelação, uma vez, ao entrar na tela: só com script (.js), sem movimento reduzido,
+      e nunca no título nem no lide da primeira tela (o elemento do LCP entra já legível).
+      Só onde ela é o momento da cena, nunca em toda seção ou em cada item de uma lista
+      (producao/esteira/20-repeticao-dentro-do-site.md). */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-revela] {
+    transition:
+      opacity 500ms cubic-bezier(0.05, 0.7, 0.1, 1),
+      transform 500ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .js [data-revela]:not([data-visivel]) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+/* Na impressão, nada fica escondido à espera de uma rolagem que não vai acontecer (marca M6 de
+   producao/esteira/11-anti-ia.md: conteúdo invisível em repouso). */
+@media print {
+  .js [data-revela]:not([data-visivel]) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 2. O marca-texto (o gesto do Essencial, nunca no título): a faixa passa por trás da palavra,
+      da esquerda para a direita, uma vez; com movimento reduzido ou ao recarregar, já está lá. */
+.marca-texto {
+  position: relative;
+  z-index: 0; /* o próprio empilhamento: a faixa (z -1) fica sob o texto, não sob a página */
+  display: inline-block; /* a marcação não quebra de linha: quebrada, a faixa vira um traço */
+  white-space: nowrap;
+}
+.marca-texto::before {
+  content: "";
+  position: absolute;
+  inset: 0.55em -0.06em 0.04em;
+  z-index: -1;
+  border-radius: 0.12em;
+  background: var(--marcador);
+  transform-origin: left center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.ja-aberto) .marca-texto::before {
+    animation: marca-texto 600ms cubic-bezier(0.05, 0.7, 0.1, 1) 300ms both;
+  }
+}
+@keyframes marca-texto {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* 3. A troca de página (a receita do guia do Next: producao/esteira/09-movimento.md, seção 8):
+      saída de 150 ms; entrada de 400 ms, em 60 px, depois de 210 ms; o cabeçalho parado. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.pagina-sai) {
+  animation: 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both vt-pagina-sai;
+}
+::view-transition-new(.pagina-entra) {
+  animation: 400ms cubic-bezier(0.05, 0.7, 0.1, 1) 210ms both vt-pagina-entra;
+}
+::view-transition-group(cabecalho) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(cabecalho) {
+  display: none;
+}
+::view-transition-new(cabecalho) {
+  animation: none;
+}
+@keyframes vt-pagina-sai {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-pagina-entra {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* O diálogo do menu do celular: tela cheia, por cima de tudo (o <dialog> nativo prende o foco,
+   fecha com Esc e deixa o resto inerte). */
+dialog.menu-celular {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--background);
+  color: var(--foreground);
+}
+dialog.menu-celular::backdrop {
+  background: transparent;
+}

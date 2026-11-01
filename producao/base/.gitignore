@@ -1,0 +1,19 @@
+# dependências e saídas de build
+/node_modules
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+# o relatório da régua e os resultados de teste (ferramentas/regua/README.md)
+/.regua/
+/test-results/
+# as capturas automáticas do Playwright MCP do agente (claude/ferramental.md, seção 2)
+/.playwright-mcp/
+# o material cru do cliente (fotos do celular, com localização; logotipo original): fora do git.
+# A fonte fica na pasta do cliente no grupo; no repositório, só o que ferramentas/preparar-fotos.mjs gerou.
+/material/
+# variáveis de ambiente: os segredos ficam fora do repositório
+.env*
+!.env.exemplo
+# sistema
+.DS_Store

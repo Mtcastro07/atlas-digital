@@ -43,9 +43,6 @@ next-env.d.ts
 # capturas automáticas do Playwright MCP do agente (producao/claude/ferramental.md, seção 2)
 /.playwright-mcp/
 
-# o kit de produção: interno, vive no repositório principal. Este repositório é a cópia pública que a Hostinger publica
-/producao/
-
 # os registros de produção dos sites de demonstração (briefing fictício, identidade, decisões, painéis, QA): internos
 /registros/
 

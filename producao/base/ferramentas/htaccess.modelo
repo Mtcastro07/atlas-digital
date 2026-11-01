@@ -1,0 +1,55 @@
+# .htaccess do site estático (export do Next), na raiz do que se publica (a pasta out/).
+# Gerado no postbuild por ferramentas/gerar-htaccess.mjs: não edite o de out/.
+# Repete o que o next.config.ts faria no modo servidor (producao/esteira/13-tecnologia-e-estrutura.md, seção 5;
+# producao/esteira/18-publicacao-e-manutencao.md, seção 3.2).
+
+# Sem listagem de pasta; a página 404 da marca.
+Options -Indexes
+ErrorDocument 404 /404.html
+
+# O texto sem charset (o llms.txt, com acento) sai em UTF-8 [NV: conferir no ar com curl -sI https://__DOMINIO__/llms.txt].
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # 1. HTTP → HTTPS, no mesmo host. Nunca mandar um subdomínio para a raiz.
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # 2. Só o www converge para o domínio raiz.
+  RewriteCond %{HTTP_HOST} ^www\.__DOMINIO_RE__$ [NC]
+  RewriteRule ^ https://__DOMINIO__%{REQUEST_URI} [R=301,L]
+
+  # 3. Depois da virada do domínio, o endereço temporário da hospedagem também converge.
+  #    Descomente só quando o domínio já servir o site.
+  # RewriteCond %{HTTP_HOST} \.hostingersite\.com$ [NC]
+  # RewriteRule ^ https://__DOMINIO__%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# A compressão do que é texto. A hospedagem comum costuma comprimir sozinha; este bloco garante onde o
+# mod_deflate existe [NV: conferir no ar com curl -sI -H "Accept-Encoding: gzip" https://__DOMINIO__/].
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://__DOMINIO__ https://*.__DOMINIO__"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  # O navegador ignora o HSTS recebido em http. Sem includeSubDomains: nem todo subdomínio tem HTTPS garantido.
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+__FORA_DA_BUSCA__
+  # JS, CSS e fontes saem do export em /_next/static/, com hash no nome: um ano, imutáveis.
+  # Por isso, nunca ponha .js, .css ou .woff2 em public/.
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # O HTML, os dados da navegação interna (.txt) e o que vem de public/ (sem hash): o navegador
+  # confere a cada visita, como o Next faz no modo servidor.
+  <FilesMatch "\.(html|txt|xml|json|svg|png|jpe?g|webp|avif|ico)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>

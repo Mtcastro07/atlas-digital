@@ -1,0 +1,36 @@
+{
+  "name": "site-do-cliente",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "postbuild": "node ferramentas/preparar-standalone.mjs && node ferramentas/gerar-htaccess.mjs",
+    "start": "next start",
+    "servidor": "node .next/standalone/server.js",
+    "estatico": "node ferramentas/servir.mjs",
+    "regua": "node ferramentas/regua/regua.mjs",
+    "paleta": "node ferramentas/conferir-paleta.mjs",
+    "termos": "node --no-warnings=ExperimentalWarning ferramentas/verificar-termos.mjs",
+    "unicidade": "node ferramentas/unicidade.mjs",
+    "pronto": "node --experimental-strip-types --no-warnings=ExperimentalWarning ferramentas/conferir-pronto.mjs",
+    "test": "node --experimental-strip-types --no-warnings=ExperimentalWarning --test testes/*.test.ts"
+  },
+  "dependencies": {
+    "next": "16.3.8",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "^22",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "playwright": "1.64.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}

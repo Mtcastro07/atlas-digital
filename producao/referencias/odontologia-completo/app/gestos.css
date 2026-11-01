@@ -1,0 +1,21 @@
+/* app/gestos.css — os gestos deste site (o plano Completo, na camada contida do nicho: producao/esteira/09-movimento.md,
+   seções 4 e 6). Copiado de producao/gestos/app/gestos.css, com os blocos dos gestos que o site não usa apagados
+   (producao/gestos/README.md, passo 2): só a inclinação do mapa dos dentes, sem o brilho. O copiar não tem CSS próprio.
+   Só transform e opacity; nada com movimento reduzido; o gesto liga só com ponteiro fino (o componente confere). */
+
+:root {
+  /* As curvas da esteira (09-movimento.md, seção 3), as mesmas da revelação e da troca de página da base. */
+  --curva-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --curva-saida: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+
+/* Tilt Card: o mapa inclina sob o ponteiro, até 3° (components/ui/spell/tilt-card.tsx). Sem o brilho do original. */
+@media (prefers-reduced-motion: no-preference) {
+  .mov-inclina {
+    perspective: 1200px;
+  }
+  .mov-inclina-corpo {
+    position: relative;
+    transition: transform 200ms var(--curva-entrada);
+  }
+}

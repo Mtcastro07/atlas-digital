@@ -1,0 +1,105 @@
+/* O que é comum aos três sites de demonstração (app/demos/), prefixo dm-:
+   a revelação ao rolar, a entrada da capa e o esqueleto (o estado de
+   carga). Este arquivo só é carregado pelas páginas dos demonstrativos;
+   o site do Atlas não o recebe. Cada
+   site tem a sua folha, com os seus tokens e o seu prefixo, carregada só
+   pelo layout dele: app/demos/nutricao/nutricao.css (nt-),
+   app/demos/deposito/deposito.css (dp-) e app/demos/barbearia/
+   barbearia.css (bb-). Movimento: o que é ambiente leva [data-ambiente] e
+   segue as regras de app/movimento.css (só com script, pausável, parado
+   fora da tela); com movimento reduzido, nada se move. */
+
+/* O fundo do documento de cada site (para a sobra de rolagem não mostrar
+   o azul do Atlas) fica na folha do próprio site: app/demos/<site>/<site>.css. */
+
+/* Os títulos dos sites não herdam a fonte do Atlas (app/globals.css): o
+   que não tem fonte própria fica no texto do site, em 600. Na camada base,
+   para as classes de cada site (a fonte de exibição, os rótulos)
+   continuarem vencendo. */
+@layer base {
+  [data-demo] :is(h1, h2, h3) {
+    font-family: var(--font-corpo, var(--font-texto));
+    font-weight: 600;
+    letter-spacing: -0.022em;
+  }
+}
+
+/* ---------- revelação (os três planos) ----------
+   Nada nasce oculto: ao montar, components/ilhas/demos/revelacao.tsx põe
+   .dm-oculto só no que [data-revelar] está abaixo da dobra (fora da vista,
+   sem piscar) e o tira quando a peça entra na tela. O que já está na tela
+   nunca some — o LCP não espera o script. Sem script, ou com movimento
+   reduzido, nada é ocultado. --atraso escalona irmãos. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-revelar] {
+    transition:
+      opacity 900ms var(--ease-atlas),
+      transform 900ms var(--ease-atlas);
+    transition-delay: var(--atraso, 0ms);
+  }
+  [data-revelar].dm-oculto {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: none;
+  }
+}
+
+/* O marca-texto (Spell UI, Highlighted Text, variante data-marcador; na
+   nutrição): abaixo da dobra, a revelação o recolhe (.dm-a-marcar, sem
+   passagem) e o tira quando a palavra entra na tela — a faixa passa da
+   esquerda. Acima da dobra, passa na entrada da página (app/movimento.css).
+   Sem script ou com movimento reduzido, o traço já está lá. */
+@media (prefers-reduced-motion: no-preference) {
+  .mov-tarja[data-marcador] .mov-tarja-faixa {
+    transition: transform 900ms var(--ease-atlas) var(--atraso-tarja, 0ms);
+  }
+  .dm-a-marcar .mov-tarja-faixa {
+    transform: translateX(-101%);
+    transition: none;
+  }
+}
+
+/* Entrada da capa, só CSS (não espera o script: o título é o LCP). */
+@media (prefers-reduced-motion: no-preference) {
+  .dm-entra {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: dm-entra 1000ms var(--ease-atlas) forwards;
+    animation-delay: var(--atraso, 0ms);
+  }
+  .ja-aberto .dm-entra {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dm-entra {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- esqueleto: o lugar do que ainda vai chegar ----------
+   O estado de carga (regra 4 das diretrizes, 03/10), onde o valor só existe
+   depois do script — a data de hoje, na agenda de retorno da barbearia: o
+   servidor não sabe o dia de quem lê. Um bloco na cor apagada do site
+   (--muted, puxada 20% para o texto apagado: na barbearia, o --muted puro
+   fica a 1,08:1 do cartão e não se vê; assim, ~1,5:1 nos três), que pulsa
+   só por opacidade e fica parado com movimento reduzido — e sem script, em
+   que o valor nunca chega. A forma (cantos, altura da linha) vem de quem
+   usa, nos cantos do seu site. Decorativo: quem usa marca aria-hidden e põe
+   aria-busy na região que espera o valor. */
+.dm-esqueleto {
+  background-color: color-mix(in srgb, var(--muted-foreground) 20%, var(--muted));
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .dm-esqueleto {
+    animation: dm-esqueleto 1400ms ease-in-out infinite alternate;
+  }
+}
+@keyframes dm-esqueleto {
+  to {
+    opacity: 0.45;
+  }
+}

@@ -1,0 +1,305 @@
+/* app/gestos.css — os gestos do Spell UI adaptados (producao/gestos/, 08.10.2026), copiados do site do Atlas
+   (web/app/movimento.css e web/app/vidro.css). Importe depois do globals.css, só no site cujo plano os tem
+   (producao/esteira/09-movimento.md, seções 4 e 6): o marca-texto e a tarja [E]; copiar e espera [P]; a onda, o
+   brilho e a inclinação [C]. Só transform e opacity; nada com movimento reduzido; entrada uma vez
+   (.ja-aberto); o ambiente (o brilho) só com script, depois de entrar na tela, e pausável. */
+
+:root {
+  /* As curvas da esteira (09-movimento.md, seção 3), as mesmas da revelação e da troca de página da base. */
+  --curva-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --curva-saida: cubic-bezier(0.3, 0, 0.8, 0.15);
+}
+
+/* Gradient Wave Text: uma faixa de cor atravessa a palavra uma vez, da
+   esquerda para a direita. A janela (bordas apagadas pela máscara) corre
+   por cima; dentro, a cópia pintada com o degradê da marca corre ao
+   contrário e fica parada sobre o texto (as duas com o tamanho da peça: os
+   101% se anulam). A peça recorta o que passa dela (contain: paint, que não
+   mexe na linha de base, como overflow: hidden mexeria, e não deixa a janela
+   abrir rolagem lateral), com uma folga por dentro, devolvida pela margem,
+   para as pontas do itálico e as descendentes. Só transform; parada, a
+   janela fica à esquerda, fora, e a cópia, recortada. Até a noite de
+   03/10, a ilha movia o degradê a cada quadro (estilo e pintura: com CPU
+   20×, 716 ms de linha principal e o LCP 0,25 s mais tarde). */
+.mov-onda {
+  position: relative;
+  display: inline-block;
+  contain: paint;
+  padding: 0.1em 0.12em 0.2em 0.04em;
+  margin: -0.1em -0.12em -0.2em -0.04em;
+}
+.mov-onda-janela,
+.mov-onda-tinta {
+  position: absolute;
+  inset: 0;
+}
+.mov-onda-janela {
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-101%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent);
+}
+.mov-onda-tinta {
+  padding: 0.1em 0.12em 0.2em 0.04em;
+  white-space: nowrap;
+  transform: translateX(101%);
+  background: linear-gradient(90deg, var(--primary), var(--accent) 35%, var(--muted-foreground) 50%, var(--accent) 65%, var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .mov-onda-janela {
+    animation: mov-onda-janela 1800ms ease-in-out var(--atraso-onda, 0ms) backwards;
+  }
+  html:not(.ja-aberto) .mov-onda-tinta {
+    animation: mov-onda-tinta 1800ms ease-in-out var(--atraso-onda, 0ms) backwards;
+  }
+}
+@keyframes mov-onda-janela {
+  from {
+    transform: translateX(-101%);
+  }
+  to {
+    transform: translateX(101%);
+  }
+}
+@keyframes mov-onda-tinta {
+  from {
+    transform: translateX(101%);
+  }
+  to {
+    transform: translateX(-101%);
+  }
+}
+
+/* Shimmer Text: um brilho atravessa o texto a cada 3 s (o selo
+   "Recomendado"; "Desde 1996", na barbearia). Como a onda: a janela de
+   bordas apagadas corre por cima, com uma cópia mais clara do texto que
+   corre ao contrário. Só transform (o original movia o fundo, que repinta a
+   cada quadro), com o mesmo recorte da onda. Ambiente: só com script e
+   depois de entrar na tela; pausa pelo botão e fora da tela. */
+.mov-cintila {
+  position: relative;
+  display: inline-block;
+  contain: paint;
+  padding: 0.1em 0.06em;
+  margin: -0.1em -0.06em;
+}
+.mov-cintila-janela,
+.mov-cintila-luz {
+  position: absolute;
+  inset: 0;
+}
+.mov-cintila-janela {
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateX(-101%);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 45%, #000 55%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 45%, #000 55%, transparent);
+}
+.mov-cintila-luz {
+  padding: 0.1em 0.06em;
+  white-space: nowrap;
+  transform: translateX(101%);
+  color: color-mix(in srgb, currentColor 35%, #ffffff);
+}
+/* O atalho vai inteiro, com o nome, em cada regra: sem o nome, o
+   minificador (Lightning CSS) reduzia "animation: 3s linear infinite" a
+   "animation: none", e o nome, que vinha noutra regra, rodava em 0 s. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .mov-cintila[data-visivel] .mov-cintila-janela {
+    animation: mov-cintila-janela 3s linear infinite;
+  }
+  .js .mov-cintila[data-visivel] .mov-cintila-luz {
+    animation: mov-cintila-luz 3s linear infinite;
+  }
+}
+@keyframes mov-cintila-janela {
+  0% {
+    transform: translateX(-101%);
+  }
+  50%,
+  100% {
+    transform: translateX(101%);
+  }
+}
+@keyframes mov-cintila-luz {
+  0% {
+    transform: translateX(101%);
+  }
+  50%,
+  100% {
+    transform: translateX(-101%);
+  }
+}
+
+/* Highlighted Text: a tarja da palavra-chave (nunca no título: producao/esteira/09-movimento.md, seção 6). A janela fica parada,
+   rente à linha (a .mov-janela do título recorta rente ao topo dela) e
+   0,12 em abaixo, para as descendentes; dentro, a faixa sobe e a cópia do
+   texto em navy desce o mesmo tanto (as duas têm a altura da janela: os
+   101% se anulam). Só transform. Parada (ou ao recarregar), já no lugar. */
+.mov-tarja {
+  position: relative;
+  display: inline-block;
+  padding-inline: 0.1em;
+}
+/* Cantos arredondados (pedido do usuário, 03/10: "priorizar arredondamentos
+   na interface"): a janela recorta a faixa com eles. */
+.mov-tarja-janela {
+  position: absolute;
+  inset: 0 0 -0.12em;
+  overflow: hidden;
+  border-radius: 0.16em;
+}
+.mov-tarja-faixa,
+.mov-tarja-tinta {
+  position: absolute;
+  inset: 0;
+}
+.mov-tarja-faixa {
+  overflow: hidden;
+  background: var(--primary);
+}
+.mov-tarja-tinta {
+  padding-inline: 0.1em;
+  white-space: nowrap;
+  color: var(--primary-foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .mov-tarja:not([data-marcador]) .mov-tarja-faixa {
+    animation: mov-tarja-faixa 800ms var(--curva-entrada) var(--atraso-tarja, 0ms) both;
+  }
+  html:not(.ja-aberto) .mov-tarja:not([data-marcador]) .mov-tarja-tinta {
+    animation: mov-tarja-tinta 800ms var(--curva-entrada) var(--atraso-tarja, 0ms) both;
+  }
+}
+/* Variante marca-texto (data-marcador; na nutrição): a faixa por trás do
+   texto (isolation: a janela em z -1 fica sob o texto, não sob a página),
+   da metade da altura do x até a linha de base, na cor de --marcador (a cor da ação
+   a 30%, se a identidade não der a sua). Entra da esquerda, uma vez, na
+   entrada da página; o preenchimento só para trás (backwards): acabada, a
+   animação não segura a faixa, e a revelação dos sites de exemplo pode
+   recolhê-la abaixo da dobra e a fazer passar na entrada da tela
+   (no Atlas, .dm-a-marcar). */
+.mov-tarja[data-marcador] {
+  isolation: isolate;
+}
+.mov-tarja[data-marcador] .mov-tarja-janela {
+  inset: 0.5em -0.04em 0.04em;
+  z-index: -1;
+  border-radius: 0.12em;
+}
+.mov-tarja[data-marcador] .mov-tarja-faixa {
+  background: var(--marcador, color-mix(in srgb, var(--primary) 30%, transparent));
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.ja-aberto) .mov-tarja[data-marcador] .mov-tarja-faixa {
+    animation: mov-marcador 900ms var(--curva-entrada) var(--atraso-tarja, 0ms) backwards;
+  }
+}
+@keyframes mov-marcador {
+  from {
+    transform: translateX(-101%);
+  }
+}
+@keyframes mov-tarja-faixa {
+  from {
+    transform: translateY(101%);
+  }
+}
+@keyframes mov-tarja-tinta {
+  from {
+    transform: translateY(-101%);
+  }
+}
+
+/* Bars Spinner: doze barras em volta do centro, cada uma se apagando a seu
+   tempo (a espera, regra 4). Só opacidade; parado, em leque. */
+.mov-barras {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: var(--barras, 16px);
+  height: var(--barras, 16px);
+}
+.mov-barras > span {
+  position: absolute;
+  top: 46%;
+  left: 38%;
+  width: 24%;
+  height: 8%;
+  border-radius: 6px;
+  background: currentColor;
+  transform: rotate(calc(var(--i) * 30deg)) translate(146%);
+  opacity: calc(0.15 + var(--i) * 0.07);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .mov-barras > span {
+    animation: mov-barras 1.2s linear infinite;
+    animation-delay: calc(var(--i) * 0.1s - 1.2s);
+  }
+}
+@keyframes mov-barras {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.15;
+  }
+}
+
+/* As cópias são só desenho: fora da seleção, para quem copia o texto não
+   levar a palavra duas vezes (a árvore de acessibilidade e a busca já as
+   ignoram: aria-hidden, data-nosnippet). */
+.mov-onda-janela,
+.mov-cintila-janela,
+.mov-tarja-janela {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Com cores forçadas, as cópias pintadas pelo fundo sairiam sem cor: somem, e fica o texto de baixo. */
+@media (forced-colors: active) {
+  .mov-onda-janela,
+  .mov-cintila-janela {
+    display: none;
+  }
+}
+
+/* Tilt Card: o objeto inclina sob o ponteiro (no Atlas, .vd-inclina, em app/vidro.css). Só com ponteiro fino
+   e sem movimento reduzido (o componente não liga o ouvinte sem isso). */
+@media (prefers-reduced-motion: no-preference) {
+  .mov-inclina {
+    perspective: 1200px;
+  }
+  .mov-inclina-corpo {
+    position: relative;
+    transition: transform 200ms var(--curva-entrada);
+  }
+  .mov-inclina-brilho {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    overflow: hidden;
+    border-radius: var(--inclina-raio, var(--radius-cartao, 1rem));
+    pointer-events: none;
+  }
+  .mov-inclina-brilho > span {
+    position: absolute;
+    inset: -50%;
+    opacity: 0;
+    background: radial-gradient(circle, rgb(255 255 255 / 0.15) 0%, transparent 40%);
+    transition: opacity 300ms var(--curva-entrada);
+  }
+}
+
+/* O ambiente pausa fora da tela e pelo botão (components/ilhas/controle-do-movimento.tsx: <html class=
+   "ambiente-pausado">). A lista nomeia as peças que correm: um seletor universal seria testado em cada
+   elemento a cada recálculo de estilo. Acrescente aqui toda peça de ambiente nova. */
+.ambiente-pausado :is(.mov-cintila-janela, .mov-cintila-luz),
+[data-fora] :is(.mov-cintila-janela, .mov-cintila-luz) {
+  animation-play-state: paused !important;
+}

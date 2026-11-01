@@ -1,0 +1,294 @@
+/* app/globals.css — o que vale para todo site do Atlas; a marca fica em identidade.css.
+   Regras e objetivos: producao/esteira/05, 06, 07, 09, 16. Só transform e opacity no movimento. */
+@import "tailwindcss";
+/* O kit (producao/, ao lado do site) fica fora da varredura do Tailwind: os documentos e os módulos guardados
+   geravam classes que o site não usa — 39 KB de CSS contra 24 KB, no exemplo (medido em 08.10.2026). */
+@source not "../producao";
+@import "./identidade.css";
+@import "./gestos.css";
+
+/* As famílias (app/fontes.ts: --font-texto e --font-titulo) e as cores por função.
+   A reserva dentro do var() vale onde a variável não existe (a global-error, por exemplo):
+   sem ela, um var() indefinido invalida a declaração inteira (producao/esteira/05-tipografia.md, seção 4.1). */
+@theme inline {
+  --font-sans: var(--font-texto, ui-sans-serif), system-ui, sans-serif;
+  /* Identidade de uma família só: tire o "titulo" de app/fontes.ts, e os títulos usam a de texto. */
+  --font-display: var(--font-titulo, var(--font-texto, ui-sans-serif)), system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-marcador: var(--marcador);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-color: color-mix(in oklab, var(--foreground) 35%, var(--background)) var(--background);
+  }
+  input,
+  select,
+  textarea {
+    caret-color: var(--accent);
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-corpo);
+    line-height: var(--text-corpo--line-height);
+    font-synthesis-weight: none; /* só os pesos que o arquivo tem: o navegador não inventa negrito */
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+  /* A âncora não para sob o cabeçalho fixo (producao/esteira/13-tecnologia-e-estrutura.md, seção 3.7). */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+  /* O foco também não: no Shift+Tab, o navegador alinha o elemento focado ao topo, sob o cabeçalho de 64 px
+     (WCAG 2.4.11, foco não encoberto). Achado do roteiro de teclado, 08.10.2026: a base de fábrica não o tinha. */
+  html {
+    scroll-padding-top: 5rem;
+  }
+  /* O foco sempre visível, ≥ 2 px e ≥ 3:1 (producao/esteira/16-acessibilidade.md). */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: var(--marcador);
+    color: var(--foreground);
+  }
+  a {
+    text-underline-offset: 0.2em;
+  }
+}
+
+/* O envelope das páginas: o recuo lateral (24 px; 40 px a partir de 768 px), nunca menor que a área
+   segura do celular com recorte — o layout usa viewportFit: "cover" (producao/esteira/13-tecnologia-e-estrutura.md,
+   seção 6, regra 4). Sem isto, no iPhone deitado, o texto passa por baixo do recorte. */
+@utility envelope {
+  padding-left: max(--spacing(6), env(safe-area-inset-left));
+  padding-right: max(--spacing(6), env(safe-area-inset-right));
+  @media (width >= 48rem) {
+    padding-left: max(--spacing(10), env(safe-area-inset-left));
+    padding-right: max(--spacing(10), env(safe-area-inset-right));
+  }
+}
+
+/* Algarismos tabulares em preço, horário e telefone. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- movimento (producao/esteira/09-movimento.md: camada completa, contida) ----------
+   1. A revelação, uma vez, ao entrar na tela: só com script (.js), sem movimento reduzido,
+      e nunca no título nem no lide da primeira tela (o elemento do LCP entra já legível). */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-revela] {
+    transition:
+      opacity 500ms cubic-bezier(0.05, 0.7, 0.1, 1),
+      transform 500ms cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  .js [data-revela]:not([data-visivel]) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+/* Na impressão nada fica escondido à espera de uma rolagem que não vai acontecer. */
+@media print {
+  .js [data-revela]:not([data-visivel]) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* 2. O mapa dos dentes (identidade.md, seção 6): o traço da ficha clínica, pelos tokens da marca. O desenho é decoração
+      do mesmo controle: os rádios da região são o controle de verdade (components/ilhas/escolha-de-regiao.tsx). */
+.dente-contorno {
+  fill: var(--card);
+  stroke: var(--foreground);
+  stroke-width: 1.1;
+}
+.dente-sulco {
+  fill: none;
+  stroke: var(--foreground);
+  stroke-opacity: 0.5;
+  stroke-width: 0.8;
+}
+/* Em unidades do desenho (342 de largura): a 390 px de tela o desenho se reduz a 0,88, e 13 passa a ~11,4 px; 11 dava 9,7 px (Q9). */
+.dente-numero {
+  fill: var(--muted-foreground);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.mapa-legenda {
+  fill: var(--muted-foreground);
+  font-size: 13px;
+}
+.mapa-faixa {
+  fill: var(--marcador);
+  fill-opacity: 0.7;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.mapa-area {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .mapa-area:hover {
+    stroke: var(--accent);
+    stroke-opacity: 0.45;
+  }
+}
+/* O círculo de lápis aparece em resposta a quem escolhe: opacidade e escala, 200 ms, uma vez por escolha. */
+@media (prefers-reduced-motion: no-preference) {
+  .mapa-faixa-entra {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: 200ms cubic-bezier(0.05, 0.7, 0.1, 1) both mapa-faixa-entra;
+  }
+}
+@keyframes mapa-faixa-entra {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* As perguntas (<details> nativos): o indicador de aberta e fechada, por transform (um chevron de traço, sem imagem). */
+summary {
+  justify-content: space-between;
+  gap: 1rem;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+summary::after {
+  content: "";
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.25rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+details[open] > summary::after {
+  transform: rotate(-135deg);
+}
+@media (prefers-reduced-motion: no-preference) {
+  summary::after {
+    transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+
+/* O vínculo no texto: grafite, com o traço de lápis vermelho por baixo (a mesma marca do ícone). */
+.vinculo {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem; /* alvo de toque de 44 px (producao/esteira/16-acessibilidade.md) */
+  color: var(--foreground);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.28em;
+}
+@media (hover: hover) {
+  .vinculo:hover {
+    text-decoration-thickness: 3px;
+  }
+}
+
+/* O que só vale sem script (a nota do pedido de avaliação): .js é posta no <head>, antes da primeira pintura. */
+html.js .sem-script {
+  display: none;
+}
+
+/* O plano de sessões: a região escolhida (data-regiao, posto pela ilha) esconde os tratamentos que não a alcançam.
+   Sem script, o atributo nunca existe, e a lista inteira fica à vista. */
+[data-regiao="frente-superior"] [data-regioes]:not([data-regioes~="frente-superior"]),
+[data-regiao="fundo-superior"] [data-regioes]:not([data-regioes~="fundo-superior"]),
+[data-regiao="frente-inferior"] [data-regioes]:not([data-regioes~="frente-inferior"]),
+[data-regiao="fundo-inferior"] [data-regioes]:not([data-regioes~="fundo-inferior"]) {
+  display: none;
+}
+
+/* 3. A troca de página (a receita do guia do Next: producao/esteira/09-movimento.md, seção 8):
+      saída de 150 ms; entrada de 400 ms, em 60 px, depois de 210 ms; o cabeçalho parado. */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.pagina-sai) {
+  animation: 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both vt-pagina-sai;
+}
+::view-transition-new(.pagina-entra) {
+  animation: 400ms cubic-bezier(0.05, 0.7, 0.1, 1) 210ms both vt-pagina-entra;
+}
+::view-transition-group(cabecalho) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(cabecalho) {
+  display: none;
+}
+::view-transition-new(cabecalho) {
+  animation: none;
+}
+@keyframes vt-pagina-sai {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes vt-pagina-entra {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* O diálogo do menu do celular: tela cheia, por cima de tudo (o <dialog> nativo prende o foco,
+   fecha com Esc e deixa o resto inerte). */
+dialog.menu-celular {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--background);
+  color: var(--foreground);
+}
+dialog.menu-celular::backdrop {
+  background: transparent;
+}

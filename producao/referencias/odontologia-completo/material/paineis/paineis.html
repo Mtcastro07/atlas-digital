@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Painéis de estilo · Odontologia Boa Viagem</title>
+<style>
+@font-face { font-family: "Albert Sans"; src: url("albert/texto.woff2") format("woff2"); font-weight: 400 700; }
+@font-face { font-family: "Red Hat Display"; src: url("redhat-display/titulo.woff2") format("woff2"); font-weight: 400 700; }
+@font-face { font-family: "Red Hat Text"; src: url("redhat-text/texto.woff2") format("woff2"); font-weight: 400 700; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: system-ui, sans-serif; background: #ddd; padding: 24px; }
+.linha { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1392px; margin: 0 auto; }
+.painel { background: var(--bg); color: var(--ink); padding: 32px; border-radius: 24px; min-height: 760px; display: flex; flex-direction: column; gap: 20px; font-family: var(--texto); font-size: 17px; line-height: 1.6; }
+.painel h2 { font-family: var(--titulo); font-weight: 600; font-size: 30px; line-height: 1.15; }
+.painel .nome { font-size: 13px; color: var(--mudo); }
+.amostras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.amostra { height: 56px; border-radius: var(--raio-m); display: flex; align-items: end; padding: 6px 8px; font-size: 12px; line-height: 1.2; }
+.botao { align-self: start; display: inline-flex; align-items: center; min-height: 44px; padding: 0 24px; border-radius: 999px; background: var(--primary); color: var(--primary-fg); font-weight: 600; }
+.cartao { background: var(--card); border: 1px solid var(--borda); border-radius: var(--raio-c); padding: 20px; }
+.cartao strong { font-family: var(--titulo); font-size: 19px; }
+.num { font-variant-numeric: tabular-nums; }
+.tabela { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabela td { padding: 8px 0; border-top: 1px solid var(--borda); }
+.tabela td:last-child { text-align: right; }
+.nota { font-size: 15px; color: var(--mudo); }
+.marca { color: var(--accent); font-weight: 600; }
+.A { --bg: oklch(0.982 0.007 85); --ink: oklch(0.27 0.012 60); --mudo: oklch(0.45 0.012 60); --primary: oklch(0.27 0.012 60); --primary-fg: oklch(0.985 0.006 85); --accent: oklch(0.47 0.16 27); --card: oklch(0.955 0.01 82); --borda: oklch(0.27 0.012 60 / 0.16); --titulo: "Albert Sans"; --texto: "Albert Sans"; --raio-c: 20px; --raio-m: 8px; }
+.B { --bg: oklch(0.972 0.012 150); --ink: oklch(0.28 0.03 160); --mudo: oklch(0.44 0.03 160); --primary: oklch(0.42 0.065 160); --primary-fg: oklch(0.99 0.005 150); --accent: oklch(0.42 0.065 160); --card: oklch(0.99 0.004 150); --borda: oklch(0.28 0.03 160 / 0.14); --titulo: "Red Hat Display"; --texto: "Red Hat Text"; --raio-c: 28px; --raio-m: 14px; }
+.C { --bg: oklch(0.97 0.004 250); --ink: oklch(0.24 0.012 250); --mudo: oklch(0.45 0.015 250); --primary: oklch(0.38 0.07 250); --primary-fg: oklch(0.99 0 0); --accent: oklch(0.4 0.09 250); --card: oklch(1 0 0); --borda: oklch(0.24 0.012 250 / 0.2); --titulo: "Albert Sans"; --texto: "Albert Sans"; --raio-c: 12px; --raio-m: 4px; }
+.A .selo { border: 1.5px solid var(--accent); border-radius: 999px; padding: 2px 12px; color: var(--accent); font-weight: 600; font-size: 14px; display: inline-block; transform: rotate(-2deg); }
+.C .grande { font-size: 56px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
+.B .onda { height: 56px; border-radius: 28px; background: oklch(0.93 0.025 155); }
+</style>
+</head>
+<body>
+<div class="linha">
+
+<section class="painel A">
+  <p class="nome">Painel A · Ficha clínica (editorial, calma)</p>
+  <h2>Primeiro a avaliação. Depois, o tratamento, sessão por sessão.</h2>
+  <p>Tipo: Albert Sans, uma família só, pesos 400 a 700. Título contido (razão 2). Algarismos tabulares para sessões e intervalos.</p>
+  <div class="amostras">
+    <div class="amostra" style="background: var(--bg); border: 1px solid var(--borda)">fundo · esmalte</div>
+    <div class="amostra" style="background: var(--ink); color: var(--bg)">tinta · grafite</div>
+    <div class="amostra" style="background: var(--card)">superfície · cerâmica</div>
+    <div class="amostra" style="background: var(--accent); color: var(--bg)">acento · lápis vermelho</div>
+    <div class="amostra" style="background: var(--mudo); color: var(--bg)">texto secundário · aço</div>
+    <div class="amostra" style="background: var(--borda)">borda · 16%</div>
+  </div>
+  <span class="botao">Pedir avaliação pelo WhatsApp</span>
+  <div class="cartao">
+    <strong>Tratamento de canal</strong>
+    <table class="tabela num"><tr><td>Sessão 1</td><td>60 min</td></tr><tr><td>Intervalo</td><td>7 dias</td></tr><tr><td>Sessão 2</td><td>60 min</td></tr></table>
+  </div>
+  <p class="nota">Textura: filetes de 1 px na cor da tinta a 16%, como a ficha impressa; nenhum degradê. O acento circula a região escolhida, <span class="marca">como o lápis na ficha</span>.</p>
+  <span class="selo">região escolhida</span>
+</section>
+
+<section class="painel B">
+  <p class="nome">Painel B · Esmalte e cerâmica (macio, acolhedor)</p>
+  <h2>Primeiro a avaliação. Depois, o tratamento, sessão por sessão.</h2>
+  <p>Tipo: Red Hat Display nos títulos e Red Hat Text no corpo. Cantos generosos; verde de louça, baixa saturação.</p>
+  <div class="amostras">
+    <div class="amostra" style="background: var(--bg); border: 1px solid var(--borda)">fundo · esmalte frio</div>
+    <div class="amostra" style="background: var(--ink); color: var(--bg)">tinta · verde-escuro</div>
+    <div class="amostra" style="background: var(--card); border: 1px solid var(--borda)">superfície · louça</div>
+    <div class="amostra" style="background: var(--primary); color: var(--bg)">ação · verde-cerâmica</div>
+    <div class="amostra" style="background: var(--mudo); color: var(--bg)">texto secundário</div>
+    <div class="amostra" style="background: oklch(0.93 0.025 155)">marcador · celadon</div>
+  </div>
+  <span class="botao">Pedir avaliação pelo WhatsApp</span>
+  <div class="cartao">
+    <strong>Tratamento de canal</strong>
+    <p class="nota">2 sessões, com 7 dias de intervalo.</p>
+    <div class="onda"></div>
+  </div>
+  <p class="nota">Textura: superfícies lisas e raios de 28 px, sem filete; a região escolhida fica sobre uma mancha celadon.</p>
+</section>
+
+<section class="painel C">
+  <p class="nome">Painel C · Instrumental (técnico, frio)</p>
+  <h2>Primeiro a avaliação. Depois, o tratamento, sessão por sessão.</h2>
+  <p>Tipo: Albert Sans com numerais grandes como peça gráfica. Cinzas de aço e um azul de caneta; raios pequenos.</p>
+  <div class="amostras">
+    <div class="amostra" style="background: var(--bg); border: 1px solid var(--borda)">fundo · aço claro</div>
+    <div class="amostra" style="background: var(--ink); color: var(--bg)">tinta · aço escuro</div>
+    <div class="amostra" style="background: var(--card); border: 1px solid var(--borda)">superfície</div>
+    <div class="amostra" style="background: var(--primary); color: var(--bg)">ação · azul de caneta</div>
+    <div class="amostra" style="background: var(--mudo); color: var(--bg)">texto secundário</div>
+    <div class="amostra" style="background: var(--borda)">borda · 20%</div>
+  </div>
+  <span class="botao">Pedir avaliação pelo WhatsApp</span>
+  <div class="cartao">
+    <p class="grande num">2 sessões</p>
+    <p class="nota num">intervalo de 7 dias · 60 min cada</p>
+  </div>
+  <p class="nota">Textura: nenhuma; o número grande faz o papel da imagem. Risco: o azul-aço lê-se como clínica genérica.</p>
+</section>
+
+</div>
+</body>
+</html>

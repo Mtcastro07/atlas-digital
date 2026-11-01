@@ -1,0 +1,48 @@
+/* app/identidade.css — a camada da marca: os tokens por função, a escala e a forma
+   (producao/esteira/04-direcao-de-arte.md, seção 4.1; producao/esteira/06-cor-forma-e-superficie.md).
+   A direção de arte (identidade.md) escreve os valores, pela tradução de producao/03-da-identidade-ao-codigo.md,
+   seção 2, e o `npm run paleta` confere o contraste. Os nomes dizem a função, nunca a cor.
+
+   Odontologia Boa Viagem (site de exemplo, plano Completo): a ficha clínica impressa. Esmalte quente por fundo,
+   grafite na tinta e na ação, o lápis vermelho do odontograma como único acento (a região marcada, a urgência
+   e o foco). Postura de contenção: o título tem, no máximo, 2 vezes o corpo na mesa. */
+
+@theme {
+  /* A escala, com a entrelinha de cada degrau (identidade.md, seção 4). Contenção: display ÷ corpo ≤ 2 na mesa
+     (35 ÷ 18 = 1,94). Em toda faixa, o máximo é no máximo 2,5 vezes o mínimo (producao/esteira/05-tipografia.md, seção 6.4). */
+  --text-rotulo: 0.8125rem;
+  --text-rotulo--line-height: 1.4;
+  --text-nota: 0.9375rem;
+  --text-nota--line-height: 1.5;
+  --text-corpo: clamp(1.0625rem, 1.035rem + 0.12vw, 1.125rem);
+  --text-corpo--line-height: 1.6;
+  --text-destaque: clamp(1.1875rem, 1.12rem + 0.3vw, 1.3125rem);
+  --text-destaque--line-height: 1.5;
+  --text-numero: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);
+  --text-numero--line-height: 1.1;
+  --text-titulo: clamp(1.5rem, 1.35rem + 0.55vw, 1.75rem);
+  --text-titulo--line-height: 1.2;
+  --text-display: clamp(1.875rem, 1.6rem + 1.1vw, 2.1875rem);
+  --text-display--line-height: 1.12;
+
+  /* A forma, por hierarquia: pílula na ação, raio na folha (cartão), pequeno na marcação. */
+  --radius-cartao: 1.25rem;
+  --radius-marcacao: 0.5rem;
+
+  /* A largura da página. */
+  --container-pagina: 72rem;
+}
+
+:root {
+  --background: oklch(0.975 0.007 85); /* o esmalte: branco quente (#f9f6f2) */
+  --foreground: oklch(0.27 0.012 60); /* o grafite: tinta e ação: 14,03:1 sobre o fundo; 15,00 sobre a folha; 12,95 sobre o suave */
+  --card: oklch(0.997 0.003 85); /* a folha sobre o balcão (a ficha) */
+  --muted: oklch(0.948 0.01 82); /* faixa e rodapé */
+  --muted-foreground: oklch(0.45 0.012 60); /* o aço: texto secundário: 6,92:1 sobre o fundo; 7,40 sobre a folha; 6,39 sobre o suave */
+  --primary: oklch(0.27 0.012 60); /* fundo da ação: grafite */
+  --primary-foreground: oklch(0.985 0.006 85); /* texto da ação: 14,50:1 sobre --primary */
+  --accent: oklch(0.47 0.16 27); /* o lápis vermelho: região marcada, urgência, foco: 6,92:1 sobre o fundo; 7,40 sobre a folha; 6,39 sobre o suave (#a12623) */
+  --marcador: oklch(0.93 0.04 27); /* o preenchimento da região marcada; a seleção de texto: a tinta por cima, 12,03:1 */
+  --border: oklch(0.27 0.012 60 / 0.16);
+  --ring: oklch(0.47 0.16 27); /* o anel de foco: 6,92:1 sobre o fundo (mínimo 3) */
+}
