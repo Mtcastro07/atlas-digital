@@ -32,6 +32,14 @@ assert.deepEqual([globo.inicio, globo.fim, globo.linhas.at(-1)], [60, 63, `<line
 assert.deepEqual(t("components/paginas/costa-de-niteroi.ts", `{"nome":"Icaraí","x":66.85,"y":73.86}`).linhas, [`{"nome":"Icaraí","x":66.85,"y":73.86}`]);
 assert.throws(() => t("lib/whatsapp.ts", "nada disto existe no arquivo"));
 assert.throws(() => t("lib/whatsapp.ts", "reais")); // repetida: em mais de uma linha
+// O invólucro da Hostinger: next.config.ts sem a âncora, e o original em <hash>.next.config.ts.
+const raiz = process.cwd();
+process.chdir(mkdtempSync(path.join(tmpdir(), "involucro-")));
+writeFileSync("next.config.ts", "export default {};\n");
+writeFileSync("6ae8.next.config.ts", "// topo\nconst a = 1;\n");
+assert.equal(t("next.config.ts", "const a = 1;").inicio, 2);
+assert.throws(() => t("next.config.ts", "nada disto"));
+process.chdir(raiz);
 assert.equal(linhasDo({ inicio: 67, fim: 67 }), "linha 67");
 assert.equal(linhasDo({ inicio: 4, fim: 5 }), "linhas 4 e 5");
 assert.equal(linhasDo({ inicio: 60, fim: 63 }), "linhas 60 a 63");

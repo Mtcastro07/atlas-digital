@@ -52,7 +52,7 @@
 
 ### 2.1 · Como a Hostinger roda o Next
 
-- **Compilação:** a Hostinger roda o Next.js só em modo servidor e aplica `output: "standalone"` antes de compilar. O export estático "não tem efeito" lá (documentação da Hostinger, consultada em 03.10.2026) [V].
+- **Compilação:** a Hostinger roda o Next.js só em modo servidor e aplica `output: "standalone"` antes de compilar. O export estático "não tem efeito" lá (documentação da Hostinger, consultada em 03.10.2026) [V]. Para isso, ela troca o `next.config.ts` por um invólucro e guarda o original em `<hash>.next.config.ts`: código que lê esse arquivo no build não acha o que espera (o R10 do Atlas falhou assim, em 02.11.2026). Antes de publicar, simule: renomeie o original, ponha o invólucro com `output: "standalone"` e compile.
 - **O `postbuild`:** copia `public/` e `.next/static` para dentro do pacote standalone. Sem ele, o logotipo, as imagens e o cartão de compartilhamento dão 404 (`13-tecnologia-e-estrutura.md`, seção 5.1).
 - **Versão do Node:** de 18 a 24 disponíveis; o Atlas usa a 22 (LTS).
 

@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 // O código mostrado nas páginas é sempre o verdadeiro (R10, fase 0, S3): o trecho se lê do arquivo no build, pela
@@ -15,13 +15,20 @@ export type Trecho = {
   linhas: string[];
 };
 
+/** O arquivo e as cópias renomeadas ao lado dele. No build, a Hostinger põe um invólucro em next.config.ts e guarda o original em <hash>.next.config.ts. */
+function copiasDe(arquivo: string) {
+  const { dir, base } = path.parse(path.join(process.cwd(), arquivo));
+  const nomes = [base, ...readdirSync(dir).filter((nome) => nome.endsWith(`.${base}`))];
+  return nomes.map((nome) => readFileSync(path.join(dir, nome), "utf8").split("\n"));
+}
+
 /**
  * trechoDe("lib/whatsapp.ts", "/** Endereço wa.me", 2) → as linhas 4 e 5. A âncora tem de aparecer numa linha só do
  * arquivo: ausente ou repetida, o build para (o número mostrado seria o errado). Quando ela é só um pedaço da linha
  * (`{"nome":"Icaraí",…}` em costa-de-niteroi.ts:12), o trecho é a âncora, literal, com o número da linha.
  */
 export function trechoDe(arquivo: string, ancora: string, linhas = 1): Trecho {
-  const texto = readFileSync(path.join(process.cwd(), arquivo), "utf8").split("\n");
+  const texto = copiasDe(arquivo).find((copia) => copia.some((linha) => linha.includes(ancora))) ?? [];
   const onde = texto.flatMap((linha, i) => (linha.includes(ancora) ? [i] : []));
   if (onde.length !== 1) {
     throw new Error(`trechoDe: a âncora ${JSON.stringify(ancora)} aparece em ${onde.length} linhas de ${arquivo} (precisa de 1)`);
