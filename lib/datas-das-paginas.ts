@@ -1,10 +1,13 @@
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 
-// A data de cada página no sitemap.xml, tirada do git no build (R10, fase 0, S13): a do último commit que tocou um
-// dos arquivos dela. O Google só aceita datas "consistently and verifiably accurate" (app/sitemap.ts): sem git, ou com
-// o histórico raso (num clone raso, o git log daria a todas a data do último commit), a página sai sem data, e o build
-// avisa. Data nenhuma é melhor que data errada. Só o servidor a chama (o sitemap.xml e a linha <lastmod> de
-// /o-trabalho). Conferido por ferramentas/conferir-sistema.mjs.
+// A data de cada página no sitemap.xml, tirada do git (R10, fase 0, S13): a do último commit que tocou um dos arquivos
+// dela. O Google só aceita datas "consistently and verifiably accurate" (app/sitemap.ts). A Hostinger compila sem o
+// histórico, e um clone raso daria a todas a data do último commit: nesses casos vale conteudo/medidas/datas.json, as
+// mesmas datas gravadas por ferramentas/gravar-datas.mjs antes de publicar. Só o servidor a chama (o sitemap.xml e a
+// linha <lastmod> de /o-trabalho). Conferido por ferramentas/conferir-sistema.mjs, que acusa o arquivo atrasado.
+const GRAVADAS = "conteudo/medidas/datas.json";
 
 // shortcut: o conteudo/site.ts e os CSS comuns entram na lista das sete, e uma mudança neles muda a data de todas (o
 // que nunca deixa de marcar uma mudança de verdade); trocar quando o texto de cada página sair do site.ts.
@@ -94,21 +97,29 @@ function temHistorico() {
   if (historico === undefined) {
     try {
       historico = git("rev-parse", "--is-shallow-repository") === "false";
-      if (!historico) console.warn("datas-das-paginas: clone raso; o sitemap.xml sai sem datas.");
+      if (!historico) console.warn(`datas-das-paginas: clone raso; o sitemap.xml usa ${GRAVADAS}.`);
     } catch {
       historico = false;
-      console.warn("datas-das-paginas: sem git no build; o sitemap.xml sai sem datas.");
+      console.warn(`datas-das-paginas: sem git no build; o sitemap.xml usa ${GRAVADAS}.`);
     }
   }
   return historico;
 }
 
+/** As páginas da tabela, para ferramentas/gravar-datas.mjs. */
+export const paginasComData = Object.keys(ARQUIVOS);
+
+/** A data gravada de uma página: lê conteudo/medidas/datas.json. */
+export function dataGravada(caminho: string): string | undefined {
+  return JSON.parse(readFileSync(path.join(process.cwd(), GRAVADAS), "utf8"))[caminho];
+}
+
 const lidas = new Map<string, string | undefined>();
 
-/** ultimaAlteracao("/o-trabalho") → "2026-10-22" (AAAA-MM-DD), ou undefined sem histórico ou sem commit nos arquivos. */
+/** ultimaAlteracao("/o-trabalho") → "2026-10-22" (AAAA-MM-DD), do git; sem o histórico inteiro, a data gravada. */
 export function ultimaAlteracao(caminho: string): string | undefined {
   const arquivos = ARQUIVOS[caminho];
   if (!arquivos) throw new Error(`ultimaAlteracao: a página ${caminho} não está na tabela de lib/datas-das-paginas.ts`);
-  if (!lidas.has(caminho)) lidas.set(caminho, temHistorico() ? git("log", "-1", "--format=%cs", "--", ...arquivos, ...COMUNS) || undefined : undefined);
+  if (!lidas.has(caminho)) lidas.set(caminho, temHistorico() ? git("log", "-1", "--format=%cs", "--", ...arquivos, ...COMUNS) || undefined : dataGravada(caminho));
   return lidas.get(caminho);
 }

@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 
 import { colofaoDe, LETRAS } from "../lib/colofao.ts";
-import { ultimaAlteracao } from "../lib/datas-das-paginas.ts";
+import { dataGravada, paginasComData, ultimaAlteracao } from "../lib/datas-das-paginas.ts";
 import { porExtenso } from "../lib/por-extenso.ts";
 import { linhasDo, trechoDe } from "../lib/trecho.ts";
 
@@ -64,5 +64,7 @@ const data = ultimaAlteracao("/o-trabalho");
 assert.match(data ?? "", /^\d{4}-\d{2}-\d{2}$/);
 assert.equal(ultimaAlteracao("/o-trabalho"), data);
 assert.throws(() => ultimaAlteracao("/nao-existe"));
+// O arquivo que a Hostinger usa acompanha o git: atrasado, rode ferramentas/gravar-datas.mjs.
+for (const p of paginasComData) assert.equal(dataGravada(p), ultimaAlteracao(p), `conteudo/medidas/datas.json atrasado em ${p}`);
 
 console.log(`conferir-sistema: tudo confere (a data de /o-trabalho no git: ${data})`);
