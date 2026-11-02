@@ -107,6 +107,18 @@ export function precoDoModulo(m: Modulo) {
 /** Módulos que entram no montador: os de cobrança recorrente. */
 export const modulosDoMontador = modulos.filter((m) => !m.porPagina);
 
+/** O selo do plano com `destaque` (a etiqueta de components/ui/etiqueta-recomendado.tsx). */
+export const seloDoRecomendado = "Recomendado";
+
+/**
+ * A condição de fundação, numa redação só no site inteiro (decisão do aprovador, 28/10/2026): o h2 das chapas do
+ * início, a nota 1 de /planos, a linha da conta do montador e a pergunta "Quanto custa um site?". A outra parte da
+ * condição da ata v3.0, IV.3 (a mensalidade parada por doze meses), saiu do site; a ata não mudou, e o site e a ata
+ * divergem até os sócios decidirem (registros/atlas/design-v2/R10/construcao/CONTRATO.md, 7).
+ * Aqui, ao lado dos preços: o desconto é só na criação, nunca na mensalidade (a ata de decisões, bloco 07, no topo).
+ */
+export const condicaoDeFundacao = "Nos três primeiros contratos, 50% de desconto na criação.";
+
 export const faixaDePreco = {
   minimo: Math.min(...planos.map((p) => p.criacao)),
   maximo: Math.max(...planos.map((p) => p.criacao)),

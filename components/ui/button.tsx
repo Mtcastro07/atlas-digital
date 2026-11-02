@@ -50,15 +50,16 @@ const buttonVariants = cva(
         ghost: "text-muted-foreground not-disabled:hover:text-foreground",
         link: "vd-vinculo rounded-none px-0 active:scale-100",
       },
-      // Texto na escala (regra 1): a ação comum e a do cabeçalho em
-      // text-nota (14 px); a ação grande e o vínculo com seta, que andam
-      // juntos (capa, fundação, chamada final, 404), em text-corpo (17 px).
-      // Até 03/10, as medidas do site de 28/08: 15; 14,5; 16 e 16,5 px.
+      // Nada que decide abaixo de 16 px (R10, 28/10, S9): a ação do
+      // cabeçalho a 16 px (text-base, 1rem/1,5); a ação comum, a grande e
+      // o vínculo com seta em text-corpo (17 px). De 03 a 28/10, a comum e a
+      // do cabeçalho em text-nota (14 px); até 03/10, as medidas do site de
+      // 28/08: 15; 14,5; 16 e 16,5 px.
       // Alturas e recuos mantidos: 48 px (44 no cabeçalho, onde os 20 px
       // de lado fazem a ação concêntrica à pílula).
       size: {
-        default: "min-h-12 px-6 py-3 text-nota",
-        sm: "min-h-11 px-5 py-2 text-nota",
+        default: "min-h-12 px-6 py-3 text-corpo",
+        sm: "min-h-11 px-5 py-2 text-base",
         lg: "min-h-12 px-7 py-3 text-corpo",
         link: "min-h-11 text-corpo",
         icon: "size-11",

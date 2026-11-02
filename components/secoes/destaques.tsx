@@ -1,8 +1,12 @@
 import { Celular } from "@/components/aparelho/celular";
+import { Trecho } from "@/components/codigo/trecho";
 import { Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
+import { Conferencia } from "@/components/ilhas/conferencia";
+import { codigoDosDestaques } from "@/conteudo/paginas/inicio";
 import { planos } from "@/conteudo/planos";
 import { capa, simulador } from "@/conteudo/site";
+import { linhasDo, trechoDe } from "@/lib/trecho";
 
 /**
  * Só os dois primeiros destaques (os 10 blocos e os 0 cookies): os outros
@@ -15,6 +19,10 @@ const site = simulador.sites.find((s) => s.id === demonstrativo.site)!;
 const plano = planos.find((p) => p.id === site.plano)!;
 const inicioDoNome = site.nome.slice(0, site.nome.lastIndexOf(" "));
 const ultimaDoNome = site.nome.slice(site.nome.lastIndexOf(" ") + 1);
+
+/** O código do início (R10, 28/10): a primeira linha da política de conteúdo, lida do arquivo no build (lib/trecho.ts);
+ *  se a linha mudar, o trecho muda com ela, e, se sumir, o build para. */
+const regra = trechoDe("next.config.ts", `"default-src 'self'",`);
 
 /**
  * Logo abaixo da capa, os destaques — o padrão de execução em fatos
@@ -51,6 +59,14 @@ const ultimaDoNome = site.nome.slice(site.nome.lastIndexOf(" ") + 1);
  * pousa no papel, com a sombra de contato do lado oposto à luz, como a
  * esfera. Os dois fatos, em parágrafos (até então, uma lista): o aparelho
  * fica entre eles na ordem do texto.
+ * Desde 28/10 (R10), o código, uma linha, verdadeiro: sob "0 cookies e
+ * rastreadores neste site.", a primeira linha da regra de segurança do site
+ * (next.config.ts), na ficha lisa (components/codigo/trecho.tsx), com a frase
+ * para o leigo e a conferência feita neste aparelho, na carga (a ilha
+ * Conferencia), numa frase só; embaixo, "Como a conferência é feita",
+ * fechado. A legenda do aparelho, que leva o vínculo do exemplo, sobe de 14
+ * a 16 px (nada que decide abaixo de 16 px) e, no celular, desce para baixo
+ * do aparelho, na largura toda, com o aparelho a 220 px, no eixo.
  */
 export function Destaques() {
   const frase = "max-w-[24ch] font-sub text-titulo leading-[1.1] font-medium tracking-[-0.03em] text-balance";
@@ -59,7 +75,7 @@ export function Destaques() {
     <Secao aria-label="Destaques" tom="claro">
       {/* A prancha de espécime (17/10): na mesa, a prova à esquerda e os dois fatos à direita, um à altura do alto dela e
           o outro à do pé. No celular, na ordem do texto: o fato, a prova, o fato. */}
-      <Envelope className="grid gap-14 lg:grid-cols-[15rem_minmax(0,1fr)] lg:grid-rows-[auto_auto] lg:gap-x-24 lg:gap-y-16">
+      <Envelope className="grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[15rem_minmax(0,1fr)] lg:grid-rows-[auto_auto_auto] lg:gap-x-24 lg:gap-y-16">
         <p className={`${frase} lg:col-start-2 lg:row-start-1`}>
           {primeiro.valor} {primeiro.rotulo}.{" "}
           {/* O que se verifica, em nota (16/10, Impeccable: "10 blocos" sozinho é jargão da casa). */}
@@ -68,19 +84,19 @@ export function Destaques() {
           )}
         </p>
 
-        {/* No celular (17/10, segundo fechamento), o aparelho a 40% da tela (até então, 44%) e o vão de 16 px: a legenda ao
-            lado ganha 22 px (de 150 a 172 a 390 px), e não se espreme em cinco linhas. */}
-        <figure className="relative flex flex-wrap items-end gap-x-4 gap-y-5 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:flex-col lg:items-start">
+        {/* Abaixo de 1024 px (R10), o aparelho a 220 px, no eixo, e a legenda embaixo, na largura toda: ao lado, a 16 px,
+            ela se espremia em oito linhas curtas. */}
+        <figure data-ambiente data-passiva="inicio-aparelho" className="relative flex flex-col items-center gap-5 lg:col-start-1 lg:row-span-2 lg:row-start-1 lg:items-start">
           {/* A tela: 390 e 780 px de largura; a do aparelho é 93,2% dele (a moldura, app/vidro.css). O aparelho pousa no
               papel, como a esfera acima dele (.vd-pousado). */}
           <Celular
             src={`/simulador/${site.id}-inicio-390.webp`}
             srcSet={`/simulador/${site.id}-inicio-390.webp 390w, /simulador/${site.id}-inicio-780.webp 780w`}
-            sizes="(min-width: 546px) 224px, 160px"
+            sizes="(min-width: 1024px) 224px, 205px"
             alt={demonstrativo.descricao}
-            className="vd-pousado w-[clamp(150px,40vw,240px)] flex-none lg:w-full"
+            className="vd-pousado mov-passiva inicio-aparelho w-[220px] max-w-full flex-none lg:w-full"
           />
-          <figcaption className="min-w-0 grow basis-36 text-nota text-muted-foreground lg:basis-auto">
+          <figcaption className="min-w-0 self-stretch text-base text-muted-foreground">
             {/* O vínculo cobre a figura inteira (o ::after: o alvo é o aparelho e a legenda); a resposta é a do
                 vínculo com seta. Em linha, para a seta seguir a última palavra quando o nome quebra. */}
             <a href={site.caminho} target="_blank" rel="noopener" className="group/demo font-semibold text-foreground no-underline after:absolute after:inset-0">
@@ -104,6 +120,29 @@ export function Destaques() {
         <p className={`${frase} lg:col-start-2 lg:row-start-2 lg:self-end`}>
           {segundo.valor} {segundo.rotulo}.
         </p>
+
+        {/* O código, a frase para o leigo e a conferência, sob o segundo fato (na mesa, 24 px mais perto dele que o vão
+            da grade: são a prova dele). */}
+        <div className="-mt-6 grid max-w-[34rem] grid-cols-[minmax(0,1fr)] gap-4 lg:col-start-2 lg:row-start-3">
+          <Trecho trecho={regra} tintas={[["'self'", "valor"], ["default-src", "nome"]]} />
+          <p className="max-w-[46ch] text-corpo text-pretty text-muted-foreground">{codigoDosDestaques.leigo}</p>
+          {/* A barreira (a passiva P27): o que vem de outro endereço corre até a linha e para ali. A frase acima diz o mesmo. */}
+          <div aria-hidden="true" className="inicio-barreira" data-ambiente data-passiva="inicio-barreira">
+            <span className="inicio-barreira-casa">{codigoDosDestaques.barreira[0]}</span>
+            <span className="inicio-barreira-fora">
+              <span className="inicio-barreira-fluxo mov-passiva" />
+              <span className="inicio-barreira-rotulo">{codigoDosDestaques.barreira[1]}</span>
+            </span>
+          </div>
+          <Conferencia textos={codigoDosDestaques.conferencia} />
+          <details className="inicio-como group">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-2.5 text-corpo font-semibold text-accent [&::-webkit-details-marker]:hidden">
+              <span aria-hidden="true" className="transition-transform duration-300 ease-atlas group-open:rotate-45">+</span>
+              {codigoDosDestaques.como.resumo}
+            </summary>
+            <p className="mt-1 max-w-[46ch] text-corpo text-pretty text-muted-foreground">{codigoDosDestaques.como.texto(regra.arquivo, linhasDo(regra))}</p>
+          </details>
+        </div>
       </Envelope>
     </Secao>
   );

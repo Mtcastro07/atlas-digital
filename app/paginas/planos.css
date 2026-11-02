@@ -1,0 +1,1290 @@
+/* ============================================================
+   ATLAS DIGITAL — Planos (/planos)
+   O CSS só desta página. Desde 28/10 (R10, fase 0), num arquivo próprio,
+   importado uma vez em app/globals.css, depois de ./nichos.css: os blocos
+   vieram de app/vidro.css e app/movimento.css, copiados sem mudança, cada
+   um na camada que tinha. O que mais de uma página usa fica lá (a matéria,
+   a luz, o metal, o vidro, a galeria, o aparelho, as entradas, a onda, a
+   pausa e as passivas). Dono na construção do R10: o agente de planos.
+   R10, fase 1 (28/10): a escada na proporção dos preços, a tabela com a
+   placa navy atrás do Profissional (D7), a galeria do celular (D19), os
+   extras, o pé dos sites de exemplo e as duas passivas da página: o
+   corrimão que corre (P5) e o palco que respira (P6).
+   ============================================================ */
+
+@layer components {
+  /* ---------- a escada de pedra de Planos (16/10; R10, 28/10) ----------
+     Um gráfico: a altura de cada degrau é o preço de criação (--h, a fração
+     do maior; components/paginas/planos/figura.tsx). No celular e no tablet,
+     três colunas de 26 rem (o Essencial com 156 px: o nome, o "R$" e a
+     mensalidade a 16 px sem se colar; a crítica do estudo pedia 144 px com
+     o "R$" e a mensalidade a 12: paginas/planos.md, 13.3); a partir de 1024 px, a grade de quatro
+     colunas da tabela, com 24 px entre elas: cada degrau pousa na coluna do
+     seu plano, e a escada sobe ao lado do título. Cada degrau é pedra sob a
+     luz da manhã, que vem do leste: a face de cima acesa, o lado do leste
+     claro, o do oeste em sombra. A sombra no chão: 38% da altura do degrau,
+     no máximo 56 px no celular e 160 px na mesa, inclinada para o oeste. */
+  .vd-escada {
+    --vao: 6px;
+    --altura-da-escada: 26rem;
+    --teto-da-sombra: 56px;
+    position: relative;
+    container-type: inline-size;
+    /* No celular, a escada passa 8 px da coluna do texto de cada lado (a figura pendurada na margem): os três nomes
+       cabem numa linha a 360 px. */
+    margin-inline: -0.5rem;
+  }
+  .vd-escadaria,
+  .vd-corrimao,
+  .vd-chao-da-escada {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--vao);
+  }
+  .vd-escadaria {
+    position: relative;
+    align-items: end;
+    height: var(--altura-da-escada);
+    /* O chão recorta os degraus que sobem na entrada (só embaixo: o corrimão passa 3 px acima do Completo). */
+    clip-path: inset(-1rem -1rem 0 -1rem);
+  }
+  .vd-degrau {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: calc(var(--h) * 100%);
+    padding: 0.625rem 0.5rem;
+    border-radius: var(--radius-pedra) var(--radius-pedra) 0 0;
+    box-shadow:
+      inset 0 3px 0 oklch(0.95 0.012 74),
+      inset -2px 0 0 rgb(255 255 255 / 0.35),
+      inset 2px 0 0 rgb(15 42 71 / 0.08);
+  }
+  .vd-degrau:focus-visible {
+    outline-offset: -4px;
+  }
+  /* O nome a 16 px em toda largura (até 28/10, 12). No celular, com 6 px de vão, 8 px de recuo, a escada pendurada
+     na margem e a letra 1,5% mais junta, os três nomes cabem numa linha a 360 px; a 320, "Profissional" parte em
+     duas, pela sílaba onde o navegador tem o dicionário, e em qualquer ponto onde não tem (nunca corta). */
+  .vd-degrau-nome {
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--accent);
+    hyphens: auto;
+    overflow-wrap: anywhere;
+  }
+  /* O "R$" é parte do preço: a 16 px, como a mensalidade (até 28/10, 12). */
+  .vd-degrau-moeda {
+    display: block;
+    font-size: 1rem;
+    line-height: 1.25;
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+  .vd-degrau-valor {
+    display: block;
+    margin-top: 0.125rem;
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-titulo);
+    /* O número cabe na pedra em toda largura: no máximo o degrau dos números; a 320 px, a 30% da largura do degrau. */
+    font-size: min(var(--text-numero), 30cqi);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  /* "+ R$ 190 por mês" a 16 px (decidido em 28/10; até então, 12): numa linha onde cabe, em duas no degrau estreito. */
+  .vd-degrau-mes {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 1rem;
+    line-height: 1.375;
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  .vd-degrau-mes > span {
+    display: block;
+  }
+  @container (min-width: 11rem) {
+    .vd-degrau-mes > span {
+      display: inline;
+    }
+  }
+  @media (min-width: 640px) {
+    .vd-degrau-nome {
+      letter-spacing: normal;
+    }
+  }
+  @media (min-width: 768px) {
+    .vd-escada {
+      margin-inline: 0;
+      --vao: 1rem;
+      --teto-da-sombra: 96px;
+    }
+    .vd-degrau {
+      padding: 1rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vd-escada {
+      --vao: 1.5rem;
+      --altura-da-escada: 27.5rem;
+      --teto-da-sombra: 160px;
+    }
+    .vd-escadaria,
+    .vd-corrimao,
+    .vd-chao-da-escada {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .vd-escadaria > :first-child,
+    .vd-corrimao > :first-child,
+    .vd-chao-da-escada > :first-child {
+      grid-column-start: 2;
+    }
+    .vd-degrau {
+      padding: 1.25rem;
+    }
+    .vd-degrau-valor {
+      margin-top: 0.25rem;
+    }
+    /* A escada sobe ao lado do título: o Essencial pousa 48 px abaixo do lide (56 px é o vão da grade da abertura).
+       Com a letra a 150% ou mais (a figura com menos de 45 rem), a escada desce para baixo do texto, sem cobri-lo. */
+    @container (min-width: 45rem) {
+      .vd-escadaria {
+        margin-top: calc(-0.625 * var(--altura-da-escada) - 0.5rem);
+      }
+    }
+  }
+
+  /* O corrimão (P5): cinco trechos, um em cima de cada degrau e um em cada vão, na mesma grade da escada. Cada trecho
+     é uma janela de 2 px que recorta o fio tracejado (6 px de traço, 8 de vão), um período mais comprido que ela. Até
+     01/11, 1 px e um período de 8 px: aprovava na medida, mas o movimento mal se via a 1440. */
+  .vd-corrimao {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .vd-corrimao-coluna {
+    position: relative;
+    align-self: end;
+    height: calc(var(--h) * 100%);
+  }
+  .vd-corrimao-h,
+  .vd-corrimao-v {
+    position: absolute;
+    overflow: hidden;
+  }
+  .vd-corrimao-h {
+    top: -3px;
+    height: 2px;
+    left: calc(var(--vao) / -2);
+    right: calc(var(--vao) / -2);
+  }
+  .vd-corrimao-coluna:first-child .vd-corrimao-h {
+    left: 0;
+  }
+  .vd-corrimao-coluna:last-child .vd-corrimao-h {
+    right: 0;
+  }
+  .vd-corrimao-v {
+    top: -3px;
+    left: calc(var(--vao) / -2);
+    width: 2px;
+    height: calc((1 - var(--h-antes) / var(--h)) * 100% + 2px);
+  }
+  .vd-corrimao-fio {
+    position: absolute;
+    inset: 0;
+  }
+  .vd-corrimao-h > .vd-corrimao-fio {
+    left: -14px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 6px, transparent 6px 14px);
+  }
+  .vd-corrimao-v > .vd-corrimao-fio {
+    bottom: -14px;
+    background: repeating-linear-gradient(180deg, var(--accent) 0 6px, transparent 6px 14px);
+  }
+
+  .vd-chao-da-escada {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    pointer-events: none;
+  }
+  .vd-sombra-do-degrau {
+    height: min(calc(var(--h) * 0.38 * var(--altura-da-escada)), var(--teto-da-sombra));
+    transform-origin: top;
+    transform: skewX(-32deg);
+    /* A penumbra: a borda da sombra se esfuma longe do pé (o desfoque é de três elementos, parados). */
+    filter: blur(1.5px);
+    background: linear-gradient(in oklch 180deg, rgb(15 42 71 / 0.2), rgb(15 42 71 / 0.05) 65%, transparent);
+  }
+
+  /* A letra a 200% no celular (a figura com menos de 14 rem; com a letra normal, 17 rem ou mais): os degraus
+     empilham, na altura do texto, sem o corrimão e sem a sombra (17/10, passe 4). */
+  @container (max-width: 14rem) {
+    .vd-escadaria {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 0.5rem;
+      height: auto;
+    }
+    .vd-degrau {
+      height: auto;
+      gap: 0.75rem;
+    }
+    .vd-corrimao,
+    .vd-chao-da-escada {
+      display: none;
+    }
+  }
+
+  /* A constante (a peça da página): sob o ponteiro, a luz da manhã enche a pedra em dois tempos, a metade e o todo,
+     as duas metades da criação, e o fio da metade acende com ela. Só transform e opacity; anda enquanto o ponteiro
+     fica. Ao sair o ponteiro, a luz apaga. */
+  .vd-degrau-luz,
+  .vd-degrau-metade {
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .vd-degrau-luz {
+    inset: 0;
+    transform-origin: bottom;
+    transform: scaleY(0);
+    background: linear-gradient(to top, rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.18));
+  }
+  .vd-degrau-metade {
+    inset-inline: 0;
+    bottom: 50%;
+    height: 1px;
+    background: rgb(122 78 28 / 0.55);
+    transition: opacity 200ms var(--ease-lugar);
+  }
+}
+
+/* ---------- os sites no palco da escada (components/secoes/escada.tsx) ----------
+   Com script, só o site escolhido do nível escolhido (data-em-cena, ilha
+   EscadaDemo) fica em cena; sem script, todos aparecem um embaixo do
+   outro. Desde 08/10, até quatro sites por plano: a ilha marca o site em
+   cena, em vez de o CSS casar o nível com o site. */
+.js [data-palco-sites] > [data-site]:not([data-em-cena]) {
+  display: none;
+}
+html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+  padding-top: 3rem;
+}
+
+/* ---------- o movimento da escada ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Planos: os três degraus sobem até o corrimão, que fica parado,
+     desenhado desde o primeiro quadro: o traçado primeiro, a obra depois.
+     Partem de 40% da própria altura, visíveis, com o nome do plano à vista
+     (o chão da figura recorta o resto), um depois do outro (--i), 480 ms
+     cada, 60 ms entre um e outro, na curva da casa; o texto sobe junto, sem
+     se deformar. Assentam aos 960 ms. Até 15/10, partiam de 101%,
+     escondidos (a metade direita da abertura ficava vazia por 360 ms), e o
+     corrimão se riscava depois deles, até os 1.500 ms. */
+  html:not(.ja-aberto) .mov-degrau {
+    animation: mov-degrau 480ms var(--ease-atlas) calc(var(--depois-da-troca) + var(--i, 0) * 60ms) backwards;
+  }
+}
+
+@keyframes mov-degrau {
+  from {
+    transform: translateY(40%);
+  }
+}
+
+/* P5, o corrimão corre (R10): o tracejado de bronze anda escada acima, ao longo dele, um período do padrão (14 px) a
+   cada 3 s, em laço, linear (o fluxo é contínuo). Nos trechos de cima de cada degrau, para o leste; nos vãos, para
+   cima. Para fora da tela, na pausa e com o movimento reduzido pelas regras do sistema (app/movimento.css); parado, o
+   tracejado é o de sempre. */
+.js [data-visivel] .vd-corrimao-h > .vd-corrimao-fio {
+  animation: planos-corrimao-leste 3s linear infinite;
+}
+.js [data-visivel] .vd-corrimao-v > .vd-corrimao-fio {
+  animation: planos-corrimao-sobe 3s linear infinite;
+}
+@keyframes planos-corrimao-leste {
+  to {
+    transform: translateX(14px);
+  }
+}
+@keyframes planos-corrimao-sobe {
+  to {
+    transform: translateY(-14px);
+  }
+}
+
+/* A constante do degrau: em laço sob o ponteiro, na mesa; no toque, uma vez, no Profissional, quando a escada entra
+   na tela, depois da entrada dos degraus (o laço contínuo reprovou no celular 4×: paginas/planos.md, 6.3). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .vd-degrau:hover .vd-degrau-luz {
+    opacity: 1;
+    animation: planos-parcelas 2.8s var(--ease-lugar) infinite;
+  }
+  .vd-degrau:hover .vd-degrau-metade {
+    opacity: 1;
+  }
+  /* Na mesa, sem o ponteiro (acabamento, 02/11), a luz enche o degrau do Profissional, devagar, enquanto a escada está na
+     tela. O laço no toque segue de fora (acima). */
+  .js [data-visivel] .vd-degrau[data-recomendado] .vd-degrau-luz {
+    opacity: 1;
+    animation: planos-parcelas 7s var(--ease-lugar) infinite;
+  }
+  .js [data-visivel] .vd-degrau[data-recomendado] .vd-degrau-metade {
+    opacity: 1;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+  .vd-degrau:hover .vd-degrau-luz {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .js [data-visivel] .vd-degrau[data-recomendado] .vd-degrau-luz {
+    animation: planos-parcelas 2.8s var(--ease-lugar) 1.2s both;
+  }
+  .js [data-visivel] .vd-degrau[data-recomendado] .vd-degrau-metade {
+    animation: planos-metade 2.8s var(--ease-lugar) 1.2s both;
+  }
+}
+@keyframes planos-parcelas {
+  0% {
+    transform: scaleY(0);
+    opacity: 1;
+  }
+  16%,
+  40% {
+    transform: scaleY(0.5);
+    opacity: 1;
+  }
+  56%,
+  84% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+@keyframes planos-metade {
+  0% {
+    opacity: 0;
+  }
+  12%,
+  84% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  /* ---------- o que cada plano inclui: a galeria (celular) e a tabela (mesa) (R10, 28/10) ----------
+     As duas marcações saem do mesmo dado; a que não vale na largura fica com display: none. A partir de 1024 px, a
+     galeria fica invisível sobre a tabela, com um quadro sobre a coluna de cada plano: o degrau da abertura que leva a
+     #plano-<id> chega ao alto da tabela (components/ilhas/ancoras.tsx mede a caixa do destino). */
+  .vd-tabela-moldura {
+    display: none;
+  }
+
+  /* O nome do plano, preso, no celular (só onde há linha do tempo; sem ela, o nome fica no alto do quadro): acende quando
+     o <h3> sai de baixo do cabeçalho e troca com a galeria, sem script. O polegar da galeria é o --plano-topo. */
+  .vd-planos-preso {
+    display: none;
+  }
+  @supports (animation-timeline: scroll()) {
+    @media (max-width: 767.98px) {
+      .vd-galeria-quadro.vd-planos-galeria {
+        timeline-scope: --galeria, --plano-topo;
+      }
+      .vd-planos-galeria > .vd-galeria-trilho {
+        view-timeline: --plano-topo block;
+      }
+      .vd-planos-preso {
+        position: sticky;
+        top: 4.75rem;
+        z-index: 2;
+        display: flex;
+        justify-content: center;
+        height: 0;
+        pointer-events: none;
+      }
+      .vd-planos-preso > span {
+        display: grid;
+        height: fit-content;
+        padding: 0.25rem 1rem;
+        border-radius: 999px;
+        background: var(--ficha);
+        box-shadow: var(--sombra-curta);
+        font-family: var(--font-sub);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.5;
+        color: #0f2a47;
+        animation: vd-preso-acende linear both;
+        animation-timeline: --plano-topo;
+        animation-range: cover calc(100% - 64px) cover calc(100% - 32px);
+      }
+      .vd-planos-preso > span > span {
+        grid-area: 1 / 1;
+        text-align: center;
+        animation: vd-preso-nome-1 linear both;
+        animation-timeline: --galeria;
+      }
+      .vd-planos-preso > span > span:nth-child(2) {
+        animation-name: vd-preso-nome-2;
+      }
+      .vd-planos-preso > span > span:nth-child(3) {
+        animation-name: vd-preso-nome-3;
+      }
+    }
+  }
+
+  /* O quadro de cada plano, na galeria: o nome, a tarefa, os dois preços, os três grupos e a ação. */
+  .vd-quadro-plano {
+    container-type: inline-size;
+    padding: 1.75rem 1.25rem 1.25rem;
+  }
+  /* A letra a 200% no celular (o quadro com menos de 13 rem; com a letra normal, 14,5 rem ou mais, a 320 px): o valor
+     desce para baixo do rótulo, e a etiqueta do botão pode partir. */
+  @container (max-width: 13rem) {
+    .vd-quadro-grupo dl > div,
+    .vd-quadro-precos > div {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .vd-quadro-grupo dd,
+    .vd-quadro-valor {
+      grid-column: 1;
+      grid-row: auto;
+      text-align: left;
+    }
+    .vd-quadro-plano > a:last-child > span {
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+  }
+  .vd-cartela {
+    position: absolute;
+    top: 0;
+    left: 1.25rem;
+    translate: 0 -50%;
+    /* Sobre a placa navy, a etiqueta navy ganha o fio do bronze-brilho, para não sumir no fundo (S4: a mesma etiqueta). */
+    box-shadow: 0 0 0 1px rgb(241 211 161 / 0.5);
+  }
+  .vd-quadro-precos {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .vd-quadro-precos > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    align-items: baseline;
+  }
+  .vd-quadro-precos dt {
+    font-weight: 500;
+  }
+  .vd-quadro-valor {
+    grid-row: 1;
+    grid-column: 2;
+    text-align: right;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .vd-quadro-criacao {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--text-numero);
+    line-height: 1.1;
+    letter-spacing: var(--tracking-titulo);
+  }
+  .vd-quadro-metades {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
+  .vd-quadro-explicacao {
+    grid-column: 1 / -1;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+  .vd-quadro-grupo {
+    margin-top: 1.75rem;
+  }
+  .vd-quadro-grupo h4 {
+    padding-bottom: 0.5rem;
+  }
+  .vd-quadro-grupo dl > div {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 1rem;
+    align-items: baseline;
+    padding: 0.4375rem 0;
+    border-top: 1px solid var(--border);
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  .vd-quadro-grupo dd {
+    font-weight: 600;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  /* A explicação da linha, a mesma da tabela (o leigo do celular precisa dela tanto quanto o da mesa). */
+  .vd-quadro-grupo dd.vd-quadro-explicacao {
+    font-weight: 400;
+    text-align: left;
+  }
+  .vd-quadro-grupo [data-ausente] dt {
+    color: var(--muted-foreground);
+  }
+  .vd-quadro-plano > a:last-child {
+    margin-top: 2rem;
+  }
+
+  /* O visto e a ausência, nos dois desenhos. */
+  .vd-visto {
+    display: inline-flex;
+    color: var(--accent);
+  }
+  .vd-visto svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    translate: 0 0.1875rem;
+  }
+  .vd-ausente {
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
+  /* A chamada da nota 1 e a marca dela, no corpo do sobrescrito (a nota está a 17 px). */
+  .vd-chamada,
+  .vd-nota-marca {
+    font-size: var(--text-rotulo);
+    font-weight: 600;
+    vertical-align: super;
+    line-height: 0;
+    color: var(--accent);
+  }
+  /* O alvo de toque da chamada tem 44 × 44 px em volta do "1" (a régua da casa), sem mexer na linha: as margens
+     negativas devolvem o espaço. */
+  .vd-chamada {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -1.375rem -1.125rem -1.375rem -1.1875rem;
+    text-decoration: none;
+  }
+
+  .vd-nota-de-fundacao {
+    margin-top: 2.5rem;
+    max-width: 60ch;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+
+  /* Os extras: o razão, com o preço em Inter 600 (o papel de hoje) e a unidade a 16 px. No celular, o nome e o que faz
+     na largura toda; embaixo, os dois preços lado a lado, cada um com a unidade escrita (as cabeças somem). */
+  .vd-extras {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 5rem;
+  }
+  .vd-razao {
+    display: block;
+    border-bottom: 1px solid var(--border);
+  }
+  .vd-razao thead {
+    display: none;
+  }
+  .vd-razao tbody {
+    display: block;
+  }
+  .vd-razao tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+  }
+  .vd-razao th,
+  .vd-razao td {
+    display: block;
+    padding: 0;
+    text-align: left;
+    font-weight: 400;
+  }
+  .vd-razao tbody th {
+    grid-column: 1 / -1;
+  }
+  .vd-razao-nome {
+    display: block;
+    font-family: var(--font-sub);
+    font-weight: 500;
+    font-size: var(--text-destaque);
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+  }
+  .vd-razao-descricao {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--muted-foreground);
+  }
+  .vd-razao td {
+    margin-top: 0.75rem;
+    font-weight: 600;
+    font-size: var(--text-destaque);
+    line-height: 1.3;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .vd-razao-unidade {
+    display: block;
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
+  .vd-so-mesa {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .vd-planos-galeria {
+      position: absolute;
+      inset: 0;
+      visibility: hidden;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .vd-planos-galeria > .vd-galeria {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 1.5rem;
+      height: 100%;
+    }
+    .vd-planos-galeria > .vd-galeria > :first-child {
+      grid-column-start: 2;
+    }
+
+    /* ---------- a tabela de ofício (a mesa) ----------
+       Uma <table> em grade de quatro colunas (a dos rótulos e os três planos), com 24 px entre elas: a grade da escada
+       da abertura. As linhas são subgrades; o corpo e a cabeça somem da caixa (display: contents), e os papéis da
+       tabela vão também em ARIA, porque o Safari tira a semântica da <table> que muda de display. */
+    .vd-tabela-moldura {
+      display: block;
+      container: tabela / inline-size;
+    }
+    .vd-tabela {
+      --grao-da-agua: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='m' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .2 -.07'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>");
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 1.5rem;
+      width: 100%;
+      padding-bottom: 1.25rem;
+      text-align: left;
+    }
+    .vd-tabela > caption {
+      grid-column: 1 / -1;
+      padding: 0 0 2.5rem;
+      text-align: left;
+    }
+    .vd-tabela > thead,
+    .vd-tabela > tbody {
+      display: contents;
+    }
+    .vd-tabela tr {
+      position: relative;
+      z-index: 1;
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+    }
+    .vd-tabela th,
+    .vd-tabela td {
+      position: relative;
+      display: block;
+      padding: 0;
+      font-weight: 400;
+    }
+    /* D7: a placa navy atrás da coluna do Profissional, da chave à última linha, com o grão da água, o raio de 28 px e
+       a sombra longa da manhã (a mesma do cartão recomendado de antes). Um item da grade só, atrás das linhas. */
+    .vd-tabela::before {
+      content: "";
+      position: absolute;
+      grid-column: 3 / 4;
+      grid-row: 2 / auto;
+      inset: 0 -1rem;
+      z-index: 0;
+      border-radius: var(--radius-xl);
+      background-color: #0f2a47;
+      background-image: var(--grao-da-agua);
+      box-shadow:
+        inset 0 0 0 1px rgb(243 239 236 / 0.08),
+        inset 0 1px 0 rgb(243 239 236 / 0.1),
+        calc(var(--sombra-dx, 0) * 6px) 4px 8px rgb(15 42 71 / 0.1),
+        calc(var(--sombra-dx, 0) * 28px) 28px 56px -18px rgb(15 42 71 / 0.3);
+    }
+    /* A corrente (P33): a mesma caixa da placa, que recorta a camada tall que sobe, um período da faixa de cada vez. */
+    .vd-tabela .vd-placa-corrente {
+      position: absolute;
+      grid-column: 3 / 4;
+      grid-row: 2 / auto;
+      inset: 0 -1rem;
+      z-index: 0;
+      display: block;
+      overflow: hidden;
+      border-radius: var(--radius-xl);
+      pointer-events: none;
+    }
+    .vd-placa-corrente :is(tr, td) {
+      display: block;
+      height: 100%;
+    }
+    .vd-na-placa {
+      --foreground: #f3efec;
+      --muted-foreground: #aebdcd;
+      --accent: #d9a76b;
+      --border: rgb(243 239 236 / 0.13);
+      color: var(--foreground);
+    }
+
+    /* A chave: os três nomes e o "Escolher", presos a 96 px do alto (sob a pílula do cabeçalho) enquanto a tabela passa.
+       Presa, a faixa de névoa cobre o que sobe acima dela (a placa inclusive: ela nunca passa acima da chave presa), e
+       a cabeça da placa perde os cantos de cima. Onde não há scroll-state (o Safari e o Firefox, hoje), a faixa e a
+       cabeça navy ficam sempre. */
+    .vd-tabela .vd-tabela-chave {
+      position: sticky;
+      top: 6rem;
+      z-index: 3;
+      container: chave / scroll-state;
+    }
+    .vd-tabela-chave > th {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      padding: 1.75rem 0.75rem 1.25rem;
+      text-align: center;
+    }
+    .vd-tabela-chave > th:first-child::before {
+      content: "";
+      position: absolute;
+      top: -6rem;
+      bottom: 0;
+      left: -1.5rem;
+      width: calc(400% + 7.5rem);
+      z-index: -1;
+      background-color: var(--background);
+      background-image: var(--fibra);
+      box-shadow: 0 1px 0 var(--border);
+      transition: opacity 200ms var(--ease-lugar);
+    }
+    .vd-tabela-chave > .vd-na-placa {
+      margin: 0 -1rem;
+      padding-inline: 0.5rem;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+      background-color: #0f2a47;
+      background-image: var(--grao-da-agua);
+    }
+    .vd-tabela-chave .vd-cartela {
+      left: 50%;
+      translate: -50% -50%;
+    }
+    @supports (container-type: scroll-state) {
+      .vd-tabela-chave > th:first-child::before {
+        opacity: 0;
+      }
+      .vd-tabela-chave > .vd-na-placa {
+        background: none;
+      }
+    }
+    @container chave scroll-state(stuck: top) {
+      .vd-tabela-chave > th:first-child::before {
+        opacity: 1;
+      }
+      .vd-tabela-chave > .vd-na-placa {
+        border-radius: 0;
+        background-color: #0f2a47;
+        background-image: var(--grao-da-agua);
+      }
+    }
+    .vd-tabela-plano {
+      font-family: var(--font-sub);
+      font-weight: 500;
+      font-size: var(--text-destaque);
+      line-height: 1.25;
+      letter-spacing: var(--tracking-sub);
+    }
+
+    /* A tarefa de cada plano, o "slogan" da coluna. */
+    .vd-tabela-tarefa > td {
+      padding: 0.25rem 1rem 1.75rem;
+      text-align: center;
+      font-family: var(--font-sub);
+      font-weight: 300;
+      font-size: var(--text-destaque);
+      line-height: 1.35;
+      letter-spacing: var(--tracking-sub);
+      text-wrap: balance;
+    }
+    .vd-tabela-tarefa > th {
+      padding: 0.25rem 0 1.75rem;
+    }
+
+    /* As linhas: o rótulo a 17 px em Inter 500 e a explicação a 16 px, no apagado; o valor centrado, em Inter 600. */
+    .vd-tabela-linha > th {
+      padding: 1.125rem 0;
+    }
+    .vd-tabela-rotulo {
+      display: block;
+      font-weight: 500;
+      transition: color 200ms var(--ease-lugar);
+    }
+    .vd-tabela-explicacao {
+      display: block;
+      margin-top: 0.125rem;
+      font-size: 1rem;
+      line-height: 1.45;
+      color: var(--muted-foreground);
+      text-wrap: pretty;
+    }
+    .vd-tabela-linha > td {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.125rem 0.75rem;
+      text-align: center;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .vd-tabela-preco > span {
+      display: block;
+      margin-top: 0.125rem;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--muted-foreground);
+    }
+    /* O filete de cada linha, de ponta a ponta; sobre a placa, na tinta da água, da largura dela. */
+    .vd-tabela-linha::before,
+    .vd-tabela-tarefa::before,
+    .vd-tabela-linha > .vd-na-placa::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--border);
+    }
+    .vd-tabela-linha > .vd-na-placa::before {
+      left: -1rem;
+      right: -1rem;
+    }
+    /* A linha sob o ponteiro (a "linha de lista" do sistema): o fundo acende por opacidade, atrás do texto. */
+    .vd-tabela-linha::after,
+    .vd-tabela-linha > .vd-na-placa::after {
+      content: "";
+      position: absolute;
+      inset: 0 -1rem;
+      z-index: -1;
+      border-radius: var(--radius);
+      background: rgb(15 42 71 / 0.045);
+      opacity: 0;
+      transition: opacity 200ms var(--ease-lugar);
+      pointer-events: none;
+    }
+    .vd-tabela-linha > .vd-na-placa::after {
+      border-radius: 0;
+      background: rgb(243 239 236 / 0.07);
+    }
+    @media (hover: hover) {
+      .vd-tabela-linha:hover::after,
+      .vd-tabela-linha:hover > .vd-na-placa::after {
+        opacity: 1;
+      }
+      .vd-tabela-linha:hover .vd-tabela-rotulo {
+        color: var(--accent);
+      }
+    }
+    .vd-tabela-grupo > th {
+      grid-column: 1;
+      padding: 3rem 0 0.75rem;
+    }
+
+    /* A letra a 150% ou mais (a tabela com menos de 55 rem; com a letra normal, nunca na mesa): a chave deixa de ficar
+       presa (presa, ela cobria metade da tela), e a pílula do Profissional quebra a linha dentro da coluna. */
+    @container tabela (max-width: 55rem) {
+      .vd-tabela .vd-tabela-chave {
+        position: relative;
+        top: auto;
+      }
+    }
+
+    .vd-nota-de-fundacao {
+      margin-left: calc(25% + 0.375rem);
+    }
+
+    .vd-extras {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      column-gap: 1.5rem;
+      margin-top: 7.5rem;
+    }
+    .vd-extras > header {
+      grid-column: 1;
+    }
+    .vd-razao {
+      grid-column: 2 / -1;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 10rem 10rem;
+    }
+    .vd-razao thead,
+    .vd-razao tbody {
+      display: contents;
+    }
+    .vd-razao tr,
+    .vd-razao tbody tr {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: subgrid;
+      column-gap: 0;
+      padding: 0;
+    }
+    .vd-razao thead th {
+      padding-bottom: 0.625rem;
+      font-size: 1rem;
+      color: var(--muted-foreground);
+      text-align: right;
+    }
+    .vd-razao thead th:first-child {
+      text-align: left;
+    }
+    .vd-razao tbody th {
+      grid-column: auto;
+      padding: 1.5rem 1.5rem 1.5rem 0;
+    }
+    .vd-razao td {
+      margin: 0;
+      padding: 1.5rem 0;
+      text-align: right;
+    }
+    .vd-so-celular {
+      display: none;
+    }
+    .vd-so-mesa {
+      display: inline;
+    }
+  }
+}
+
+/* O "Escolher" da chave, com a etiqueta dentro, cabe numa linha na coluna de 242 px (fora da camada: vence o recuo
+   da pílula pequena, components/ui/button.tsx). Numa mesa estreita (1.024 px), a etiqueta desce para a segunda linha. */
+.vd-tabela-chave a {
+  padding-inline: 0.875rem;
+}
+
+/* ---------- os sites de exemplo (components/secoes/escada.tsx, components/ilhas/escada-demo.tsx; R10, 28/10) ---------- */
+@layer components {
+  /* Os seletores com o rótulo à vista (WCAG 3.3.2): no celular, o rótulo em cima; a partir de 768 px, à esquerda, e
+     um vão igual à direita, para o trilho ficar no eixo. A nota do plano logo abaixo, a 16 px. */
+  .vd-seletores {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+  }
+  .vd-seletor {
+    display: grid;
+    justify-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 36rem;
+  }
+  .vd-seletor-rotulo {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+  .vd-seletor-nota {
+    max-width: 46ch;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--muted-foreground);
+    text-wrap: balance;
+  }
+  @media (min-width: 768px) {
+    .vd-seletor {
+      grid-template-columns: 4rem auto 4rem;
+      justify-content: center;
+      align-items: center;
+      column-gap: 1rem;
+      max-width: none;
+    }
+    .vd-seletor-rotulo {
+      text-align: right;
+      justify-self: end;
+    }
+  }
+
+  /* O pé: o aviso e a frase à esquerda; o cabeçalho do servidor à direita (no celular, embaixo). */
+  .vd-pe-dos-sites {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+  @media (min-width: 768px) {
+    .vd-pe-dos-sites {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.5rem;
+      align-items: start;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vd-pe-dos-sites {
+      margin-top: 5rem;
+    }
+  }
+}
+
+/* O simulador só na mesa (pedido de 17/10): fora dela, o botão diz "Abrir o site", e o vínculo "Abrir em nova aba",
+   que repetiria a mesma ação, some. A consulta é a mesma de components/ilhas/simulador.tsx (NA_MESA). Fora da camada:
+   vence o display dos utilitários do botão. */
+.vd-so-simulador {
+  display: none;
+}
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  .vd-so-simulador {
+    display: inline-flex;
+  }
+  .vd-sem-simulador {
+    display: none;
+  }
+}
+/* Os seletores a 16 px (nada que decide abaixo de 16 px; o segmento do sistema, components/ui/toggle.tsx, é de 14).
+   No celular estreito, o recuo das opções cai à metade, e "Profissional" cabe no terço do trilho (a 360 px). */
+.vd-seletores [role="group"] > button {
+  font-size: 1rem;
+  padding-inline: 0.5rem;
+}
+@media (min-width: 768px) {
+  .vd-seletores [role="group"] {
+    width: auto;
+  }
+  .vd-seletores [role="group"] > button {
+    padding-inline: 1.5rem;
+    font-size: 1.0625rem;
+  }
+}
+
+/* P6, o palco respira (R10): o aparelho inclina sozinho na luz, em dois invólucros fora do TiltCard: o de fora em
+   rotateY, ±6° (±7° no celular), numa volta de 16 s; o de dentro em rotateX, ±3°, numa de 11 s (os dois períodos nunca se alinham).
+   Cada volta parte do repouso (0°) e é uma senoide: sai rápido, assenta nos extremos e cruza o meio na mesma
+   velocidade com que partiu, sem degrau na emenda. Para sob o ponteiro (a inclinação do TiltCard assume), com o
+   simulador aberto, fora da tela, na pausa e com o movimento reduzido (as três últimas pelas regras do sistema). */
+/* A perspectiva e o giro do aparelho: 1.100 px e ±6° na mesa; no celular, onde o aparelho mede a metade, 800 px e
+   ±7° (com os de mesa, a borda andava só 4,5 px, abaixo do piso de 6 px: CONTRATO.md, 4.1). */
+.vd-palco {
+  --perspectiva-do-palco: 800px;
+  --giro-do-palco: 7deg;
+}
+@media (min-width: 768px) {
+  .vd-palco {
+    --perspectiva-do-palco: 1100px;
+    --giro-do-palco: 6deg;
+  }
+}
+.js [data-visivel] .vd-palco-respira-y {
+  animation: planos-palco-y 16s linear infinite;
+}
+.js [data-visivel] .vd-palco-respira-x {
+  animation: planos-palco-x 11s linear infinite;
+}
+/* O .js dá a especificidade: sem ele, o atalho "animation" acima devolvia o aparelho a "running" com o simulador aberto. */
+.vd-palco:hover :is(.vd-palco-respira-y, .vd-palco-respira-x),
+.js [data-simulador-aberto] :is(.vd-palco-respira-y, .vd-palco-respira-x) {
+  animation-play-state: paused;
+}
+@keyframes planos-palco-y {
+  0% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateY(0deg);
+    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  }
+  25% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateY(var(--giro-do-palco, 6deg));
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  75% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateY(calc(-1 * var(--giro-do-palco, 6deg)));
+    animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  }
+  100% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateY(0deg);
+  }
+}
+@keyframes planos-palco-x {
+  0% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateX(0deg);
+    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  }
+  25% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateX(-3deg);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  75% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateX(3deg);
+    animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  }
+  100% {
+    transform: perspective(var(--perspectiva-do-palco, 1100px)) rotateX(0deg);
+  }
+}
+/* No palco, o lugar da prévia fica parado, na cor do apagado (sem o pulso de cor: ele repintaria a prévia por quase
+   10 s, e é o ambiente de uma passiva, que só anda por transform e opacity). */
+[data-palco-sites] .vd-esqueleto {
+  animation: none;
+}
+
+/* O "Escolher" do quadro cabe numa linha a 320 px (o recuo da pílula, de components/ui/button.tsx, cai a 16 px). */
+.vd-quadro-plano > a:last-child {
+  padding-inline: 1rem;
+}
+/* O foco que sobe pela tabela (Shift+Tab) não fica sob a chave presa (96 px do alto e cerca de 160 de altura). */
+.vd-tabela a {
+  scroll-margin-top: 17rem;
+}
+
+@keyframes vd-preso-acende {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vd-preso-nome-1 {
+  0%, 24% {
+    opacity: 1;
+  }
+  26%, 100% {
+    opacity: 0;
+  }
+}
+@keyframes vd-preso-nome-2 {
+  0%, 24% {
+    opacity: 0;
+  }
+  26%, 74% {
+    opacity: 1;
+  }
+  76%, 100% {
+    opacity: 0;
+  }
+}
+@keyframes vd-preso-nome-3 {
+  0%, 74% {
+    opacity: 0;
+  }
+  76%, 100% {
+    opacity: 1;
+  }
+}
+
+@layer components {
+  /* A faixa da corrente: um período de 560 px, na placa da mesa e no quadro do Profissional, no celular. */
+  .vd-corrente {
+    position: absolute;
+    inset: 0 0 -560px;
+    display: block;
+    background: repeating-linear-gradient(180deg, transparent 0 240px, rgb(241 211 161 / 0.115) 400px, transparent 560px);
+  }
+  .vd-quadro-corrente {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  /* O texto apagado sob as luzes passivas, um pouco mais claro: fica em 4,5:1 também no pico delas (02/11). */
+  .vd-refletores ~ *,
+  .vd-quadro-plano[data-tom="escuro"] > * {
+    --muted-foreground: #bdcad8;
+  }
+  /* Os refletores. */
+  .vd-refletores {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 46rem;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .vd-refletor {
+    position: absolute;
+    top: -6rem;
+    left: 26%;
+    display: block;
+    width: 48rem;
+    height: 56rem;
+    margin-left: -24rem;
+    transform-origin: 50% 0;
+    background: conic-gradient(from 166deg at 50% 0, transparent 0deg, rgb(241 211 161 / 0.09) 14deg, transparent 28deg);
+  }
+  .vd-refletor + .vd-refletor {
+    left: 74%;
+  }
+  @media (max-width: 767.98px) {
+    .vd-refletor {
+      width: 30rem;
+      height: 40rem;
+      margin-left: -15rem;
+    }
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-visivel] .vd-corrente {
+    animation: pl-corrente 14s linear infinite;
+  }
+  .js [data-visivel] .vd-refletor {
+    animation: pl-refletor 13s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  .js [data-visivel] .vd-refletor + .vd-refletor {
+    animation-duration: 17s;
+    animation-direction: alternate-reverse;
+  }
+}
+@keyframes pl-corrente {
+  to {
+    translate: 0 -560px;
+  }
+}
+@keyframes pl-refletor {
+  from {
+    rotate: -24deg;
+  }
+  to {
+    rotate: 24deg;
+  }
+}

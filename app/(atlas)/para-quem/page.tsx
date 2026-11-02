@@ -1,7 +1,7 @@
 import { AberturaDePagina } from "@/components/paginas/abertura-de-pagina";
-import { CartaDeNiteroi } from "@/components/paginas/figuras";
+import { ChapaDaCarta } from "@/components/paginas/para-quem/figura";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
-import { ParaQuem } from "@/components/secoes/para-quem";
+import { NichosAtendidos, ParaQuem } from "@/components/secoes/para-quem";
 import { Vitrine } from "@/components/secoes/vitrine";
 import { metadadosDaPagina } from "@/lib/metadados";
 
@@ -21,28 +21,33 @@ const manhaCedo = {
 } as React.CSSProperties;
 
 /**
- * Para quem: a cidade antes do serviço. A abertura é a parede de bairros
- * de Niterói, com os três dos sites de exemplo acesos — desde 14/10, ao
- * lado do título, numa coluna (embaixo dele, a metade direita da abertura
- * ficava vazia na mesa; o crítico de fora) —; depois, os três
- * públicos (com o exemplo pronto de cada um) e a vitrine dos nichos.
- * Desde 16/10, a abertura é a carta da costa de Niterói, sob a luz da
- * manhã cedo, ao lado da lista dos bairros, e projeta a sua sombra sobre o
- * papel dos públicos (o plano sobre o plano, a única emenda desse tipo na
- * página: a abertura fica por cima, z-[1]); a vitrine, na pedra.
+ * Para quem: a cidade antes do serviço. Desde 28/10 (R10, D5, a decisão do aprovador), a carta de Niterói é uma chapa
+ * de água funda que atravessa a abertura e os públicos: na mesa, presa à direita, da abertura ao último público, que
+ * são a legenda dela (cada um acende o seu bairro ao passar pelo meio da tela); no celular, no fluxo, sob o lide, com
+ * Icaraí aceso. Depois, o índice dos nichos, a vitrine e a próxima página.
+ * O palco (.vd-pq-palco) guarda a abertura, a chapa e os públicos: a chapa fica numa coluna posta por cima das duas
+ * seções, e não dentro de uma delas (a abertura vem sem figura). A água (.vd-pq-agua) junta a abertura e a chapa numa
+ * cena só no celular; na mesa, não tem caixa (display: contents), e a abertura pinta a sua. O CSS: app/paginas/para-quem.css.
+ * De 16 a 28/10, a carta ao lado da lista dos três bairros, dentro da abertura, com a sombra sobre o papel dos públicos.
  */
 export default function PaginaParaQuem() {
   return (
     // A hora da página (16/10): dá o lado das sombras a toda a página (app/vidro.css). Um atributo, sem texto.
     <div data-hora="manha-cedo" className="contents">
-      <AberturaDePagina
-        pagina="para-quem"
-        colunasDaFigura={7}
-        figura={<CartaDeNiteroi />}
-        className="vd-cena z-[1] shadow-[-12px_28px_40px_-28px_rgb(2_8_18/0.35)]"
-        style={manhaCedo}
-      />
-      <ParaQuem />
+      <div className="vd-pq-palco">
+        <div data-tom="escuro" className="vd-pq-agua vd-materia vd-cena" style={manhaCedo}>
+          <AberturaDePagina
+            pagina="para-quem"
+            colunasDaFigura={7}
+            figura={null}
+            className="vd-cena vd-pq-abertura pb-12 md:pb-12 lg:pt-40 lg:pb-36"
+            style={manhaCedo}
+          />
+          <ChapaDaCarta />
+        </div>
+        <ParaQuem />
+      </div>
+      <NichosAtendidos />
       <Vitrine />
       <ProximaPagina atual="para-quem" />
     </div>

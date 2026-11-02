@@ -96,7 +96,11 @@ function posicaoDe(alvo: HTMLElement) {
   const sobe = alvo.querySelector("[data-sobe]")?.getBoundingClientRect().top ?? Infinity;
   const topo = Math.min(caixa.top + parseFloat(estilo.paddingTop), sobe);
   const conteudo = caixa.bottom - parseFloat(estilo.paddingBottom) - topo;
-  const cabecalho = document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
+  // O cabeçalho conta em repouso: recolhido (o translate do <header>, como em cabecalho-retratil.tsx), o pé dele fica
+  // abaixo de 0, e o destino subiria até colar no alto (o toque num degrau de /planos, no celular); e, na volta para
+  // cima, ele reaparece sobre o destino.
+  const barra = document.querySelector("header")?.getBoundingClientRect();
+  const cabecalho = barra ? barra.bottom - Math.min(0, barra.top) : 0;
   const livre = window.innerHeight - cabecalho;
   const acima = conteudo <= livre ? (livre - conteudo) / 2 : FOLGA;
   const maximo = document.documentElement.scrollHeight - window.innerHeight;
@@ -139,6 +143,12 @@ function irPara(id: string, instantaneo = false) {
     rolarAte(0, semMovimento);
     return;
   }
+  // As seções com content-visibility (app/globals.css) ainda não desenhadas têm só a altura reservada: todas se desenham
+  // antes da medida e voltam a se poupar dois quadros depois, com a altura de verdade lembrada (27/10). Antes do alvo
+  // (28/10): na carga com âncora, a classe vem do <head> (app/layout.tsx), e sai aqui mesmo se a âncora não existir.
+  const raiz = document.documentElement;
+  raiz.classList.add("ancorando");
+  requestAnimationFrame(() => requestAnimationFrame(() => raiz.classList.remove("ancorando")));
   const alvo = document.getElementById(id);
   if (!alvo) return;
   // A resposta de uma dúvida: o <details> abre antes de medir.
@@ -199,7 +209,8 @@ export function Ancoras() {
     // página). O navegador já pulou até ela; o ajuste fino é instantâneo.
     const aoChegarComAncora = () => {
       const destino = ancoraDoEndereco();
-      if (!destino) return;
+      // Sem destino legível (um "#%E0"), a classe que o <head> pôs na carga sai já (app/layout.tsx).
+      if (!destino) return document.documentElement.classList.remove("ancorando");
       limparEndereco();
       requestAnimationFrame(() => irPara(destino, true));
     };

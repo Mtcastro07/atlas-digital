@@ -18,16 +18,16 @@ const INTERVALO = 80;
  * à vista ao rolar para baixo e para cima. Até então, acompanhava o
  * cabeçalho e sumia a cada gesto para baixo: quem lê rolando para baixo, com
  * uma mão, ficava sem nenhuma ação de contato à vista (a persona do
- * celular). No pé da página, ele fica na folga que o rodapé reserva (pb-28),
- * 41 px abaixo do último texto: não cobre texto parado (medido de 320 a 768
- * px, nas sete páginas), e por isso o rodapé não leva a marca.
+ * celular).
  * Fica oculto enquanto estiver na tela algo marcado com [data-sem-atalho]:
  * a capa (a mesma ação já está à vista), os dois montadores, o do início
  * e o de /orcamento, com a faixa fixa dele (cobriria as opções e disputaria
  * o "Enviar pelo WhatsApp"), e, desde o segundo fechamento com o Impeccable
  * (17/10), as cenas que já têm o "Falar no WhatsApp" à vista: a condição de
  * fundação (no início e em /planos) e o Fim do início, onde o atalho cobria
- * o vínculo da própria cena (dois WhatsApp na mesma tela, um sobre o outro). Até 16/10, só os ids #inicio e #orcamento: o
+ * o vínculo da própria cena (dois WhatsApp na mesma tela, um sobre o outro), e, desde 01/11 (R10, integração), o rodapé,
+ * que tem o próprio WhatsApp: ao rolar, o atalho passava sobre o último texto, e a sombra dele derrubava o slogan a
+ * 4,17:1 a 390 px, conforme a altura da página. Até 16/10, só os ids #inicio e #orcamento: o
  * montador de /orcamento, que desde 16/10 é a figura da abertura, ficou
  * sem nenhum deles, e o atalho aparecia sobre as opções (o diagnóstico do
  * celular, A5). Fica no layout: a cada troca de página, observa as marcas
@@ -119,7 +119,7 @@ export function AcaoFlutuante() {
       tabIndex={visivel ? undefined : -1}
       data-visivel={visivel || undefined}
       data-fundo="escuro"
-      className="vd-metal vd-atalho fixed right-[max(1.5rem,calc(env(safe-area-inset-right)+0.75rem))] bottom-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))] z-30 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-5 py-3 text-nota font-semibold text-primary-foreground no-underline lg:hidden"
+      className="vd-metal vd-atalho fixed right-[max(1.5rem,calc(env(safe-area-inset-right)+0.75rem))] bottom-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))] z-30 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-4 py-3 text-base font-semibold text-primary-foreground no-underline lg:hidden"
     >
       <IconeWhatsApp className="size-4.5" />
       WhatsApp

@@ -1,8 +1,7 @@
 import { AberturaDePagina } from "@/components/paginas/abertura-de-pagina";
-import { EscadaDePrecos } from "@/components/paginas/figuras";
+import { EscadaDePrecos } from "@/components/paginas/planos/figura";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
 import { Escada } from "@/components/secoes/escada";
-import { Fundacao } from "@/components/secoes/fundacao";
 import { Planos } from "@/components/secoes/planos";
 import { metadadosDaPagina } from "@/lib/metadados";
 
@@ -22,15 +21,13 @@ const manha = {
 } as React.CSSProperties;
 
 /**
- * Planos: a abertura é a escada de preços (três degraus, o preço de
- * criação em cada um); depois, os planos com o que cada um inclui, a
- * escada dos sites de demonstração, até quatro por plano (o simulador abre o site vivo,
- * com as páginas dele) e a condição dos três primeiros contratos, em
- * extrato, na névoa (desde 16/10: até então, no navy da escada). Os tons:
- * navy, névoa, navy, névoa e o navy da próxima página (até 16/10, os
- * planos no branco). Desde 16/10, a escada é de pedra e, a partir de 1024
- * px, pousa na emenda (a figura alinhada ao chão; a abertura por cima dos
- * planos, z-[1]), com a sombra de cada degrau no papel de baixo.
+ * Planos: a abertura é a escada de preços, na proporção deles; depois, o que cada plano inclui (na mesa, a tabela,
+ * com a placa navy atrás do Profissional; no celular, um quadro por plano na galeria), a nota 1 com a condição de
+ * fundação e os extras; por fim, os sites de exemplo, até quatro por plano (o simulador, só na mesa, abre o site vivo).
+ * Os tons: navy, névoa, navy e o navy da próxima página. A escada pousa na emenda em toda largura (a abertura por cima
+ * dos planos, z-[1]), com a sombra de cada degrau no papel de baixo; a partir de 1024 px, ela ocupa a grade inteira da
+ * página, e cada degrau fica sobre a coluna do seu plano. Desde 28/10 (R10, D3), a condição de fundação é a nota 1 da
+ * linha "Criação": a seção própria (o extrato, components/secoes/fundacao.tsx) saiu daqui.
  */
 export default function PaginaDosPlanos() {
   return (
@@ -41,11 +38,10 @@ export default function PaginaDosPlanos() {
         figura={<EscadaDePrecos />}
         className="vd-cena z-[1]"
         style={manha}
-        classeDaFigura="lg:self-end lg:-mb-36"
+        classeDaFigura="-mb-24 md:-mb-36 lg:col-span-12"
       />
       <Planos />
       <Escada />
-      <Fundacao extrato />
       <ProximaPagina atual="planos" />
     </div>
   );

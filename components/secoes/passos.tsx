@@ -4,6 +4,7 @@ import { Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
 import { Titulo } from "@/components/tipografia";
 import { buttonVariants } from "@/components/ui/button";
+import { tituloDosPassos } from "@/conteudo/paginas/inicio";
 import { passosDoInicio, trabalho } from "@/conteudo/site";
 
 /**
@@ -52,6 +53,8 @@ function geometria(g: Prancha) {
   const [rp, rt] = [g.r + g.parcial, g.r + g.total];
   const folga = g.traco * 1.6;
   return {
+    /** O centro, o raio e os ângulos da viagem do marcador (a passiva P26), em unidades da prancha. */
+    via: { cx: g.cx, cy: g.cy, r: g.r, t0: T[0].toFixed(4), t1: T[3].toFixed(4) },
     estacoes: T.map((t) => ponto(t, g.r)),
     rumo: arco(angulo(-g.alem), angulo(g.largura + g.alem), g.r),
     chamadas: raio(T[0], g.r + folga, rt + folga) + raio(T[1], g.r + folga, rp + folga) + raio(T[3], g.r + folga, rt + folga),
@@ -113,6 +116,19 @@ const lugar = (i: number, qual: "estacoes" | "valores") =>
     "--yc": f(G.celular[qual][i][1]),
   }) as React.CSSProperties;
 
+const VIA = {
+  "--cx": G.mesa.via.cx,
+  "--cy": G.mesa.via.cy,
+  "--r": G.mesa.via.r,
+  "--t0": `${G.mesa.via.t0}rad`,
+  "--t1": `${G.mesa.via.t1}rad`,
+  "--cxc": G.celular.via.cx,
+  "--cyc": G.celular.via.cy,
+  "--rc": G.celular.via.r,
+  "--t0c": `${G.celular.via.t0}rad`,
+  "--t1c": `${G.celular.via.t1}rad`,
+} as React.CSSProperties;
+
 /**
  * O trabalho, no início: uma prancha só, a derrota das quatro etapas. Até
  * 17/10, quatro caixas que se empilhavam ao rolar (as do site de 28/08,
@@ -137,6 +153,11 @@ const lugar = (i: number, qual: "estacoes" | "valores") =>
  * (app/vidro.css).
  * O título na margem, e não ao centro (até 17/10, centrado, como a
  * fundação, logo abaixo, e o Fim).
+ * Desde 28/10 (R10), o título "Como o site é feito." (conteudo/paginas/
+ * inicio.ts; até então, "Quatro etapas. Nenhuma delas opcional.", o
+ * aforismo em dois tempos, a marca X1) e os rótulos das marcas a 16 px (nada
+ * que decide abaixo de 16 px; até então, 14). Desde 02/11 (acabamento), o marcador
+ * percorre o rumo, das primeira à quarta estação (a passiva P26).
  */
 export function Passos() {
   return (
@@ -145,7 +166,7 @@ export function Passos() {
       <Envelope>
         {/* O rótulo, só para o leitor de tela (17/10): à vista, era o sobretítulo (a marca T2). */}
         <p className="sr-only">{passosDoInicio.rotulo}</p>
-        <Titulo linhas={trabalho.titulo} />
+        <Titulo linhas={tituloDosPassos} />
         <div className="vd-derrota mt-14 md:mt-16">
           <div className="vd-derrota-prancha">
             <Desenho id="mesa" g={G.mesa} p={MESA} />
@@ -153,13 +174,20 @@ export function Passos() {
             {G.mesa.estacoes.map((_, i) => (
               <span key={i} aria-hidden="true" className="vd-fixo" style={lugar(i, "estacoes")} />
             ))}
+            {/* O marcador que faz o percurso (a passiva P26): um pivô sem tamanho, no centro do círculo do rumo, gira e leva
+                o ponto pelo próprio arco: a camada é só a do ponto. A prancha recorta o resto. */}
+            <span aria-hidden="true" className="vd-derrota-via" data-ambiente data-passiva="inicio-derrota" style={VIA}>
+              <span className="vd-derrota-pivo mov-passiva">
+                <span className="vd-derrota-navio" />
+              </span>
+            </span>
             <ol className="vd-derrota-etapas">
               {trabalho.passos.map((passo, i) => {
                 const cota = i in G.mesa.valores;
                 const marca = (
                   <>
                     <span className="valor font-display tracking-titulo text-numero whitespace-nowrap text-accent tabular-nums">{passo.marca.valor}</span>{" "}
-                    <span className="rotulo text-nota text-muted-foreground">{passo.marca.rotulo}</span>
+                    <span className="rotulo text-base text-muted-foreground">{passo.marca.rotulo}</span>
                   </>
                 );
                 return (

@@ -54,6 +54,10 @@ const DESFOQUE_POR_RAIO = 0.35;
 
 type Filtro = { id: string; no: SVGFilterElement; usos: number };
 const filtros = new Map<string, Filtro>();
+type Mapa = { url: string; escala: number };
+/** Os mapas já assados, pela mesma chave: a troca de página refaz os filtros, mas não reassa o mapa (27/10: o mapa da
+ *  barra, reassado a cada navegação, somava ~50 ms numa tarefa só na mesa). Esvazia ao redimensionar a janela. */
+const mapas = new Map<string, Mapa>();
 let definicoes: SVGSVGElement | null = null;
 let proximoId = 0;
 
@@ -79,9 +83,9 @@ const byte = (v: number) => Math.max(0, Math.min(255, Math.round(v)));
  * Assa o campo de refração do shader num mapa de deslocamento: R e G
  * guardam o deslocamento em x e y em torno do neutro, na escala do
  * feDisplacementMap. Fórmulas transcritas do container.js de
- * liquid-glass-js, como no plugin.
+ * liquid-glass-js, como no plugin. Uma linha por passo (assarAosPoucos).
  */
-function mapaDeDeslocamento(w: number, h: number, raio: number, paginaW: number, paginaH: number, c: Configuracao) {
+function* mapaDeDeslocamento(w: number, h: number, raio: number, paginaW: number, paginaH: number, c: Configuracao): Generator<void, Mapa> {
   const ss = Math.max(0.25, Math.min(SUPERAMOSTRA, ARESTA_MAXIMA / Math.max(w, h)));
   const bw = Math.max(1, Math.round(w * ss));
   const bh = Math.max(1, Math.round(h * ss));
@@ -125,6 +129,7 @@ function mapaDeDeslocamento(w: number, h: number, raio: number, paginaW: number,
       dy[i] = fy;
       maximo = Math.max(maximo, Math.abs(fx), Math.abs(fy));
     }
+    yield;
   }
 
   const escala = Math.max(maximo * 2, 1e-4);
@@ -146,6 +151,26 @@ function mapaDeDeslocamento(w: number, h: number, raio: number, paginaW: number,
   return { url: tela.toDataURL("image/png"), escala };
 }
 
+/**
+ * Assa nas sobras de tempo entre os quadros (requestIdleCallback: a refração só existe no Chromium, que o tem) e avisa
+ * quando o mapa fica pronto. Numa tarefa só, o mapa do cartão de "O Atlas" levava 25 a 40 ms, e a mesa perdia quadros na
+ * chegada à página (27/10).
+ */
+function assarAosPoucos(chave: string, passos: Generator<void, Mapa>, pronto: () => void) {
+  let id = requestIdleCallback(function fatia(prazo) {
+    for (let passo = passos.next(); ; passo = passos.next()) {
+      if (passo.done) {
+        mapas.set(chave, passo.value);
+        pronto();
+        return;
+      }
+      if (prazo.timeRemaining() < 1) break;
+    }
+    id = requestIdleCallback(fatia);
+  });
+  return () => cancelIdleCallback(id);
+}
+
 const SVG = "http://www.w3.org/2000/svg";
 
 /** Um elemento SVG com os atributos dados, na ordem. */
@@ -165,14 +190,14 @@ function definicoesSvg() {
   return definicoes;
 }
 
-/** Elementos do mesmo tamanho e configuração dividem um filtro. */
-function obterFiltro(chave: string, w: number, h: number, raio: number, paginaW: number, paginaH: number, c: Configuracao) {
+/** Elementos do mesmo tamanho e configuração dividem um filtro. O mapa da chave já está assado (refratar). */
+function obterFiltro(chave: string, w: number, h: number, c: Configuracao) {
   const existente = filtros.get(chave);
   if (existente?.no.isConnected) {
     existente.usos++;
     return existente;
   }
-  const { url, escala } = mapaDeDeslocamento(w, h, raio, paginaW, paginaH, c);
+  const { url, escala } = mapas.get(chave)!;
   const id = `vidro-liquido-${proximoId++}`;
 
   // A região do filtro passa da caixa pelo alcance do deslocamento mais o
@@ -228,6 +253,7 @@ function refratar(el: HTMLElement) {
   }
   let chaveAtual: string | null = null;
   let quadro = 0;
+  let pararDeAssar = () => {};
 
   const refazer = () => {
     const w = Math.round(el.offsetWidth);
@@ -239,8 +265,13 @@ function refratar(el: HTMLElement) {
     const paginaH = window.innerHeight;
     const chave = [w, h, raio, paginaW, paginaH, JSON.stringify(config)].join("|");
     if (chave === chaveAtual) return;
+    if (!mapas.has(chave)) {
+      pararDeAssar();
+      pararDeAssar = assarAosPoucos(chave, mapaDeDeslocamento(w, h, raio, paginaW, paginaH, config), agendar);
+      return;
+    }
     soltarFiltro(chaveAtual);
-    const filtro = obterFiltro(chave, w, h, raio, paginaW, paginaH, config);
+    const filtro = obterFiltro(chave, w, h, config);
     chaveAtual = chave;
     // O que se soma à refração vem de --vidro-filtro, no CSS: a barra muda o
     // escurecimento conforme o que passa por trás dela (app/vidro.css).
@@ -256,6 +287,7 @@ function refratar(el: HTMLElement) {
   return () => {
     observador.disconnect();
     cancelAnimationFrame(quadro);
+    pararDeAssar();
     soltarFiltro(chaveAtual);
     el.style.backdropFilter = "";
   };
@@ -293,6 +325,7 @@ export function VidroLiquido() {
     // A janela mudou de tamanho: a refração de todos muda (é proporcional à
     // janela). Espera o arraste terminar para refazer.
     const aoRedimensionar = () => {
+      mapas.clear();
       clearTimeout(espera);
       espera = setTimeout(ligar, 180);
     };

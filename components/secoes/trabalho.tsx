@@ -1,52 +1,89 @@
 import { Envelope, Secao } from "@/components/estrutura";
-import { trabalho } from "@/conteudo/site";
+import { FichaDaVisita, MapaDoSite, MarcaObrigatoria, PrimeiroDia, Relogio, Rodadas } from "@/components/paginas/o-trabalho/objetos";
+import { contato } from "@/conteudo/contato";
+import { etapas, fraseDaAprovacao, rotuloDasEtapas, textos, visita } from "@/conteudo/paginas/o-trabalho";
+import { paginas } from "@/conteudo/site";
+import { ultimaAlteracao } from "@/lib/datas-das-paginas";
+
+/** O nome da etapa e o prazo dela: o valor com a unidade, grande, e o resto da frase. */
+function Cabeca({ i, tamanho = "" }: { i: number; tamanho?: string }) {
+  const etapa = etapas[i];
+  return (
+    <>
+      <h2 className="ot-nome">{etapa.titulo}</h2>
+      <p className="ot-prazo">
+        <span className={`ot-valor ${tamanho}`}>{etapa.valor}</span>
+        {etapa.resto}
+      </p>
+    </>
+  );
+}
 
 /**
- * As quatro etapas como um cronograma, em linhas: a marca da etapa (uma
- * visita, 24 h, duas rodadas, 7 a 15 dias úteis), o nome e o texto. A
- * partir de 1024 px, a marca abre a linha, como a hora numa agenda; no
- * leitor de tela e no celular, o nome vem primeiro. A ordem das linhas é a
- * da sequência. A régua do prazo, na abertura, é a linha do tempo; aqui, o
- * que acontece em cada trecho. Com o ponteiro, o nome da linha acende em
- * bronze (a lista que acende: 09-movimento.md, seção 13.2).
- * Até 16/10, uma linha do tempo de círculos numerados (1 a 4) ligados por
- * um traço, com a marca de cada etapa em número grande no pé da coluna: a
- * mesma peça da história de O Atlas, a página seguinte do percurso, e o
- * número com legenda que o início já mostra na pilha (o crítico de fora).
- * Desde 14/10, no branco da abertura, que continua até as etapas: o creme
- * logo depois do branco ficava a 0,035 de L (OKLab), abaixo dos 0,04 de
- * uma virada de cena, e se lia como emenda. E o título "Quatro etapas.
- * Nenhuma delas opcional." fica só no nome da região, para leitor de tela:
- * é o mesmo das caixas do início, e aqui o h1 e a régua do prazo já abrem o
- * assunto; as etapas são h2.
- * Desde 16/10 ("Identidade mais profunda"), na névoa, como a abertura (o
- * branco saiu como campo de cena), e sem os filetes: o espaço agrupa. A
- * marca de cada etapa vai para a margem da direita, como nota à margem; na
- * mesa, um fio de chamada de 1 px, no bronze a 40%, liga o fim do nome da
- * etapa à nota (o único fio de chamada do site). No celular, a nota fica
- * sob o nome, sem fio. O texto é o mesmo.
+ * As quatro etapas (R10, acabamento, 02/11; até então, um livro-razão: quatro linhas de esqueleto igual, em papel claro).
+ * Cada etapa tem a sua composição, e um objeto tirado de um dado do kit, grande o bastante para tomar a tela:
+ * - a visita, no papel: a folha do formulário, na mesa, com a caneta que passa pelos campos (a passiva P23);
+ * - o rascunho, a cena escura de largura total: as 24 h em letra de cena e o mostrador das 24 horas, de 480 px na mesa
+ *   (a passiva P10; até 02/11, 28 px), com a barra das 24 h embaixo (a constante da página);
+ * - as revisões, no papel: as duas rodadas em volta do número (a passiva P24) e a frase da aprovação na largura toda;
+ * - a publicação, na pedra: o mapa do site que corre numa janela, a linha desta página em bronze (a passiva P25).
+ * O prazo e o texto são os do site (`trabalho.passos`; conteudo/paginas/o-trabalho.ts): "briefing" e "rascunho" sem
+ * glosa (D4), "7 a 15 dias úteis, em geral" (D10). Cada objeto é o [data-ambiente] da sua passiva.
  */
 export function Trabalho() {
+  const mapa = paginas.flatMap((p) => {
+    const data = ultimaAlteracao(p.caminho);
+    return data ? [{ loc: contato.url + p.caminho, lastmod: data, estaPagina: p.caminho === "/o-trabalho" }] : [];
+  });
   return (
-    <Secao id="trabalho" tom="claro" aria-label={trabalho.titulo.join(" ")}>
-      <Envelope>
-        <ol>
-          {trabalho.passos.map((passo) => (
-            <li key={passo.titulo} className="group grid gap-x-14 gap-y-2 py-8 md:py-10 lg:grid-cols-12 lg:items-center lg:gap-y-4">
-              {/* h2 com o desenho do h3 (app/globals.css): sem o título da seção, as etapas descem direto do h1. O fio de
-                  chamada é o ::after, do fim do nome até a nota, na mesa. */}
-              <h2 className="font-sub text-destaque leading-[1.25] font-medium tracking-[-0.018em] transition-colors duration-300 ease-atlas group-hover:text-accent lg:col-span-9 lg:row-start-1 lg:flex lg:items-center lg:after:ml-6 lg:after:h-px lg:after:flex-1 lg:after:bg-accent/40">
-                {passo.titulo}
-              </h2>
-              <p className="text-nota lg:col-span-3 lg:col-start-10 lg:row-start-1">
-                <span className="font-semibold text-accent tabular-nums">{passo.marca.valor}</span>{" "}
-                <span className="text-muted-foreground">{passo.marca.rotulo}</span>
+    <Secao id="trabalho" tom="claro" aria-label={rotuloDasEtapas} className="py-0 md:py-0">
+      <ol>
+        <li className="ot-visita">
+          <Envelope className="ot-visita-grade">
+            <div>
+              <Cabeca i={0} tamanho="ot-valor-grande" />
+              <p className="ot-corpo">{textos[0]}</p>
+              <p id="regra-da-visita" className="ot-regra">
+                {visita.regra[0]} <MarcaObrigatoria />
+                <span className="sr-only">marca</span> {visita.regra[1]}
               </p>
-              <p className="mt-2 max-w-[60ch] text-corpo text-muted-foreground lg:col-span-8 lg:row-start-2 lg:mt-0">{passo.texto}</p>
-            </li>
-          ))}
-        </ol>
-      </Envelope>
+            </div>
+            <FichaDaVisita idDaRegra="regra-da-visita" />
+          </Envelope>
+        </li>
+
+        <li className="ot-etapa-dia vd-materia" data-tom="escuro" data-ambiente>
+          <Envelope className="ot-dia-grade">
+            <div>
+              <Cabeca i={1} tamanho="ot-valor-cena" />
+              <p className="ot-corpo">{textos[1]}</p>
+              <PrimeiroDia />
+            </div>
+            <Relogio />
+          </Envelope>
+        </li>
+
+        <li className="ot-revisoes">
+          <Envelope className="ot-revisoes-grade">
+            <Rodadas />
+            <div>
+              <Cabeca i={2} tamanho="ot-valor-grande" />
+              <p className="ot-corpo">{textos[2]}</p>
+            </div>
+            <p className="ot-frase">{fraseDaAprovacao}</p>
+          </Envelope>
+        </li>
+
+        <li className="ot-publicacao vd-materia" data-tom="pedra">
+          <Envelope className="ot-publicacao-grade">
+            <div>
+              <Cabeca i={3} tamanho="ot-valor-grande" />
+              <p className="ot-corpo">{textos[3]}</p>
+            </div>
+            {mapa.length > 0 && <MapaDoSite linhas={mapa} />}
+          </Envelope>
+        </li>
+      </ol>
     </Secao>
   );
 }

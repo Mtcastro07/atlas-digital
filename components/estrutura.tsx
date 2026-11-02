@@ -85,10 +85,3 @@ export function Abertura({ titulo, lide, className, children, margem = false }: 
   );
 }
 
-/**
- * Orbe de luz do bloco com .vd-luz: segue o ponteiro, movido pela ilha
- * LuzDoCursor (components/ilhas/luz-do-cursor.tsx). Decorativo.
- */
-export function Orbe() {
-  return <span aria-hidden="true" className="vd-orbe" />;
-}

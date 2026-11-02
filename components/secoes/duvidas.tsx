@@ -1,35 +1,78 @@
+import { Trecho } from "@/components/codigo/trecho";
 import { Envelope, Secao } from "@/components/estrutura";
 import { duvidas } from "@/conteudo/duvidas";
+import { legendaDoCodigo } from "@/conteudo/paginas/duvidas";
+import { figuras } from "@/conteudo/site";
+import { perguntasFrequentes } from "@/lib/dados-estruturados";
+
+/** A grade da mesa tem quatro linhas de perguntas por momento (app/paginas/duvidas.css). */
+if (figuras.momentos.some((m) => m.itens.length > 4)) throw new Error("Dúvidas: um momento passou de quatro perguntas");
+
+/** O começo do primeiro objeto Question, como o servidor o manda, com uma quebra depois de "Question",. */
+function comecoDoJsonLd() {
+  const comeco = /^(\{"@type":"Question",)("name":"[^"]*",)/.exec(JSON.stringify(perguntasFrequentes.mainEntity[0]));
+  if (!comeco) throw new Error("Dúvidas: o JSON-LD da primeira pergunta mudou de forma");
+  return comeco;
+}
 
 /**
- * <details> nativo: abre e fecha sem script, e a busca do navegador
- * encontra as respostas. A altura anima onde o navegador sabe animar para
- * "auto" (vd-duvida, app/vidro.css); o "+" gira até virar "×". Desde
- * 16/10, direto na névoa, entre dois filetes, e sem o índice de 01 a 10:
- * até então, num painel branco (mais um cartão numa cena clara) e com o
- * número que o mapa da abertura já mostrava (o crítico de fora).
+ * O objeto de cada momento (R10, acabamento, 02/11; a passiva P35), à direita do título, cada um com o seu movimento,
+ * ligado ao momento: antes de contratar, a agulha que busca o rumo; na contratação, a assinatura que se traça; durante o
+ * trabalho, as 24 horas que passam; com o site no ar, o sinal que se abre. Desenho: o título diz o momento.
+ */
+function ObjetoDoMomento({ i }: { i: number }) {
+  return (
+    <span aria-hidden="true" className={`vd-momento-objeto vd-momento-${i + 1}`}>
+      <span className="vd-momento-peca mov-passiva" />
+    </span>
+  );
+}
+
+/**
+ * A mesa de leitura (R10): os quatro momentos em h2 e, na mesa, a pergunta à esquerda e a resposta aberta ao lado. O
+ * <details name> dá uma resposta aberta por momento, sem script: quatro à vista na chegada. O id (#duvida-N, a mesma
+ * numeração de conteudo/duvidas.ts) fica na resposta, e não no <details>, que na mesa não tem caixa (display: contents):
+ * a ilha Ancoras abre e mede a resposta, e sem script o navegador abre o <details> do destino.
  */
 export function Duvidas() {
+  const comeco = comecoDoJsonLd();
   return (
     <Secao id="duvidas" tom="claro">
-      <Envelope>
-        <div className="mx-auto max-w-3xl border-y border-border">
-          {duvidas.map((d, i) => (
-            <details key={d.pergunta} id={`duvida-${i + 1}`} open={i === 0} className="vd-duvida group scroll-mt-28 border-b border-border last:border-b-0">
-              <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-6 py-5 font-sub text-corpo font-medium tracking-sub transition-colors duration-300 ease-atlas hover:text-accent [&::-webkit-details-marker]:hidden">
-                <span>{d.pergunta}</span>
-                <span
-                  aria-hidden="true"
-                  className="relative size-7 flex-none rounded-full bg-muted transition-[transform,background-color] duration-500 ease-atlas group-open:rotate-[135deg] group-hover:bg-foreground/10"
-                >
-                  <span className="absolute top-1/2 left-1/2 h-px w-3 -translate-1/2 bg-current" />
-                  <span className="absolute top-1/2 left-1/2 h-3 w-px -translate-1/2 bg-current" />
-                </span>
-              </summary>
-              <p className="max-w-[56ch] pb-6 text-corpo text-muted-foreground">{d.resposta}</p>
-            </details>
+      <Envelope className="vd-mesa">
+        <div className="vd-mesa-momentos">
+          {figuras.momentos.map((m, i) => (
+            <div key={m.momento} role="group" aria-labelledby={`momento-${i + 1}`} className="vd-mesa-momento" data-ambiente data-passiva={`duvidas-momento-${i + 1}`}>
+              <div className="vd-momento-cabeca">
+                <h2 id={`momento-${i + 1}`}>{m.momento}</h2>
+                <ObjetoDoMomento i={i} />
+              </div>
+              <div className="vd-mesa-itens">
+                {m.itens.map((item, j) => (
+                  <details key={item.duvida} name={`momento-${i + 1}`} open={j === 0} className="vd-duvida">
+                    <summary>
+                      <span className="vd-duvida-pergunta">{duvidas[item.duvida - 1].pergunta}</span>
+                      <span aria-hidden="true" className="vd-duvida-sinal" />
+                    </summary>
+                    <div id={`duvida-${item.duvida}`} className="vd-duvida-resposta">
+                      <p>{duvidas[item.duvida - 1].resposta}</p>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
+        <Trecho
+          className="vd-mesa-codigo"
+          trecho={{ linhas: [comeco[1], ` ${comeco[2]}`] }}
+          tintas={[
+            ['"@type"', "chave"],
+            ['"name"', "chave"],
+            ['"Question"', "nome"],
+            [comeco[2].slice(7, -1), "valor"],
+          ]}
+          legenda={legendaDoCodigo}
+        />
       </Envelope>
     </Secao>
   );

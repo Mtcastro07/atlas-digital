@@ -1,0 +1,329 @@
+/* ============================================================
+   ATLAS DIGITAL — as peças comuns
+   O cabeçalho, o menu, a próxima página e o rodapé: o CSS só delas. Desde
+   28/10 (R10, fase 0), importado uma vez em app/globals.css, depois
+   de ./nichos.css e das páginas. Nada passivo aqui: as peças comuns ficam
+   quietas (CONTRATO.md, 4.1). Dono na construção do R10: o agente de comuns.
+   A prova: esboco/comuns/prova.html. O que muda ao ponteiro é a luz do
+   sistema (.vd-acende, app/vidro.css), e não regra daqui.
+   ============================================================ */
+
+@layer components {
+  /* ---------- o menu do celular (components/ilhas/painel-menu.tsx) ----------
+     A lista rola sozinha, com 8 px de folga em cima e embaixo (o anel de
+     foco da primeira e da última linha não é cortado). Os nomes a 28 px,
+     600; a página aberta em bronze, com "página atual" escrito no creme
+     (8,54:1 no pior pixel da linha; o apagado dava 3,89:1 sobre os fios). A
+     luz da linha vai de borda a borda do painel. */
+  /* O reflexo do vidro de antes (.vd-vidro::before), sem o desfoque: a luz entra pelo canto de cima, à esquerda, a 10%
+     (a 16% de antes, o bronze da página aberta caía a 3,30:1 no pior pixel, em "Início"; a 10%, 3,68:1, e o texto
+     grande pede 3:1). O painel cobre a tela e a água (.vd-materia) já era opaca: o desfoque de uma camada da tela
+     inteira não mostrava nada. */
+  .cm-painel {
+    isolation: isolate;
+  }
+  .cm-painel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(
+      140deg,
+      rgb(255 255 255 / 0.1) 0%,
+      rgb(255 255 255 / 0) 34%,
+      rgb(255 255 255 / 0) 70%,
+      rgb(255 255 255 / 0.05) 100%
+    );
+  }
+  .cm-painel-lista {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.5rem 1.5rem;
+  }
+  .cm-linha {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: 1rem;
+    min-height: 3.75rem;
+    padding-block: 0.8125rem;
+    text-decoration: none;
+    color: var(--foreground);
+  }
+  .cm-linha::before {
+    inset: 0 -1.5rem;
+  }
+  .cm-linha:focus-visible {
+    outline-offset: -4px;
+  }
+  .cm-linha-nome {
+    font-weight: 600;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+  }
+  .cm-linha[aria-current] .cm-linha-nome {
+    color: var(--accent);
+  }
+  .cm-linha-aqui {
+    flex: none;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--foreground);
+  }
+  .cm-painel-pe {
+    flex: none;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem 0;
+  }
+  /* Em telas baixas (700 px ou menos), as linhas de 48 px e os nomes a 24 px: a 320 × 640, as sete cabem com a pausa e
+     as duas ações, sem rolar a lista. */
+  @media (max-height: 700px) {
+    .cm-painel-lista {
+      padding-top: 0;
+    }
+    .cm-linha {
+      min-height: 3rem;
+      padding-block: 0.5rem;
+    }
+    .cm-linha-nome {
+      font-size: 1.5rem;
+    }
+    .cm-painel-pe {
+      padding-top: 0.5rem;
+      gap: 0.375rem;
+    }
+  }
+
+  /* ---------- a próxima página (components/paginas/proxima-pagina.tsx) ----------
+     O traço seguinte da régua do percurso acende com a luz (opacidade da
+     camada em bronze, e não troca de cor). O anel do foco por dentro da área,
+     que vai de borda a borda. */
+  .cm-proxima:focus-visible {
+    outline-offset: -8px;
+  }
+  .cm-seguinte {
+    position: relative;
+  }
+  .cm-seguinte::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 300ms var(--ease-lugar);
+  }
+  .cm-proxima:is(:focus-visible, :active) .cm-seguinte::after {
+    opacity: 0.75;
+  }
+  @media (hover: hover) {
+    .cm-proxima:hover .cm-seguinte::after {
+      opacity: 0.75;
+    }
+  }
+
+  /* ---------- o rodapé (components/secoes/rodape.tsx) ----------
+     Três degraus, e nada abaixo de 16 px (até 28/10, tudo em 12 e 14):
+     1. o índice das seis páginas, na voz do menu (Inter 600, com fios), de
+        18 a 21 px (--text-destaque);
+     2. o contato, a 17 px (o corpo), em navy, 500;
+     3. a descrição, o selo e o colofão, a 16/24 px, no apagado.
+     A grade de hoje (três colunas da mesma largura, desde 02/10), com o
+     logotipo numa linha própria e as colunas alinhadas pela primeira linha
+     de base (a nota de 16 px e os vínculos de 44 e 52 px começam juntos).
+     minmax(0, 1fr): com a letra a 200%, o e-mail alargava a coluna. */
+  .cm-rodape-grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.75rem;
+    margin-top: 1.25rem;
+  }
+  .cm-rodape-nota {
+    max-width: 46ch;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+  .cm-indice ul {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    column-gap: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .cm-indice li {
+    border-bottom: 1px solid var(--border);
+  }
+  .cm-indice-vinculo {
+    display: flex;
+    align-items: center;
+    min-height: 3.25rem;
+    font-size: var(--text-destaque);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.017em;
+    color: var(--foreground);
+    text-decoration: none;
+  }
+  /* A página aberta, marcada além da cor: o peso 700 e um traço de bronze de 2 × 16 px à esquerda, no vão da coluna
+     (6,46:1 sobre a névoa; a marca que não é texto pede 3:1). O nome segue em navy (13,14:1). O ponteiro acende a luz,
+     e não o traço: a marca do estado não é a do ponteiro. */
+  .cm-indice-vinculo[aria-current] {
+    font-weight: 700;
+  }
+  .cm-indice-vinculo[aria-current]::after {
+    content: "";
+    position: absolute;
+    left: -0.75rem;
+    top: 50%;
+    width: 2px;
+    height: 1rem;
+    margin-top: -0.5rem;
+    border-radius: 1px;
+    background: var(--accent);
+  }
+  .cm-contato {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: var(--text-corpo);
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--foreground);
+    text-decoration: underline 1px transparent;
+    text-underline-offset: 0.3em;
+    transition:
+      color 300ms var(--ease-atlas),
+      text-decoration-color 300ms var(--ease-atlas);
+  }
+  .cm-contato:active {
+    color: var(--accent);
+  }
+  @media (hover: hover) {
+    .cm-contato:hover {
+      color: var(--accent);
+      text-decoration-color: currentColor;
+    }
+  }
+  .cm-cidade {
+    display: flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--muted-foreground);
+  }
+  .cm-rodape-pe {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .cm-rodape-fim {
+    display: grid;
+    justify-items: start;
+    align-content: start;
+  }
+  .cm-rodape-fim .cm-contato {
+    font-size: 1rem;
+  }
+  .cm-direitos {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+  .cm-colofao-numero {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--foreground);
+  }
+  @media (min-width: 768px) {
+    .cm-rodape-grade,
+    .cm-rodape-pe {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 2.5rem;
+      align-items: baseline;
+    }
+    .cm-rodape-grade > :first-child,
+    .cm-rodape-fim {
+      grid-column: 1 / -1;
+    }
+    /* Lado a lado, o fio de cima sai: com ele, a descrição descia 38 px abaixo do logotipo para casar a linha de base. */
+    .cm-indice ul {
+      grid-auto-columns: minmax(0, 1fr);
+      border-top: 0;
+    }
+  }
+  @media (min-width: 1024px) {
+    .cm-rodape-grade,
+    .cm-rodape-pe {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cm-rodape-grade {
+      margin-top: 1.75rem;
+    }
+    .cm-rodape-grade > :first-child,
+    .cm-rodape-fim {
+      grid-column: auto;
+    }
+    .cm-rodape-pe {
+      margin-top: 3rem;
+      padding-top: 2rem;
+    }
+  }
+  /* A letra a 200%, pelo zoom (a tela de 390 px vira 195 px de CSS) ou pela preferência do navegador (o em da media query
+     acompanha a letra, e o px não): o índice numa coluna só. */
+  @media (max-width: 19.9em) {
+    .cm-indice ul {
+      grid-auto-flow: row;
+      grid-template-rows: none;
+    }
+  }
+}
+
+/* A entrada das linhas do menu: sobem 12 px e acendem, de 30 em 30 ms, em 560 ms (a de 14/10 subia 28 px). É resposta
+   a um toque, e não abertura de página: o .ja-aberto não a pula. Com movimento reduzido, nada se desloca, e o painel só
+   se acende, em 150 ms (fora das camadas: vence o translate do Sheet). */
+@media (prefers-reduced-motion: no-preference) {
+  .cm-entra {
+    animation: cm-entra 560ms var(--ease-atlas) calc(40ms + var(--i, 0) * 30ms) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cm-painel {
+    translate: none;
+    transition-duration: 150ms;
+  }
+}
+@keyframes cm-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* Na tela baixa de verdade (a letra a 200% num celular de 844 px dá 422 px de CSS), o pé fixo comia a lista: o painel
+   inteiro rola, a lista e o pé juntos. Fora das camadas, para vencer o overflow do Sheet. */
+@media (max-height: 560px) {
+  .cm-painel {
+    overflow-y: auto;
+  }
+  .cm-painel .cm-painel-lista {
+    flex: none;
+    overflow: visible;
+  }
+  .cm-painel .cm-painel-pe {
+    padding-bottom: 0.5rem;
+  }
+}
+

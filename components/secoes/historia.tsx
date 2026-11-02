@@ -1,54 +1,96 @@
+import Link from "next/link";
+
 import { Envelope, Secao } from "@/components/estrutura";
+import { PecaDoLogotipo, type LinhaDoGlobo, type Pedaco } from "@/components/ilhas/peca-do-logotipo";
+import { CartaCeleste } from "@/components/paginas/o-atlas/carta-celeste";
 import { Titulo } from "@/components/tipografia";
+import { origem } from "@/conteudo/paginas/o-atlas";
 import { quemFaz } from "@/conteudo/site";
+import { linhasDo, trechoDe } from "@/lib/trecho";
 
 /**
- * A história do Atlas (pedido do usuário, 01/10): da sala de aula da UFF
- * ao balcão do comércio de Niterói, em quatro capítulos. Cada capítulo é
- * uma linha da página: o número em bronze num círculo, o título e o texto,
- * com o fio que liga um ao outro. Na página "O Atlas", entre a abertura e
- * os sócios. Na escala desde 03/10 (regra 2): círculos de 36 px (48 px a
- * partir de 768 px), a coluna do tamanho do círculo (auto) e o fio no eixo
- * deles, a 18 e a 24 px da borda (até 03/10, medidas de 2,3 e 3,2 rem). O
- * fio em degradê, que se apaga embaixo, e o aro cheio dos círculos saíram
- * em 03/10 pela regra 3 das Diretrizes de Design Premium e voltaram no
- * mesmo dia, a pedido do usuário: são parte da identidade do site.
- * Os títulos dos capítulos no degrau dos números (24 a 36 px): no do lide
- * (18 a 21 px), mal se destacariam do texto de 17 px.
- * Com o ponteiro, o círculo do capítulo sob ele se enche de bronze (a
- * lista que acende: 09-movimento.md, seção 13.2; desde 16/10, quando a cena
- * não respondia à mão: o crítico de fora). Desde 16/10, é a única linha do
- * tempo de círculos do site: as etapas de O trabalho, a página anterior do
- * percurso, viraram um cronograma em linhas.
+ * Uma linha do globo do logotipo em pedaços, com a tinta de cada um (C-codigo.md, 3.3): o elemento na tinta do texto,
+ * a chave na água rasa, o valor no bronze-sombra, a pontuação no apagado. Também os atributos, para a peça se desenhar
+ * pela própria linha, e o pedaço em que ela desce no celular (antes do terceiro atributo). Uma linha que não tenha a
+ * forma <elemento chave="valor" … /> para o build: o código mostrado é sempre o do arquivo.
+ */
+function linhaDoGlobo(linha: string, traducao: string): LinhaDoGlobo {
+  const forma = /^<([a-z]+)((?:\s+[a-z0-9]+="[^"]*")+)\s*\/>$/;
+  const casou = forma.exec(linha);
+  if (!casou) throw new Error(`historia: a linha ${JSON.stringify(linha)} não tem a forma de um elemento SVG`);
+  const [, elemento, resto] = casou;
+  const atributos: Record<string, string> = {};
+  const pedacos: Pedaco[] = [{ texto: `<${elemento}`, papel: "nome" }];
+  let quebra = 0;
+  for (const [, espaco, chave, valor] of resto.matchAll(/(\s+)([a-z0-9]+)="([^"]*)"/g)) {
+    atributos[chave] = valor;
+    if (Object.keys(atributos).length === 3) quebra = pedacos.length;
+    pedacos.push({ texto: espaco, papel: null }, { texto: chave, papel: "chave" }, { texto: "=", papel: "apagado" }, { texto: `"${valor}"`, papel: "valor" });
+  }
+  pedacos.push({ texto: linha.slice(linha.lastIndexOf('"') + 1, -2), papel: null }, { texto: "/>", papel: "apagado" });
+  if (pedacos.map((p) => p.texto).join("") !== linha) throw new Error(`historia: a linha ${JSON.stringify(linha)} não se remonta`);
+  return { elemento, atributos, pedacos, quebra: quebra || pedacos.length, traducao };
+}
+
+/**
+ * A origem do Atlas (desde 28/10, R10; CONTRATO.md, 3.6), em dois tempos, um por tela.
+ * - **A história:** "Da sala de aula ao balcão." e os quatro capítulos (pedido do usuário, 01/10), cada um num
+ *   parágrafo, com o título corrido na frase, em duas tintas (D6, só aqui no site): o h3 em Archivo 500, na tinta
+ *   plena, com o ponto posto pelo estilo, e o texto em Inter, no apagado, no degrau do lide. Ao lado do título, na
+ *   coluna que ficava vazia (no celular, acima dos capítulos), a carta celeste dos capítulos (a passiva P12). Até
+ *   28/10, os capítulos eram uma linha do tempo de círculos numerados (01 a 04), com o fio entre eles.
+ * - **O nome:** "Atlas sustenta o céu." e o mito (conteudo/site.ts, quemFaz.nome, palavra por palavra), no eixo da
+ *   página, com o logotipo em 3D em pé sobre o papel e, logo abaixo, as quatro linhas de código que desenham o globo,
+ *   lidas no build de components/marca/logotipo.tsx (a ilha PecaDoLogotipo). Até 28/10, o nome morava numa chapa navy
+ *   de vidro líquido em "Quem faz", com o A grande ao fundo.
+ * O texto é o de conteudo/site.ts (quemFaz.historia e quemFaz.nome); o novo, em conteudo/paginas/o-atlas.ts.
  */
 export function Historia() {
-  const { historia } = quemFaz;
+  const { historia, nome } = quemFaz;
+  const trecho = trechoDe("components/marca/logotipo.tsx", '<circle cx="163" cy="24" r="21.75" />', 4);
+  const linhas = trecho.linhas.map((linha, i) => linhaDoGlobo(linha, origem.traducoes[i]));
+  const arquivo = trecho.arquivo.split("/").at(-1);
   return (
-    <Secao aria-labelledby="historia" tom="claro">
+    <Secao aria-labelledby="historia" tom="claro" className="vd-origem">
       <Envelope>
-        <div className="grid gap-12 lg:grid-cols-12">
-          {/* Cinco colunas para o título (até 16/10, quatro): a 68 px, na de quatro, "Da sala de aula ao balcão."
-              quebrava em quatro linhas, com o "ao" sozinho. */}
-          <div className="lg:col-span-5">
-            {/* O rótulo, só para o leitor de tela (17/10): à vista, era o sobretítulo (a marca T2). */}
-            <p className="sr-only">{historia.rotulo}</p>
-            <Titulo id="historia" linhas={historia.titulo} className="lg:sticky lg:top-32" />
-          </div>
-          <ol className="relative lg:col-span-6 lg:col-start-7">
-            <span aria-hidden="true" className="absolute top-3 bottom-3 left-4.5 w-px bg-gradient-to-b from-accent via-accent/40 to-transparent md:left-6" />
-            {historia.capitulos.map((capitulo) => (
-              <li key={capitulo.numero} className="group relative grid grid-cols-[auto_1fr] gap-x-6 pb-14 last:pb-0 md:gap-x-9">
-                <span aria-hidden="true" className="relative z-10 grid size-9 place-items-center rounded-full border border-accent bg-background font-display text-nota tracking-wide text-accent tabular-nums transition-colors duration-300 ease-atlas group-hover:bg-primary group-hover:text-primary-foreground md:size-12">
-                  {capitulo.numero}
-                </span>
-                {/* O recuo de cima põe a primeira linha do título no meio do círculo. */}
-                <div className="pt-1 md:pt-1.5">
-                  <h3 className="text-numero">{capitulo.titulo}</h3>
-                  <p className="mt-4 max-w-[58ch] text-corpo text-muted-foreground">{capitulo.texto}</p>
-                </div>
+        {/* Tempo 1: a história. */}
+        <div className="vd-origem-historia">
+          {/* O rótulo, só para o leitor de tela (17/10): à vista, era o sobretítulo (a marca T2). */}
+          <p className="sr-only">{historia.rotulo}</p>
+          <Titulo id="historia" linhas={historia.titulo} className="vd-origem-titulo" />
+          <CartaCeleste className="vd-origem-carta" />
+          <ol className="vd-capitulos">
+            {historia.capitulos.map((capitulo, i) => (
+              <li key={capitulo.numero} className="vd-capitulo">
+                <h3>{capitulo.titulo}</h3> <p>{capitulo.texto}</p>
+                {i === historia.capitulos.length - 1 && (
+                  <>
+                    <br />
+                    <Link href={origem.condicao.destino} className="vd-capitulo-vinculo">
+                      {origem.condicao.rotulo}
+                    </Link>
+                  </>
+                )}
               </li>
             ))}
           </ol>
+        </div>
+
+        {/* Tempo 2: o nome, a peça e o código que a desenha. O [data-ambiente] dá à constante da peça (a flutuação) a
+            parada fora da tela. */}
+        <div className="vd-origem-nome" data-ambiente data-passiva="o-atlas-peca">
+          <h3 className="vd-origem-mito-titulo">{nome.titulo}</h3>
+          <p className="vd-origem-mito">{nome.texto}</p>
+          <PecaDoLogotipo
+            linhas={linhas}
+            ponte={origem.ponte}
+            rotulo={origem.peca}
+            legenda={
+              <>
+                Trecho do arquivo do logotipo deste site, <code>{arquivo}</code>, {linhasDo(trecho)}.
+              </>
+            }
+          />
         </div>
       </Envelope>
     </Secao>

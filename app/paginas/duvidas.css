@@ -1,0 +1,747 @@
+/* ============================================================
+   ATLAS DIGITAL — Dúvidas (/duvidas)
+   O CSS só desta página. Desde 28/10 (R10, fase 0), num arquivo próprio,
+   importado uma vez em app/globals.css, depois de ./nichos.css: os blocos
+   vieram de app/vidro.css e app/movimento.css, copiados sem mudança, cada
+   um na camada que tinha. O que mais de uma página usa fica lá (a matéria,
+   a luz, o metal, o vidro, a galeria, o aparelho, as entradas, a onda, a
+   pausa e as passivas).
+   ============================================================ */
+
+@layer components {
+  /* ---------- a rosa, com os quatro momentos nos quatro rumos ----------
+     components/paginas/duvidas/figura.tsx. Os vãos são iguais na mesa: o canto de dentro de cada momento cai na diagonal
+     da rosa, e a agulha aponta para ele. No celular, duas colunas estreitas, voltadas para a rosa, e a agulha nos ângulos
+     dos cantos daquela grade. */
+  .vd-rosa {
+    --vao-x: 40px;
+    --vao-y: 184px;
+    --rosa-lado: 156px;
+    --orbita-aro: 4px;
+    --rumo-no: -12.8deg;
+    --rumo-ne: 12.8deg;
+    --rumo-so: -167.2deg;
+    --rumo-se: 167.2deg;
+    --rumo-raio: 82px;
+    --rumo-comprimento: 6px;
+    --rumo: var(--rumo-no);
+    position: relative;
+    container-type: inline-size;
+  }
+  @media (min-width: 768px) {
+    .vd-rosa {
+      --vao-x: 240px;
+      --vao-y: 240px;
+      --rosa-lado: 212px;
+      --orbita-aro: 6px;
+      --rumo-no: -45deg;
+      --rumo-ne: 45deg;
+      --rumo-so: -135deg;
+      --rumo-se: 135deg;
+      --rumo-raio: 110px;
+      --rumo-comprimento: 48px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vd-rosa {
+      --vao-x: 360px;
+      --vao-y: 360px;
+      --rosa-lado: 320px;
+      --orbita-aro: 8px;
+      --rumo-raio: 164px;
+      --rumo-comprimento: 80px;
+      margin-inline: auto;
+      max-width: 944px;
+    }
+  }
+  .vd-rosa:has([data-quadrante="no"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: var(--rumo-no);
+  }
+  .vd-rosa:has([data-quadrante="ne"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: var(--rumo-ne);
+  }
+  .vd-rosa:has([data-quadrante="so"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: var(--rumo-so);
+  }
+  .vd-rosa:has([data-quadrante="se"] a:is(:hover, :focus-visible, :active)) {
+    --rumo: var(--rumo-se);
+  }
+  /* Sem z-index: acima da rosa, a lista virava uma camada de 944 × 561 px, por sobreposição; a rosa não toca o texto. */
+  .vd-rosa ol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    column-gap: var(--vao-x);
+    row-gap: var(--vao-y);
+  }
+  .vd-rosa li {
+    display: flex;
+  }
+  .vd-rosa li:is([data-quadrante="no"], [data-quadrante="so"]) {
+    justify-content: flex-end;
+    text-align: right;
+  }
+  .vd-rosa li:is([data-quadrante="no"], [data-quadrante="ne"]) {
+    align-items: flex-end;
+  }
+  .vd-rosa a {
+    display: block;
+    max-width: 18rem;
+    padding-block: 0.25rem;
+    color: inherit;
+    text-decoration: none;
+  }
+  .vd-rosa-momento {
+    display: block;
+    font-family: var(--font-sub);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    transition: color 300ms var(--ease-atlas);
+  }
+  .vd-rosa-assuntos {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: var(--muted-foreground);
+    text-wrap: balance;
+  }
+  @media (min-width: 768px) {
+    .vd-rosa-momento {
+      font-size: 1.75rem;
+    }
+    .vd-rosa-assuntos {
+      margin-top: 0.625rem;
+      font-size: var(--text-corpo);
+    }
+  }
+  .vd-rosa a:is(:focus-visible, :active) .vd-rosa-momento {
+    color: var(--accent);
+  }
+  @media (hover: hover) {
+    .vd-rosa a:hover .vd-rosa-momento {
+      color: var(--accent);
+    }
+  }
+  /* Os eixos: dois fios de 1 px na cor do filete, dentro da bússola, apagados para fora. */
+  .vd-rosa-cruz {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--border), var(--border)) 50% 50% / 1px 100% no-repeat,
+      linear-gradient(var(--border), var(--border)) 50% 50% / 100% 1px no-repeat;
+    -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent);
+    mask-image: radial-gradient(closest-side, #000 30%, transparent);
+  }
+  .vd-rosa-peca {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    width: var(--rosa-lado);
+    height: var(--rosa-lado);
+    translate: -50% -50%;
+    pointer-events: none;
+  }
+  /* Antes de a rosa entrar na tela, a agulha está no norte; ao entrar, assenta no primeiro momento (uma vez). */
+  .js .vd-rosa-peca:not([data-visivel], [data-fora]) {
+    --rumo: 0deg;
+  }
+  .vd-rosa-bronze,
+  .vd-rosa-aro,
+  .vd-rosa-pontas,
+  .vd-rosa-brilho,
+  .vd-rosa-brilho > div,
+  .vd-rosa-agulha,
+  .vd-rosa-agulha-sombra,
+  .vd-rosa-gira,
+  .vd-rosa-viva {
+    position: absolute;
+    inset: 0;
+  }
+  /* O repouso do brilho: apagado, as faces como o desenho as tem. */
+  .vd-rosa-brilho > div {
+    opacity: 0;
+  }
+  .vd-rosa-peca svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  /* A sombra da agulha, deslocada na tela: fica sempre do lado da hora, para onde quer que a agulha gire. */
+  .vd-rosa-agulha-sombra {
+    translate: calc(var(--rosa-lado) * 0.028) calc(var(--rosa-lado) * 0.044);
+    opacity: 0.45;
+  }
+  /* Um invólucro aponta o quadrante, o outro é a passiva: em volta do mesmo centro, os dois giros se somam em qualquer
+     ordem. A passiva fica por fora para a caixa medida ser a do quadrado sem giro: a 45°, a caixa quase não muda com ±10°
+     (3 px na conferência), embora a ponta ande 22 px. */
+  .vd-rosa-gira {
+    transform: rotate(var(--rumo));
+    transition: transform 700ms var(--ease-lugar);
+  }
+  /* O rumo aceso: o trecho entre o aro e o canto do momento sob o ponteiro, por opacidade. */
+  .vd-rosa-rumo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.5px;
+    height: var(--rumo-comprimento);
+    margin-left: -0.75px;
+    border-radius: 1px;
+    background: linear-gradient(var(--bronze-brilho), rgb(241 211 161 / 0.35));
+    opacity: 0;
+    transform-origin: 50% 0;
+    transform: rotate(calc(var(--angulo) + 180deg)) translateY(var(--rumo-raio));
+    transition: opacity 240ms var(--ease-lugar);
+  }
+  .vd-rosa-rumo[data-rumo="no"] {
+    --angulo: var(--rumo-no);
+  }
+  .vd-rosa-rumo[data-rumo="ne"] {
+    --angulo: var(--rumo-ne);
+  }
+  .vd-rosa-rumo[data-rumo="so"] {
+    --angulo: var(--rumo-so);
+  }
+  .vd-rosa-rumo[data-rumo="se"] {
+    --angulo: var(--rumo-se);
+  }
+  .vd-rosa:has([data-quadrante="no"] a:is(:hover, :focus-visible)) .vd-rosa-rumo[data-rumo="no"],
+  .vd-rosa:has([data-quadrante="ne"] a:is(:hover, :focus-visible)) .vd-rosa-rumo[data-rumo="ne"],
+  .vd-rosa:has([data-quadrante="so"] a:is(:hover, :focus-visible)) .vd-rosa-rumo[data-rumo="so"],
+  .vd-rosa:has([data-quadrante="se"] a:is(:hover, :focus-visible)) .vd-rosa-rumo[data-rumo="se"] {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vd-rosa-gira,
+    .vd-rosa-rumo {
+      transition: none;
+    }
+  }
+  /* Com a letra a 200%: os momentos numa lista, na ordem de leitura, sem a rosa. */
+  @container (max-width: 16rem) {
+    .vd-rosa ol {
+      grid-template-columns: 1fr;
+      grid-auto-rows: auto;
+      row-gap: 1.5rem;
+    }
+    .vd-rosa li[data-quadrante] {
+      justify-content: flex-start;
+      text-align: left;
+    }
+    .vd-rosa-peca,
+    .vd-rosa-cruz {
+      display: none;
+    }
+  }
+
+  /* ---------- a mesa de leitura ----------
+     components/secoes/duvidas.tsx. No celular, e onde o navegador não tem ::details-content, o acordeão, a 22/17 px. A
+     resposta abre sem animar a altura: só o texto chega, por opacidade e transform. */
+  .vd-mesa {
+    container-type: inline-size;
+  }
+  .vd-mesa-momentos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3.5rem;
+  }
+  .vd-mesa-momento {
+    overflow-wrap: anywhere;
+  }
+  .vd-momento-cabeca {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .vd-mesa-momento h2 {
+    font-size: 1.75rem;
+    line-height: 1.05;
+  }
+  /* Os quatro objetos dos momentos (P35): cada um no seu desenho e no seu mecanismo. */
+  .vd-momento-objeto {
+    position: relative;
+    flex: none;
+    width: 5.5rem;
+    height: 5.5rem;
+    overflow: hidden;
+    border-radius: 50%;
+    background: var(--foreground);
+  }
+  .vd-momento-peca {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  /* A agulha: dois losangos, bronze ao norte. */
+  .vd-momento-1 .vd-momento-peca {
+    background:
+      conic-gradient(from 168deg at 50% 50%, #f4efe6 0 24deg, transparent 24deg) 0 50% / 100% 50% no-repeat,
+      conic-gradient(from -12deg at 50% 100%, #d9a76b 0 24deg, transparent 24deg) 0 0 / 100% 50% no-repeat;
+  }
+  /* A assinatura: o traço que se escreve, em bronze, sobre a linha de assinar. */
+  .vd-momento-2 {
+    border-radius: var(--radius-pedra);
+  }
+  .vd-momento-2::after {
+    content: "";
+    position: absolute;
+    inset-inline: 12%;
+    bottom: 28%;
+    height: 2px;
+    background: rgb(244 239 230 / 0.4);
+  }
+  .vd-momento-2 .vd-momento-peca {
+    inset: 34% 12% 30%;
+    border-radius: 0.25rem;
+    background: linear-gradient(170deg, #f1d3a1, #c08a4a);
+    transform-origin: 0 50%;
+  }
+  /* As 24 horas: a cunha de luz gira em volta do centro. */
+  .vd-momento-3 .vd-momento-peca {
+    background: conic-gradient(rgb(241 211 161 / 0) 0deg, rgb(241 211 161 / 0.85) 96deg, transparent 96.5deg);
+  }
+  /* O sinal: o disco se abre e some. */
+  .vd-momento-4 .vd-momento-peca {
+    border-radius: 50%;
+    background: #d9a76b;
+  }
+
+  .vd-duvida {
+    border-bottom: 1px solid var(--border);
+  }
+  .vd-duvida > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4.5rem;
+    padding-block: 1.125rem;
+    font-family: var(--font-sub);
+    font-size: 1.375rem;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    list-style: none;
+    cursor: pointer;
+    transition: color 300ms var(--ease-atlas);
+  }
+  .vd-duvida > summary::-webkit-details-marker {
+    display: none;
+  }
+  .vd-duvida > summary:focus-visible {
+    outline-offset: 4px;
+    border-radius: var(--radius-pedra, 4px);
+  }
+  .vd-duvida-pergunta {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  /* O sinal: o + num aro fino; aberto, gira até o ×, e o aro se enche de tinta. */
+  .vd-duvida-sinal {
+    position: relative;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    color: var(--foreground);
+    box-shadow: inset 0 0 0 1px rgb(15 42 71 / 0.35);
+    transition:
+      transform 500ms var(--ease-atlas),
+      background-color 300ms var(--ease-atlas),
+      color 300ms var(--ease-atlas),
+      box-shadow 300ms var(--ease-atlas);
+  }
+  .vd-duvida-sinal::before,
+  .vd-duvida-sinal::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 13px;
+    height: 1.5px;
+    border-radius: 1px;
+    background: currentColor;
+    translate: -50% -50%;
+  }
+  .vd-duvida-sinal::after {
+    width: 1.5px;
+    height: 13px;
+  }
+  .vd-duvida[open] .vd-duvida-sinal {
+    color: var(--nevoa);
+    background-color: var(--foreground);
+    box-shadow: none;
+    transform: rotate(135deg);
+  }
+  @media (hover: hover) {
+    .vd-duvida > summary:hover {
+      color: var(--accent);
+    }
+    .vd-duvida:not([open]) > summary:hover .vd-duvida-sinal {
+      background-color: rgb(15 42 71 / 0.07);
+    }
+  }
+  .vd-duvida-resposta {
+    padding: 0.25rem 3.25rem 1.75rem 0;
+    scroll-margin-top: 7rem;
+  }
+  .vd-duvida-resposta p {
+    max-width: 36em;
+    font-size: var(--text-corpo);
+    line-height: 1.65;
+    color: var(--foreground);
+  }
+  /* Transição, e não animação: não corre na carga, com as quatro já abertas, nem quando a seção volta a ser desenhada
+     (content-visibility). Ao fechar, a resposta some na hora. */
+  @media (prefers-reduced-motion: no-preference) {
+    .vd-duvida::details-content {
+      opacity: 0;
+      transform: translateY(-6px);
+      transition:
+        opacity 280ms var(--ease-entrada),
+        transform 280ms var(--ease-entrada);
+    }
+    .vd-duvida[open]::details-content {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* O código, no pé. Quebra na ficha, no celular, em vez de rolar de lado: a linha da pergunta passa da coluna por pouco. */
+  .vd-mesa-codigo {
+    --trecho-recuo: 0.875rem;
+    margin-top: 4rem;
+  }
+  .vd-mesa-codigo pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  /* Com a letra a 200%, a palavra longa se parte na sílaba; na coluna normal, nada se parte. */
+  @container (max-width: 18rem) {
+    .vd-duvida-pergunta,
+    .vd-duvida-resposta p {
+      hyphens: auto;
+    }
+    .vd-duvida-resposta {
+      padding-right: 0;
+    }
+  }
+
+  /* A mesa: a partir de 64 em (com a letra a 200%, o acordeão fica), a pergunta na coluna da esquerda e a resposta aberta
+     na da direita. Só onde há ::details-content: sem ele, duas respostas se cobririam. O <details> sai da caixa, e a
+     resposta vai da primeira à última linha do momento; a sobra vai à linha 1fr do fim, e a altura da resposta empurra o
+     momento seguinte, em vez de passar por cima dele. */
+  @media (min-width: 64em) {
+    @supports selector(::details-content) {
+      .vd-mesa {
+        --vao-da-mesa: 72px;
+        display: grid;
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+        column-gap: var(--vao-da-mesa);
+        align-items: start;
+        container-type: normal;
+      }
+      .vd-mesa-momentos {
+        grid-column: 1;
+        grid-row: 1;
+        gap: 4.5rem;
+      }
+      .vd-mesa-momento h2 {
+        padding-bottom: 1.5rem;
+        font-size: var(--text-numero);
+      }
+      .vd-mesa-itens {
+        display: grid;
+        grid-template-columns: 100% var(--vao-da-mesa) calc(100% * 7 / 5);
+        grid-template-rows: repeat(4, auto) 1fr;
+      }
+      .vd-duvida {
+        display: contents;
+      }
+      .vd-duvida > summary {
+        grid-column: 1;
+        min-height: 4.25rem;
+        padding-block: 1rem;
+        font-size: var(--text-destaque);
+        border-bottom: 1px solid var(--border);
+      }
+      .vd-duvida::details-content {
+        grid-column: 3;
+        grid-row: 1 / -1;
+      }
+      .vd-duvida-resposta {
+        padding: 0.8125rem 0 1rem;
+      }
+      .vd-duvida-resposta p {
+        max-width: 25em;
+        font-size: 1.5rem;
+        line-height: 1.5;
+        letter-spacing: -0.017em;
+      }
+      /* O fio que liga a pergunta aberta à resposta do momento, do aro do sinal à coluna da direita. Só opacidade: o
+         traço que se risca é o gesto da trena de /o-trabalho. */
+      .vd-duvida > summary::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 100%;
+        width: calc(var(--vao-da-mesa) - 16px);
+        height: 1px;
+        background: var(--accent);
+        opacity: 0;
+      }
+      .vd-duvida[open] > summary {
+        color: var(--accent);
+      }
+      .vd-duvida[open] > summary::after {
+        opacity: 1;
+        transition: opacity 200ms var(--ease-lugar) 60ms;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .vd-duvida::details-content {
+          transform: translateX(-10px);
+          transition-duration: 320ms;
+        }
+      }
+      .vd-mesa-codigo {
+        --trecho-recuo: 1.5rem;
+        grid-column: 2;
+        grid-row: 2;
+        margin-top: 6rem;
+      }
+    }
+  }
+}
+
+/* ---------- as passivas da rosa (P14 e P15) ----------
+   A agulha procura o norte: uma oscilação amortecida e um repouso, como a agulha que assenta. Sob o ponteiro ou o foco, a
+   passiva dá lugar à constante: a agulha aponta o quadrante e oscila pouco em volta dele. O aro e a rosa orbitam em
+   sentidos opostos, em camadas próprias: a profundidade da peça. A órbita é um dodecágono em linear: a corda de 30° erra
+   o círculo em 0,3 px no raio de 8 px. O brilho acompanha a órbita, no mesmo ciclo: conforme a rosa anda, a luz passa das
+   faces acesas às escuras, como no metal que muda de ângulo; é a passiva que se vê inteira de longe. A pausa, a saída da
+   tela e o movimento reduzido vêm de app/movimento.css. */
+.js [data-visivel] .vd-rosa-viva {
+  animation: mov-agulha-procura 10s cubic-bezier(0.37, 0, 0.63, 1) 1200ms infinite;
+}
+@media (hover: hover) {
+  .js .vd-rosa:has(a:hover) [data-visivel] .vd-rosa-viva {
+    animation: mov-agulha-aponta 2.4s cubic-bezier(0.37, 0, 0.63, 1) 700ms infinite;
+  }
+}
+.js .vd-rosa:has(a:focus-visible) [data-visivel] .vd-rosa-viva {
+  animation: mov-agulha-aponta 2.4s cubic-bezier(0.37, 0, 0.63, 1) 700ms infinite;
+}
+.js [data-visivel] .vd-rosa-aro {
+  --orbita: var(--orbita-aro);
+  animation: mov-orbita 16s linear infinite;
+}
+.js [data-visivel] .vd-rosa-pontas {
+  --orbita: calc(var(--orbita-aro) / 2);
+  animation: mov-orbita 16s linear infinite reverse;
+}
+.js [data-visivel] .vd-rosa-brilho-acesa {
+  animation: mov-brilho-acesa 16s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+.js [data-visivel] .vd-rosa-brilho-escura {
+  animation: mov-brilho-escura 16s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+@keyframes mov-brilho-acesa {
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.55;
+  }
+}
+@keyframes mov-brilho-escura {
+  0%,
+  50%,
+  100% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0.45;
+  }
+}
+@keyframes mov-agulha-procura {
+  0%,
+  24%,
+  100% {
+    rotate: 0deg;
+  }
+  6% {
+    rotate: 10deg;
+  }
+  12% {
+    rotate: -6deg;
+  }
+  18% {
+    rotate: 3deg;
+  }
+}
+@keyframes mov-agulha-aponta {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  25% {
+    rotate: 3deg;
+  }
+  75% {
+    rotate: -3deg;
+  }
+}
+@keyframes mov-orbita {
+  0%,
+  100% {
+    translate: var(--orbita) 0;
+  }
+  8.333% {
+    translate: calc(var(--orbita) * 0.866) calc(var(--orbita) * 0.5);
+  }
+  16.667% {
+    translate: calc(var(--orbita) * 0.5) calc(var(--orbita) * 0.866);
+  }
+  25% {
+    translate: 0 var(--orbita);
+  }
+  33.333% {
+    translate: calc(var(--orbita) * -0.5) calc(var(--orbita) * 0.866);
+  }
+  41.667% {
+    translate: calc(var(--orbita) * -0.866) calc(var(--orbita) * 0.5);
+  }
+  50% {
+    translate: calc(var(--orbita) * -1) 0;
+  }
+  58.333% {
+    translate: calc(var(--orbita) * -0.866) calc(var(--orbita) * -0.5);
+  }
+  66.667% {
+    translate: calc(var(--orbita) * -0.5) calc(var(--orbita) * -0.866);
+  }
+  75% {
+    translate: 0 calc(var(--orbita) * -1);
+  }
+  83.333% {
+    translate: calc(var(--orbita) * 0.5) calc(var(--orbita) * -0.866);
+  }
+  91.667% {
+    translate: calc(var(--orbita) * 0.866) calc(var(--orbita) * -0.5);
+  }
+}
+
+/* Dúvidas: a pergunta escolhida no mapa acende ao ser alcançada (mostra
+   para onde o clique levou). Uma camada de bronze atrás da pergunta, só de
+   opacidade, em 1.400 ms: acende em 200 ms, segura e se apaga nos últimos
+   150 ms. A espera (--chegada) é a duração da rolagem até lá, que a ilha
+   Ancoras escreve no <details> junto com data-chegou
+   (components/ilhas/ancoras.tsx); sem script, vale a chegada pelo salto
+   nativo (:target), sem espera. Com movimento reduzido, a rolagem é
+   instantânea, e a camada acende sem passagem e se apaga em 150 ms. */
+.vd-duvida > summary {
+  position: relative;
+  isolation: isolate;
+}
+.vd-duvida > summary::before {
+  content: "";
+  position: absolute;
+  inset: 0 -1rem;
+  z-index: -1;
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.vd-duvida:is(:has(:target), [data-chegou]) > summary::before {
+  animation: mov-chegada-reduzida 1400ms linear var(--chegada, 0ms);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .vd-duvida:is(:has(:target), [data-chegou]) > summary::before {
+    animation: mov-chegada 1400ms linear var(--chegada, 0ms);
+  }
+}
+
+@keyframes mov-chegada {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1);
+  }
+  14.286% {
+    opacity: 1;
+    animation-timing-function: linear;
+  }
+  89.286% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes mov-chegada-reduzida {
+  0%,
+  89.286% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-visivel] .vd-momento-1 .vd-momento-peca {
+    animation: du-busca 5s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  .js [data-visivel] .vd-momento-2 .vd-momento-peca {
+    animation: du-assina 6s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  .js [data-visivel] .vd-momento-3 .vd-momento-peca {
+    animation: du-horas 8s linear infinite;
+  }
+  .js [data-visivel] .vd-momento-4 .vd-momento-peca {
+    animation: du-sinal 3.6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  }
+}
+@keyframes du-busca {
+  from {
+    rotate: -38deg;
+  }
+  to {
+    rotate: 34deg;
+  }
+}
+@keyframes du-assina {
+  from {
+    scale: 0.08 1;
+  }
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes du-horas {
+  to {
+    rotate: 1turn;
+  }
+}
+@keyframes du-sinal {
+  from {
+    scale: 0.12;
+    opacity: 1;
+  }
+  to {
+    scale: 1.05;
+    opacity: 0.08;
+  }
+}

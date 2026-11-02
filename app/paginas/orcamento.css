@@ -1,0 +1,1046 @@
+/* ============================================================
+   ATLAS DIGITAL — Orçamento (/orcamento)
+   O CSS só desta página. Desde 28/10 (R10, fase 0), num arquivo próprio,
+   importado uma vez em app/globals.css, depois de ./nichos.css: os blocos
+   vieram de app/vidro.css e app/movimento.css, copiados sem mudança, cada
+   um na camada que tinha. O que mais de uma página usa fica lá (a matéria,
+   a luz, o metal, o vidro, a galeria, o aparelho, as entradas, a onda, a
+   pausa e as passivas). Dono na construção do R10: o agente do orçamento.
+   O montador (components/ilhas/montador.tsx) também aparece no início, na
+   ficha que sobe sobre a derrota (.orc-curto): as regras dele valem lá.
+   ============================================================ */
+
+@layer components {
+  /* ---------- o montador: as escolhas no papel, a conta numa ficha só (R10, 28/10) ---------- */
+  .orc-completo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4rem;
+  }
+  @media (min-width: 1024px) {
+    .orc-completo {
+      grid-template-columns: minmax(0, 1fr) 28.5rem;
+      column-gap: 3.5rem;
+      align-items: start;
+    }
+  }
+
+  /* Os passos ("O plano.", "Os módulos, opcionais."): o fieldset com o título na legenda. No h2 de /orcamento e no h3
+     do início, a Archivo 500 do papel do h3 (D1), e não a Archivo Black dos títulos. */
+  .orc-passo {
+    min-width: 0;
+  }
+  .orc-passo + .orc-passo {
+    margin-top: 4rem;
+  }
+  .orc-passo > legend {
+    float: left;
+    width: 100%;
+    margin-bottom: 1.25rem;
+  }
+  .orc-passo > legend + * {
+    clear: both;
+  }
+  .orc-passo-titulo {
+    font-family: var(--font-sub);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* As opções, com o preço dentro. O controle nativo cobre a opção inteira, sem desenho próprio: o clique, o teclado (as setas
+     no rádio, o espaço na caixa), o foco e o nome acessível são os dele. Abaixo de 32rem de coluna (o celular, a mesa estreita,
+     a letra a 200%), o preço desce para baixo do nome. */
+  .orc-opcoes {
+    display: grid;
+    gap: 0.75rem;
+    container-type: inline-size;
+  }
+  .orc-opcao {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+    grid-template-areas: "marca nome preco" "marca resumo preco";
+    column-gap: 0.875rem;
+    row-gap: 0.25rem;
+    align-items: start;
+    padding: 1.25rem 1.375rem 1.25rem 1.125rem;
+    border: 1px solid rgb(15 42 71 / 0.18);
+    border-radius: var(--radius);
+    background: rgb(254 252 249 / 0.55);
+    cursor: pointer;
+    transition:
+      border-color 200ms var(--ease-lugar),
+      background-color 200ms var(--ease-lugar),
+      box-shadow 300ms var(--ease-atlas);
+  }
+  .orc-opcao:not(:has(.orc-opcao-resumo)) {
+    grid-template-areas: "marca nome preco";
+  }
+  /* Sem a aparência nativa, sem fundo e sem borda, o controle não desenha nada: a opção é o desenho, e o anel do
+     foco é o do próprio controle, no contorno da opção. */
+  .orc-opcao-campo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    border-radius: inherit;
+    background: transparent;
+    appearance: none;
+    cursor: pointer;
+  }
+  .orc-opcao-campo:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
+  /* O hover como luz: a opção clareia até a ficha (a folha que acende), e o fio escurece. */
+  @media (hover: hover) {
+    .orc-opcao:hover {
+      border-color: rgb(15 42 71 / 0.45);
+      background: var(--ficha);
+    }
+  }
+  .orc-opcao:active {
+    background: var(--ficha);
+  }
+  .orc-opcao:has(:checked) {
+    border-color: var(--foreground);
+    background: var(--ficha);
+    box-shadow:
+      inset 0 0 0 1px var(--foreground),
+      var(--sombra-curta);
+  }
+  .orc-marca {
+    grid-area: marca;
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-top: 0.25rem;
+    color: var(--foreground);
+  }
+  .orc-marca-cheio {
+    opacity: 0;
+    transition: opacity 150ms var(--ease-lugar);
+  }
+  .orc-opcao:has(:checked) .orc-marca-cheio {
+    opacity: 1;
+  }
+  .orc-opcao-nome {
+    grid-area: nome;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.75rem;
+    font-family: var(--font-sub);
+    font-weight: 500;
+    font-size: clamp(1.25rem, 1.1rem + 0.4vw, 1.375rem);
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+  }
+  /* A etiqueta e o preço não passam da coluna, nem com a letra a 200% a 390 px. */
+  .orc-opcao-nome > span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+  .orc-opcao-resumo {
+    grid-area: resumo;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    overflow-wrap: anywhere;
+  }
+  .orc-opcao-preco {
+    grid-area: preco;
+    padding-top: 0.125rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    text-align: right;
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .orc-opcao-preco > span {
+    display: block;
+  }
+  .orc-opcao-preco b {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  /* A opção em pé: o preço desce para baixo do nome. Na conta de /orcamento, abaixo de 32rem de coluna; na ficha do
+     início, sem o resumo, só abaixo de 22rem (o celular). */
+  @container (max-width: 31.99rem) {
+    .orc-completo .orc-opcao {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      grid-template-areas: "marca nome" "marca resumo" "marca preco";
+      padding: 1.125rem 1rem 1.125rem 0.875rem;
+    }
+    .orc-completo .orc-opcao-preco {
+      padding-top: 0.375rem;
+      text-align: left;
+      white-space: normal;
+    }
+    .orc-completo .orc-opcao-preco > span {
+      display: inline-block;
+      max-width: 100%;
+    }
+  }
+  @container (max-width: 21.99rem) {
+    .orc-curto .orc-opcao {
+      grid-template-columns: 1.75rem minmax(0, 1fr);
+      grid-template-areas: "marca nome" "marca preco";
+      padding: 1rem 1rem 1rem 0.875rem;
+    }
+    .orc-curto .orc-opcao-preco {
+      padding-top: 0.375rem;
+      text-align: left;
+      white-space: normal;
+    }
+    .orc-curto .orc-opcao-preco > span {
+      display: inline-block;
+      max-width: 100%;
+    }
+  }
+
+  /* O que o plano inclui, sob as opções, e a página adicional, sob os módulos: no papel, sob um filete. */
+  .orc-inclui {
+    margin-top: 2rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .orc-adicional {
+    max-width: 52ch;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 1rem;
+    line-height: 1.55;
+    color: var(--muted-foreground);
+  }
+  .orc-adicional b {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  /* O vínculo de texto da página: no bronze do vínculo, o sublinhado aparece no hover e a seta avança. */
+  .orc-vinculo {
+    display: inline-block;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.28em;
+    transition: text-decoration-color 300ms var(--ease-atlas);
+  }
+  .orc-vinculo svg {
+    transition: translate 350ms var(--ease-atlas);
+  }
+  @media (hover: hover) {
+    .orc-vinculo:hover {
+      text-decoration-color: currentColor;
+    }
+    .orc-vinculo:hover svg {
+      translate: 3px 0;
+    }
+  }
+
+  /* A conta: a única ficha da página, presa ao lado das escolhas em toda mesa (o MacBook Air de 1440 × 900 deixa
+     790 px de janela com a barra do navegador): no pior caso, o Completo com os dois módulos, ela cabe inteira abaixo
+     do cabeçalho, e por isso os passos dela são curtos. No celular, ela sangra 12 px de cada lado da coluna. */
+  .orc-conta {
+    position: relative;
+    padding: 1.25rem 1.75rem 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--ficha);
+    box-shadow:
+      inset 0 1px 0 #fff,
+      var(--sombra-media);
+  }
+  @media (min-width: 1024px) {
+    .orc-conta {
+      position: sticky;
+      top: 5rem;
+      display: flex;
+      flex-direction: column;
+      max-height: calc(100svh - 5.5rem);
+    }
+    .orc-conta-miolo {
+      flex: 0 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+    }
+  }
+  @media (max-width: 1023.98px) {
+    .orc-conta {
+      margin-inline: -0.75rem;
+      padding: 1.75rem 1.25rem;
+    }
+  }
+  /* O filete duplo contábil embaixo dos totais: o fecho da soma (desde 16/10). */
+  .orc-totais {
+    position: relative;
+    display: grid;
+    gap: 0.75rem;
+    padding-bottom: calc(1rem + 3px);
+  }
+  .orc-totais::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    border-bottom: 3px double rgb(15 42 71 / 0.3);
+  }
+  /* O teto em vw, como no título: com a letra a 200% a 390 px, "R$ 1.500" cabe na conta. */
+  .orc-total {
+    font-size: min(clamp(2.5rem, 1.6rem + 2.6vw, 3.5rem), 12vw);
+    line-height: 1;
+  }
+  /* O que o módulo sob o ponteiro somaria, ao lado do total (a constante da página). */
+  .orc-fantasma {
+    position: absolute;
+    right: 0;
+    bottom: 0.375rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: 0;
+    color: var(--accent);
+  }
+  .orc-itens > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.125rem 1rem;
+    padding: 0.375rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  .orc-itens dt {
+    font-weight: 600;
+  }
+  .orc-itens dd {
+    color: var(--muted-foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  .orc-itens dd b {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  .orc-fundacao {
+    margin-top: 0.875rem;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .orc-fundacao b {
+    font-weight: 600;
+    color: var(--accent);
+  }
+  /* O alvo de 44 px sem abrir a entrelinha: o recuo de cima e de baixo devolvido pela margem. */
+  .orc-fundacao .orc-vinculo {
+    padding-block: 0.625rem;
+    margin-block: -0.625rem;
+  }
+  .orc-mensagem {
+    margin-top: 0.875rem;
+  }
+  .orc-mensagem-texto {
+    margin-top: 0.375rem;
+    padding: 0.5rem 0;
+    border-block: 1px solid var(--border);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  /* "Copiar" mora com o que copia: um vínculo de texto na linha do rótulo, com o alvo de 44 px sem abrir a linha. */
+  .orc-copiar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: 2.75rem;
+    margin-block: -0.75rem;
+    padding-inline: 0.25rem;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 0.28em;
+    transition: text-decoration-color 300ms var(--ease-atlas);
+  }
+  @media (hover: hover) {
+    .orc-copiar:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  /* A faixa do pé, abaixo de 1024 px (no <body>, por portal): os totais à mão, em navy chapado, enquanto as escolhas
+     estão na tela. Mostra e esconde pelo translate; o transform fica para a entrada da página (app/movimento.css). */
+  .orc-faixa {
+    position: fixed;
+    inset: auto 0 0;
+    z-index: 40;
+    padding: 0.875rem 1rem max(0.875rem, env(safe-area-inset-bottom));
+    border-radius: var(--radius) var(--radius) 0 0;
+    box-shadow:
+      inset 0 1px 0 rgb(243 239 236 / 0.14),
+      0 -12px 32px rgb(15 42 71 / 0.18);
+    /* Sem visibility na transição (R10, integração): esperando o fim, ela roda na linha principal, e a régua perdia de
+       5 a 35 batidas sem nada mudar na tela. Fora da tela, a faixa já está fora do Tab e do leitor de tela (montador.tsx). */
+    translate: 0 105%;
+    transition: translate 200ms var(--ease-saida);
+  }
+  .orc-faixa[data-visivel] {
+    translate: none;
+    transition: translate 300ms var(--ease-atlas);
+  }
+  .orc-faixa > * {
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+  .orc-faixa-totais {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    margin-bottom: 0.625rem;
+    padding-inline: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: var(--muted-foreground);
+  }
+  .orc-faixa-totais > span {
+    white-space: nowrap;
+  }
+  .orc-faixa-totais b {
+    margin-left: 0.375rem;
+    font-weight: 600;
+    font-size: 1.0625rem;
+    color: var(--foreground);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orc-faixa,
+    .orc-faixa[data-visivel] {
+      transition: none;
+    }
+  }
+
+  /* O montador curto do início, na ficha: os mesmos passos, mais juntos. */
+  .orc-curto .orc-passo + .orc-passo {
+    margin-top: 2rem;
+  }
+  .orc-curto .orc-passo > legend {
+    margin-bottom: 1rem;
+  }
+  .orc-curto .orc-passo-titulo {
+    font-size: 1.25rem;
+  }
+  .orc-curto .orc-opcoes {
+    gap: 0.625rem;
+  }
+  .orc-curto .orc-opcao {
+    padding-block: 0.875rem;
+  }
+  .orc-curto .orc-opcao-nome {
+    font-size: 1.1875rem;
+  }
+  /* A letra a 200% (o em da media query acompanha a preferência do navegador): a marca em cima, numa coluna só; o nome
+     não sai da tela. */
+  @media (max-width: 19.9em) {
+    .orc-curto .orc-opcao,
+    .orc-completo .orc-opcao {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "marca" "nome" "resumo" "preco";
+    }
+    .orc-opcao-nome {
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* ---------- a rota direta: a frase e o código que a prova (D12) ---------- */
+  .orc-rota {
+    display: grid;
+    gap: 2rem;
+    margin-top: 7rem;
+  }
+  @media (min-width: 1024px) {
+    .orc-rota {
+      gap: 2.5rem;
+      margin-top: 9rem;
+    }
+  }
+  .orc-rota-titulo {
+    max-width: 32ch;
+    font-family: var(--font-sub);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .orc-rota-fonte {
+    display: block;
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+  }
+  /* No celular, a ficha sangra 16 px e o código quebra dentro dela (quatro linhas a 390 px), sem rolar de lado: o texto
+     do código e a legenda caem na coluna (o esboço, esboco/orcamento/prova.html). */
+  @media (max-width: 767.98px) {
+    .orc-rota .vd-trecho-ficha {
+      --trecho-recuo: 1rem;
+      width: auto;
+      margin-inline: -1rem;
+    }
+    .orc-rota .vd-trecho pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* ---------- a rota direta: o caminho da mensagem (P20) ---------- */
+  .orc-caminho {
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    font-family: var(--font-sub);
+    font-size: var(--text-destaque);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: var(--foreground);
+  }
+  .orc-caminho-fio {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    position: relative;
+    display: block;
+    height: 3.5rem;
+    overflow: hidden;
+    background: linear-gradient(var(--primary), var(--primary)) center / 100% 2px no-repeat;
+  }
+  .orc-caminho-balao {
+    position: absolute;
+    top: 0.375rem;
+    left: 0;
+    display: block;
+    width: 100%;
+    padding-left: 1.25rem;
+    isolation: isolate;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    line-height: 2.75rem;
+    color: var(--ficha);
+  }
+  .orc-caminho-balao::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 8.25rem;
+    height: 2.75rem;
+    border-radius: 1.375rem 1.375rem 1.375rem 0.25rem;
+    background: var(--foreground);
+  }
+
+  @media (min-width: 768px) {
+    .orc-caminho {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+    .orc-caminho-fio {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  /* ---------- a fita da conta (P19) ----------
+     A janela de um contador, entre dois fios, com a letra dos preços. No celular, logo acima das opções; na mesa, no alto
+     à direita da abertura, onde a coluna do título deixa o lugar. */
+  .orc-fita {
+    --fita-h: 6.5rem;
+    contain: inline-size;
+    height: var(--fita-h);
+    margin-top: 2rem;
+    overflow: hidden;
+    mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+  }
+  .orc-fita-no-alto {
+    margin-block: -2.5rem 3.5rem;
+  }
+  .orc-fita-linha {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: var(--fita-h);
+    font-size: 1rem;
+    line-height: 1.35;
+    color: var(--muted-foreground);
+  }
+  .orc-fita-linha b {
+    font-family: var(--font-display);
+    font-size: 3.25rem;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+  @media (min-width: 64em) {
+    .orc-fita {
+      --fita-h: 8.5rem;
+      margin-top: 3rem;
+    }
+    .orc-fita-linha b {
+      font-size: 4.5rem;
+    }
+    .orc-fita-no-alto {
+      --fita-h: 11.5rem;
+      position: absolute;
+      top: 0.5rem;
+      right: max(2.5rem, env(safe-area-inset-left), env(safe-area-inset-right));
+      width: 22rem;
+      margin: 0;
+    }
+    .orc-fita-no-alto .orc-fita-linha {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 1.0625rem;
+    }
+    .orc-fita-no-alto br {
+      display: none;
+    }
+  }
+
+  /* A leitura do que o plano inclui (P21): a faixa desce pela lista, por baixo do texto. */
+  .orc-inclui-lista {
+    position: relative;
+    overflow: clip;
+    margin-inline: -0.75rem;
+    padding-inline: 0.75rem;
+  }
+  .orc-inclui-lista > li {
+    position: relative;
+  }
+  .orc-inclui-lista > .orc-inclui-luz {
+    position: absolute;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+  }
+  .orc-inclui-luz::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: -3.5rem;
+    height: 3.5rem;
+    border-radius: 0.5rem;
+    background: linear-gradient(transparent, rgb(192 138 74 / 0.3) 50%, transparent);
+  }
+
+  /* ---------- "O que o preço cobre.": a cena do endereço, no navy (D14; R10, acabamento, 02/11) ---------- */
+  .orc-cena-mes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2.5rem 4rem;
+    margin-top: 3.5rem;
+  }
+  .orc-cena-tempo {
+    font-size: var(--text-numero);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .orc-cena-tempo small {
+    display: block;
+    margin-top: 0.375rem;
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: var(--text-corpo);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--muted-foreground);
+  }
+  .orc-cena-frase {
+    max-width: 30ch;
+    margin-top: 1.5rem;
+    font-family: var(--font-sub);
+    font-size: var(--text-destaque);
+    line-height: 1.45;
+    letter-spacing: -0.015em;
+    text-wrap: pretty;
+  }
+
+  /* A folha do calendário (P7): a folha de baixo fica, com as bordas das folhas seguintes; a de cima vira. O cabeçalho
+     da folha em navy e os dias numa grade de pontos (7 × 5), sem número nem data; os anéis em bronze, por cima das
+     duas folhas. Tudo pintado uma vez: na virada, só o transform da folha e a opacidade da sombra mudam. */
+  .orc-calendario {
+    --cal-l: 11rem;
+    --cal-a: 12.5rem;
+    position: relative;
+    flex: none;
+    width: min(var(--cal-l), 100%);
+    height: var(--cal-a);
+    perspective: 1400px;
+    perspective-origin: 50% 0;
+  }
+  @media (min-width: 1024px) {
+    .orc-calendario {
+      --cal-l: 17rem;
+      --cal-a: 19rem;
+    }
+  }
+  .orc-calendario-folha {
+    position: absolute;
+    inset: 0;
+    padding: calc(var(--cal-a) * 0.27) calc(var(--cal-l) * 0.09) calc(var(--cal-a) * 0.07);
+    border-radius: var(--radius-pedra);
+    background:
+      linear-gradient(var(--bronze-sombra), var(--bronze-sombra)) top / 100% calc(var(--cal-a) * 0.19) no-repeat border-box,
+      radial-gradient(circle, rgb(15 42 71 / 0.55) 0 calc(var(--cal-l) * 0.018), transparent calc(var(--cal-l) * 0.024)) 0 0 / calc(100% / 7) calc(100% / 5) content-box,
+      #f4efe6;
+  }
+  /* As folhas seguintes, pelas bordas embaixo da que fica, e a sombra longa no navy. */
+  .orc-calendario-fica {
+    box-shadow:
+      0 4px 0 -1px #e8e2d6,
+      0 8px 0 -2px #dcd5c7,
+      0 24px 40px -12px rgb(0 0 0 / 0.5);
+  }
+  /* A sombra que a folha erguida deixa na de baixo: escura junto dos anéis, apagada embaixo. */
+  .orc-calendario-sombra {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(rgb(15 42 71 / 0.44), rgb(15 42 71 / 0) 70%);
+    opacity: 0;
+  }
+  .orc-calendario-vira {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% calc(var(--cal-a) * 0.06);
+    backface-visibility: hidden;
+  }
+  .orc-calendario-aneis {
+    position: absolute;
+    inset: calc(var(--cal-a) * -0.07) 0 auto;
+    height: calc(var(--cal-a) * 0.17);
+    background:
+      linear-gradient(90deg, oklch(0.52 0.08 62), oklch(0.85 0.09 72) 45%, oklch(0.56 0.08 62)) 28% 0 / calc(var(--cal-l) * 0.05) 100% no-repeat,
+      linear-gradient(90deg, oklch(0.52 0.08 62), oklch(0.85 0.09 72) 45%, oklch(0.56 0.08 62)) 72% 0 / calc(var(--cal-l) * 0.05) 100% no-repeat;
+  }
+
+  /* O endereço (P8) e as cinco partes (P18). A letra se mede pela largura da coluna: as 31 letras da mono cabem nela. */
+  .orc-endereco {
+    position: relative;
+    container-type: inline-size;
+    margin-top: 5rem;
+  }
+  .orc-url-legenda {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+  .orc-url {
+    font-family: var(--font-mono);
+    font-size: calc(100cqi / 14.4);
+    line-height: 1.2;
+    letter-spacing: 0;
+    font-variant-ligatures: none;
+    color: var(--foreground);
+  }
+  .orc-url-protocolo {
+    display: block;
+    color: #f1d3a1;
+  }
+  .orc-url-dominio {
+    display: block;
+  }
+  .orc-endereco-sombra {
+    position: absolute;
+    top: calc(2.25rem + 100cqi / 14.4 * 2.5);
+    inset-inline: 2%;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(0 0 0 / 0.42), rgb(0 0 0 / 0));
+  }
+  .orc-partes {
+    display: grid;
+    margin-top: 4rem;
+  }
+  /* O fio de cada parte, à esquerda no celular, e o pulso que desce por ele. */
+  .orc-partes > div {
+    position: relative;
+    padding: 0 0 2.25rem 1.75rem;
+  }
+  .orc-partes > div::before {
+    content: "";
+    position: absolute;
+    left: 0.3125rem;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    background: rgb(241 211 161 / 0.5);
+  }
+  .orc-partes > div::after {
+    content: "";
+    position: absolute;
+    left: -0.3125rem;
+    top: 0;
+    bottom: 0;
+    width: 1.25rem;
+    background: radial-gradient(circle at 50% 0.625rem, #f1d3a1 0 0.3125rem, rgb(241 211 161 / 0.3) 0.375rem 0.625rem, transparent 0.6875rem);
+    opacity: 0;
+  }
+  .orc-partes dt {
+    font-family: var(--font-sub);
+    font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+  .orc-partes dd {
+    margin-top: 0.5rem;
+    font-size: var(--text-corpo);
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+  @media (min-width: 1024px) {
+    .orc-endereco {
+      margin-top: 6.5rem;
+    }
+    .orc-url {
+      font-size: calc(100cqi / 18.75);
+    }
+    .orc-url-protocolo,
+    .orc-url-dominio {
+      display: inline;
+    }
+    .orc-endereco-sombra {
+      top: calc(2.25rem + 100cqi / 18.75 * 1.25);
+    }
+    /* Na mesa, cinco colunas sob o endereço, com os fios descendo do trilho. */
+    .orc-partes {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      column-gap: 2rem;
+      margin-top: 2rem;
+      padding-top: 0;
+      border-top: 1.5px solid rgb(241 211 161 / 0.5);
+    }
+    .orc-partes > div {
+      padding: 5.5rem 0 0;
+    }
+    .orc-partes > div::before {
+      left: 0;
+      bottom: auto;
+      height: 4.5rem;
+    }
+    .orc-partes > div::after {
+      left: -0.625rem;
+      bottom: auto;
+      height: 4.5rem;
+    }
+  }
+
+  /* ---------- a criação e o que é à parte, na pedra ---------- */
+  .orc-tempos-grade {
+    display: grid;
+    gap: 4.5rem;
+  }
+  @media (min-width: 1024px) {
+    .orc-tempos-grade {
+      grid-template-columns: 7fr 5fr;
+      column-gap: 5rem;
+    }
+  }
+  /* As duas parcelas: a primeira cheia; a segunda enche até a publicação (P22). */
+  .orc-metades {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.375rem;
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .orc-metade {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 5.5rem;
+    padding: 0.75rem 1rem;
+    overflow: hidden;
+    border-radius: var(--radius-pedra);
+    background: var(--foreground);
+    color: #f4efe6;
+  }
+  .orc-metade-vem {
+    background: rgb(15 42 71 / 0.12);
+    color: var(--foreground);
+  }
+  .orc-metade-enche {
+    position: absolute;
+    inset: 0;
+    background: rgb(192 138 74 / 0.72);
+    transform-origin: left;
+    scale: 0.08 1;
+  }
+}
+
+/* ---------- o movimento da página ----------
+   A constante (o que o módulo somaria, sob o ponteiro) e as duas passivas (P7 e P8, na cena "O que o preço cobre.",
+   longe da decisão). Só transform e opacity, em alvos HTML; a pausa, a saída da tela e o movimento reduzido param
+   todas pela regra do sistema (app/movimento.css, as passivas). O vaivém na curva senoidal do contrato. */
+@media (prefers-reduced-motion: no-preference) {
+  /* A constante: uma respiração, e não um pisca: de 40% a 100%, cinco meias-voltas de 900 ms (4,5 s), e assenta acesa. */
+  .orc-fantasma {
+    animation: orc-respira 900ms cubic-bezier(0.45, 0, 0.55, 1) 5 alternate both;
+  }
+
+  /* P7, o mês passa: a folha de cima se ergue, presa nos anéis, e vira por cima deles (rotateX, com a perspectiva de
+     1400 px do calendário); de costas, some, e a de baixo, igual, fica. 2,6 s de virada a cada 10 s. A volta ao começo
+     do ciclo é invisível: a folha volta a 0° exatamente sobre a que ficou, igual a ela. */
+  .js [data-visivel] .orc-calendario-vira {
+    animation: orc-mes-passa 10s infinite;
+  }
+  .js [data-visivel] .orc-calendario-sombra {
+    animation: orc-mes-sombra 10s infinite;
+  }
+
+  /* P8, o objeto pousa, no toque: o endereço sobe 10 px e desce, em 9 s; a sombra de contato encolhe e clareia ao contrário.
+     Na mesa, qualquer camada em laço sobre o endereço (o texto que flutua, ou uma luz que passa por ele) dava 7 batidas na
+     rolagem (acabamento, 02/11, em A/B: de 2 a 3 sem ela, com ou sem will-change): lá, o endereço fica, e os pulsos andam. */
+  @media (hover: none) {
+    .js [data-visivel] .orc-url {
+      animation: orc-flutua 9s infinite;
+    }
+    .js [data-visivel] .orc-endereco-sombra {
+      animation: orc-pousa 9s infinite;
+    }
+  }
+  /* P18, o pulso: desce pelo fio de cada parte, cada um no seu tempo, como o que mantém o endereço no ar. */
+  .js [data-visivel] .orc-partes > div::after {
+    animation: orc-pulso calc(5.2s + var(--vez) * 0.7s) linear calc(var(--vez) * -1.3s) infinite;
+  }
+  /* P19, a fita: sobe sem parar, um fluxo linear; a volta ao começo é invisível (a fita se repete). */
+  .js [data-visivel] .orc-fita-corre {
+    animation: orc-fita 27s linear infinite;
+  }
+  /* P20, o caminho: o balão vai do aparelho ao WhatsApp, sem parada no meio, e some na chegada. */
+  .js [data-visivel] .orc-caminho-balao {
+    animation: orc-balao 7s linear infinite;
+  }
+  /* P21, a leitura: a faixa desce pela lista do plano. */
+  .js [data-visivel] .orc-inclui-luz {
+    animation: orc-leitura 9s linear infinite;
+  }
+  /* P22, a parcela que vem: enche devagar, da esquerda, ida e volta. */
+  .js [data-visivel] .orc-metade-enche {
+    animation: orc-enche 11s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+}
+
+@keyframes orc-respira {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes orc-mes-passa {
+  0%,
+  4% {
+    transform: rotateX(0deg);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  30%,
+  100% {
+    transform: rotateX(180deg);
+  }
+}
+@keyframes orc-mes-sombra {
+  0%,
+  4% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  16% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  31%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes orc-flutua {
+  0%,
+  100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  50% {
+    transform: translateY(-10px);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+}
+@keyframes orc-pousa {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  50% {
+    transform: scale(0.86);
+    opacity: 0.5;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+}
+@keyframes orc-pulso {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 100%;
+    opacity: 0;
+  }
+}
+@keyframes orc-fita {
+  to {
+    translate: 0 -50%;
+  }
+}
+@keyframes orc-balao {
+  0% {
+    translate: -8.25rem 0;
+  }
+  100% {
+    translate: 100% 0;
+  }
+}
+@keyframes orc-leitura {
+  to {
+    translate: 0 calc(100% + 3.5rem);
+  }
+}
+@keyframes orc-enche {
+  to {
+    scale: 1 1;
+  }
+}

@@ -40,6 +40,9 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
     const elemento = cabecalho.current;
     const barra = elemento?.querySelector<HTMLElement>(".vd-barra");
     let anterior = window.scrollY;
+    // A página nova abre no topo (ilhas/ao-topo.tsx, 27/10), às vezes antes desta leitura: sem isto, o cabeçalho
+    // recolhido na página de onde se veio ficava recolhido no topo da nova, onde nenhum gesto para cima o traz.
+    if (anterior <= TOPO) setRecolhido(false);
     let quadro = 0;
     let lida = 0;
     let pendente = 0;

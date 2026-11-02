@@ -6,8 +6,9 @@
 // Títulos são listas de linhas: cada entrada vira uma linha no desenho.
 
 import { duvidas } from "@/conteudo/duvidas";
-import { faixaDePreco } from "@/conteudo/planos";
+import { condicaoDeFundacao, faixaDePreco } from "@/conteudo/planos";
 import { reais } from "@/lib/moeda";
+import { porExtenso, type Genero } from "@/lib/por-extenso";
 
 export { contato, mensagens } from "@/conteudo/contato";
 
@@ -27,11 +28,19 @@ export type IdDaSecao = "inicio" | "quem" | "planos" | "escada" | "vitrine" | "o
  * o rótulo no cabeçalho; `abertura`, o topo de cada página (rótulo,
  * título em linhas, a palavra do título que recebe a tarja de bronze e
  * lide); `porta`, a entrada dela no índice do início
- * (o número grande e o resumo). `titulo` diz o que se vende e onde, com
+ * (desde 28/10, R10, a `frase`, o dado dentro da frase, para o índice com
+ * desenho e a próxima página). `titulo` diz o que se vende e onde, com
  * "· Atlas Digital" no fim (16/10, SEO e GEO: até então, "Planos e preços ·
  * Atlas Digital" e afins, sem "sites" nem "Niterói"); só fatos que a página
  * já mostra.
  */
+/**
+ * A porta de uma página (R10, D9 e D18): a frase com o número por extenso ("Três públicos: comércio de bairro, …").
+ */
+const porta = (n: number, unidade: string, genero: Genero, resumo: string) => ({
+  frase: `${porExtenso(n, genero, true)} ${unidade}: ${resumo[0].toLowerCase()}${resumo.slice(1)}`,
+});
+
 export const paginas = [
   {
     id: "inicio",
@@ -52,7 +61,7 @@ export const paginas = [
       destaque: "Niterói",
       lide: "Atendimento presencial em qualquer bairro da cidade. O briefing ocorre no próprio estabelecimento.",
     },
-    porta: { dado: "3", unidade: "públicos", resumo: "Comércio de bairro, serviço com agenda e profissão regulamentada." },
+    porta: porta(3, "públicos", "m", "Comércio de bairro, serviço com agenda e profissão regulamentada."),
   },
   {
     id: "planos",
@@ -69,7 +78,7 @@ export const paginas = [
       lide: "Cada degrau define o número de páginas, as funcionalidades sob medida e os efeitos de movimento. A mensalidade acompanha o degrau.",
     },
     // A porta em número e palavra, como as outras; o preço vai no resumo, declarado (ata v3.0, IV.1: preço por último, nunca alardeado).
-    porta: { dado: "3", unidade: "planos", resumo: `De ${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}, com o site de cada plano para abrir e usar.` },
+    porta: porta(3, "planos", "m", `De ${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}, com o site de cada plano para abrir e usar.`),
   },
   {
     id: "orcamento",
@@ -83,7 +92,7 @@ export const paginas = [
       destaque: "exato",
       lide: "O plano e os módulos definem o total, em criação e mensalidade. A mensagem segue pronta para o WhatsApp.",
     },
-    porta: { dado: "2", unidade: "toques", resumo: "O valor exato na hora e a mensagem pronta para o WhatsApp." },
+    porta: porta(2, "toques", "m", "O valor exato na hora e a mensagem pronta para o WhatsApp."),
   },
   {
     id: "trabalho",
@@ -97,7 +106,7 @@ export const paginas = [
       destaque: "próprio",
       lide: "O prazo corre a partir do briefing completo. Nada é publicado sem aprovação.",
     },
-    porta: { dado: "4", unidade: "etapas", resumo: "Da visita ao rascunho navegável, da aprovação à publicação." },
+    porta: porta(4, "etapas", "f", "Da visita ao rascunho navegável, da aprovação à publicação."),
   },
   {
     id: "atlas",
@@ -109,9 +118,13 @@ export const paginas = [
       rotulo: "O Atlas",
       titulo: ["Origem", "na UFF."],
       destaque: "UFF",
-      lide: "Formado por três estudantes de Ciência da Computação da Universidade Federal Fluminense, em Niterói. O método acadêmico aplicado ao comércio local.",
+      // [provisório] (R10, CONTRATO.md, 5.2): a primeira frase, a da formação, passou a "Quem faz", para a formação
+      // aparecer uma vez na página; o lide fica com a segunda frase de hoje, literal.
+      lide: "O método acadêmico aplicado ao comércio local.",
     },
-    porta: { dado: "UFF", unidade: "", resumo: "Formado por estudantes de Ciência da Computação, em Niterói." },
+    porta: {
+      frase: "Formado por estudantes de Ciência da Computação da UFF, em Niterói.",
+    },
   },
   {
     id: "duvidas",
@@ -123,9 +136,9 @@ export const paginas = [
       rotulo: "Dúvidas",
       titulo: ["Perguntas", "frequentes."],
       destaque: "frequentes",
-      lide: "As respostas que costumam anteceder o orçamento. Outras questões seguem pelo WhatsApp.",
+      lide: "As respostas que antecedem o orçamento. Outras questões seguem pelo WhatsApp.",
     },
-    porta: { dado: String(duvidas.length), unidade: "perguntas", resumo: "Prazo, preço, contrato, verificação e privacidade." },
+    porta: porta(duvidas.length, "perguntas", "f", "Prazo, preço, contrato, verificação e privacidade."),
   },
 ] as const;
 
@@ -145,8 +158,7 @@ export const acaoOrcamento = { rotulo: "Montar orçamento", destino: "/orcamento
 /** O índice do início: cada página interna como uma porta. */
 export const portas = {
   rotulo: "O site",
-  titulo: ["O essencial,", "em seis páginas."],
-  lide: "Uma página por assunto, com o dado principal à frente.",
+  titulo: ["O essencial está", "em seis páginas."],
 };
 
 /**
@@ -169,28 +181,14 @@ export const proximaPagina = {
   },
   inicio: "Voltar ao início",
   /** A porta do início, para o pé da última página. */
-  portaDoInicio: { dado: "6", unidade: "páginas", resumo: "As seis páginas numa só vista." },
+  portaDoInicio: { frase: "As seis páginas numa só vista." },
 };
 
 /**
  * As figuras das aberturas: a identidade de cada página interna
- * (components/paginas/figuras.tsx).
+ * (components/paginas/<pagina>/figura.tsx).
  */
 export const figuras = {
-  /**
-   * Para quem: os bairros dos três sites de exemplo — só eles, desde 03/10
-   * (pedido do usuário) —, cada um com o nicho e o vínculo para o site, na
-   * ordem dos planos (Essencial, Profissional, Completo).
-   */
-  bairros: {
-    rotulo: "Bairros dos sites de exemplo",
-    exemplos: [
-      { bairro: "Icaraí", nicho: "nutrição", caminho: "/demos/nutricao" },
-      { bairro: "Engenhoca", nicho: "construção", caminho: "/demos/deposito" },
-      { bairro: "Santa Rosa", nicho: "barbearia", caminho: "/demos/barbearia" },
-    ],
-    nota: "Os bairros dos três sites de exemplo (estabelecimentos fictícios).",
-  },
   /** Orçamento: a conta, em quatro termos. */
   equacao: [
     { termo: "Plano", valor: `${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}` },
@@ -222,8 +220,8 @@ export const figuras = {
    * palavra leva à resposta (o número é o da pergunta na lista).
    */
   momentos: [
-    { momento: "Antes de contratar", itens: [{ rotulo: "Instagram", duvida: 4 }, { rotulo: "Celular", duvida: 6 }, { rotulo: "Site existente", duvida: 8 }] },
-    { momento: "Na contratação", itens: [{ rotulo: "Pagamento", duvida: 7 }, { rotulo: "Fim do contrato", duvida: 3 }] },
+    { momento: "Antes de contratar", itens: [{ rotulo: "Instagram", duvida: 4 }, { rotulo: "Celular", duvida: 6 }, { rotulo: "Site existente", duvida: 8 }, { rotulo: "Preço", duvida: 11 }] },
+    { momento: "Na contratação", itens: [{ rotulo: "Pagamento", duvida: 7 }, { rotulo: "Fim do contrato", duvida: 3 }, { rotulo: "O que o cliente faz", duvida: 12 }] },
     { momento: "Durante o trabalho", itens: [{ rotulo: "As 24 horas", duvida: 1 }, { rotulo: "Textos", duvida: 5 }, { rotulo: "Verificação", duvida: 9 }] },
     { momento: "Com o site no ar", itens: [{ rotulo: "Mensalidade", duvida: 2 }, { rotulo: "Privacidade", duvida: 10 }] },
   ],
@@ -271,9 +269,7 @@ export const capa = {
 };
 
 export const paraQuem = {
-  titulo: ["Reconhecidos no bairro,", "ausentes da internet."],
-  /** Rótulo do exemplo pronto de cada público: um dos sites de demonstração (`plano`, em `simulador.sites`). */
-  exemplo: "Exemplo pronto",
+  titulo: ["Negócios reconhecidos no bairro", "e ausentes da internet."],
   // Os três textos com o mesmo fôlego (duas frases, ~100 caracteres): os blocos ficam simétricos.
   publicos: [
     {
@@ -316,31 +312,22 @@ export const paraQuem = {
 };
 
 export const planosSecao = {
-  titulo: ["O preço está publicado.", "Sem proposta, sem reunião."],
-  lide: "Todos os planos compreendem domínio, hospedagem, certificado de segurança e manutenção mensal. Criação paga em duas parcelas.",
-  seloDestaque: "Recomendado",
-  /** Rótulo da prévia do site feito em cada plano (simulador.sites). */
-  siteDoPlano: "O site deste plano",
   acaoPlano: "Escolher",
-  tituloModulos: "Módulos",
 };
 
 export const escada = {
-  titulo: ["A distância não está na lista.", "Está na tela."],
-  lide: "Sites completos, um por nicho, agrupados por plano. Selecione um nível e um nicho para comparar; no simulador, o site funciona por inteiro.",
+  titulo: ["A diferença entre os planos", "se vê nos sites."],
   /** Rótulo do seletor dos sites de um plano (os nichos), abaixo do seletor de nível. */
   nichos: "Nicho",
   niveis: [
-    { id: "essencial", nome: "Essencial", nota: "Essencial: tudo aparece de uma vez, sem ordem de entrada." },
-    { id: "profissional", nome: "Profissional", nota: "Profissional: entrada em camadas, com ordem de leitura definida." },
-    { id: "completo", nome: "Completo", nota: "Completo: o título se compõe palavra a palavra e os blocos assentam em sequência." },
+    { id: "essencial", nome: "Essencial" },
+    { id: "profissional", nome: "Profissional" },
+    { id: "completo", nome: "Completo" },
   ],
 } as const;
 
 export const vitrine = {
   titulo: ["Cada nicho impõe", "uma exigência própria."],
-  texto:
-    "Na nutrição, depoimento e resultado são vedados pelo conselho da profissão. Num depósito de material de construção, o cálculo de quantidade e o horário visível são indispensáveis. O projeto parte dessas exigências, não do visual.",
   seletor: "Escolher demonstrativo",
   nota: "Estabelecimentos fictícios, criados para demonstração.",
 };
@@ -355,26 +342,14 @@ export const orcamento = {
     "Nada é registrado nesta página: a mensagem parte do próprio aparelho. Página adicional é orçada em separado.",
   semScript: "O montador requer JavaScript. A conversa pode começar direto pelo WhatsApp:",
   /**
-   * A tabela completa da página Orçamento (components/ilhas/montador.tsx,
-   * `completo`): o que o plano inclui, o que cada módulo faz, a conta item
-   * a item, as duas parcelas e o que a mensalidade compreende. Pagamento e
-   * mensalidade como nas perguntas 2 e 7 (conteudo/duvidas.ts).
+   * O que resta aqui da tabela completa da página Orçamento: o aviso e a linha da condição; o resto mora em
+   * conteudo/paginas/orcamento.ts desde o R10.
    */
   completo: {
-    inclui: "O plano inclui",
-    siteDoPlano: "O site deste plano",
-    resumo: "Conta",
-    pagamento: "Pagamento da criação",
-    noBriefing: "No briefing",
-    naPublicacao: "Na publicação",
-    inicioDaMensalidade: "A mensalidade começa no mês seguinte à publicação.",
-    mensalidadeCompreende:
-      "A mensalidade compreende hospedagem, domínio, certificado de segurança, cópias de segurança e alterações de texto, preço ou horário.",
-    paginaAdicional: "Página adicional",
     /** Junto do nome do site do plano, que é de um estabelecimento fictício (16/10, SEO e GEO). */
     aviso: capa.demonstrativo.aviso,
     fundacao: {
-      texto: "Nos três primeiros contratos: 50% de desconto na criação e mensalidade congelada por doze meses.",
+      texto: condicaoDeFundacao,
       rotulo: "Condição de fundação",
       destino: "/planos#fundacao",
     },
@@ -390,35 +365,6 @@ export const orcamento = {
 export const passosDoInicio = {
   rotulo: "O trabalho",
   vinculo: { rotulo: "Ver o trabalho em detalhe", destino: "/o-trabalho" },
-};
-
-export const trabalho = {
-  titulo: ["Quatro etapas.", "Nenhuma delas opcional."],
-  // Cada fato uma vez: o número fica na marca, e o título e o texto não o repetem.
-  // Os quatro textos com o mesmo fôlego (~110 caracteres), para as colunas fecharem na mesma altura.
-  passos: [
-    {
-      titulo: "Visita e briefing",
-      marca: { valor: "1", rotulo: "visita presencial" },
-      // O briefing explicado uma vez (16/10, Impeccable, heurística 2): a conversa de levantamento.
-      texto: "A conversa de levantamento, no próprio estabelecimento. O formulário é preenchido com o responsável, que fornece as fotografias do local.",
-    },
-    {
-      titulo: "Rascunho",
-      marca: { valor: "24 h", rotulo: "após o briefing completo" },
-      texto: "Site navegável, entregue por link, com textos e fotografias reais — sem banco de imagens nem inteligência artificial.",
-    },
-    {
-      titulo: "Revisões",
-      marca: { valor: "2", rotulo: "rodadas sem custo" },
-      texto: "Ajustes sobre o rascunho. O que exceder o escopo é orçado antes de ser feito, nunca cobrado depois.",
-    },
-    {
-      titulo: "Publicação",
-      marca: { valor: "7 a 15", rotulo: "dias úteis, em geral" },
-      texto: "Após a verificação técnica e a conferência de privacidade. Domínio, hospedagem e manutenção seguem pela mensalidade.",
-    },
-  ],
 };
 
 // Sociedade vigente desde 30/09/2026 (ata v3.0; CLAUDE.md, "Decisões tomadas").
@@ -439,7 +385,7 @@ export const quemFaz = {
    * node ferramentas/preparar-fotos.mjs <foto> <nome do arquivo>.
    */
   socios: [
-    { iniciais: "GY", nome: "Gabriel Yida", funcao: "Direção e vendas", foto: "gabriel-ribeiro-ota-yida" },
+    { iniciais: "GY", nome: "Gabriel Ribeiro Ota Yida", funcao: "Direção e vendas", foto: "gabriel-ribeiro-ota-yida" },
     { iniciais: "MA", nome: "Matheus Azevedo Abreu", funcao: "Suporte ao cliente e parte legal", foto: "matheus-azevedo-abreu" },
     { iniciais: "MC", nome: "Matheus Castro Oliveira de Luna Garcia", funcao: "Desenvolvimento dos sites", foto: "matheus-castro-oliveira-de-luna-garcia" },
   ],
@@ -476,22 +422,60 @@ export const quemFaz = {
     ],
   },
   nome: {
-    titulo: "Atlas sustentava o mundo.",
+    // No tempo do mito (R10, D17): o texto logo abaixo diz "Atlas sustenta o céu sobre os ombros".
+    titulo: "Atlas sustenta o céu.",
     texto:
       "Na mitologia grega, Atlas sustenta o céu sobre os ombros. O nome traduz o propósito: sustentar o que o cliente já construiu, sem substituí-lo. No logotipo, o globo sobre o ombro da letra A reduz essa figura a uma letra.",
   },
 };
 
+/** O sócio que vai à visita (producao/esteira/01-processo.md:77). */
+const vendas = quemFaz.socios.find((s) => s.funcao.includes("vendas"));
+if (!vendas) throw new Error("conteudo/site.ts: nenhum sócio com a função de vendas em quemFaz.socios");
+
+export const trabalho = {
+  // Cada fato uma vez: o número fica na marca, e o título e o texto não o repetem. O texto de cada etapa é o da página
+  // O trabalho, o mesmo no llms.txt (R10, integração, 01/11; a prova de R10/paginas/o-trabalho.md, 3.2, com a D4). Até
+  // então, o llms.txt dizia que o responsável "fornece as fotografias do local", o que só vale no Essencial
+  // (01-processo.md:78).
+  passos: [
+    {
+      titulo: "Visita e briefing",
+      marca: { valor: "1", rotulo: "visita presencial" },
+      // 01-processo.md:77 (quem vai e "nunca se entrega o formulário ao cliente para responder depois") e :78 (30 min no
+      // Essencial, 45 no Profissional, 1 h no Completo).
+      texto: `${vendas.nome} vai ao estabelecimento para a conversa de levantamento, de 30 a 60 minutos. O formulário é preenchido ali, com o responsável, e nunca deixado para depois.`,
+    },
+    {
+      titulo: "Rascunho",
+      marca: { valor: "24 h", rotulo: "após o briefing completo" },
+      // 01-processo.md:164 (o endereço temporário, com noindex).
+      texto: "Site navegável, entregue por link, com textos e fotografias reais, sem banco de imagens nem inteligência artificial. Fica num endereço provisório, fora do Google, até a aprovação.",
+    },
+    {
+      titulo: "Revisões",
+      marca: { valor: "2", rotulo: "rodadas sem custo" },
+      // 01-processo.md:178 ("o que excede o escopo do plano é orçado antes de ser feito, nunca cobrado depois").
+      texto: "Ajustes sobre o rascunho. O que não estiver no plano é orçado antes de ser feito, nunca cobrado depois.",
+    },
+    {
+      titulo: "Publicação",
+      marca: { valor: "7 a 15", rotulo: "dias úteis, em geral" },
+      // 01-processo.md:203 (a segunda parcela da criação, na publicação).
+      texto: "Após a verificação técnica e a conferência de privacidade. A segunda metade da criação é paga aqui. Domínio, hospedagem e manutenção seguem pela mensalidade.",
+    },
+  ],
+};
+
 export const fundacao = {
   rotulo: "Condição de fundação",
-  titulo: ["Os três primeiros contratos", "têm condição própria."],
-  // A condição da ata (IV.3: metade do valor de criação, mensalidade congelada por doze meses, três
-  // contratos) em percentual: "50%" se lê mais depressa que "½" e é a forma habitual de um desconto.
-  // Em reais (R$ 450 a R$ 1.200), não: os valores constam como [A CONFIRMAR] no contexto comercial, §2.
+  // A condição numa redação só, a de conteudo/planos.ts (R10, 28/10, decisão do aprovador), partida nas duas linhas do
+  // título: "Nos três primeiros contratos," e "50% de desconto na criação.". Em percentual: "50%" se lê mais depressa
+  // que "½" e é a forma habitual de um desconto. Em reais (R$ 450 a R$ 1.200), não: os valores constam como
+  // [A CONFIRMAR] no contexto comercial, §2. A parte da ata (IV.3) sobre a mensalidade saiu do site em 28/10.
+  titulo: condicaoDeFundacao.replace(", ", ",\n").split("\n"),
   lide: "O risco de contratar uma agência sem histórico é reconhecido no preço. São três contratos, e a condição se encerra com eles. Em troca, cada um vira estudo de caso, com autorização assinada no início.",
   termos: [
-    { valor: "50%", rotulo: "de desconto na criação" },
-    { valor: "12 meses", rotulo: "de mensalidade congelada" },
     /** selos: o número desenhado ao lado, um globo da marca por contrato. */
     { valor: "3", rotulo: "contratos com esta condição", selos: 3 },
   ],

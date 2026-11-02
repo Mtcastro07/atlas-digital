@@ -375,7 +375,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
       onClose={aoFecharDialogo}
       aria-labelledby="simulador-titulo"
       data-tom="escuro"
-      className="vd-simulador m-auto h-[min(94dvh,980px)] max-h-none w-[min(97vw,1680px)] max-w-none overflow-hidden rounded-[28px] border border-border bg-deep p-0 text-foreground"
+      className="vd-simulador m-auto h-[min(94dvh,980px)] max-h-none w-[min(97vw,1680px)] max-w-none overflow-hidden rounded-xl border border-border bg-deep p-0 text-foreground"
     >
       <div className="flex h-full flex-col">
         {/* Barra: planos, aparelho e fechar. Os recuos são os do palco e do
@@ -392,7 +392,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                   type="button"
                   aria-pressed={p.id === site.plano}
                   onClick={() => trocarDeSite(ultimoDoPlano.current[p.id] ?? sites.findIndex((s) => s.plano === p.id))}
-                  className="min-h-11 cursor-pointer rounded-full px-4 text-nota font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+                  className="min-h-11 cursor-pointer rounded-full px-4 text-base font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
                 >
                   {p.nome}
                 </button>
@@ -406,7 +406,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                     type="button"
                     aria-pressed={s.i === indice}
                     onClick={() => trocarDeSite(s.i)}
-                    className="min-h-11 cursor-pointer rounded-full px-4 text-nota font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
+                    className="min-h-11 cursor-pointer rounded-full px-4 text-base font-semibold text-muted-foreground transition-colors duration-300 hover:text-foreground aria-pressed:bg-foreground aria-pressed:text-background"
                   >
                     {s.rotulo}
                   </button>
@@ -428,7 +428,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                   aria-pressed={aparelho === a}
                   aria-disabled={trocando || undefined}
                   onClick={() => trocarDeAparelho(a)}
-                  className="min-h-11 cursor-pointer rounded-full px-4 text-nota font-semibold text-muted-foreground transition-[color,background-color,opacity] duration-300 hover:text-foreground aria-disabled:cursor-not-allowed aria-pressed:bg-foreground aria-pressed:text-background"
+                  className="min-h-11 cursor-pointer rounded-full px-4 text-base font-semibold text-muted-foreground transition-[color,background-color,opacity] duration-300 hover:text-foreground aria-disabled:cursor-not-allowed aria-pressed:bg-foreground aria-pressed:text-background"
                 >
                   {textos.aparelhos[a]}
                 </button>
@@ -537,19 +537,19 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                     </p>
                     <div key={site.caminho} aria-hidden="true" className="flex h-full flex-col gap-6 p-6">
                       <div className="flex items-center justify-between gap-6">
-                        <span className="vd-esqueleto h-6 w-24 rounded-md" />
+                        <span className="vd-esqueleto h-6 w-24 rounded-pedra" />
                         <span className="vd-esqueleto h-6 w-2/5 max-w-72 rounded-full" />
                       </div>
                       <div className="mt-6 flex max-w-xl flex-col gap-3">
-                        <span className="vd-esqueleto h-10 w-11/12 rounded-lg" />
-                        <span className="vd-esqueleto h-10 w-3/5 rounded-lg" />
+                        <span className="vd-esqueleto h-10 w-11/12 rounded-pedra" />
+                        <span className="vd-esqueleto h-10 w-3/5 rounded-pedra" />
                         <span className="vd-esqueleto mt-3 h-4 w-full rounded-full" />
                         <span className="vd-esqueleto h-4 w-4/5 rounded-full" />
                         <span className="vd-esqueleto mt-3 h-11 w-40 rounded-full" />
                       </div>
                       <div className="mt-auto grid grid-cols-3 gap-4">
                         {[0, 1, 2].map((k) => (
-                          <span key={k} className="vd-esqueleto aspect-[4/3] rounded-lg" />
+                          <span key={k} className="vd-esqueleto aspect-[4/3] rounded-pedra" />
                         ))}
                       </div>
                     </div>
@@ -565,7 +565,9 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               text-destaque (abaixo do nome, que é o que se escolhe aqui), o
               resto em text-nota. Até 03/10, nove tamanhos soltos, de 11,8 a 28 px.
               O nome, o preço e o número de páginas em Archivo Black, como os
-              títulos e os números do site de 28/08 (desde 05/10). */}
+              títulos e os números do site de 28/08 (desde 05/10). Desde 28/10
+              (R10), nada que decide abaixo de 16 px: os seletores, a linha do
+              preço e as duas ações em text-base; os raios nos quatro do sistema. */}
           <aside className="flex flex-col gap-6 overflow-y-auto border-border p-6 max-lg:border-t lg:border-l">
             <div>
               {/* O plano na legenda, sob o nome (17/10, segundo fechamento com o Impeccable): até então, em caixa-alta acima
@@ -578,8 +580,8 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               </p>
               <p className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <span className="font-display text-destaque tracking-titulo tabular-nums">{reais(plano.criacao)}</span>
-                <span className="text-nota text-muted-foreground">{textos.criacao}</span>
-                <span className="text-nota text-muted-foreground tabular-nums">
+                <span className="text-base text-muted-foreground">{textos.criacao}</span>
+                <span className="text-base text-muted-foreground tabular-nums">
                   + {reais(plano.mensal)} {textos.mensal}
                 </span>
               </p>
@@ -609,7 +611,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
               <Link
                 href={`/orcamento#orcamento-${plano.id}`}
                 onClick={fechar}
-                className="vd-metal inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-6 text-nota font-semibold text-primary-foreground transition-[box-shadow] duration-300"
+                className="vd-metal inline-flex min-h-12 items-center justify-center rounded-full bg-primary px-6 text-base font-semibold text-primary-foreground transition-[box-shadow] duration-300"
               >
                 {textos.escolher} {plano.nome}
               </Link>
@@ -617,7 +619,7 @@ export default function PainelDoSimulador({ dados, inicial, aoFechar }: Props) {
                 href={caminhoAberto}
                 target="_blank"
                 rel="noopener"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-border px-6 text-nota font-semibold transition-colors duration-300 hover:border-foreground/40"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-border px-6 text-base font-semibold transition-colors duration-300 hover:border-foreground/40"
               >
                 {textos.novaAba}
                 <svg viewBox="0 0 16 16" aria-hidden="true" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">

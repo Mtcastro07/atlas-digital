@@ -26,8 +26,10 @@ const naTela = new WeakSet<Element>();
 /**
  * No celular não há ponteiro para passar sobre o logotipo: ali, o globo dá
  * uma volta a cada vez que aparece — na carga, quando o cabeçalho volta à
- * tela (ilhas/cabecalho-retratil.tsx) e quando o rodapé ou o símbolo de
- * "O Atlas" entram na tela. Para girar de novo, o globo precisa antes sair
+ * tela (ilhas/cabecalho-retratil.tsx) e quando o símbolo de "O Atlas" entra
+ * na tela. O do rodapé fica quieto (R10, integração, 01/11: a volta dele ao
+ * parar a rolagem deixava 750 ms de quadros parciais, 45 batidas na régua, e o
+ * rodapé é das peças comuns, sem nada passivo). Para girar de novo, o globo precisa antes sair
  * de vista por inteiro. Observa todo elemento com data-globo; não desenha nada.
  * Com ponteiro, quem dispara é o hover, em CSS. Com movimento reduzido, nada gira.
  * Procura os globos de novo a cada troca de página: até 07/10, procurava só
@@ -51,7 +53,7 @@ export function GiroDoGlobo() {
       },
       { threshold: [0, VISIVEL] }
     );
-    document.querySelectorAll("[data-globo]").forEach((globo) => observador.observe(globo));
+    document.querySelectorAll("[data-globo]:not(footer *)").forEach((globo) => observador.observe(globo));
     return () => observador.disconnect();
   }, [caminho]);
 

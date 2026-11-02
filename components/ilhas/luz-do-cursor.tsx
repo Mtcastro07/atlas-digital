@@ -18,6 +18,8 @@ import { useEffect } from "react";
  * luz do hover passa uma vez; o botão não anda. Acende ao soltar o dedo: o
  * toque que vira rolagem cancela o ponteiro e não acende nada. Com
  * movimento reduzido, nada. Não desenha nada.
+ * O orbe saiu do Atlas em 28/10 (R10, S7) e segue só na cena do couro da barbearia: nenhuma marcação do Atlas leva
+ * .vd-orbe. A resposta de "vínculo para outra página", no Atlas, é a luz do sistema (.vd-acende, app/vidro.css).
  */
 export function LuzDoCursor() {
   useEffect(() => {

@@ -1,87 +1,90 @@
 import Link from "next/link";
 
+import { Colofao, IndiceDoRodape } from "@/components/comuns/rodape-da-pagina";
 import { Envelope } from "@/components/estrutura";
 import { Logotipo } from "@/components/marca/logotipo";
+import { textoParaIas } from "@/conteudo/paginas/comuns";
 import { contato, metadados, navegacao, rodape } from "@/conteudo/site";
+import { colofaoDe } from "@/lib/colofao";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
-const titulo = "text-rotulo font-semibold text-foreground";
-const vinculo =
-  "inline-flex min-h-11 min-w-11 items-center text-nota text-muted-foreground no-underline transition-colors duration-300 ease-atlas hover:text-foreground";
 const [usuarioDoEmail, dominioDoEmail] = contato.email.split("@");
 
+/** As frases do colofão das sete páginas, calculadas no servidor, no build: o relatório da régua não vai ao navegador. */
+const colofoes = Object.fromEntries(["/", ...navegacao.map((item) => item.caminho)].map((caminho) => [caminho, colofaoDe(caminho)]));
+
 /**
- * Rodapé em névoa, texto pequeno, como nas lojas de fabricante: marca,
- * índice das páginas, contato e o selo, em três colunas da mesma largura
- * (desde 02/10). O índice são as seis páginas internas em duas colunas de
- * três, na ordem do menu, de cima para baixo — o início saiu da lista em
- * 03/10 (pedido do usuário: simetria) e é o vínculo do logotipo, cujo
- * globo gira como o do cabeçalho: sob o ponteiro, no computador; a cada
- * aparecimento, no celular (ilhas/giro-do-globo.tsx). Assim, as três
- * colunas têm a mesma altura: três linhas cada. No celular, a folga
- * inferior reserva o espaço da ação flutuante. Fica no layout: o mesmo em
- * todas as páginas.
+ * Rodapé em névoa: a marca e, em três colunas da mesma largura (desde
+ * 02/10), a descrição, o índice das seis páginas e o contato; no pé, o
+ * selo, o colofão e o texto para as IAs. Desde 28/10 (R10,
+ * esboco/comuns/ESBOCO.md, 1.1), em três degraus e nada abaixo de 16 px
+ * (até então, tudo em 12 e 14): o índice na voz do menu, com fios, de 18
+ * a 21 px, e a página aberta marcada (o peso e o traço de bronze, além da
+ * cor: components/comuns/rodape-da-pagina.tsx); o contato a 17 px, em
+ * navy; a descrição, o selo e o colofão a 16 px, no apagado. Saíram os
+ * rótulos "Páginas" e "Contato": as listas se leem pelo que são. O
+ * logotipo, numa linha própria, leva ao início (que não está no índice) e,
+ * como o do cabeçalho, o globo gira sob o ponteiro, no computador, e a
+ * cada aparecimento, no celular (ilhas/giro-do-globo.tsx). O colofão (D13)
+ * dá as letras do site e a medida da régua de quadros da página aberta,
+ * lida no build (lib/colofao.ts); sem medida, só as letras. A descrição é
+ * também a description dos dados estruturados: fica palavra por palavra
+ * (D10). O atalho do WhatsApp sai de cena sobre ele (data-sem-atalho): o contato está à vista.
+ * Fica no layout: o mesmo em todas as páginas.
  */
 export function Rodape() {
   return (
-    <footer data-tom="claro" className="vd-materia border-t border-border pt-16 pb-28 md:pt-20 lg:pb-16">
+    <footer data-tom="claro" data-sem-atalho className="vd-materia border-t border-border pt-14 pb-16 md:pt-18">
       <Envelope>
-        <div className="grid gap-12 md:grid-cols-3 md:gap-10">
-          <div>
-            {/* O logotipo leva ao início (que saiu da lista de páginas) e, como no cabeçalho, o globo gira sob o ponteiro
-                (com movimento reduzido, sem o giro, o logotipo responde em cor). */}
-            <Link
-              href="/"
-              prefetch={false}
-              aria-label="Atlas Digital — início"
-              className="inline-flex min-h-11 items-center text-foreground transition-colors duration-300 ease-atlas motion-reduce:hover:text-accent"
-            >
-              <Logotipo recorte="globo-rodape" className="h-[39px] w-auto" decorativo />
-            </Link>
-            <p className="mt-5 max-w-[32ch] text-nota text-muted-foreground">{rodape.descricao}</p>
-          </div>
+        <Link
+          href="/"
+          prefetch={false}
+          aria-label="Atlas Digital — início"
+          className="inline-flex min-h-11 items-center text-foreground transition-colors duration-300 ease-atlas motion-reduce:hover:text-accent"
+        >
+          <Logotipo recorte="globo-rodape" className="h-[39px] w-auto" decorativo />
+        </Link>
+        <div className="cm-rodape-grade">
+          <p className="cm-rodape-nota">{rodape.descricao}</p>
           {/* #indice: destino do gatilho "Menu" quando o script não está disponível. */}
-          <nav id="indice" aria-label="Páginas">
-            <p className={titulo}>Páginas</p>
-            <ul className="mt-2 grid grid-flow-col grid-rows-3 gap-x-6">
-              {navegacao.map((item) => (
-                <li key={item.id}>
-                  <Link href={item.caminho} className={vinculo}>
-                    {item.rotulo}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <nav id="indice" aria-label="Páginas" className="cm-indice">
+            <IndiceDoRodape itens={navegacao} />
           </nav>
-          <div>
-            <p className={titulo}>Contato</p>
-            <ul className="mt-2">
+          <address className="not-italic">
+            <ul>
               <li>
-                <a href={linkWhatsApp()} target="_blank" rel="noopener" className={vinculo}>
+                <a href={linkWhatsApp()} target="_blank" rel="noopener" className="cm-contato">
                   WhatsApp {contato.telefone}
                 </a>
               </li>
               <li>
-                {/* No tablet, a coluna é mais estreita que o endereço: ele quebra logo depois do "@" (<wbr>, que não vai junto quando se copia). */}
-                <a href={`mailto:${contato.email}`} className={`${vinculo} min-w-0`}>
+                {/* Na coluna estreita, o endereço quebra logo depois do "@" (<wbr>, que não vai junto quando se copia). */}
+                <a href={`mailto:${contato.email}`} className="cm-contato">
                   <span>
                     {usuarioDoEmail}@<wbr />
                     {dominioDoEmail}
                   </span>
                 </a>
               </li>
-              <li className="flex min-h-11 items-center text-nota text-muted-foreground">
+              <li className="cm-cidade">
                 {contato.cidade}, {contato.estado}
               </li>
             </ul>
-          </div>
+          </address>
         </div>
-        <div className="mt-16 border-t border-border pt-8 text-rotulo text-muted-foreground">
-          <p className="max-w-[60ch]">{rodape.selo}</p>
-          <p className="mt-3 flex flex-wrap gap-x-6 gap-y-1">
-            <span>{rodape.direitos}</span>{" "}
-            <span>{metadados.slogan}</span>
-          </p>
+        <div className="cm-rodape-pe">
+          <p className="cm-rodape-nota">{rodape.selo}</p>
+          <Colofao frases={colofoes} className="cm-rodape-nota" />
+          <div className="cm-rodape-fim">
+            {/* O texto do site para as IAs (app/llms.txt/route.ts). Um <a> comum: é um arquivo de texto, e não uma página
+                do app; sem seta, porque não sai do site. */}
+            <a href="/llms.txt" className="cm-contato">
+              {textoParaIas}
+            </a>
+            <p className="cm-direitos">
+              <span>{rodape.direitos}</span> <span>{metadados.slogan}</span>
+            </p>
+          </div>
         </div>
       </Envelope>
     </footer>

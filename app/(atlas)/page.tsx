@@ -1,8 +1,8 @@
+import { Chapas } from "@/components/paginas/inicio/chapas";
 import { Portas } from "@/components/paginas/portas";
 import { Capa } from "@/components/secoes/capa";
 import { Destaques } from "@/components/secoes/destaques";
 import { Fim } from "@/components/secoes/fim";
-import { Fundacao } from "@/components/secoes/fundacao";
 import { Orcamento } from "@/components/secoes/orcamento";
 import { Passos } from "@/components/secoes/passos";
 import { capaDoAtlas, jsonLd } from "@/lib/dados-estruturados";
@@ -27,8 +27,10 @@ export const metadata = metadadosDaPagina("inicio");
  * 4. o orçamento, na tabela de 28/08 — um passo pequeno, sem cadastro,
  *    antes da conversa (pé na porta: Freedman e Fraser, 1966);
  * 5. a condição de fundação — a escassez verdadeira junto da decisão de
- *    preço (Worchel, Lee e Adewole, 1975);
- * 6. as seis portas — para quem quer ler mais antes de decidir;
+ *    preço (Worchel, Lee e Adewole, 1975); desde 28/10 (R10, D3), as três
+ *    chapas de bronze "1 de 3";
+ * 6. as seis portas — para quem quer ler mais antes de decidir; desde
+ *    28/10 (R10, D9), o índice com um desenho por linha;
  * 7. a chamada final — a ação de novo, no fim.
  * Os tons alternam a partir da capa: navy, névoa, navy, névoa, navy,
  * névoa, navy.
@@ -41,7 +43,7 @@ export default function Inicio() {
       <Destaques />
       <Passos />
       <Orcamento />
-      <Fundacao destino="#orcamento" />
+      <Chapas destino="#orcamento" />
       <Portas />
       <Fim />
       {/* O site e o negócio local ficam aqui, e não no layout raiz: os sites de demonstração (app/demos/) não são o Atlas. */}

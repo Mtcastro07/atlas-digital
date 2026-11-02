@@ -1,22 +1,23 @@
 "use client";
 
-import { useAnimate } from "motion/react-mini";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 
 import { IconeSeta, IconeVisto, IconeWhatsApp } from "@/components/icones";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { EtiquetaRecomendado } from "@/components/ui/etiqueta-recomendado";
 import { CopyButton } from "@/components/ui/spell/copy-button";
+import { montador as t } from "@/conteudo/paginas/orcamento";
 import { modulos, modulosDoMontador, planos } from "@/conteudo/planos";
 import { EVENTO_ANCORA, type DetalheDaAncora } from "@/lib/ancoras";
 import { contarReais } from "@/lib/contar";
 import { reais } from "@/lib/moeda";
 import { linkWhatsApp, mensagemDeOrcamento } from "@/lib/whatsapp";
 
-const SUAVE = [0.22, 1, 0.36, 1] as const;
-
 /** A página adicional: cobrada por pedido, fora da soma (conteudo/planos.ts). */
 const paginaAdicional = modulos.find((m) => m.porPagina);
+const semInscricao = () => () => {};
 
 function somar(planoId: string, moduloIds: string[]) {
   const plano = planos.find((p) => p.id === planoId)!;
@@ -29,34 +30,15 @@ function somar(planoId: string, moduloIds: string[]) {
   };
 }
 
-// A escala do painel (diretrizes de 03/10, CLAUDE.md da raiz). Texto em
-// três degraus: rótulo (12 px: capitulares, a nota de privacidade), nota
-// (14 px: pílulas, conta, descrições, a mensagem) e número (24 a 36 px: os
-// dois totais, em Archivo Black, como no site de 28/08; de 03 a 05/10, na
-// família do texto, em 600). Até 03/10, nove tamanhos soltos, de 11,5 a
-// 15 px, e os totais de 23 a 35 px. Recuos em três
-// medidas: o painel com 24 px dos lados no celular e 32 px a partir de
-// 640 px (40 px na tabela completa, de duas colunas, a partir de 1024 px);
-// as caixas de dentro (totais, mensagem, plano, condição) todas com 16 px
-// dos lados e 20 px em cima e embaixo; as pílulas com 16 px. Até 03/10,
-// seis combinações, de 18, 20 e 30 px. Os 16 px nas caixas dos totais
-// também deixam "R$ 1.500" caber na caixa a partir de 375 px de tela.
-
-/** As pílulas de escolha da tabela de 28/08: contorno em repouso, navy quando marcadas. */
-const PILULA =
-  "inline-flex min-h-11 cursor-pointer items-center rounded-full border border-border bg-transparent px-4 py-2.5 text-nota font-medium text-foreground transition-[background-color,color,border-color] duration-150 ease-atlas hover:border-foreground aria-pressed:border-secondary aria-pressed:bg-secondary aria-pressed:text-secondary-foreground";
-
-const ROTULO = "mb-2.5 block text-nota font-semibold";
-// Em letra comum desde o segundo fechamento com o Impeccable (17/10): até então, em caixa-alta espaçada (a marca T3).
-const CAPITULAR = "text-nota font-semibold text-muted-foreground";
-/** As caixas de dentro do painel: os totais e a mensagem (até 16/10, também o plano escolhido e a condição de fundação). */
-const CAIXA = "rounded-[1.25rem] px-4 py-5";
+/** O resumo de cada plano na opção: os dois primeiros itens dele, numa frase ("Até seis páginas, galeria e formulário."). */
+const resumoDo = (itens: string[]) => `${itens[0]}, ${itens[1].charAt(0).toLowerCase()}${itens[1].slice(1)}.`;
 
 /**
- * Total da tabela: quando muda, conta do valor anterior ao novo (380 ms, como em 28/08).
- * Com movimento reduzido, não conta: fica o valor novo, que o React já escreveu.
+ * O total: quando muda, conta do valor anterior ao novo (380 ms, como em 28/08). Com movimento reduzido, não conta:
+ * fica o valor novo, que o React já escreveu. Na conta de /orcamento, o que o módulo sob o ponteiro somaria aparece ao
+ * lado do número e respira (a constante da página: de 40% a 100%, em cinco meias-voltas de 900 ms, e assenta).
  */
-function Total({ rotulo, valor, naChapa }: { rotulo: string; valor: number; naChapa?: boolean }) {
+function Total({ rotulo, valor, sob, somaria, grande }: { rotulo: string; valor: number; sob: string; somaria?: number; grande?: boolean }) {
   const el = useRef<HTMLSpanElement>(null);
   const anterior = useRef(valor);
 
@@ -68,93 +50,168 @@ function Total({ rotulo, valor, naChapa }: { rotulo: string; valor: number; naCh
   }, [valor]);
 
   return (
-    // Na chapa (a tabela completa), o número fica direto nela, sem caixa própria: uma superfície só (17/10). No início,
-    // desde o segundo fechamento (17/10), também direto no painel, sobre o filete duplo: até então, cada total numa
-    // caixa arredondada dentro do painel (o cartão dentro do cartão, a marca L4; a avaliação A).
-    <div className={naChapa ? `${CAIXA} min-w-0` : "min-w-0"}>
-      <dt className={CAPITULAR}>{rotulo}</dt>
-      <dd className="mt-1.5 font-display tracking-titulo text-numero whitespace-nowrap tabular-nums">
+    <div className="min-w-0">
+      <dt className="text-base font-semibold text-muted-foreground">{rotulo}</dt>
+      <dd className={`relative mt-1 font-display tracking-titulo tabular-nums whitespace-nowrap ${grande ? "orc-total" : "text-numero"}`}>
         <span ref={el}>{reais(valor)}</span>
+        {somaria != null && (
+          <span key={somaria} aria-hidden="true" className="orc-fantasma mov-constante">
+            + {reais(somaria)}
+          </span>
+        )}
       </dd>
+      <dd className="mt-1 text-base text-muted-foreground tabular-nums">{sob}</dd>
     </div>
   );
 }
 
-/** Linha da conta: o que é, à esquerda; criação e mensalidade, à direita. */
-function Linha({ rotulo, valor, detalhe, forte }: { rotulo: string; valor: string; detalhe?: string; forte?: boolean }) {
+/** A marca da opção, desenhada: o círculo do plano e o quadrado do módulo, cheios e com o visto quando marcados. */
+function Marca({ tipo }: { tipo: "radio" | "checkbox" }) {
+  const Forma = tipo === "radio" ? "circle" : "rect";
+  const forma = tipo === "radio" ? { cx: 11, cy: 11, r: 10 } : { x: 1, y: 1, width: 20, height: 20, rx: 6 };
   return (
-    <div className="flex items-baseline justify-between gap-4 py-2.5 text-nota">
-      <dt className={forte ? "font-semibold" : "text-muted-foreground"}>{rotulo}</dt>
-      <dd className="text-right tabular-nums">
-        <span className="font-semibold">{valor}</span>
-        {detalhe && <span className="text-muted-foreground">{detalhe}</span>}
-      </dd>
-    </div>
+    <svg viewBox="0 0 22 22" aria-hidden="true" className="orc-marca">
+      <Forma {...forma} fill="none" stroke="currentColor" strokeOpacity={0.6} strokeWidth={1.5} />
+      <Forma {...forma} className="orc-marca-cheio" fill="currentColor" />
+      <path className="orc-marca-cheio" d="m6.6 11.2 3 2.9 5.8-6.2" fill="none" stroke="#f3efec" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
-type TextosDaTabelaCompleta = {
-  inclui: string;
-  siteDoPlano: string;
-  resumo: string;
-  pagamento: string;
-  noBriefing: string;
-  naPublicacao: string;
-  inicioDaMensalidade: string;
-  mensalidadeCompreende: string;
-  paginaAdicional: string;
-  aviso: string;
-  fundacao: { texto: string; rotulo: string; destino: string };
+type PropsDaOpcao = {
+  tipo: "radio" | "checkbox";
+  valor: string;
+  id?: string;
+  marcado: boolean;
+  aoMudar: () => void;
+  aoApontar?: (sobre: boolean) => void;
+  nome: string;
+  resumo?: string;
+  criacao: number;
+  mensal: number;
+  soma?: boolean;
+  recomendado?: boolean;
 };
+
+/**
+ * A opção, com o preço dentro (R10, 28/10): o rádio ou a caixa nativos, do tamanho da opção inteira e sem desenho
+ * próprio (o clique, o teclado, o foco e o leitor de tela são os do controle nativo); o nome em Archivo 500, no papel
+ * do h3; o preço à direita, "R$ 1.500 uma vez e R$ 250 por mês". A etiqueta "Recomendado" (D15, a 16 px) no
+ * Profissional.
+ */
+function Opcao({ tipo, valor, id, marcado, aoMudar, aoApontar, nome, resumo, criacao, mensal, soma, recomendado }: PropsDaOpcao) {
+  const mais = soma ? "+ " : "";
+  return (
+    <label
+      className="orc-opcao"
+      onPointerEnter={aoApontar && ((e) => e.pointerType === "mouse" && aoApontar(true))}
+      onPointerLeave={aoApontar && (() => aoApontar(false))}
+    >
+      <input type={tipo} name={tipo === "radio" ? "plano" : "modulo"} value={valor} id={id} checked={marcado} onChange={aoMudar} className="orc-opcao-campo" />
+      <Marca tipo={tipo} />
+      <span className="orc-opcao-nome">
+        {nome}
+        {recomendado && (
+          <>
+            {" "}
+            <EtiquetaRecomendado />
+          </>
+        )}
+      </span>
+      {resumo && <span className="orc-opcao-resumo">{resumo}</span>}
+      <span className="orc-opcao-preco">
+        <span>
+          <b>
+            {mais}
+            {reais(criacao)}
+          </b>{" "}
+          {t.umaVez}
+        </span>{" "}
+        <span>
+          e{" "}
+          <b>
+            {mais}
+            {reais(mensal)}
+          </b>{" "}
+          {t.porMes}
+        </span>
+      </span>
+    </label>
+  );
+}
+
+/** O texto do vínculo com a seta presa à última palavra: quando a linha quebra, a seta não desce sozinha. */
+function ComSeta({ texto }: { texto: string }) {
+  const corte = texto.lastIndexOf(" ");
+  return (
+    <>
+      {texto.slice(0, corte + 1)}
+      <span className="whitespace-nowrap">
+        {texto.slice(corte + 1)}
+        <IconeSeta className="ml-1 inline size-3.5 align-[-0.05em]" />
+      </span>
+    </>
+  );
+}
+
+/** O envio, o mesmo na conta e na faixa do celular (a crítica do esboço, 8.3: a mesma ação com o mesmo desenho). */
+function BotaoEnviar({ href, className = "", tabIndex }: { href: string; className?: string; tabIndex?: number }) {
+  return (
+    <a href={href} target="_blank" rel="noopener" tabIndex={tabIndex} className={buttonVariants({ className: `vd-brilho ${className}` })}>
+      <IconeWhatsApp className="size-4.5" />
+      {t.enviar}
+    </a>
+  );
+}
 
 type Props = {
   privacidade: string;
   /**
-   * A tabela completa da página Orçamento: além das escolhas e dos totais,
-   * o que o plano inclui e o site feito nele, o que cada módulo faz, a
-   * conta item a item, as duas parcelas e o que a mensalidade compreende.
+   * A conta de /orcamento: além das escolhas e dos totais, o que o plano inclui e o site feito nele, a composição, a
+   * condição de fundação, a mensagem sempre à vista e a faixa do celular. Os textos de conteudo/site.ts chegam por
+   * aqui, do servidor; os desta ilha, de conteudo/paginas/orcamento.ts.
    */
-  completo?: { textos: TextosDaTabelaCompleta; sites: { plano: string; nome: string; caminho: string }[] };
+  completo?: {
+    aviso: string;
+    fundacao: { texto: string; rotulo: string; destino: string };
+    sites: { plano: string; nome: string; caminho: string }[];
+  };
 };
 
 /**
- * Montador de orçamento com o desenho da tabela do site de 28/08 (pedido
- * do usuário, 03/10: "prefiro a tabela do site antigo"): num painel
- * branco, as pílulas do plano e dos módulos, os dois totais em caixas,
- * "Preparar mensagem" e a prévia, com o envio pelo WhatsApp e a cópia.
- * No início, essa é a tabela inteira; na página Orçamento (`completo`), o
- * mesmo painel ganha uma segunda coluna com a conta item a item, as duas
- * parcelas da criação, o que a mensalidade compreende e a condição de
- * fundação, e a primeira mostra o que o plano inclui e o que cada módulo
- * faz. Tudo acontece no aparelho — soma, mensagem e vínculo para o
- * WhatsApp. Nada é enviado a servidor algum.
- * O plano pode chegar marcado pelo vínculo "Escolher <plano>" da página
- * Planos ou do simulador (/orcamento#orcamento-<id>, lido do endereço na
- * chegada à página do orçamento): a navegação interna não guarda a âncora
- * no endereço e avisa o destino pelo evento EVENTO_ANCORA (lib/ancoras.ts).
- * Sem plano no vínculo, chega marcado o recomendado (o Profissional; ata
- * v3.0, IV.2): o ponto de partida é o plano indicado, não o menor preço.
+ * O montador de orçamento (R10, 28/10). As opções com o preço dentro, em rádio e caixa nativos; os totais em Archivo
+ * Black; "Enviar no WhatsApp" direto (D14: saiu o "Preparar mensagem", e com ele o useAnimate da prévia).
+ * - Em /orcamento (`completo`), a conta é o objeto da página: uma ficha só, presa ao lado das escolhas na mesa, com os
+ *   dois totais um sobre o outro, a composição, a condição de fundação e a mensagem sempre à vista. No celular, a faixa
+ *   navy dos totais aparece quando o título e a conta saem da tela.
+ * - No início, o montador curto, na ficha que sobe sobre a derrota: as mesmas opções, os totais lado a lado, o envio.
+ * Tudo acontece no aparelho: a soma, a mensagem e o vínculo do WhatsApp. Nada é enviado a servidor algum.
+ * O plano pode chegar marcado pelo "Escolher <plano>" de /planos (/orcamento#orcamento-<id>, lido do endereço na
+ * chegada; a navegação interna avisa o destino pelo evento EVENTO_ANCORA, lib/ancoras.ts). Sem plano no vínculo,
+ * chega marcado o recomendado (o Profissional; ata v3.0, IV.2).
  */
 export function Montador({ privacidade, completo }: Props) {
   const [planoId, setPlanoId] = useState((planos.find((p) => p.destaque) ?? planos[0]).id);
   const [moduloIds, setModuloIds] = useState<string[]>([]);
-  const [mensagem, setMensagem] = useState<string | null>(null);
-  const [previa, animate] = useAnimate<HTMLDivElement>();
+  const [apontado, setApontado] = useState<string | null>(null);
+  const [mudou, setMudou] = useState(false);
   const colunaDasEscolhas = useRef<HTMLDivElement>(null);
   const caixaDosTotais = useRef<HTMLDListElement>(null);
+  const faixaRef = useRef<HTMLDivElement>(null);
   const [faixa, setFaixa] = useState(false);
+  const hidratado = useSyncExternalStore(semInscricao, () => true, () => false);
 
   const { plano, escolhidos, criacao, mensal } = somar(planoId, moduloIds);
+  const mensagem = mensagemDeOrcamento({ plano: plano.nome, modulos: escolhidos.map((m) => m.nome), criacao, mensal });
+  const link = linkWhatsApp(mensagem);
+  const somaria = modulosDoMontador.find((m) => m.id === apontado && !moduloIds.includes(m.id));
 
   // "Escolher Profissional" (página Planos) aponta para /orcamento#orcamento-profissional.
   // O destino chega pelo evento da navegação interna (ou pelo endereço, na chegada).
   useEffect(() => {
     const aplicar = (destino: string | undefined) => {
       const pedido = /^orcamento-(.+)$/.exec(destino ?? "")?.[1];
-      if (planos.some((p) => p.id === pedido)) {
-        setPlanoId(pedido!);
-        setMensagem(null);
-      }
+      if (planos.some((p) => p.id === pedido)) setPlanoId(pedido!);
     };
     let chegada = "";
     try {
@@ -169,285 +226,227 @@ export function Montador({ privacidade, completo }: Props) {
     return () => window.removeEventListener(EVENTO_ANCORA, aoAncorar);
   }, []);
 
-  // A prévia se abre deslizando (a animação "abre" de 28/08) e, se estiver abaixo da dobra, é trazida à vista.
-  useEffect(() => {
-    const el = previa.current;
-    if (!mensagem || !el) return;
-    const reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduzir) animate(el, { opacity: [0, 1], transform: ["translateY(-8px)", "none"] }, { duration: 0.7, ease: SUAVE });
-    el.scrollIntoView({ behavior: reduzir ? "auto" : "smooth", block: "nearest" });
-  }, [mensagem, animate, previa]);
-
-  // A faixa do pé, na tabela completa abaixo de 1024 px (16/10, Impeccable): depois do toque num plano, os totais ficavam
-  // a ~1.400 px, fora da tela de 844, e o título promete "Dois toques, valor exato". Ela aparece enquanto as escolhas
-  // estão na tela e os totais de verdade não; chegando a eles, sai (sem os valores duas vezes à vista).
+  // A faixa do pé, em /orcamento abaixo de 1024 px: aparece quando as escolhas estão na tela e nem o título da página
+  // nem os totais da conta estão (sem os valores duas vezes à vista). Enquanto ela está à vista, a rolagem guarda a
+  // altura dela embaixo (scroll-padding): a opção que recebe o foco pelo teclado não para sob a faixa (WCAG 2.4.11).
   useEffect(() => {
     const escolhas = colunaDasEscolhas.current;
     const totais = caixaDosTotais.current;
+    const titulo = document.getElementById("titulo-da-pagina");
     if (!completo || !escolhas || !totais) return;
     const vistos = new Map<Element, boolean>();
+    const raiz = document.documentElement;
     const observador = new IntersectionObserver((entradas) => {
       for (const e of entradas) vistos.set(e.target, e.isIntersecting);
-      setFaixa(!!vistos.get(escolhas) && !vistos.get(totais));
+      const mostrar = !!vistos.get(escolhas) && !vistos.get(totais) && !(titulo && vistos.get(titulo));
+      setFaixa(mostrar);
+      const altura = faixaRef.current?.offsetHeight ?? 0;
+      raiz.style.scrollPaddingBottom = mostrar && altura ? `${altura + 16}px` : "";
     });
     observador.observe(escolhas);
     observador.observe(totais);
-    return () => observador.disconnect();
+    if (titulo) observador.observe(titulo);
+    return () => {
+      observador.disconnect();
+      raiz.style.scrollPaddingBottom = "";
+    };
   }, [completo]);
-
-  const preparar = () => setMensagem(mensagemDeOrcamento({ plano: plano.nome, modulos: escolhidos.map((m) => m.nome), criacao, mensal }));
 
   function escolherPlano(id: string) {
     setPlanoId(id);
-    setMensagem(null);
+    setMudou(true);
   }
 
   function alternarModulo(id: string) {
     setModuloIds((atuais) => (atuais.includes(id) ? atuais.filter((m) => m !== id) : [...atuais, id]));
-    setMensagem(null);
+    setMudou(true);
   }
+
+  const Passo = completo ? "h2" : "h3";
+  const site = completo?.sites.find((s) => s.plano === plano.id);
 
   const escolhas = (
     <>
-      {/* @container: na coluna estreita (abaixo de 22 rem: o celular, ou a letra a 200%), os três planos um sobre o outro,
-          na largura toda (17/10, segundo fechamento com o Impeccable); até então, quebravam em dois e um, a 390 px. */}
-      <div className="@container mb-6">
-        <span id="rotulo-plano" className={ROTULO}>
-          Plano
-        </span>
-        <div role="group" aria-labelledby="rotulo-plano" className="flex flex-wrap gap-2 @max-[22rem]:grid @max-[22rem]:*:justify-center">
+      <fieldset className="orc-passo">
+        <legend>
+          <Passo className="orc-passo-titulo">{t.passos.plano}</Passo>
+        </legend>
+        <div className="orc-opcoes">
           {planos.map((p) => (
-            <button
+            <Opcao
               key={p.id}
-              type="button"
+              tipo="radio"
+              valor={p.id}
               id={completo ? `orcamento-${p.id}` : undefined}
-              aria-pressed={p.id === planoId}
-              onClick={() => escolherPlano(p.id)}
-              className={PILULA}
-            >
-              {p.nome}{" "}
-            </button>
-          ))}
-        </div>
-        {completo && <DetalheDoPlano plano={plano} textos={completo.textos} site={completo.sites.find((s) => s.plano === plano.id)} />}
-      </div>
-
-      <div className="mb-6">
-        <span id="rotulo-modulos" className={ROTULO}>
-          Módulos <small className="text-rotulo font-medium text-muted-foreground">(opcional)</small>
-        </span>
-        <div role="group" aria-labelledby="rotulo-modulos" className="flex flex-wrap gap-2">
-          {modulosDoMontador.map((m) => (
-            <button key={m.id} type="button" aria-pressed={moduloIds.includes(m.id)} onClick={() => alternarModulo(m.id)} className={PILULA}>
-              {m.nome}{" "}
-            </button>
+              marcado={p.id === planoId}
+              aoMudar={() => escolherPlano(p.id)}
+              nome={p.nome}
+              resumo={completo ? resumoDo(p.itens) : undefined}
+              criacao={p.criacao}
+              mensal={p.mensal}
+              recomendado={p.destaque}
+            />
           ))}
         </div>
         {completo && (
-          <dl className="mt-4 divide-y divide-border border-y border-border">
-            {modulosDoMontador.map((m) => (
-              <div key={m.id} className={`py-3 transition-colors duration-300 ${moduloIds.includes(m.id) ? "text-foreground" : "text-muted-foreground"}`}>
-                <dt className="flex items-baseline justify-between gap-4 text-nota font-semibold">
-                  {m.nome}{" "}
-                  <span className="font-normal tabular-nums">
-                    + {reais(m.criacao)} e {reais(m.mensal ?? 0)} por mês
-                  </span>
-                </dt>
-                <dd className="mt-0.5 text-nota">{m.descricao}</dd>
-              </div>
-            ))}
-            {paginaAdicional && (
-              <div className="py-3 text-muted-foreground">
-                <dt className="flex items-baseline justify-between gap-4 text-nota font-semibold">
-                  {completo.textos.paginaAdicional}{" "}
-                  <span className="font-normal tabular-nums">{reais(paginaAdicional.criacao)} por página</span>
-                </dt>
-                <dd className="mt-0.5 text-nota">{paginaAdicional.descricao} Sem recorrência, fora desta soma.</dd>
-              </div>
+          <div className="orc-inclui">
+            <h3 className="text-[1.25rem]">{t.inclui(plano.nome)}</h3>
+            {/* A leitura (a passiva P21): a faixa de luz desce pela lista do que o plano inclui. O [data-ambiente] não muda
+                com o plano: o observador do movimento só vê o que está no HTML da carga. */}
+            <ul className="orc-inclui-lista mt-4 grid gap-2.5" data-ambiente data-passiva="orcamento-inclui">
+              <li aria-hidden="true" className="orc-inclui-luz mov-passiva" />
+              {plano.itens.map((item) => (
+                <li key={item} className="flex gap-3">
+                  {/* mt-1.5: o visto de 16 px no meio da primeira linha (27 px). */}
+                  <IconeVisto className="mt-1.5 size-4 flex-none text-accent" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            {site && (
+              <>
+                {/* Vínculo comum, não <Link>: o site de exemplo é outro site, e a pré-busca traria as fontes dele. */}
+                <a href={site.caminho} target="_blank" rel="noopener" className="orc-vinculo mt-3 py-2.5">
+                  <ComSeta texto={`${t.siteDoPlano} ${site.nome}`} />
+                </a>
+                <p className="text-nota text-muted-foreground">{completo.aviso}</p>
+              </>
             )}
-          </dl>
-        )}
-      </div>
-    </>
-  );
-
-  const acao = (
-    <>
-      <Button variant="secondary" className="w-full" onClick={preparar}>
-        Preparar mensagem
-      </Button>
-
-      <div aria-live="polite">
-        {mensagem && (
-          // scroll-mt: trazida à vista, a prévia não para sob o cabeçalho fixo (72 px).
-          <div ref={previa} className={`${CAIXA} mt-4 scroll-mt-28 scroll-mb-6 border border-border bg-background`}>
-            <p className={`${CAPITULAR} mb-2`}>Mensagem</p>
-            <p className="text-nota">{mensagem}</p>
-            {/* No celular, os dois na largura toda, um sobre o outro; a partir de 640 px, lado a lado. */}
-            <div className="mt-4 grid gap-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-              <a href={linkWhatsApp(mensagem)} target="_blank" rel="noopener" className={buttonVariants({ className: "vd-brilho" })}>
-                <IconeWhatsApp className="size-4.5" />
-                Enviar no WhatsApp
-              </a>
-              {/* Spell UI, Copy Button (desde 03/10): confirma só se a cópia deu certo. */}
-              <CopyButton valor={mensagem} className={buttonVariants({ variant: "outline" })} />
-            </div>
           </div>
         )}
-      </div>
+      </fieldset>
 
-      <p className="mt-4 max-w-[60ch] text-rotulo text-muted-foreground">{privacidade}</p>
+      <fieldset className="orc-passo">
+        <legend>
+          <Passo className="orc-passo-titulo">{t.passos.modulos}</Passo>
+        </legend>
+        <div className="orc-opcoes">
+          {modulosDoMontador.map((m) => (
+            <Opcao
+              key={m.id}
+              tipo="checkbox"
+              valor={m.id}
+              marcado={moduloIds.includes(m.id)}
+              aoMudar={() => alternarModulo(m.id)}
+              aoApontar={completo ? (sobre) => setApontado(sobre ? m.id : null) : undefined}
+              nome={m.nome}
+              resumo={completo ? m.descricao : undefined}
+              criacao={m.criacao}
+              mensal={m.mensal ?? 0}
+              soma
+            />
+          ))}
+        </div>
+        {completo && paginaAdicional && (
+          <p className="orc-adicional">
+            <b>{t.paginaAdicional.rotulo}</b> {t.paginaAdicional.texto(paginaAdicional.criacao)}
+          </p>
+        )}
+      </fieldset>
     </>
   );
 
-  // Lado a lado a partir de 400 px; abaixo, um sobre o outro: em Archivo Black (05/10), "R$ 3.100" passava da caixa até 375 px.
-  // O filete duplo contábil embaixo (16/10): o fecho da soma, o único do site, aqui no componente (início e Orçamento).
-  // Só na tabela completa (16/10), a marca da chapa: o relevo da gravura em volta da impressão, um retângulo afundado
-  // no papel, com a sombra na borda de cima e a luz na de baixo (o sol do meio-dia vem de cima). Desde 17/10
-  // (fechamento com o Impeccable), uma superfície só: os números direto na chapa, o filete duplo por dentro dela e a
-  // chapa dentro da coluna. Até então, a chapa passava 8 px fora da coluna, o filete cruzava a borda dela, e no
-  // celular eram três caixas arredondadas uma dentro da outra (o painel, a chapa e as caixas dos totais: a marca L4).
-  const totais = completo ? (
-    <dl
-      ref={caixaDosTotais}
-      className="relative my-6 grid rounded-[1.25rem] bg-[color-mix(in_srgb,var(--background)_45%,transparent)] pb-4 shadow-[inset_0_1px_0_rgb(15_42_71/0.14),inset_0_-1px_0_rgb(255_255_255/0.9)] after:absolute after:inset-x-4 after:bottom-4 after:border-b-[3px] after:border-double after:border-foreground/30 after:content-[''] min-[25rem]:grid-cols-2"
-    >
-      <Total rotulo="Criação" valor={criacao} naChapa />
-      <Total rotulo="Por mês" valor={mensal} naChapa />
-    </dl>
-  ) : (
-    <dl ref={caixaDosTotais} className="my-6 grid gap-4 border-b-[3px] border-double border-foreground/30 pb-5 min-[25rem]:grid-cols-2">
-      <Total rotulo="Criação" valor={criacao} />
-      <Total rotulo="Por mês" valor={mensal} />
-    </dl>
+  // O que se anuncia ao leitor de tela, só depois de uma escolha (os números à vista contam e não são lidos a cada passo).
+  const falado = (
+    <p className="sr-only" aria-live="polite">
+      {mudou ? t.falado(criacao, mensal) : ""}
+    </p>
   );
 
-  // A sombra de 60 px saiu em 03/10 pela regra 3 das Diretrizes de Design Premium e voltou no mesmo dia,
-  // a pedido do usuário: é parte da identidade do site.
-  // min-w-0: com a letra a 200% a 390 px, o painel não alarga a página (16/10, Impeccable).
-  // Desde 16/10, uma ficha (o --card dos tons claros) com a sombra do lado da hora da página: média no início, onde
-  // sobe sobre os passos; curta na página Orçamento, onde o sol do meio-dia dá sombra curta (app/vidro.css).
-  const painel = `min-w-0 rounded-[2rem] border border-border bg-card px-6 py-8 sm:px-8 ${completo ? "shadow-[var(--sombra-curta)]" : "shadow-[var(--sombra-media)]"}`;
-
   if (!completo) {
+    // O montador curto do início: a ficha que sobe sobre a derrota (components/secoes/orcamento.tsx, data-sobe).
     return (
-      <div className={painel}>
+      <div className="orc-montador orc-curto min-w-0 rounded-xl border border-border bg-card px-6 py-8 shadow-[var(--sombra-media)] sm:px-8">
         {escolhas}
-        {totais}
-        {acao}
+        {/* O filete duplo contábil embaixo: o fecho da soma. Lado a lado a partir de 400 px. */}
+        <dl className="mt-8 grid gap-x-6 gap-y-5 border-b-[3px] border-double border-foreground/30 pb-5 min-[25rem]:grid-cols-2">
+          <Total rotulo={t.criacao} valor={criacao} sob={t.metades(criacao / 2)} />
+          <Total rotulo={t.mensal} valor={mensal} sob={t.inicioDaMensalidade} />
+        </dl>
+        {falado}
+        {/* Abaixo de 360 px, 16 px de lado na pílula: com 24, "Enviar no WhatsApp" quebrava em duas linhas a 320 px. */}
+        <BotaoEnviar href={link} className="mt-6 w-full max-[22.5rem]:px-4" />
+        <p className="mt-4 max-w-[60ch] text-base text-muted-foreground">{privacidade}</p>
       </div>
     );
   }
 
-  const { textos } = completo;
+  // A faixa presa ao pé da tela, só abaixo de 1024 px: os dois totais e o envio, em navy chapado. Fora de vista, inerte.
+  // Hidratada, no <body>, com a entrada da página (app/movimento.css), desde 28/10: o transform da .atlas-entra fazia
+  // da caixa da página o bloco do fixed, e a faixa ficava fora da tela na entrada. É um atalho de quem toca: o leitor
+  // de tela e o teclado têm a conta inteira, na ordem da página (o envio da faixa fora do Tab, que a levaria para
+  // depois do rodapé), e a faixa repete os mesmos valores e a mesma ação.
+  const faixaDoPe = (
+    <div
+      ref={faixaRef}
+      data-tom="escuro"
+      data-entra-com-a-pagina={hidratado ? "" : undefined}
+      data-visivel={faixa || undefined}
+      aria-hidden="true"
+      inert={!faixa}
+      className="orc-faixa lg:hidden"
+    >
+      <p className="orc-faixa-totais">
+        <span>
+          {t.criacao} <b>{reais(criacao)}</b>
+        </span>{" "}
+        <span>
+          {t.mensal} <b>{reais(mensal)}</b>
+        </span>
+      </p>
+      <BotaoEnviar href={link} tabIndex={-1} className="w-full" />
+    </div>
+  );
+
+  const { fundacao } = completo;
   return (
-    <div className={`${painel} grid gap-10 lg:grid-cols-2 lg:gap-14 lg:p-10`}>
+    <div className="orc-montador orc-completo">
       <div ref={colunaDasEscolhas} className="min-w-0">
         {escolhas}
       </div>
-      {/* A faixa presa ao pé da tela, só no celular e no tablet: os dois totais e a ação. Fora de vista, inerte. */}
-      <div
-        inert={!faixa}
-        className={`fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-12px_32px_rgb(15_42_71/0.12)] backdrop-blur-md transition-[translate,visibility] duration-300 ease-atlas motion-reduce:transition-none lg:hidden ${faixa ? "visible translate-y-0" : "invisible translate-y-full"}`}
-      >
-        <div className="mx-auto flex max-w-xl flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          {/* Os dois valores quebram de linha quando não cabem lado a lado (17/10, segundo fechamento): com a letra a 200%,
-              "Por mês R$ 250" passava da tela. O espaço os separa (até então, o ponto médio). */}
-          <p className="flex flex-wrap gap-x-4 text-nota tabular-nums">
-            <span className="whitespace-nowrap">
-              Criação <span className="font-semibold">{reais(criacao)}</span>
-            </span>{" "}
-            <span className="whitespace-nowrap">
-              Por mês <span className="font-semibold">{reais(mensal)}</span>
-            </span>
-          </p>
-          {/* Abaixo de 480 px, a ação desce para a linha de baixo, na largura toda: ao lado dos valores, não cabia. */}
-          <Button variant="secondary" size="sm" className="w-full min-[30rem]:w-auto" onClick={preparar}>
-            Preparar mensagem
-          </Button>
-        </div>
-      </div>
-      <div className="min-w-0">
-        {/* A conta item a item, só com módulos: sem eles, a única linha (o plano) repetia os dois totais logo abaixo. */}
-        {escolhidos.length > 0 && (
-          <>
-            <p className={CAPITULAR}>{textos.resumo}</p>
-            <dl className="mt-2 divide-y divide-border border-y border-border">
-              <Linha rotulo={`Plano ${plano.nome}`} valor={reais(plano.criacao)} detalhe={` e ${reais(plano.mensal)} por mês`} forte />
-              {escolhidos.map((m) => (
-                <Linha key={m.id} rotulo={m.nome} valor={reais(m.criacao)} detalhe={` e ${reais(m.mensal ?? 0)} por mês`} />
-              ))}
-            </dl>
-          </>
-        )}
-        {totais}
-        <p className={CAPITULAR}>{textos.pagamento}</p>
-        {/* As duas parcelas são iguais: uma linha, com o valor uma vez (até 16/10, duas linhas com o mesmo valor). */}
-        <dl className="mt-2 border-y border-border">
-          <Linha rotulo={`${textos.noBriefing} e ${textos.naPublicacao.toLowerCase()}`} valor={`2 × ${reais(criacao / 2)}`} />
+      {hidratado ? createPortal(faixaDoPe, document.body) : faixaDoPe}
+      <aside className="orc-conta" aria-labelledby="conta-titulo">
+        <h2 id="conta-titulo" className="sr-only">
+          {t.conta}
+        </h2>
+        <dl ref={caixaDosTotais} className="orc-totais">
+          <Total rotulo={t.criacao} valor={criacao} sob={t.metades(criacao / 2)} somaria={somaria?.criacao} grande />
+          <Total rotulo={t.mensal} valor={mensal} sob={t.inicioDaMensalidade} somaria={somaria?.mensal} grande />
         </dl>
-        <p className="mt-3 text-nota text-muted-foreground">
-          {textos.inicioDaMensalidade} {textos.mensalidadeCompreende}
-        </p>
-        {/* A condição de fundação numa nota, com o vínculo para ela (até 16/10, numa caixa com filete de bronze dentro do painel:
-            cartão dentro de cartão, e o terceiro bloco da condição no site, depois do início e de Planos). */}
-        <div className="mt-6 mb-6 text-nota">
-          <p>
-            <span className="font-semibold text-accent">{textos.fundacao.rotulo}.</span> {textos.fundacao.texto}
-          </p>
-          {/* O vínculo com seta do site (.vd-vinculo): no hover, o sublinhado aparece e a seta avança (até 03/10, não respondia).
-              Na linha de baixo: no meio do texto, os 44 px do alvo abriam a entrelinha da última linha. */}
-          <Link href={textos.fundacao.destino} className="vd-vinculo min-h-11 gap-1.5 font-semibold">
-            Ver a condição
-            <IconeSeta className="size-3.5" />
+        {falado}
+        {/* Na tela baixa, é este miolo que rola: os totais e o envio ficam sempre à vista (orcamento.css). */}
+        <div className="orc-conta-miolo">
+        {/* A composição, sempre à vista: o plano e cada módulo, com a criação e a mensalidade de cada um. */}
+        <dl className="orc-itens">
+          {[{ id: plano.id, nome: plano.nome, criacao: plano.criacao, mensal: plano.mensal }, ...escolhidos].map((linha) => (
+            <div key={linha.id}>
+              <dt>{linha.nome}</dt>
+              <dd>
+                <b>{reais(linha.criacao)}</b> e {reais(linha.mensal ?? 0)} {t.porMes}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <p className="orc-fundacao">
+          <b>{fundacao.rotulo}.</b> {fundacao.texto}{" "}
+          <Link href={fundacao.destino} className="orc-vinculo">
+            <ComSeta texto={t.verCondicao} />
           </Link>
+        </p>
+        <div className="orc-mensagem">
+          {/* Quebra com a letra grande: o "Copiar" desce, e o vão de 12 px devolve a margem negativa do alvo dele. */}
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+            <p id="mensagem-rotulo" className="text-base font-semibold text-muted-foreground">
+              {t.mensagem}
+            </p>
+            {/* Spell UI, Copy Button: confirma só se a cópia deu certo. Um vínculo de texto na linha do rótulo. */}
+            <CopyButton valor={mensagem} rotulo={t.copiar} className="orc-copiar" />
+          </div>
+          <p className="orc-mensagem-texto">{mensagem}</p>
         </div>
-        {acao}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Na tabela completa, sob as pílulas: o que o plano escolhido inclui e o
- * site feito nele, sob um filete, direto no painel. Até 16/10, numa caixa
- * creme, com o preço em cima: o mesmo valor aparecia três vezes no painel
- * (aqui, na conta e nos totais) e a caixa era um cartão dentro do cartão
- * (o crítico de fora).
- */
-function DetalheDoPlano({
-  plano,
-  textos,
-  site,
-}: {
-  plano: (typeof planos)[number];
-  textos: TextosDaTabelaCompleta;
-  site?: { nome: string; caminho: string };
-}) {
-  return (
-    <div className="mt-5 border-t border-border pt-4">
-      <p className={CAPITULAR}>{textos.inclui}</p>
-      <ul className="mt-2 space-y-2">
-        {plano.itens.map((item) => (
-          <li key={item} className="flex gap-2.5 text-nota">
-            {/* mt-1: o visto de 14 px no meio da primeira linha (21 px), como no simulador. */}
-            <IconeVisto className="mt-1 size-3.5 flex-none text-accent" />
-            {item}
-          </li>
-        ))}
-      </ul>
-      {site && (
-        <>
-          {/* Vínculo comum, não <Link>: o site de exemplo é outro site, e a pré-busca traria as fontes dele.
-              O vínculo com seta (.vd-vinculo), na cor do texto: no hover, o sublinhado e a seta que avança. */}
-          <a href={site.caminho} target="_blank" rel="noopener" className="vd-vinculo mt-4 min-h-11 gap-1.5 text-nota text-foreground">
-            <span className="text-muted-foreground">{textos.siteDoPlano}:</span>{" "}
-            <span className="font-semibold">{site.nome}</span>
-            <IconeSeta className="size-3.5 text-accent" />
-          </a>
-          <p className="mt-1 text-rotulo text-muted-foreground">{textos.aviso}</p>
-        </>
-      )}
+        </div>
+        <BotaoEnviar href={link} className="mt-5 w-full flex-none" />
+      </aside>
     </div>
   );
 }

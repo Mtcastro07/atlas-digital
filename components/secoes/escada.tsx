@@ -1,41 +1,64 @@
+import { Trecho } from "@/components/codigo/trecho";
 import { Abertura, Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
 import { EscadaDemo } from "@/components/ilhas/escada-demo";
 import { Simulador } from "@/components/ilhas/simulador";
 import { buttonVariants } from "@/components/ui/button";
+import { EtiquetaRecomendado } from "@/components/ui/etiqueta-recomendado";
 import { BarsSpinner } from "@/components/ui/spell/bars-spinner";
-import { Apoio } from "@/components/tipografia";
 import { TiltCard } from "@/components/ui/spell/tilt-card";
+import { sitesDeExemplo } from "@/conteudo/paginas/planos";
 import { planos } from "@/conteudo/planos";
-import { escada, planosSecao, simulador } from "@/conteudo/site";
+import { escada, simulador } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
+import { linhasDo, trechoDe } from "@/lib/trecho";
 
 /**
- * "A distância não está na lista. Está na tela.": um site completo em cada
+ * O código desta página (R10, 28/10): o cabeçalho que o servidor manda junto de cada página dos sites de exemplo,
+ * lido de next.config.ts no build (a linha e o número dela são os verdadeiros; se a regra mudar, o build para). A
+ * página o mostra como o servidor o manda, "X-Robots-Tag: noindex, nofollow".
+ */
+const robots = trechoDe("next.config.ts", '{ key: "X-Robots-Tag", value: "noindex, nofollow" }');
+const [, chaveDoCabecalho, valorDoCabecalho] = /key: "([^"]+)", value: "([^"]+)"/.exec(robots.linhas[0])!;
+
+/**
+ * "A diferença entre os planos se vê nos sites.": um site completo em cada
  * nicho, agrupados por plano, no palco da escada (desde 08/10, até quatro
- * por plano; antes, um). O seletor dos três níveis escolhe o plano, e o de
- * nichos, o site dele em cena; a troca é encenada com a camada de
- * movimento de cada nível (ilha EscadaDemo: no Essencial, tudo surge de
- * uma vez; no Profissional, em camadas; no Completo, o nome se compõe
- * palavra a palavra e os blocos assentam). Cada site traz o plano, o nome,
- * o nicho, o resumo e a prévia no computador e no celular
- * (public/simulador/<nicho>-*.webp); "Abrir no simulador" e a própria
- * prévia abrem o site vivo num diálogo (ilha Simulador, à maneira do
- * Webild). Todos ficam desenhados aqui, no servidor: sem script, aparecem
- * um embaixo do outro, e os vínculos levam ao site em nova aba.
+ * por plano; antes, um). O seletor dos três planos escolhe o plano, e o de
+ * nichos, o site dele em cena, com o rótulo de cada um à vista (R10, 28/10); a
+ * nota do plano, junto deles, diz o que o site faz. A troca é encenada com a
+ * camada de movimento de cada nível (ilha EscadaDemo). Cada site traz o plano,
+ * o nome, o nicho, o resumo e a prévia no computador e no celular
+ * (public/simulador/<nicho>-*.webp). Na mesa, "Abrir no simulador" e a própria
+ * prévia abrem o site vivo num diálogo (ilha Simulador); no celular, o
+ * simulador não abre (pedido de 17/10), e o botão abre o site em nova aba. Todos
+ * ficam desenhados aqui, no servidor: sem script, aparecem um embaixo do outro.
+ * A passiva P6 (R10): o aparelho respira na luz, inclinando sozinho (o invólucro
+ * de fora em rotateY, o de dentro em rotateX, com períodos diferentes); sob o
+ * ponteiro, ele para, e a inclinação do TiltCard assume.
+ * No pé, o aviso de ficção e o cabeçalho que tira os sites do Google.
  */
 export function Escada() {
   // `abrir` é só do palco; o resto dos rótulos vai ao diálogo.
   const { sites, abrir, ...textos } = simulador;
+  const niveis = escada.niveis.map((n) => ({ ...n, nota: sitesDeExemplo.notas[n.id] }));
 
   return (
-    // pb-12 md:pb-18 (17/10, passe 4): a seção termina em duas legendas (a nota do nível e o aviso), e depois delas vai
-    // meio respiro, e não o inteiro (sobravam 214 px de água abaixo do palco, na mesa).
-    <Secao id="escada" tom="escuro" className="pb-12 md:pb-18">
-      <Envelope>
-        <Abertura titulo={escada.titulo} lide={escada.lide} />
+    <Secao id="escada" tom="escuro" className="pb-16 md:pb-24">
+      {/* Os refletores do palco (a passiva P34): dois fachos que varrem devagar o alto da cena, atrás do título. */}
+      <div aria-hidden="true" className="vd-refletores" data-ambiente data-passiva="planos-refletores">
+        <span className="vd-refletor mov-passiva" />
+        <span className="vd-refletor mov-passiva" />
+      </div>
+      <Envelope className="relative">
+        <Abertura titulo={escada.titulo} lide={sitesDeExemplo.lide} />
         <Simulador dados={{ textos, sites }}>
-          <EscadaDemo niveis={escada.niveis} sites={sites.map(({ id, plano, rotulo }) => ({ id, plano, rotulo }))} rotuloDosNichos={escada.nichos}>
+          <EscadaDemo
+            niveis={niveis}
+            sites={sites.map(({ id, plano, rotulo }) => ({ id, plano, rotulo }))}
+            rotuloDoPlano={sitesDeExemplo.rotuloDoPlano}
+            rotuloDosNichos={escada.nichos}
+          >
             {sites.map((site, i) => {
               const plano = planos.find((p) => p.id === site.plano)!;
               const palavras = site.nome.split(" ");
@@ -45,14 +68,12 @@ export function Escada() {
                       "Abrir no site" passavam da largura do palco, que os cortava. Com a letra normal, nada quebra a palavra. */}
                   <div className="min-w-0 [overflow-wrap:anywhere]">
                     <p data-parte="texto" className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <span className="text-rotulo font-semibold text-accent">{plano.nome}</span>{" "}
-                      <span className="text-nota text-muted-foreground tabular-nums">
+                      <span className="text-base font-semibold text-accent">{plano.nome}</span>{" "}
+                      <span className="text-base text-muted-foreground tabular-nums">
                         {reais(plano.criacao)} {textos.criacao}
                       </span>
                     </p>
-                    {/* Título de bloco: o nome do site em cena, em Archivo Black (de 03 a 05/10, na família do texto), no
-                        degrau dos números. De 03 a 17/10, no dos títulos, o mesmo do h2 da seção (68 px na mesa): a
-                        hierarquia achatada (a marca T6; fechamento com o Impeccable, 17/10). */}
+                    {/* Título de bloco: o nome do site em cena, em Archivo Black, no degrau dos números (desde 17/10). */}
                     <h3 data-parte="titulo" className="mt-3 font-display tracking-titulo text-numero font-normal">
                       {/* Cada palavra numa janela própria: no nível Completo, sobe de dentro dela. A folga de 0,08 em
                           embaixo guarda as descendentes. */}
@@ -75,13 +96,18 @@ export function Escada() {
                     </p>
                     <div data-parte="texto" className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
                       <a href={site.caminho} target="_blank" rel="noopener" data-simulador={i} className={buttonVariants({ size: "lg" })}>
-                        <span className="vd-espera-rotulo">{abrir}</span>
+                        {/* Na mesa, o simulador; no celular, o site em nova aba (planos.css, .vd-so-simulador). */}
+                        <span className="vd-espera-rotulo">
+                          <span className="vd-so-simulador">{abrir}</span>
+                          <span className="vd-sem-simulador">{sitesDeExemplo.abrirOSite}</span>
+                        </span>
                         {/* Enquanto o simulador baixa (aria-busy, ilhas/simulador.tsx): as barras no lugar do rótulo. */}
                         <span aria-hidden="true" className="vd-espera">
                           <BarsSpinner tamanho={18} />
                         </span>
                       </a>{" "}
-                      <a href={site.caminho} target="_blank" rel="noopener" className={buttonVariants({ variant: "link", size: "link" })}>
+                      {/* Só na mesa: no celular, o botão já abre o site em nova aba. */}
+                      <a href={site.caminho} target="_blank" rel="noopener" className={`vd-so-simulador ${buttonVariants({ variant: "link", size: "link" })}`}>
                         {textos.novaAba}
                         <IconeSeta className="size-3.5" />
                       </a>
@@ -95,65 +121,77 @@ export function Escada() {
                     rel="noopener"
                     data-simulador={i}
                     data-parte="bloco"
-                    aria-label={`${abrir}: ${site.nome}`}
-                    className="group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+                    aria-label={site.nome}
+                    className="vd-palco-previa group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                   >
-                    {/* A prévia inclina em 3D sob o ponteiro, com um brilho (Spell UI, Tilt Card; desde 03/10). */}
-                    <TiltCard limite={6} raio="var(--radius-xl)">
-                      <span data-tom={site.tom} className="vd-previa relative block aspect-[16/11] overflow-hidden rounded-xl border border-border">
-                        {/* Enquanto o simulador baixa, as barras num disco, no centro da prévia. */}
-                        <span aria-hidden="true" className="vd-espera z-20">
-                          <span className="grid size-14 place-items-center rounded-full bg-background/85 text-foreground">
-                            <BarsSpinner tamanho={22} />
+                    {/* P6: os dois invólucros que respiram, fora do TiltCard (que inclina sob o ponteiro, desde 03/10). */}
+                    <span className="vd-palco-respira-y mov-passiva block">
+                      <span className="vd-palco-respira-x mov-passiva block">
+                        <TiltCard limite={6} raio="var(--radius-xl)">
+                          <span data-tom={site.tom} className="vd-previa relative block aspect-[16/11] overflow-hidden rounded-xl border border-border">
+                            {/* Enquanto o simulador baixa, as barras num disco, no centro da prévia. */}
+                            <span aria-hidden="true" className="vd-espera z-20">
+                              <span className="grid size-14 place-items-center rounded-full bg-background/85 text-foreground">
+                                <BarsSpinner tamanho={22} />
+                              </span>
+                            </span>
+                            {plano.destaque && <EtiquetaRecomendado className="absolute top-3 right-3 z-10" />}
+                            {/* As duas telas flutuam com sombras de 75 e 80% de preto (parte da identidade do site, a
+                                pedido do usuário, 03/10); enquanto a imagem não chega, o lugar dela pulsa devagar. */}
+                            <span className="absolute top-[9%] left-[6%] w-[80%] overflow-hidden rounded-[10px] bg-deep shadow-[0_24px_50px_-24px_rgb(0_0_0/0.75)] ring-1 ring-foreground/10 transition-transform duration-500 ease-atlas group-hover:-translate-y-1">
+                              <span aria-hidden="true" className="flex h-4 items-center gap-1 bg-card px-2">
+                                {[0, 1, 2].map((k) => (
+                                  <span key={k} className="size-1.5 rounded-full bg-foreground/25" />
+                                ))}
+                              </span>
+                              <img
+                                src={`/simulador/${site.id}-computador.webp`}
+                                alt=""
+                                width={720}
+                                height={450}
+                                loading="lazy"
+                                decoding="async"
+                                className="vd-esqueleto block aspect-[16/10] w-full object-cover object-top"
+                              />
+                            </span>
+                            <span className="vd-moldura-de-celular absolute right-[5%] bottom-[-12%] w-[23%] overflow-hidden rounded-[16px] border-[3px] shadow-[0_24px_50px_-20px_rgb(0_0_0/0.8)] transition-transform duration-500 ease-atlas group-hover:-translate-y-2">
+                              <img
+                                src={`/simulador/${site.id}-celular.webp`}
+                                alt=""
+                                width={293}
+                                height={633}
+                                loading="lazy"
+                                decoding="async"
+                                className="vd-esqueleto block w-full rounded-[13px]"
+                              />
+                            </span>
                           </span>
-                        </span>
-                        {plano.destaque && (
-                          <span className="absolute top-3 right-3 z-10 rounded-full bg-primary px-3 py-1 text-rotulo font-semibold text-primary-foreground">
-                            {planosSecao.seloDestaque}
-                          </span>
-                        )}
-                        {/* As duas telas flutuam com sombras de 75 e 80% de preto (saíram em 03/10 pela regra 3 das
-                            Diretrizes de Design Premium e voltaram no mesmo dia, a pedido do usuário: são parte da
-                            identidade do site); enquanto a imagem não chega, o lugar dela pulsa devagar (vd-esqueleto),
-                            em vez de ficar vazio. */}
-                        <span className="absolute top-[9%] left-[6%] w-[80%] overflow-hidden rounded-[10px] bg-deep shadow-[0_24px_50px_-24px_rgb(0_0_0/0.75)] ring-1 ring-foreground/10 transition-transform duration-500 ease-atlas group-hover:-translate-y-1">
-                          <span aria-hidden="true" className="flex h-4 items-center gap-1 bg-card px-2">
-                            {[0, 1, 2].map((k) => (
-                              <span key={k} className="size-1.5 rounded-full bg-foreground/25" />
-                            ))}
-                          </span>
-                          <img
-                            src={`/simulador/${site.id}-computador.webp`}
-                            alt=""
-                            width={720}
-                            height={450}
-                            loading="lazy"
-                            decoding="async"
-                            className="vd-esqueleto block aspect-[16/10] w-full object-cover object-top"
-                          />
-                        </span>
-                        <span className="vd-moldura-de-celular absolute right-[5%] bottom-[-12%] w-[23%] overflow-hidden rounded-[16px] border-[3px] shadow-[0_24px_50px_-20px_rgb(0_0_0/0.8)] transition-transform duration-500 ease-atlas group-hover:-translate-y-2">
-                          <img
-                            src={`/simulador/${site.id}-celular.webp`}
-                            alt=""
-                            width={293}
-                            height={633}
-                            loading="lazy"
-                            decoding="async"
-                            className="vd-esqueleto block w-full rounded-[13px]"
-                          />
-                        </span>
+                        </TiltCard>
                       </span>
-                    </TiltCard>
+                    </span>
                   </a>
                 </div>
               );
             })}
           </EscadaDemo>
         </Simulador>
-        {/* Os sites do palco são de estabelecimentos fictícios: o aviso em texto, fora do diálogo que só abre com script,
-            centrado logo abaixo da nota do nível, como uma legenda só do palco (o da vitrine também é centrado). */}
-        <Apoio className="mx-auto mt-2 text-center text-nota">{textos.aviso}</Apoio>
+
+        {/* O pé: o aviso de ficção (os sites são de estabelecimentos fictícios), fora do diálogo que só abre com script,
+            e, ao lado, o cabeçalho que o servidor manda junto de cada página deles, com a frase para o leigo antes. */}
+        <div className="vd-pe-dos-sites">
+          <div>
+            <p className="font-semibold">{textos.aviso}</p>
+            <p className="mt-2 max-w-[46ch] text-muted-foreground">{sitesDeExemplo.fraseDoCodigo}</p>
+          </div>
+          <Trecho
+            trecho={{ linhas: [`${chaveDoCabecalho}: ${valorDoCabecalho}`] }}
+            tintas={[
+              [valorDoCabecalho, "valor"],
+              [chaveDoCabecalho, "chave"],
+            ]}
+            legenda={`Do arquivo ${robots.arquivo}, ${linhasDo(robots)}.`}
+          />
+        </div>
       </Envelope>
     </Secao>
   );

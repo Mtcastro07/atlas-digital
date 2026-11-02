@@ -38,7 +38,9 @@ export function fundoSob(dono: Element, caixa: { left: number; width: number; to
   const y = Math.min(Math.max(caixa.top + caixa.height / 2, 1), window.innerHeight - 1);
   let claros = 0;
   for (const fracao of PONTOS) {
-    const sob = document.elementsFromPoint(caixa.left + caixa.width * fracao, y).find((el) => !dono.contains(el));
+    // A peça que está saindo ([data-ending-style], do Base UI: o menu do celular, que fecha em 300 ms depois do toque
+    // num vínculo) não é o fundo: sem a View Transition (27/10), a primeira leitura da página nova caía nela.
+    const sob = document.elementsFromPoint(caixa.left + caixa.width * fracao, y).find((el) => !dono.contains(el) && !el.closest("[data-ending-style]"));
     if (eClaro(sob)) claros++;
   }
   if (claros === PONTOS.length) return "claro";

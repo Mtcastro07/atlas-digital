@@ -27,12 +27,18 @@ const importarPainel = () =>
 const preCarregar = () => void importarPainel().catch(() => undefined);
 const PainelDoSimulador = dynamic(importarPainel, { ssr: false });
 
+// O simulador só na mesa (pedido de 17/10; R10, 28/10): com a tela larga e um ponteiro fino. No celular e no
+// tablet, o diálogo nem baixa, e o vínculo faz o que faz sem script: abre o site numa aba nova. A mesma consulta
+// troca o rótulo do botão (app/paginas/planos.css, .vd-so-simulador).
+const NA_MESA = "(min-width: 1024px) and (hover: hover) and (pointer: fine)";
+const naMesa = () => window.matchMedia(NA_MESA).matches;
+
 const cartaoDe = (alvo: EventTarget | null) =>
   (alvo as Element | null)?.closest?.<HTMLAnchorElement>("a[data-simulador]") ?? null;
 
 /** Sinal de intenção (ponteiro ou foco) sobre um cartão: o diálogo começa a baixar. */
 function preCarregarNoCartao(evento: React.SyntheticEvent) {
-  if (cartaoDe(evento.target)) preCarregar();
+  if (cartaoDe(evento.target) && naMesa()) preCarregar();
 }
 
 /**
@@ -41,7 +47,8 @@ function preCarregarNoCartao(evento: React.SyntheticEvent) {
  * a[data-simulador] levam ao site em nova aba — sem script, é o que
  * acontece. Com script, o clique abre o diálogo
  * (ilhas/painel-do-simulador.tsx) com aquele site.
- * Cliques com Ctrl, Cmd, Shift ou botão do meio seguem o navegador.
+ * Cliques com Ctrl, Cmd, Shift ou botão do meio seguem o navegador, e,
+ * fora da mesa, todo clique (o simulador só na mesa).
  */
 export function Simulador({ dados, children }: { dados: DadosDoSimulador; children: React.ReactNode }) {
   // A chave remonta o diálogo a cada abertura (um cartão clicado enquanto o anterior ainda sai).
@@ -49,11 +56,14 @@ export function Simulador({ dados, children }: { dados: DadosDoSimulador; childr
 
   return (
     <div
+      // Com o diálogo aberto, o aparelho do palco para de respirar (a passiva P6, app/paginas/planos.css).
+      data-simulador-aberto={aberto ? "" : undefined}
       onPointerOver={preCarregarNoCartao}
       onFocus={preCarregarNoCartao}
       onClick={(evento) => {
         const cartao = cartaoDe(evento.target);
         if (!cartao || evento.button !== 0 || evento.metaKey || evento.ctrlKey || evento.shiftKey || evento.altKey) return;
+        if (!naMesa()) return;
         evento.preventDefault();
         const pedido = { indice: Number(cartao.dataset.simulador), chave: evento.timeStamp };
         if (painelPronto) return setAberto(pedido);

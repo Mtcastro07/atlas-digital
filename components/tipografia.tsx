@@ -2,7 +2,8 @@ import { cn } from "@/lib/utils";
 
 // Papéis de texto, nas fontes do site de 28/08 (desde 05/10, pedido do
 // usuário; app/globals.css) e nos degraus da escala tipográfica: títulos
-// em Archivo Black, lide em Archivo Light, subtítulos em Archivo Medium,
+// em Archivo Black, lide em Archivo Regular (400; até 28/10, Light, 300; R10,
+// D1), subtítulos em Archivo Medium,
 // texto em Inter. As cores vêm do tom da seção, então o mesmo componente
 // serve no escuro, na névoa e na pedra.
 
@@ -25,11 +26,12 @@ export function Titulo({ linhas, className, ...props }: TituloProps) {
   );
 }
 
-/** Parágrafo de abertura: Archivo Light, text-destaque, 18 a 21 px, cor secundária (o .lide do site de 28/08). */
+/** Parágrafo de abertura: Archivo 400, text-destaque, 18 a 21 px, cor secundária (o .lide do site de 28/08). O peso vem
+ *  do mesmo arquivo variável da Archivo (300 a 500): nenhum byte novo. */
 export function Lide({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("max-w-[48ch] font-sub text-destaque font-light tracking-sub text-muted-foreground", className)}
+      className={cn("max-w-[48ch] font-sub text-destaque font-normal tracking-sub text-muted-foreground", className)}
       {...props}
     />
   );

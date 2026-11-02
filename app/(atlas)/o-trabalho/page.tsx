@@ -1,5 +1,5 @@
 import { AberturaDePagina } from "@/components/paginas/abertura-de-pagina";
-import { ReguaDoTrabalho } from "@/components/paginas/figuras";
+import { ReguaDoTrabalho } from "@/components/paginas/o-trabalho/figura";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
 import { Trabalho } from "@/components/secoes/trabalho";
 import { metadadosDaPagina } from "@/lib/metadados";
@@ -14,9 +14,11 @@ const tarde = { "--luz-x": "-8%", "--luz-y": "30%" } as React.CSSProperties;
 /**
  * O trabalho: a abertura é a régua do prazo, como uma trena — da visita
  * ao rascunho em 24 horas, às revisões e à publicação —; depois, as
- * quatro etapas, num cronograma em linhas (desde 16/10). Desde 16/10,
- * na névoa (até então, no branco, que saiu como campo de cena), com a luz
- * da tarde na abertura.
+ * quatro etapas, cada uma com a sua composição e o seu objeto (desde 02/11,
+ * no acabamento do R10: o rascunho é a cena escura, com o mostrador das 24 h;
+ * de 28/10 a 02/11, um livro-razão; de 16 a 28/10, um cronograma em linhas).
+ * Com a luz da tarde na abertura. As passivas: a janela da publicação, na
+ * trena, a folha da visita, o mostrador, as duas rodadas e o mapa do site.
  */
 export default function PaginaDoTrabalho() {
   return (

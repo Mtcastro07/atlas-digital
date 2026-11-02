@@ -1,5 +1,5 @@
 import { AberturaDePagina } from "@/components/paginas/abertura-de-pagina";
-import { GloboDeNiteroi, MolduraGraduada } from "@/components/paginas/figuras";
+import { GloboDeNiteroi, MolduraGraduada } from "@/components/paginas/o-atlas/figura";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
 import { Historia } from "@/components/secoes/historia";
 import { QuemFaz } from "@/components/secoes/quem-faz";

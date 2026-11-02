@@ -5,6 +5,7 @@ import { formaDosNichos } from "@/components/nichos/forma";
 import { marcasDosNichos } from "@/components/nichos/marcas";
 import { Apoio } from "@/components/tipografia";
 import { demonstrativos } from "@/conteudo/nichos";
+import { textosDaPagina } from "@/conteudo/paginas/para-quem";
 import { vitrine } from "@/conteudo/site";
 
 /**
@@ -23,6 +24,9 @@ import { vitrine } from "@/conteudo/site";
  * acima, são a névoa, e a pedra separa as duas cenas claras sem ir ao navy
  * (ΔL de 0,050). Os dois aparelhos são objetos sob a mesma luz da manhã,
  * com a sombra média para o oeste (a do aparelho, app/vidro.css).
+ * Desde 28/10 (R10, fase 1): o lide em 400, com o texto do R9 (conteudo/paginas/para-quem.ts), as notas no corpo (de
+ * 14 a 17 px), o seletor e o nicho a 16 px (nada que decide abaixo disso), o raio da nota em rounded-ficha (o
+ * rounded-lg saiu do Atlas) e a grade que não alarga a página com a letra a 200%. Nenhum efeito novo.
  */
 export function Vitrine() {
   return (
@@ -32,7 +36,7 @@ export function Vitrine() {
       <Envelope className="vd-alternador">
         {/* Centrada: a cena de cima, os públicos, é na margem e no mesmo tom (de 14 a 16/10, o contrário,
             quando os públicos eram três blocos centrados). */}
-        <Abertura titulo={vitrine.titulo} lide={vitrine.texto} />
+        <Abertura titulo={vitrine.titulo} lide={textosDaPagina.vitrine} />
 
         {/* min-w-0: o fieldset tem largura mínima no conteúdo; com a letra a 200%, alargava a página (16/10). */}
         {/* @container: com a letra a 200%, as opções perdem o recuo dos lados (17/10); antes, "Nutrição" passava da tela. */}
@@ -43,7 +47,7 @@ export function Vitrine() {
             {demonstrativos.map((d, i) => (
               <label key={d.id} className="group/opcao relative z-[1] flex min-h-11 cursor-pointer items-center justify-center">
                 <input type="radio" name="demonstrativo" value={d.id} defaultChecked={i === 0} className="peer sr-only" />
-                <span className="rounded-full px-3 py-1 text-nota font-semibold @max-[14rem]:px-0 text-muted-foreground transition-colors duration-300 group-hover/opcao:text-foreground peer-checked:text-foreground peer-focus-visible:outline-2 peer-focus-visible:outline-ring">
+                <span className="rounded-full px-3 py-1 text-base font-semibold [overflow-wrap:anywhere] @max-[14rem]:px-0 text-muted-foreground transition-colors duration-300 group-hover/opcao:text-foreground peer-checked:text-foreground peer-focus-visible:outline-2 peer-focus-visible:outline-ring">
                   {d.rotuloCurto}
                 </span>{" "}
               </label>
@@ -51,7 +55,7 @@ export function Vitrine() {
           </div>
         </fieldset>
 
-        <div className="mt-12 grid gap-20 lg:mt-20 lg:grid-cols-2 lg:gap-16">
+        <div data-ambiente data-passiva="para-quem-aparelhos" className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-20 [overflow-wrap:anywhere] lg:mt-20 lg:grid-cols-2 lg:gap-16">
           {demonstrativos.map((d) => {
             const Marca = marcasDosNichos[d.id];
             const forma = formaDosNichos[d.id];
@@ -61,16 +65,18 @@ export function Vitrine() {
                   <Marca className="size-11" />
                   {/* O nicho sob o nome, como legenda (17/10): acima dele, era o sobretítulo (a marca T2). */}
                   <h3 className={`mt-3 text-destaque ${fonteDoNicho} ${forma.nome}`}>{d.casa}</h3>
-                  <p className="mt-1 text-nota text-muted-foreground">{d.nicho}</p>
+                  <p className="mt-1 text-base text-muted-foreground">{d.nicho}</p>
                 </header>
                 {/* O palco: o tom e o padrão do nicho atrás do aparelho. */}
                 <div data-tom={d.id} className={`relative mt-8 overflow-hidden rounded-xl bg-deep px-6 py-10 md:py-12 ${forma.fundo}`}>
                   {d.id === "deposito" && <span aria-hidden="true" className="vd-zebrada absolute inset-x-0 top-0 h-2" />}
-                  <Celular src={d.imagem} alt={d.descricao} marcadores={d.marcadores} inclina className="relative mx-auto w-[min(76%,300px)]" />
+                  <div className="vd-pq-aparelho mov-passiva">
+                    <Celular src={d.imagem} alt={d.descricao} marcadores={d.marcadores} inclina className="relative mx-auto w-[min(76%,300px)]" />
+                  </div>
                 </div>
                 <ol className="mx-auto mt-10 max-w-md space-y-1">
                   {d.notas.map((nota, i) => (
-                    <li key={nota} data-nota={i + 1} className="vd-nota flex gap-3.5 rounded-lg p-3 text-nota text-muted-foreground">
+                    <li key={nota} data-nota={i + 1} className="vd-nota flex gap-3.5 rounded-ficha p-3 text-corpo text-muted-foreground">
                       <span
                         data-numero
                         aria-hidden="true"
@@ -78,7 +84,7 @@ export function Vitrine() {
                       >
                         {i + 1}
                       </span>{" "}
-                      <span className="pt-0.5">{nota}</span>
+                      <span>{nota}</span>
                     </li>
                   ))}
                 </ol>

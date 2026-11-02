@@ -3,6 +3,15 @@
 @import "./vidro.css";
 @import "./movimento.css";
 @import "./nichos.css";
+/* O CSS de cada página e o das peças comuns (R10, fase 0, 28/10): um arquivo por dono, depois do que todas usam. */
+@import "./paginas/inicio.css";
+@import "./paginas/para-quem.css";
+@import "./paginas/planos.css";
+@import "./paginas/orcamento.css";
+@import "./paginas/o-trabalho.css";
+@import "./paginas/o-atlas.css";
+@import "./paginas/duvidas.css";
+@import "./comuns.css";
 /* O kit de produção (producao/) mora na raiz, mas não é este site: as classes dele não entram na folha. */
 @source not "../producao";
 
@@ -54,6 +63,12 @@
   --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.55);
+  /* Os raios do Atlas em quatro valores (R10, 28/10, S8): 4 px, a pedra e a folha (rounded-pedra); 18 px, a ficha
+     (rounded-ficha, o --radius); 28 px, a placa (rounded-xl, o --radius-xl); e a pílula (rounded-full). Os tokens de
+     cima não mudam: com o @theme inline, rounded-sm leva o valor na própria classe, e um site de demonstração o usa.
+     No Atlas, os três de cima saem (C9 do contrato), salvo no desenho de um objeto (o aparelho, a esfera, o globo). */
+  --radius-pedra: 4px;
+  --radius-ficha: var(--radius);
 }
 
 /* A coluna: 1.120 px até 1.440 px de tela, como no site de 28/08, e fluida dali até 1.344 px a 1.920 (desde 16/10,
@@ -61,6 +76,11 @@
    tokens (producao/esteira/09-movimento.md, seção 3): entrada, saída e mudança de lugar, do Material 3. O código novo
    usa só estas; a curva da casa (ease-atlas) fica para o que já existia. */
 @theme {
+  /* A letra do código mostrado (R10, 28/10, D2): a mono do próprio aparelho, sem @font-face (Menlo no Chrome do Mac, SF
+     Mono no Safari, Droid Sans Mono no Android). Fora do @theme inline, de propósito: font-mono continua a ler
+     var(--font-mono), e o depósito, que dá ao seu bloco a Plex Mono pela mesma variável
+     (components/demos/deposito/fontes.ts), fica como está. */
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, monospace;
   --container-pagina: clamp(70rem, 28rem + 46.67vw, 84rem);
   --ease-atlas: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
@@ -243,7 +263,7 @@
     background: var(--background);
     scroll-behavior: smooth;
     /* Sem o realce azul do toque no Android: cada peça responde ao toque
-       com a sua própria cor (vidro.css, .vd-bloco:active; os botões). */
+       com a sua própria cor. */
     -webkit-tap-highlight-color: transparent;
   }
   body {
@@ -364,4 +384,30 @@ section[data-tom="pedra"] + section[data-tom="pedra"] {
 }
 html:not(:has([data-demo])) :is(input, textarea, [contenteditable]) {
   caret-color: var(--accent);
+}
+
+/* A troca de página a 60 quadros (27/10; registros/atlas/design-v2/60fps-navegacao): as seções do Atlas abaixo da
+   primeira e o rodapé só recebem estilo, leiaute e pintura perto da tela, e o commit da página nova deixa de recalcular
+   a página inteira. A altura reservada vale até a seção se desenhar uma vez (auto: depois, a última medida). Fora a
+   seção com o que sobe sobre a de cima ([data-sobe], o montador do início): a contenção recortaria a parte que sobe.
+   Fora também a vitrine de /para-quem (#vitrine): contida, a rolagem do celular travava de 130 a 580 ms, sempre no
+   mesmo ponto do gesto da régua (28/10; registros/atlas/design-v2/60fps-navegacao/RELATO-2.md, seção 7). Fora, enfim,
+   a seção marcada com data-sem-poupar (R10, 28/10, S18): a que precisa de uma linha do tempo de rolagem ou de algo
+   preso que atravessa a emenda (a carta de /para-quem); a régua de quadros mede o custo na navegação.
+   Antes de medir um destino, a ilha Ancoras desenha todas (html.ancorando): com a altura reservada, a âncora caía fora
+   do lugar. Na carga com âncora, o script do <head> (app/layout.tsx) já põe o html.ancorando: o salto do navegador
+   até a âncora cai no lugar certo, e não numa altura reservada (RELATO-2.md, 12.5, a carga de /#fundacao). */
+#conteudo section.vd-materia ~ section.vd-materia:not(:has([data-sobe]), #vitrine, [data-sem-poupar]),
+#conteudo ~ footer {
+  content-visibility: var(--poupar-secoes, auto);
+  contain-intrinsic-size: auto 1000px;
+}
+/* A vitrine fica fora da contenção na rolagem (RELATO-2.md, 7.2), mas só durante a entrada da página ela pesava no commit
+   da troca: 46 ms de tarefa no celular 4×, contra 36 contida (R10, depois da crítica, 01/11). Ilhas/entrada-da-pagina.tsx. */
+.atlas-entra:not(.atlas-entrou) #vitrine {
+  content-visibility: var(--poupar-secoes, auto);
+  contain-intrinsic-size: auto 1000px;
+}
+html.ancorando {
+  --poupar-secoes: visible;
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
-import { Lide, Titulo } from "@/components/tipografia";
+import { Lide } from "@/components/tipografia";
 import { buttonVariants } from "@/components/ui/button";
 import { acaoOrcamento, falarNoWhatsApp, fim, mensagens } from "@/conteudo/site";
 import { linkWhatsApp } from "@/lib/whatsapp";
@@ -28,21 +28,36 @@ import { linkWhatsApp } from "@/lib/whatsapp";
  * fechamento (17/10), o mar com 4 rem (até então, a 80% da cena na mesa e a
  * 9 rem do pé no celular: uma faixa escura vazia de 180 a 290 px antes do
  * rodapé) e o sol ao meio, sob a ação principal (até então, a 77%).
+ * Desde 28/10 (R10, D11), o reflexo corre por transform: a janela de luz e
+ * a cópia clara do título em sentidos opostos (a passiva P2); até então,
+ * o background-position de um degradê recortado pelo texto, que repintava
+ * o título a cada quadro.
  * Até 16/10, a mesma chamada fechava também Dúvidas, colada à faixa "Fim
  * do percurso": duas chamadas seguidas, cada uma com a sua pílula de
  * bronze, e o mesmo bloco em duas páginas (o crítico de fora). Dúvidas
  * termina como as outras páginas internas, na próxima página.
  */
+const titulo = fim.titulo.join(" ");
+
 export function Fim() {
   return (
-    // Na mesa, a altura da tela (16/10): o amanhecer fecha a noite que a capa abriu. A matéria da água vem da Secao
+    // Na mesa, três quartos da tela (até 01/11, a tela inteira, com 372 px vazios sob a ação; a marca L10): o amanhecer fecha a noite que a capa abriu. A matéria da água vem da Secao
     // (até 16/10, o grão só aqui, .vd-grao, com as bordas apagadas por máscara).
     // O pé maior que o alto: o texto fica no céu, acima do horizonte e da luz que sobe dele.
     // O pé: o mar (4 rem) mais a luz que sobe do horizonte (app/vidro.css, --subida), para o texto ficar acima dela.
     // data-sem-atalho (17/10, segundo fechamento): o "Falar no WhatsApp" da cena já está à vista, e o atalho o cobria.
-    <Secao aria-label="Chamada final" data-sem-atalho tom="escuro" className="vd-amanhecer overflow-hidden pb-40 text-center md:pb-44 lg:flex lg:min-h-svh lg:items-center lg:pb-[calc(4rem+20svh)]">
+    <Secao aria-label="Chamada final" data-sem-atalho tom="escuro" className="vd-amanhecer overflow-hidden pb-40 text-center md:pb-44 lg:flex lg:min-h-[75svh] lg:items-center lg:pb-44">
       <Envelope>
-        <Titulo linhas={fim.titulo} data-ambiente className="mov-reflexo mx-auto -mb-[0.1em] pb-[0.1em]" />
+        {/* O reflexo (R10, D11; a passiva P2, app/paginas/inicio.css): a cópia clara do título, numa janela que corre. O
+            h2 é o [data-ambiente]; a cópia vem do ::before (data-texto), fora do HTML e da árvore de acessibilidade. */}
+        <h2 data-ambiente className="mx-auto text-titulo">
+          <span data-passiva="inicio-reflexo" className="inicio-reflexo">
+            {titulo}
+            <span aria-hidden="true" className="inicio-reflexo-janela mov-passiva">
+              <span className="inicio-reflexo-luz mov-passiva" data-texto={titulo} />
+            </span>
+          </span>
+        </h2>
         <Lide className="mx-auto mt-8">{fim.lide}</Lide>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
           <Link href={acaoOrcamento.destino} className={buttonVariants({ size: "lg" })}>

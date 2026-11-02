@@ -1,5 +1,7 @@
 import { Envelope, Secao } from "@/components/estrutura";
 import { Montador } from "@/components/ilhas/montador";
+import { FitaDaConta } from "@/components/paginas/orcamento/fita-da-conta";
+import { RotaDireta } from "@/components/paginas/orcamento/rota-direta";
 import { Apoio, Lide } from "@/components/tipografia";
 import { buttonVariants } from "@/components/ui/button";
 import { falarNoWhatsApp, mensagens, orcamento, simulador } from "@/conteudo/site";
@@ -28,6 +30,9 @@ export function Orcamento() {
     // data-sem-atalho: o atalho do WhatsApp some enquanto o montador está na tela (ilhas/acao-flutuante.tsx).
     <Secao id="orcamento" data-sem-atalho tom="claro">
       <Envelope className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+        {/* A fita fica fora do que é preso: na mesa, no pé da coluna, à altura da conta. */}
+        <div className="min-w-0 lg:flex lg:flex-col lg:self-stretch">
+          <div className="lg:flex-1">
         <div className="lg:sticky lg:top-28">
           {/* O rótulo, só para o leitor de tela (17/10): à vista, era o sobretítulo (a marca T2). */}
           <p className="sr-only">{orcamento.rotulo}</p>
@@ -37,6 +42,9 @@ export function Orcamento() {
           <h2 className="text-titulo">{orcamento.titulo.join(" ")}</h2>
           <Lide className="mt-6">{orcamento.lide}</Lide>
           <SemScript />
+        </div>
+          </div>
+          <FitaDaConta />
         </div>
         {/* O plano sobre o plano (16/10): na mesa, o painel sobe 96 px sobre o navy dos passos (os 144 do respiro
             mais 96), por cima dele. A única emenda deste tipo no início. data-sobe: a âncora #orcamento conta com ele
@@ -50,30 +58,29 @@ export function Orcamento() {
 }
 
 /**
- * A figura da página Orçamento (desde 16/10): o próprio montador, com a
- * tabela completa (ilhas/montador.tsx), logo abaixo do título "Dois
- * toques, valor exato." — a abertura e a ferramenta numa cena só, e a
- * primeira tela, na mesa, já com o plano para escolher. Até 16/10, a
- * figura era a equação (plano mais módulos é igual a criação mais
- * mensalidade), num cartão parado que repetia o lide, e o montador vinha
- * numa seção à parte, na mesma névoa, com a borda de cima no pé da
- * primeira tela (o crítico de fora: a abertura mais pobre das seis). O
- * aviso para quem está sem script vem antes do painel.
+ * A figura da página Orçamento: o próprio montador, logo abaixo do título "Dois toques, valor exato." (desde 16/10), a
+ * abertura e a ferramenta numa cena só. Desde 28/10 (R10), as escolhas no papel e a conta como o objeto da página, e,
+ * depois delas, a rota direta: "A conta é feita neste aparelho.", com o código que a prova (D12). O aviso para quem
+ * está sem script vem antes do montador.
  */
 export function MontadorDaPagina() {
   return (
-    // O atalho do WhatsApp some enquanto o montador está na tela (16/10, passe 3): sem nenhum dos ids que ele observava,
-    // aparecia sobre as opções e disputava o "Enviar pelo WhatsApp" (A5). A faixa fixa do montador só aparece com as
-    // escolhas na tela, que estão aqui dentro: fica coberta pela mesma marca.
-    <div data-sem-atalho>
-      <SemScript />
-      <Montador
-        privacidade={orcamento.privacidade}
-        completo={{
-          textos: orcamento.completo,
-          sites: simulador.sites.map(({ plano, nome, caminho }) => ({ plano, nome, caminho })),
-        }}
-      />
-    </div>
+    <>
+      <FitaDaConta noAlto />
+      {/* O atalho do WhatsApp some enquanto o montador está na tela (16/10, passe 3): aparecia sobre as opções e
+          disputava o "Enviar no WhatsApp" (A5). A faixa do celular só aparece com as escolhas na tela, aqui dentro. */}
+      <div data-sem-atalho>
+        <SemScript />
+        <Montador
+          privacidade={orcamento.privacidade}
+          completo={{
+            aviso: orcamento.completo.aviso,
+            fundacao: orcamento.completo.fundacao,
+            sites: simulador.sites.map(({ plano, nome, caminho }) => ({ plano, nome, caminho })),
+          }}
+        />
+      </div>
+      <RotaDireta />
+    </>
   );
 }

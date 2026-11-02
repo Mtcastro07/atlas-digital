@@ -1,3 +1,4 @@
+import { duvidas } from "@/conteudo/duvidas";
 import { modulos, planos, precoDoModulo } from "@/conteudo/planos";
 import { contato, metadados, paginas, paraQuem, quemFaz, simulador, trabalho } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
@@ -28,6 +29,11 @@ export function GET() {
     "## Páginas",
     "",
     ...paginas.map((p) => `- [${p.menu}](${contato.url}${p.caminho}): ${p.descricao}`),
+    "",
+    // As perguntas de /duvidas, as mesmas do FAQPage (R10, 28/10, D18).
+    "## Perguntas",
+    "",
+    ...duvidas.map((d) => `- ${d.pergunta} ${d.resposta}`),
     "",
   ].join("\n");
   return new Response(texto, { headers: { "Content-Type": "text/plain; charset=utf-8" } });

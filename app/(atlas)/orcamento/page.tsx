@@ -1,4 +1,5 @@
 import { AberturaDePagina } from "@/components/paginas/abertura-de-pagina";
+import { PrecoCobre } from "@/components/paginas/orcamento/preco-cobre";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
 import { MontadorDaPagina } from "@/components/secoes/orcamento";
 import { metadadosDaPagina } from "@/lib/metadados";
@@ -16,8 +17,10 @@ const meioDia = { "--luz-x": "56%", "--luz-y": "-12%" } as React.CSSProperties;
  * cartão parado que repetia o lide, e o montador vinha numa seção à parte,
  * na mesma névoa (o crítico de fora). O plano chega marcado de
  * /orcamento#orcamento-<plano> (o "Escolher" dos planos e do simulador).
- * Desde 16/10, a mesa ao meio-dia: a luz de cima no papel, a sombra curta
- * do painel e a marca da chapa em volta dos totais (ilhas/montador.tsx).
+ * Desde 16/10, a mesa ao meio-dia: a luz de cima no papel e a sombra do
+ * lado da hora. Desde 28/10 (R10), a conta como o objeto da página, a rota
+ * direta com o código, e a cena "O que o preço cobre." (desde 02/11, o
+ * endereço como objeto, no navy; as passivas estão em cada peça).
  */
 export default function PaginaDoOrcamento() {
   return (
@@ -31,6 +34,7 @@ export default function PaginaDoOrcamento() {
         className="vd-papel"
         style={meioDia}
       />
+      <PrecoCobre />
       <ProximaPagina atual="orcamento" />
     </div>
   );

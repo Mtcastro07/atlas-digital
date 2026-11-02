@@ -1,9 +1,9 @@
 import { Envelope, Secao } from "@/components/estrutura";
-import { IconeSeta } from "@/components/icones";
 import { Esfera } from "@/components/marca/esfera";
 import { Lide } from "@/components/tipografia";
 import { buttonVariants } from "@/components/ui/button";
 import { GradientWaveText } from "@/components/ui/spell/gradient-wave-text";
+import { capaDoInicio } from "@/conteudo/paginas/inicio";
 import { capa } from "@/conteudo/site";
 
 const atraso = (ms: number) => ({ "--atraso": `${ms}ms` }) as React.CSSProperties;
@@ -46,6 +46,12 @@ const palavrasDoTitulo = capa.titulo.split(" ");
  * Título em Archivo Black (desde 05/10, de novo, a do site de 28/08), em
  * text-display (48 a 96 px desde 16/10; de 40 a 80 até então; no site de
  * 28/08, 92 px).
+ * Desde 28/10 (R10): o lide diz o que se vende e onde antes da frase
+ * vinculante (conteudo/paginas/inicio.ts); "Ver como funciona", sem seta,
+ * no lugar de "Conhecer o método"; no celular (D16), a esfera inteira
+ * abaixo das ações, pousando 48 px no papel, e o h1 fluido a 44 px; os
+ * meridianos em camadas HTML (a passiva P1, marca/esfera.tsx). A onda do
+ * "24h" fica (D11).
  * Desde 03/10 (pedido do usuário: "enxugue", "separe a seção dos
  * celulares"), só isso: os dois celulares saíram do início (seguem na
  * vitrine de Para quem), e os destaques e a faixa de nichos foram para a
@@ -56,15 +62,18 @@ const palavrasDoTitulo = capa.titulo.split(" ");
  */
 export function Capa() {
   return (
-    // No celular, 208 px de folga embaixo (contra 96 em cima) sobem o bloco 56 px, ao centro óptico: a ação principal
-    // termina antes de 60% da primeira tela a 390 × 844 (até 14/10, em 66%; 07-composicao.md).
+    // No celular (R10, D16), a capa tem a altura do conteúdo: 72 px de respiro sob o cabeçalho, o texto, as ações e a
+    // esfera, que fecha a primeira tela inteira a 390 × 844 e pousa no papel. Até 28/10, a tela inteira, com 208 px de
+    // folga embaixo (contra 96 em cima), o bloco ao centro óptico e a esfera atrás dele. Flex também no celular: o item
+    // flex segura a margem negativa da esfera (−48 px) dentro dele, e a capa termina 48 px antes do pé dela; em bloco,
+    // a margem escaparia da capa, e o navy dela cobriria o papel onde a esfera pousa.
     // Desde 16/10, a capa sobe por baixo do cabeçalho de vidro, como as aberturas (-mt-18, e os 72 px dele somados ao
     // respiro de cima): com a luz, a faixa do navy liso da página aparecia atrás da barra. O bloco fica onde estava.
     <Secao
       id="inicio"
       data-sem-atalho
       tom="escuro"
-      className="vd-cena relative z-[1] -mt-18 flex min-h-svh items-center overflow-x-clip pt-42 max-md:pb-52 md:pt-54"
+      className="inicio-capa vd-cena relative z-[1] -mt-18 flex overflow-x-clip pt-36 max-md:pb-0 md:min-h-svh md:items-center md:pt-54"
       style={madrugada}
     >
       <div className="relative w-full">
@@ -81,20 +90,21 @@ export function Capa() {
               </span>
             ))}
           </h1>
-          <Lide className="mx-auto mt-8 max-w-[34ch]">{capa.lide}</Lide>
+          <Lide className="mx-auto mt-8 max-w-[34ch]">{capaDoInicio.lide}</Lide>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
             <a href={capa.acaoPrincipal.destino} className={buttonVariants({ size: "lg" })}>
               {capa.acaoPrincipal.rotulo}
             </a>{" "}
-            <a href={capa.acaoSecundaria.destino} className={buttonVariants({ variant: "link", size: "link" })}>
-              {capa.acaoSecundaria.rotulo}
-              <IconeSeta className="size-3.5" />
+            {/* Sem seta (R10): a âncora fica na própria página; a seta é só do que sai dela. */}
+            <a href={capaDoInicio.acaoSecundaria.destino} className={buttonVariants({ variant: "link", size: "link" })}>
+              {capaDoInicio.acaoSecundaria.rotulo}
             </a>
           </div>
         </Envelope>
-        {/* A esfera vem depois do texto no HTML (a posição é absoluta, e o texto, em z-[1], fica por
+        {/* A esfera vem depois do texto no HTML (na mesa, a posição é absoluta, e o texto, em z-[1], fica por
             cima de qualquer jeito): assim ela só se desenha com o bloco de texto completo. Antes dele,
-            numa carga em partes, nascia centrada num bloco ainda curto e descia 150 px (CLS 0,1). */}
+            numa carga em partes, nascia centrada num bloco ainda curto e descia 150 px (CLS 0,1). No celular
+            (R10, D16), ela fica no fluxo, abaixo das ações (app/paginas/inicio.css). */}
         <Esfera />
       </div>
     </Secao>

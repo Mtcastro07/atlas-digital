@@ -6,7 +6,6 @@ import { ControleDoMovimento } from "@/components/ilhas/controle-do-movimento";
 import { MenuCelular } from "@/components/ilhas/menu-celular";
 import { NavegacaoDoAtlas } from "@/components/ilhas/navegacao-do-atlas";
 import { Logotipo } from "@/components/marca/logotipo";
-import { CabecalhoFixo } from "@/components/transicao-de-pagina";
 import { buttonVariants } from "@/components/ui/button";
 import { acaoOrcamento, navegacao } from "@/conteudo/site";
 import { cn } from "@/lib/utils";
@@ -30,16 +29,18 @@ import { cn } from "@/lib/utils";
  * do último botão da borda direita — 4 + 20 (o px-5 da ação) = 24 px a
  * partir de 1024 px (lg:pl-6); abaixo, 4 + 12 (o px-3 do botão Menu) = 16
  * px (pl-4). Até 03/10, a pílula tinha 56 px, com 6 px de folga e recuos
- * de 26 e 18 px, fora da escala. Ao lado da ação, o botão de pausa do
- * movimento contínuo (a esfera da capa, o globo de O
- * Atlas, o reflexo da chamada final). No celular, recolhe ao rolar para
+ * de 26 e 18 px, fora da escala. Ao lado do logotipo, desde 28/10 (R10),
+ * a pausa do movimento contínuo, escrita ("Pausar"), sem cápsula: ao lado
+ * da ação, com o rótulo e o menu a 16 px, ela tirava o menu do centro em
+ * 52 a 76 px (esboco/comuns/ESBOCO.md, 1.3). No celular, recolhe ao rolar para
  * baixo. Desde 01/10 o site tem uma página por assunto: o cabeçalho fica
  * no layout (app/(atlas)/layout.tsx), não remonta na troca de página, e o
  * menu marca a página aberta (ilha NavegacaoDoAtlas).
  */
 export function Cabecalho() {
   return (
-    <CabecalhoFixo>
+    // Sem o CabecalhoFixo desde 27/10: o Atlas não tem mais a View Transition (components/ilhas/entrada-da-pagina.tsx).
+    <>
       <CabecalhoRetratil>
         <Envelope className="flex h-18 items-center">
           {/* O tom fica na pílula, não no <header>: lá, a regra base pintaria a faixa inteira de navy. A coluna da marca pode
@@ -52,25 +53,27 @@ export function Cabecalho() {
             data-vidro-intensidade="1.8"
             className="vd-barra @container pointer-events-auto relative top-[env(safe-area-inset-top)] -mx-3 grid h-13 grow grid-cols-[minmax(0,1fr)_auto] items-center gap-4 rounded-full pr-1 pl-4 md:-mx-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6 lg:pl-6"
           >
-            {/* No hover, o globo gira; com movimento reduzido, sem o giro, o logotipo responde em cor. */}
-            <Link
-              href="/"
-              prefetch={false}
-              aria-label="Atlas Digital — início"
-              className="inline-flex min-h-11 items-center justify-self-start text-foreground transition-colors duration-300 ease-atlas motion-reduce:hover:text-accent"
-            >
-              <Logotipo recorte="globo-cabecalho" className="h-[31px] w-auto md:h-[34px]" decorativo />
-            </Link>
+            <div className="flex min-w-0 items-center gap-2 justify-self-start lg:gap-3">
+              {/* No hover, o globo gira; com movimento reduzido, sem o giro, o logotipo responde em cor. */}
+              <Link
+                href="/"
+                prefetch={false}
+                aria-label="Atlas Digital — início"
+                className="inline-flex min-h-11 flex-none items-center text-foreground transition-colors duration-300 ease-atlas motion-reduce:hover:text-accent"
+              >
+                <Logotipo recorte="globo-cabecalho" className="h-[31px] w-auto md:h-[34px]" decorativo />
+              </Link>{" "}
+              {/* Abaixo de 360 px, a pausa fica só no painel do menu (ilhas/painel-menu.tsx), que a mostra em todas as
+                  larguras: a 320, ela e o "Menu" disputavam a pílula (16/10, passe 3; C5). A pausa de verdade continua
+                  sendo esta: a linha do painel aciona este botão. */}
+              <span className="contents max-[359.98px]:hidden">
+                <ControleDoMovimento escrito />
+              </span>
+            </div>
 
             <NavegacaoDoAtlas itens={navegacao} />
 
             <div className="flex items-center gap-1.5 justify-self-end md:gap-2">
-              {/* Abaixo de 360 px, a pausa vai para o painel do menu (ilhas/painel-menu.tsx), com o rótulo que já tem: a 320,
-                  ela e o menu disputavam a pílula, e o rótulo "Menu" recolhia (16/10, passe 3; C5). A pausa de verdade
-                  continua sendo esta: a linha do painel aciona este botão. */}
-              <span className="contents max-[359.98px]:hidden">
-                <ControleDoMovimento />
-              </span>{" "}
               <Link href={acaoOrcamento.destino} className={cn(buttonVariants({ size: "sm" }), "hidden sm:inline-flex")}>
                 {acaoOrcamento.rotulo}
               </Link>{" "}
@@ -80,6 +83,6 @@ export function Cabecalho() {
           </div>
         </Envelope>
       </CabecalhoRetratil>
-    </CabecalhoFixo>
+    </>
   );
 }

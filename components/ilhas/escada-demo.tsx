@@ -14,7 +14,8 @@ type Props = {
   niveis: readonly Nivel[];
   /** Os sites, na mesma ordem dos filhos; o primeiro de cada plano entra em cena quando o plano é escolhido. */
   sites: readonly SiteDoPalco[];
-  /** O nome do seletor de nichos, para o leitor de tela. */
+  /** Os rótulos dos dois seletores, à vista (R10, 28/10; WCAG 3.3.2): "Plano" e "Nicho". */
+  rotuloDoPlano: string;
   rotuloDosNichos: string;
   /** Os sites do palco, um por item de `sites`, desenhados no servidor (components/secoes/escada.tsx). */
   children: React.ReactNode;
@@ -40,7 +41,7 @@ const PALAVRAS = "[data-palavra]";
  * e data-palavra, dentro do site em cena. Sem script, todos os sites
  * aparecem um embaixo do outro.
  */
-export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) {
+export function EscadaDemo({ niveis, sites, rotuloDoPlano, rotuloDosNichos, children }: Props) {
   const [nivel, setNivel] = useState(niveis[0].id);
   // O site escolhido em cada plano: começa no primeiro; voltar a um plano devolve o que estava nele.
   const [escolha, setEscolha] = useState<Record<string, string>>(() =>
@@ -91,54 +92,75 @@ export function EscadaDemo({ niveis, sites, rotuloDosNichos, children }: Props) 
 
   return (
     <div className="mt-12">
-      <ToggleGroup
-        value={[nivel]}
-        onValueChange={(valor) => escolherNivel(valor[0])}
-        aria-label="Plano"
-        className="vd-vidro vd-segmento mx-auto grid w-full max-w-md auto-cols-fr grid-flow-col"
-        style={{ "--n": niveis.length, "--i": posicao } as React.CSSProperties}
+      {/* Os seletores, com o rótulo à vista (R10, 28/10): o do plano e, com mais de um site no plano, o do nicho. A nota
+          do plano, logo abaixo, diz o que o site faz (até 28/10, no pé do palco, descrevia a animação). */}
+      {/* O atalho flutuante sai de cena sobre os seletores: cobriria a ponta de um controle (Q19). */}
+      <div className="vd-seletores" data-sem-atalho>
+        <div className="vd-seletor">
+          <span id="rotulo-do-plano" className="vd-seletor-rotulo">
+            {rotuloDoPlano}
+          </span>
+          <ToggleGroup
+            value={[nivel]}
+            onValueChange={(valor) => escolherNivel(valor[0])}
+            aria-labelledby="rotulo-do-plano"
+            className="vd-vidro vd-segmento grid w-full max-w-md auto-cols-fr grid-flow-col"
+            style={{ "--n": niveis.length, "--i": posicao } as React.CSSProperties}
+          >
+            <span aria-hidden="true" className="vd-segmento-cursor" />
+            {niveis.map((n) => (
+              <ToggleGroupItem key={n.id} value={n.id} variant="segmento">
+                {n.nome}{" "}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
+
+        {/* Os nichos do plano escolhido: só com mais de um site nele. A chave remonta o seletor a cada plano,
+            e o cursor nasce na posição certa, sem deslizar desde o nicho do plano anterior. */}
+        {doNivel.length > 1 && (
+          <div className="vd-seletor" key={nivel}>
+            <span id="rotulo-dos-nichos" className="vd-seletor-rotulo">
+              {rotuloDosNichos}
+            </span>
+            <ToggleGroup
+              value={[emCena]}
+              onValueChange={(valor) => escolherSite(valor[0])}
+              aria-labelledby="rotulo-dos-nichos"
+              className="vd-vidro vd-segmento grid w-full max-w-xl auto-cols-fr grid-flow-col"
+              style={{ "--n": doNivel.length, "--i": posicaoDoSite } as React.CSSProperties}
+            >
+              <span aria-hidden="true" className="vd-segmento-cursor" />
+              {doNivel.map((s) => (
+                <ToggleGroupItem key={s.id} value={s.id} variant="segmento">
+                  {s.rotulo}{" "}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+        )}
+        <p className="vd-seletor-nota" aria-live="polite">
+          {nota}
+        </p>
+      </div>
+
+      {/* O palco. O recuo dos lados em px no celular (17/10, segundo fechamento): com a letra a 200%, o px-6 dobrava, e
+          o nome do site partia no meio da palavra. É também o ambiente da passiva P6 (o aparelho que respira): vem no HTML
+          do servidor, e o observador de controle-do-movimento.tsx lhe dá data-visivel e data-fora. */}
+      <div
+        ref={palco}
+        data-palco-sites
+        data-ambiente
+        data-passiva="planos-palco"
+        data-nivel={nivel}
+        className="vd-palco mt-10 overflow-hidden rounded-xl bg-card px-[24px] py-12 md:px-12 md:py-16"
       >
-        <span aria-hidden="true" className="vd-segmento-cursor" />
-        {niveis.map((n) => (
-          <ToggleGroupItem key={n.id} value={n.id} variant="segmento">
-            {n.nome}{" "}
-          </ToggleGroupItem>
-        ))}
-      </ToggleGroup>
-
-      {/* Os nichos do plano escolhido: só com mais de um site nele. A chave remonta o seletor a cada plano,
-          e o cursor nasce na posição certa, sem deslizar desde o nicho do plano anterior. */}
-      {doNivel.length > 1 && (
-        <ToggleGroup
-          key={nivel}
-          value={[emCena]}
-          onValueChange={(valor) => escolherSite(valor[0])}
-          aria-label={rotuloDosNichos}
-          className="vd-vidro vd-segmento mx-auto mt-4 grid w-full max-w-xl auto-cols-fr grid-flow-col"
-          style={{ "--n": doNivel.length, "--i": posicaoDoSite } as React.CSSProperties}
-        >
-          <span aria-hidden="true" className="vd-segmento-cursor" />
-          {doNivel.map((s) => (
-            <ToggleGroupItem key={s.id} value={s.id} variant="segmento">
-              {s.rotulo}{" "}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      )}
-
-      {/* O recuo dos lados em px no celular (17/10, segundo fechamento): o mesmo com a letra normal; com a letra a 200%, o
-          px-6 dobrava (48 px de cada lado), e o nome do site partia no meio da palavra ("Nutriçã-o"). */}
-      <div ref={palco} data-palco-sites data-nivel={nivel} className="mt-8 overflow-hidden rounded-xl bg-card px-[24px] py-12 md:px-12 md:py-16">
         {Children.toArray(children).map((filho, i) => (
           <div key={sites[i].id} data-site={sites[i].id} data-plano={sites[i].plano} data-em-cena={sites[i].id === emCena || undefined}>
             {filho}
           </div>
         ))}
       </div>
-
-      <p className="mt-5 text-center text-nota text-muted-foreground" aria-live="polite">
-        {nota}
-      </p>
     </div>
   );
 }

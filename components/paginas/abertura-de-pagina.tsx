@@ -7,7 +7,7 @@ type Props = {
   /** O id da página em `paginas` (conteudo/site.ts): de lá vêm o número, o rótulo, o título e o lide. */
   pagina: PaginaInterna["id"];
   tom?: Tom;
-  /** A figura da página (components/paginas/figuras.tsx): o que dá a identidade dela. */
+  /** A figura da página (components/paginas/<pagina>/figura.tsx): o que dá a identidade dela. */
   figura: React.ReactNode;
   /** "lado": texto à esquerda, figura à direita; "embaixo": a figura ocupa a coluna inteira, abaixo do texto. */
   disposicao?: "lado" | "embaixo";
@@ -35,7 +35,7 @@ const COLUNAS = {
  * bronze; o título em linhas — o h1 da página —; o lide; e a figura própria
  * da página. O texto chega parado, com a transição de página, que é do
  * sistema; o momento de cada página é o da sua figura, um por página e
- * diferente de uma para outra (components/paginas/figuras.tsx). Até 14/10,
+ * diferente de uma para outra (components/paginas/<pagina>/figura.tsx). Até 14/10,
  * as seis aberturas entravam iguais — o rótulo e o lide que se acendiam, as
  * linhas do título que subiam de dentro da janela, a tarja e a figura que
  * se acendia —, a marca M1 da mesma entrada em todas as páginas (pedido do
@@ -91,7 +91,7 @@ export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = 
               figura em Planos e em O Atlas, onde a figura começa no alto da coluna (medido a 1.440 px, 16/10). Na tinta
               apagada, como o fólio de um livro, e não no bronze, que é do que se toca (17/10: em Planos, o bronze sobre
               o pico da luz da manhã dava 4,17:1 na régua). */}
-          <p className="order-last mt-8 flex gap-x-3 text-rotulo font-medium tracking-[0.02em] text-muted-foreground tabular-nums lg:absolute lg:right-[max(2.5rem,env(safe-area-inset-left),env(safe-area-inset-right))] lg:bottom-[calc(100%+1.5rem)] lg:mt-0 lg:block lg:text-right">
+          <p className="order-last mt-8 flex gap-x-3 text-nota font-medium tracking-[0.02em] text-muted-foreground tabular-nums lg:absolute lg:right-[max(2.5rem,env(safe-area-inset-left),env(safe-area-inset-right))] lg:bottom-[calc(100%+1.5rem)] lg:mt-0 lg:block lg:text-right">
             <span className="block">
               {String(indice + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
             </span>{" "}

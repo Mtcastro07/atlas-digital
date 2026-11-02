@@ -1,22 +1,24 @@
 import { EsferaViva } from "@/components/ilhas/esfera-viva";
 
 // Esfera de arame da capa, a mesma do site de 28/08: o globo do logotipo
-// em escala de fundo, atrás do título. Cinco paralelos fixos e oito
+// em escala de fundo, atrás do título. Cinco paralelos fixos e os
 // meridianos que giram (cada um é um círculo que se estreita até virar
-// linha e se abre do outro lado: scaleX de 1 a -1, app/movimento.css).
-// Cores, traço e animação nas classes mov-esfera-* de movimento.css.
+// linha e se abre do outro lado). Cores, traço e animação em
+// app/paginas/inicio.css.
 // Desde 16/10 ("Identidade mais profunda"), uma esfera armilar de metal:
 // - os traços fixos (o contorno, os paralelos e o anel) em bronze, num
 //   degradê aceso do noroeste, o lado da luz da madrugada da capa;
 // - a frente e o verso: cada traço fixo se parte em dois arcos, o de trás
 //   (a metade de cima da elipse, na vista um pouco de cima) fino e a 35%, o
-//   da frente inteiro; cada meridiano vira duas metades que trocam de face
+//   da frente inteiro; cada meridiano tem duas metades que trocam de face
 //   quando ele está todo aberto, o instante em que as duas coincidem com o
 //   contorno (a troca não se vê);
 // - o anel do equador vira o anel do instrumento: duas elipses fora da
 //   esfera e 72 traços de 5 em 5° (os de 10 em 10°, mais longos; no
 //   celular, só estes), fixo enquanto os meridianos giram. É o único anel
 //   graduado do site.
+// Desde 28/10 (R10), os traços fixos em dois SVG parados (o verso embaixo, a
+// frente em cima) e cada meridiano numa camada HTML entre eles (abaixo).
 
 const RAIO = 196;
 const CENTRO = 200;
@@ -56,45 +58,74 @@ function graduacao(primeiro: number, alcance: number) {
 const DEZ = graduacao(0, RAIO + 12);
 const CINCO = graduacao(5, RAIO + 9);
 
-/** Duração de uma volta, em segundos (igual a `animation-duration` de .mov-meridiano). */
-const VOLTA = 16;
-const MERIDIANOS = 8;
+/**
+ * Os meridianos que giram (R10, 28/10, a passiva P1): cada um é uma camada HTML (.inicio-meridiano), com o desenho
+ * parado dentro (as duas metades: a da esquerda na frente, inteira; a da direita no verso, a 35%) e o giro no
+ * compositor, por scaleX de 1 a −1 numa curva senoidal (cubic-bezier(0.37, 0, 0.63, 1): a largura é o cosseno do
+ * ângulo, como a projeção de um aro que gira). Ao fim de cada meia volta, o meridiano coincide com o contorno, e a
+ * camada recomeça do outro lado, com as faces trocadas: o desenho é o mesmo (um aro girado de 180° é ele mesmo). Até
+ * 28/10, o scaleX animava os <path> dentro do SVG, e o navegador repintava a esfera a cada quadro, na linha principal
+ * (de 8,4% a 11,7% dela, parada: paginas/inicio.md, 2.1).
+ * Quatro meridianos a 45° um do outro (na mesa) e dois a 90° (no celular): os mesmos ângulos que se viam até 28/10,
+ * quando os oito da volta de 16 s coincidiam dois a dois.
+ */
+const MEIA_VOLTA = 8;
+const MERIDIANOS = 4;
 
 /** As duas metades de cada meridiano (o círculo do contorno): a da esquerda e a da direita, de polo a polo. */
 const METADE_ESQUERDA = `M${CENTRO} ${CENTRO + RAIO}A${RAIO} ${RAIO} 0 0 1 ${CENTRO} ${CENTRO - RAIO}`;
 const METADE_DIREITA = `M${CENTRO} ${CENTRO - RAIO}A${RAIO} ${RAIO} 0 0 1 ${CENTRO} ${CENTRO + RAIO}`;
 
 /**
- * Cada meridiano começa num ponto diferente da volta (atraso negativo).
- * `--estatico` é a largura em que ele fica parado quando o movimento é
- * reduzido (ou sem script): desde 16/10, oito longitudes distintas de 0 a
- * 180° (até então, |cos| da fase, que sobrepunha os meridianos dois a dois),
- * e `--face` a opacidade de cada metade nessa pose: na longitude λ, a metade
- * da direita está na frente se cos λ > 0. Girando, as metades trocam de face
- * pelas animações mov-face-a e mov-face-b (app/movimento.css): na primeira
- * metade da volta, a da esquerda está na frente; na segunda, a da direita.
+ * Cada meridiano começa num ponto da meia volta (atraso negativo, --fase), no ângulo (j + 0,25) · 45°: 11, 56, 101 e
+ * 146°. Com (j + 0,5) · 45°, os ângulos ficariam simétricos (22,5 e 157,5°; 67,5 e 112,5°), e as elipses coincidiriam
+ * duas a duas na pose parada. `--estatico` é a largura em que ele fica parado com o movimento reduzido (ou sem
+ * script): o cosseno desse ângulo, a mesma pose em que o giro começa, sem salto.
  */
-const FASES = Array.from({ length: MERIDIANOS }, (_, i) => {
-  const t = i / MERIDIANOS;
-  const longitude = ((i + 0.5) * Math.PI) / MERIDIANOS;
-  const direitaNaFrente = Math.cos(longitude) > 0;
-  const base = {
-    "--fase": `-${(t * VOLTA).toFixed(2)}s`,
-    "--estatico": Math.abs(Math.sin(longitude)).toFixed(3),
-  };
+const FASES = Array.from({ length: MERIDIANOS }, (_, j) => {
+  const t = (j + 0.25) / MERIDIANOS;
   return {
-    esquerda: { ...base, "--face": direitaNaFrente ? 0.35 : 1 } as React.CSSProperties,
-    direita: { ...base, "--face": direitaNaFrente ? 1 : 0.35 } as React.CSSProperties,
-    acento: i % 4 === 0,
-    // No celular, metade dos meridianos (os ímpares): menos traço para redesenhar.
-    soNoComputador: i % 2 === 1,
+    estilo: { "--fase": `-${(t * MEIA_VOLTA).toFixed(2)}s`, "--estatico": Math.cos(t * Math.PI).toFixed(3) } as React.CSSProperties,
+    acento: j === 0,
+    // No celular, dois (a 90°): menos camadas na memória do aparelho.
+    soNoComputador: j % 2 === 1,
   };
 });
+
+/** Os traços fixos, na ordem da pintura: o verso, ou o contorno e a frente. */
+function Fixos({ lado }: { lado: "tras" | "frente" }) {
+  if (lado === "tras")
+    return (
+      <>
+        {PARALELOS.map((p) => (
+          <path key={p.tras} d={p.tras} className="mov-metal mov-tras" />
+        ))}
+        {ANEL.map((a) => (
+          <path key={a.tras} d={a.tras} className="mov-metal mov-tras mov-anel" />
+        ))}
+        <path d={DEZ.tras} className="mov-metal mov-tras mov-graduacao" />
+        <path d={CINCO.tras} className="mov-metal mov-tras mov-graduacao max-md:hidden" />
+      </>
+    );
+  return (
+    <>
+      <circle cx={CENTRO} cy={CENTRO} r={RAIO} className="mov-metal mov-contorno" />
+      {PARALELOS.map((p) => (
+        <path key={p.frente} d={p.frente} className="mov-metal mov-frente" />
+      ))}
+      {ANEL.map((a) => (
+        <path key={a.frente} d={a.frente} className="mov-metal mov-frente mov-anel" />
+      ))}
+      <path d={DEZ.frente} className="mov-metal mov-frente mov-graduacao" />
+      <path d={CINCO.frente} className="mov-metal mov-frente mov-graduacao max-md:hidden" />
+    </>
+  );
+}
 
 export function Esfera() {
   return (
     <EsferaViva>
-      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="size-full">
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="inicio-esfera-camada">
         <defs>
           {/* O metal, aceso do noroeste: --bronze-brilho, o vínculo do escuro, a ação e o vínculo do claro. */}
           <linearGradient id="esfera-metal" gradientUnits="userSpaceOnUse" x1="40" y1="40" x2="360" y2="360">
@@ -104,31 +135,22 @@ export function Esfera() {
             <stop offset="1" stopColor="#8a5a24" />
           </linearGradient>
         </defs>
-        {/* O verso primeiro, a frente por cima. */}
-        {PARALELOS.map((p) => (
-          <path key={p.tras} d={p.tras} className="mov-metal mov-tras" />
-        ))}
-        {ANEL.map((a) => (
-          <path key={a.tras} d={a.tras} className="mov-metal mov-tras mov-anel" />
-        ))}
-        <path d={DEZ.tras} className="mov-metal mov-tras mov-graduacao" />
-        <path d={CINCO.tras} className="mov-metal mov-tras mov-graduacao max-md:hidden" />
-        {FASES.map((f, i) => {
-          const classe = `mov-meridiano${f.acento ? " mov-acento" : ""}${f.soNoComputador ? " max-md:hidden" : ""}`;
-          return [
-            <path key={`e${i}`} d={METADE_ESQUERDA} className={`${classe} mov-meia-a`} style={f.esquerda} />,
-            <path key={`d${i}`} d={METADE_DIREITA} className={`${classe} mov-meia-b`} style={f.direita} />,
-          ];
-        })}
-        <circle cx={CENTRO} cy={CENTRO} r={RAIO} className="mov-metal mov-contorno" />
-        {PARALELOS.map((p) => (
-          <path key={p.frente} d={p.frente} className="mov-metal mov-frente" />
-        ))}
-        {ANEL.map((a) => (
-          <path key={a.frente} d={a.frente} className="mov-metal mov-frente mov-anel" />
-        ))}
-        <path d={DEZ.frente} className="mov-metal mov-frente mov-graduacao" />
-        <path d={CINCO.frente} className="mov-metal mov-frente mov-graduacao max-md:hidden" />
+        <Fixos lado="tras" />
+      </svg>
+      {FASES.map((f, j) => (
+        <span
+          key={j}
+          className={`inicio-meridiano mov-passiva${f.acento ? " inicio-acento" : ""}${f.soNoComputador ? " max-md:hidden" : ""}`}
+          style={f.estilo}
+        >
+          <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <path d={METADE_DIREITA} className="inicio-verso" />
+            <path d={METADE_ESQUERDA} />
+          </svg>
+        </span>
+      ))}
+      <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" className="inicio-esfera-camada">
+        <Fixos lado="frente" />
       </svg>
     </EsferaViva>
   );

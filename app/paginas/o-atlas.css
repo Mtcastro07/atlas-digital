@@ -1,0 +1,1242 @@
+/* ============================================================
+   ATLAS DIGITAL — O Atlas (/o-atlas)
+   O CSS só desta página. Desde 28/10 (R10, fase 0), num arquivo próprio,
+   importado uma vez em app/globals.css, depois de ./nichos.css: os blocos
+   vieram de app/vidro.css e app/movimento.css, copiados sem mudança, cada
+   um na camada que tinha. O que mais de uma página usa fica lá (a matéria,
+   a luz, o metal, o vidro, a galeria, o aparelho, as entradas, a onda, a
+   pausa e as passivas). Dono na construção do R10: o agente de o-atlas.
+   ============================================================ */
+
+@layer components {
+  /* ---------- a folha de O Atlas (16/10) ----------
+     A moldura graduada (components/paginas/o-atlas/figura.tsx, MolduraGraduada):
+     faixas de 6 px, recuadas 24 px da cena (a de cima, abaixo dos 72 px do
+     cabeçalho; a de baixo, na emenda), com os fios dos dois lados e os
+     segmentos de um minuto de arco alternados (o bronze da ação a 70% e a
+     água). Cada faixa é um ladrilho de dois minutos, centrado: a fronteira
+     de dois segmentos cai no meio da faixa, em Niterói. No celular, a
+     moldura fica dentro dos 24 px da margem.
+     Desde 17/10 (passe 4, fechamento com o Impeccable), o recuo cresce até
+     32 px quando a margem da página deixa (a margem do Envelope menos 16 px:
+     a barra e 10 px de folga até o texto; 32 px a partir de 1.136 px de
+     cena). Desde 28/10 (R10), sem os rótulos de latitude e de longitude: a
+     cidade fica com uma coordenada só, sob "Niterói, RJ". */
+  .vd-moldura {
+    container-type: inline-size;
+    --moldura-barra: 6px;
+    --minuto-lat: 40px;
+    --minuto-lon: 36.85px; /* 40 · cos 22,88° */
+    --moldura-seg: color-mix(in srgb, var(--primary) 70%, transparent);
+  }
+  /* Nos filhos: o cqi resolve contra a própria moldura (a cena inteira, sem a barra de rolagem). A margem do Envelope é
+     a sobra da coluna (--container-pagina) dividida por dois, mais os 2,5 rem dele (components/estrutura.tsx). */
+  .vd-moldura > * {
+    --moldura-recuo: clamp(24px, (100cqi - min(100cqi, var(--container-pagina))) / 2 + 2.5rem - 16px, 32px);
+  }
+  @media (max-width: 767.98px) {
+    .vd-moldura {
+      --moldura-barra: 4px;
+    }
+    .vd-moldura > * {
+      --moldura-recuo: 11px;
+    }
+  }
+  .vd-moldura-barra {
+    position: absolute;
+    border: 0 solid var(--moldura-seg);
+  }
+  .vd-moldura-esquerda,
+  .vd-moldura-direita {
+    top: calc(72px + var(--moldura-recuo));
+    bottom: 0;
+    width: var(--moldura-barra);
+    border-inline-width: 1px;
+    background: linear-gradient(180deg, var(--moldura-seg) 50%, transparent 50%) 0 50% / 100% calc(2 * var(--minuto-lat)) repeat-y;
+  }
+  .vd-moldura-esquerda {
+    left: var(--moldura-recuo);
+  }
+  .vd-moldura-direita {
+    right: var(--moldura-recuo);
+  }
+  .vd-moldura-topo,
+  .vd-moldura-base {
+    left: var(--moldura-recuo);
+    right: var(--moldura-recuo);
+    height: var(--moldura-barra);
+    border-block-width: 1px;
+    background: linear-gradient(90deg, var(--moldura-seg) 50%, transparent 50%) 50% 0 / calc(2 * var(--minuto-lon)) 100% repeat-x;
+  }
+  .vd-moldura-topo {
+    top: calc(72px + var(--moldura-recuo));
+  }
+  .vd-moldura-base {
+    bottom: 0;
+  }
+  /* O papel sob o globo que pousa: a grade da projeção cônica, que se apaga embaixo e nos lados, e a sombra de
+     contato, deslocada para o leste (a luz do fim da tarde vem do oeste). */
+  .vd-projecao {
+    fill: none;
+    stroke: rgb(138 90 36 / 0.14);
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+    -webkit-mask-image: radial-gradient(50% 100% at 50% 0%, #000 45%, transparent 100%);
+    mask-image: radial-gradient(50% 100% at 50% 0%, #000 45%, transparent 100%);
+  }
+  .vd-projecao * {
+    vector-effect: non-scaling-stroke;
+  }
+  .vd-pouso-do-globo {
+    left: 50%;
+    top: 100%;
+    width: 60%;
+    height: 10%;
+    translate: calc(-50% + 8%) -50%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(15 42 71 / 0.18), rgb(15 42 71 / 0.07) 60%, transparent);
+  }
+}
+
+@layer components {
+  /* ---------- o globo que gira no compositor (R10, 28/10, a passiva P11) ----------
+     components/marca/globo.tsx: o que não gira num SVG só; cada meridiano, um
+     círculo numa camada HTML do tamanho do globo, em rotateY, com a pose
+     parada em --giro (a mesma largura aparente do desenho de antes); o ponto
+     de Niterói, numa camada de 6 px, posto no círculo do meridiano da marca
+     (translate, em cqi do globo), girado em volta do eixo e desvirado por
+     dentro (o ponto fica redondo, como o de antes).
+     Sem perspectiva, de propósito (contra os 800 a 1.200 px de CONTRATO.md,
+     4.1): o contorno e os paralelos são desenhados em projeção ortográfica, e
+     a 1.000 px a metade da frente de cada meridiano saía 25% maior e passava
+     do contorno nos polos (medido nas capturas de 28/10). Sem perspectiva, o
+     círculo girado é a elipse exata do meridiano. */
+  .vd-globo-3d {
+    container-type: inline-size;
+  }
+  .vd-globo-meridiano {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(var(--giro));
+  }
+  .vd-globo-meridiano svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    stroke: var(--accent);
+    stroke-linecap: round;
+  }
+  /* A espessura é a da tela (como a do meridiano de antes), e não a do desenho. */
+  .vd-globo-meridiano path {
+    vector-effect: non-scaling-stroke;
+  }
+  /* O giro estreita a camada inteira, e o traço de pé afina com ela (o non-scaling-stroke não vê o rotateY): por isso
+     mais grosso que o do desenho parado de antes (1,4 e 1 px), para o movimento se ver em toda a volta. */
+  .vd-globo-meridiano.marca svg {
+    stroke-width: 2.4px;
+  }
+  .vd-globo-meridiano.reticula svg {
+    stroke-width: 1.6px;
+    opacity: 0.5;
+  }
+  .vd-globo-meridiano .verso {
+    opacity: 0.35;
+  }
+  .vd-globo-niteroi {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-style: preserve-3d;
+    transform: translate(var(--niteroi-x), var(--niteroi-y));
+    rotate: y var(--giro);
+  }
+  .vd-globo-niteroi-ponto {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 50%;
+    background: var(--bronze-brilho);
+    rotate: y calc(-1 * var(--giro));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* O giro (a passiva P11): meia volta de cada meridiano em 18 s, linear (a volta contínua), a partir da pose parada
+     (--atraso); o ponto de Niterói, a volta inteira em 36 s, a 35% na metade de trás (mov-face-a, app/movimento.css).
+     Só depois de entrar na tela (data-visivel); a pausa, a saída da tela e o movimento reduzido são do sistema
+     (.mov-passiva, app/movimento.css). */
+  .js [data-visivel] .vd-globo-meridiano.mov-passiva {
+    animation: mov-meridiano-3d 18s linear infinite;
+    animation-delay: var(--atraso);
+  }
+  .js [data-visivel] .vd-globo-niteroi.mov-passiva {
+    animation: mov-niteroi 36s linear infinite;
+    animation-delay: var(--atraso);
+  }
+  .js [data-visivel] .vd-globo-niteroi-ponto.mov-passiva {
+    animation:
+      mov-niteroi-desvira 36s linear infinite,
+      mov-face-a 36s steps(1, end) infinite;
+    animation-delay: var(--atraso);
+  }
+}
+
+/* Bem de perfil, a textura da camada se reduz a menos de um pixel, e o traço sai em tracejado: nesses 2,5 s da meia
+   volta, o meridiano se apaga e volta, em vez de se quebrar. */
+@keyframes mov-meridiano-3d {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(180deg);
+  }
+  43%,
+  57% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}
+@keyframes mov-niteroi {
+  from {
+    rotate: y 0deg;
+  }
+  to {
+    rotate: y 360deg;
+  }
+}
+@keyframes mov-niteroi-desvira {
+  from {
+    rotate: y 0deg;
+  }
+  to {
+    rotate: y -360deg;
+  }
+}
+
+/* ============================================================
+   A origem (components/secoes/historia.tsx; R10, 28/10, CONTRATO.md, 3.6)
+   ============================================================ */
+@layer components {
+  /* ---------- tempo 1: a história ----------
+     O título e, ao lado dele (no celular, embaixo), a carta celeste; os quatro capítulos em duas colunas (no celular,
+     uma), cada um num parágrafo só: o título do capítulo corre na frase, na tinta plena, e o texto segue no apagado
+     (D6), no degrau do lide (21/31,5 na mesa, 18/27 no celular). Sem números, sem círculos, sem fio. */
+  .vd-origem-historia {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .vd-origem-carta {
+    width: 100%;
+    margin-top: 2.5rem;
+  }
+  .vd-capitulos {
+    margin-top: 3rem;
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 1024px) {
+    .vd-origem-historia {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 36rem);
+      column-gap: 3rem;
+      align-items: end;
+    }
+    .vd-origem-carta {
+      width: 100%;
+      margin-top: 0;
+    }
+    .vd-capitulos {
+      grid-column: 1 / -1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 3.5rem 4rem;
+      margin-top: 4.5rem;
+    }
+  }
+  .vd-capitulo {
+    font-size: var(--text-destaque);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+  .vd-capitulo :is(h3, p) {
+    display: inline;
+    font: inherit;
+  }
+  .vd-capitulo h3 {
+    font-family: var(--font-sub);
+    font-weight: 500;
+    letter-spacing: -0.018em;
+    color: var(--foreground);
+  }
+  .vd-capitulo h3::after {
+    content: ".";
+  }
+  /* O vínculo para a condição, em /planos: sem seta (a marca K3); o sublinhado acende em 200 ms. */
+  .vd-capitulo-vinculo {
+    display: inline-block;
+    margin-top: 0.75rem;
+    padding-block: 0.625rem;
+    font-size: var(--text-corpo);
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent);
+    transition: text-decoration-color 200ms var(--ease-atlas);
+  }
+  .vd-capitulo-vinculo:is(:hover, :focus-visible) {
+    text-decoration-color: var(--accent);
+  }
+
+  /* ---------- a carta celeste dos capítulos (components/paginas/o-atlas/carta-celeste.tsx) ----------
+     O traçado parado no bronze a 40% (o arco do equador, as marcas, dois meridianos) e o caminho dos capítulos na
+     tinta, fino; por cima, as quatro estrelas em HTML: o núcleo na tinta e o aro no bronze, que cintila (P12). */
+  .vd-carta-celeste {
+    position: relative;
+    container-type: inline-size;
+    aspect-ratio: 440 / 260;
+  }
+  .vd-carta-celeste-gravura {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    fill: none;
+    stroke-linecap: round;
+  }
+  .vd-carta-celeste-gravura path {
+    vector-effect: non-scaling-stroke;
+  }
+  /* O traçado se apaga nas bordas, como a grade da projeção sob o globo: a carta não tem moldura. */
+  .vd-carta-celeste-gravura {
+    -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent);
+    mask-image: radial-gradient(closest-side, #000 62%, transparent);
+  }
+  .vd-carta-celeste-gravura :is(.equador, .meridiano, .marca) {
+    stroke: color-mix(in srgb, var(--primary) 40%, transparent);
+    stroke-width: 1px;
+  }
+  .vd-carta-celeste-gravura .caminho {
+    stroke: color-mix(in srgb, var(--foreground) 45%, transparent);
+    stroke-width: 1px;
+    stroke-linejoin: round;
+  }
+  .vd-estrela {
+    position: absolute;
+    width: 3rem;
+    height: 3rem;
+    translate: -50% -50%;
+  }
+  .vd-estrela-aro {
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid var(--primary);
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(192 138 74 / 0.42), rgb(192 138 74 / 0.12));
+    opacity: 0.7;
+  }
+  .vd-estrela-nucleo {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 50%;
+    background: var(--foreground);
+    transition:
+      scale 300ms var(--ease-atlas),
+      background-color 300ms var(--ease-atlas);
+  }
+  /* O viajante: o ponto de bronze que percorre o caminho dos capítulos (a segunda parte de P12). Em repouso, apagado. */
+  .vd-carta-viajante {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1rem;
+    height: 1rem;
+    margin: -0.5rem 0 0 -0.5rem;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 28%, transparent);
+    opacity: 0;
+  }
+  /* O capítulo sob o ponteiro, ou com o vínculo em foco, acende a sua estrela. */
+  .vd-origem-historia:has(.vd-capitulo:nth-child(1):is(:hover, :focus-within)) .vd-estrela:nth-child(1) .vd-estrela-nucleo,
+  .vd-origem-historia:has(.vd-capitulo:nth-child(2):is(:hover, :focus-within)) .vd-estrela:nth-child(2) .vd-estrela-nucleo,
+  .vd-origem-historia:has(.vd-capitulo:nth-child(3):is(:hover, :focus-within)) .vd-estrela:nth-child(3) .vd-estrela-nucleo,
+  .vd-origem-historia:has(.vd-capitulo:nth-child(4):is(:hover, :focus-within)) .vd-estrela:nth-child(4) .vd-estrela-nucleo {
+    scale: 1.6;
+    background-color: var(--accent);
+  }
+
+  /* ---------- tempo 2: o nome e a peça, no eixo ----------
+     Um título, uma frase e um objeto. O eixo central é só desta cena na página (no celular, à margem). Entre os dois
+     tempos, 160 px na mesa e 96 no celular: a troca de cena, sem filete. */
+  .vd-origem-nome {
+    overflow-x: clip;
+    margin-top: 6rem;
+  }
+  @media (min-width: 768px) {
+    .vd-origem-nome {
+      margin-top: 7rem;
+      text-align: center;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vd-origem-nome {
+      margin-top: 10rem;
+    }
+  }
+  .vd-origem-mito-titulo {
+    font-family: var(--font-display);
+    font-size: var(--text-numero);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: var(--tracking-titulo);
+    text-wrap: balance;
+  }
+  .vd-origem-mito {
+    max-width: 31em;
+    margin: 1rem auto 0;
+    font-size: var(--text-destaque);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+  @media (min-width: 768px) {
+    .vd-origem-mito {
+      margin-top: 1.25rem;
+    }
+  }
+
+  /* ---------- a peça: o logotipo em 3D, em pé sobre o papel (components/ilhas/peca-do-logotipo.tsx) ----------
+     A letra no navy da tinta, com a espessura no navy fundo; o globo em bronze. A sombra longa cai para a direita,
+     rasante (a luz do fim da tarde vem do oeste): parada, pintada uma vez. Cada peça do globo é uma camada do tamanho
+     do globo no logotipo (x de 139 a 187, y de 0 a 48), e não da peça inteira. */
+  .vd-peca {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    position: relative;
+    width: min(19.5rem, 100%);
+    aspect-ratio: 1 / 1.02;
+    margin: 1.5rem auto 0;
+    border-radius: var(--radius);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (min-width: 768px) {
+    .vd-peca {
+      width: min(30rem, 100%);
+      margin-top: 2rem;
+    }
+  }
+  .vd-peca:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 4px;
+  }
+  .vd-peca-sombra {
+    position: absolute;
+    left: 14%;
+    bottom: 9%;
+    width: 54%;
+    aspect-ratio: 204 / 184;
+    transform-origin: 30% 100%;
+    /* A inclinação cresce com a largura: mais longa, a sombra sairia da tela a 360 e a 768 px (a régua, geometria). */
+    transform: scaleY(0.2) skewX(calc(var(--sombra-dx, 1) * -34deg));
+    color: rgb(15 42 71 / 0.15);
+    filter: blur(5px);
+    pointer-events: none;
+  }
+  @media (min-width: 768px) {
+    .vd-peca-sombra {
+      width: 56%;
+      transform: scaleY(0.2) skewX(calc(var(--sombra-dx, 1) * -46deg));
+    }
+  }
+  @media (min-width: 1024px) {
+    .vd-peca-sombra {
+      transform: scaleY(0.2) skewX(calc(var(--sombra-dx, 1) * -56deg));
+    }
+  }
+  .vd-peca-sombra svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .vd-peca-contato {
+    position: absolute;
+    left: 12%;
+    bottom: 6%;
+    width: 64%;
+    height: 9%;
+    background: radial-gradient(closest-side, rgb(8 32 59 / 0.32), rgb(8 32 59 / 0));
+    pointer-events: none;
+  }
+  /* O palco tem a proporção da caixa do logotipo (204 × 184): assim o globo cabe numa camada do tamanho dele. */
+  .vd-peca-palco {
+    position: absolute;
+    left: 8%;
+    right: 10%;
+    top: 16%;
+    aspect-ratio: 204 / 184;
+    perspective: 1200px;
+    perspective-origin: 50% 35%;
+  }
+  .vd-peca-inclinacao {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: rotateY(-22deg) rotateX(4deg);
+    transition: transform 520ms var(--ease-atlas);
+  }
+  .vd-peca-camada {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transition: transform 520ms var(--ease-atlas);
+  }
+  .vd-peca-camada svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .vd-peca-flutua {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+  }
+  .vd-peca-camada .e1 {
+    transform: translateZ(-3px);
+  }
+  .vd-peca-camada .e2 {
+    transform: translateZ(-6px);
+  }
+  .vd-peca-camada .e3 {
+    transform: translateZ(-9px);
+  }
+  .vd-peca-camada .acesa {
+    opacity: 0;
+    transition: opacity 240ms var(--ease-atlas);
+  }
+  /* As quatro peças do globo: montadas, no plano da letra; abertas, afastam-se pouco, em profundidade, e continuam a
+     ler como globo. */
+  .vd-peca-globo {
+    --aberta: translate3d(-12.75%, -30%, calc(var(--i) * 16px + 12px));
+    inset: auto;
+    left: 72.059%;
+    top: 4.348%;
+    width: 23.529%;
+    height: 26.087%;
+    transform: translate3d(0, 0, 0);
+  }
+  .vd-peca[aria-pressed="true"] .vd-peca-inclinacao {
+    transform: rotateY(-32deg) rotateX(6deg);
+  }
+  /* A peça que entra na tela com a pausa ligada aparece montada, sem transição; e assim fica. */
+  [data-entrada="parada"] * {
+    transition: none;
+  }
+  .vd-peca[aria-pressed="true"] .vd-peca-globo,
+  [data-entrada="pendente"] .vd-peca-globo {
+    transform: var(--aberta);
+  }
+  @media (hover: hover) {
+    .vd-peca:hover .vd-peca-inclinacao {
+      transform: rotateY(-32deg) rotateX(6deg);
+    }
+    .vd-peca:hover .vd-peca-globo {
+      transform: var(--aberta);
+    }
+  }
+  .vd-peca-globo.erguida {
+    transform: translate3d(-17%, -61%, 56px);
+  }
+  .vd-peca-globo.erguida .acesa {
+    opacity: 1;
+  }
+  [data-entrada="indo"] .vd-peca-globo {
+    transition-duration: 600ms;
+    transition-timing-function: var(--ease-entrada);
+    transition-delay: calc(var(--i) * 50ms);
+  }
+  [data-entrada="pendente"] .vd-peca-globo {
+    transition: none;
+  }
+  [data-teclado] :is(.vd-peca-camada, .vd-peca-inclinacao, .vd-peca-camada .acesa),
+  [data-teclado] .vd-peca-linha::before {
+    transition: none;
+  }
+
+  .vd-peca-caixa {
+    position: relative;
+  }
+  .vd-peca-janela {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .vd-peca-leitura {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .vd-peca-leitura::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: -4rem;
+    height: 4rem;
+    background: linear-gradient(transparent, rgb(192 138 74 / 0.24), transparent);
+  }
+
+  /* ---------- o código: as quatro linhas, logo abaixo da peça ----------
+     Sem caixa, sem filete, sem barra de janela, sem número de linha, sem cursor (o código que mora numa figura: a
+     síntese do R10, 5.2, item 1). Cada linha é um botão: o código à esquerda, o que ele desenha à direita, a 16 px.
+     No celular, uma coluna; a linha longa desce antes do terceiro atributo, com recuo. */
+  .vd-peca-codigo {
+    max-width: 48rem;
+    margin: 1.5rem auto 0;
+  }
+  @media (min-width: 768px) {
+    .vd-peca-codigo {
+      margin-top: 1.75rem;
+    }
+  }
+  .vd-peca-ponte {
+    max-width: 30em;
+    margin-inline: auto;
+    font-size: var(--text-destaque);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--foreground);
+    text-wrap: pretty;
+  }
+  .vd-peca-linhas {
+    margin: 0.75rem -0.75rem 0;
+    display: grid;
+    text-align: left;
+  }
+  .vd-peca-linha {
+    all: unset;
+    box-sizing: border-box;
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .vd-peca-linha::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: #ebe4da;
+    opacity: 0;
+    transition: opacity 200ms var(--ease-atlas);
+  }
+  .vd-peca-linha.ativa::before {
+    opacity: 1;
+  }
+  .vd-peca-linha:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 0;
+  }
+  .vd-peca-linha code {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    letter-spacing: 0;
+    font-variant-ligatures: none;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--muted-foreground);
+  }
+  .vd-peca-resto {
+    display: block;
+    padding-left: 2ch;
+  }
+  .vd-peca-traducao {
+    margin-top: 2px;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    transition: color 200ms var(--ease-atlas);
+  }
+  .vd-peca-linha.ativa .vd-peca-traducao {
+    color: var(--foreground);
+  }
+  .vd-peca-codigo figcaption {
+    margin-top: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+  .vd-peca-codigo figcaption code {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    letter-spacing: 0;
+  }
+  @media (min-width: 768px) {
+    .vd-peca-linhas {
+      margin: 1.75rem 0 0;
+      gap: 2px;
+    }
+    /* Flexível, e não grade de 30 rem: com a letra a 200%, a tradução desce, e o código quebra dentro da coluna. */
+    .vd-peca-linha {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      column-gap: 1.5rem;
+      padding: 0.8125rem 1rem;
+    }
+    .vd-peca-linha code {
+      flex: 0 1 30rem;
+      min-width: 0;
+      font-size: 0.9375rem;
+      line-height: 1.5rem;
+    }
+    .vd-peca-resto {
+      display: inline;
+      padding-left: 0;
+    }
+    .vd-peca-traducao {
+      flex: 1 1 9rem;
+      margin-top: 0;
+    }
+    .vd-peca-codigo figcaption {
+      margin-top: 1rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A cintilação (a passiva P12): o aro de cada estrela, de 0,35 a 1, ida e volta, no período dela (primos entre si). */
+  .js [data-visivel] .vd-estrela-aro {
+    animation: mov-cintila-aro var(--periodo) cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  /* O viajante (P12): sai da primeira estrela e anda, com uma parada em cada uma, até a última (a sala de aula e o
+     balcão), onde se apaga: 16 s, com três trechos de 3 s. As posições vêm das estrelas (carta-celeste.tsx). */
+  .js [data-visivel] .vd-carta-viajante {
+    animation: mov-viajante 16s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  }
+  /* A flutuação da peça aberta ou erguida (a constante desta página): ±10 px em profundidade, cada peça num tempo. */
+  .vd-peca-globo.erguida .vd-peca-flutua,
+  .vd-peca[aria-pressed="true"] .vd-peca-flutua {
+    animation: mov-flutua 2.6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    animation-delay: calc(var(--i) * -0.45s);
+  }
+  @media (hover: hover) {
+    .vd-peca:hover .vd-peca-flutua {
+      animation: mov-flutua 2.6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+      animation-delay: calc(var(--i) * -0.45s);
+    }
+  }
+  [data-teclado] .vd-peca-flutua {
+    animation: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.vd-peca-camada, .vd-peca-inclinacao, .vd-peca-camada .acesa, .vd-capitulo-vinculo),
+  .vd-peca-linha::before {
+    transition: none;
+  }
+}
+@keyframes mov-cintila-aro {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes mov-viajante {
+  0% {
+    translate: var(--e1);
+    opacity: 0;
+  }
+  8%,
+  14% {
+    translate: var(--e1);
+    opacity: 1;
+  }
+  33%,
+  39% {
+    translate: var(--e2);
+    opacity: 1;
+  }
+  58%,
+  64% {
+    translate: var(--e3);
+    opacity: 1;
+  }
+  83%,
+  90% {
+    translate: var(--e4);
+    opacity: 1;
+  }
+  100% {
+    translate: var(--e4);
+    opacity: 0;
+  }
+}
+@keyframes mov-flutua {
+  0%,
+  100% {
+    transform: translateZ(0);
+  }
+  50% {
+    transform: translateZ(10px);
+  }
+}
+
+/* ============================================================
+   Quem faz (components/secoes/quem-faz.tsx; R10, 28/10, CONTRATO.md, seção 5)
+   ============================================================ */
+@layer components {
+  /* ---------- os retratos ----------
+     Em toda a largura do Envelope: uma coluna por sócio na mesa, uma por linha no celular (a foto tem 640 px, derivada
+     de ferramentas/tratar-retratos.mjs, com o mesmo recorte). */
+  .vd-socios-formacao {
+    max-width: 38em;
+    margin-top: 2rem;
+    font-size: var(--text-destaque);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--foreground);
+    text-wrap: pretty;
+  }
+  .vd-socios {
+    display: grid;
+    gap: 3.5rem;
+    margin-top: 3.5rem;
+  }
+  .vd-socio {
+    min-width: 0;
+  }
+  .vd-socio-nome {
+    margin-top: 1.5rem;
+    font-size: var(--text-numero);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .vd-socio-funcao {
+    margin-top: 0.625rem;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0;
+    color: var(--accent);
+  }
+  .vd-socio-compromisso {
+    margin-top: 0.5rem;
+    font-size: var(--text-corpo);
+    line-height: 1.5;
+    color: var(--muted-foreground);
+    text-wrap: pretty;
+  }
+  .vd-retrato {
+    position: relative;
+    display: block;
+    aspect-ratio: 1;
+  }
+  .vd-retrato-foto {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--deep);
+    color: var(--secondary-foreground);
+    font-family: var(--font-display);
+    font-size: var(--text-numero);
+  }
+  .vd-retrato-lente {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .vd-retrato-lente img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .vd-retrato-vaga .vd-retrato-foto {
+    outline: 1px dashed var(--primary);
+    outline-offset: 4px;
+  }
+  /* A luz que passa (a passiva P13): a borda de bronze do retrato acende e fica, uma vez em cada um. Sem véu sobre o
+     rosto (CONFERENCIA-DECISOES.md, A2): só o fio, por opacidade. Sem ela (o movimento reduzido), o retrato limpo. */
+  .vd-retrato-luz {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 1.5px rgb(217 167 107 / 0.9);
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  /* ---------- a rota das cinco etapas ----------
+     Mais larga que o Envelope na mesa. Uma linha só, da visita ao suporte, e o marcador que anda por ela (a passiva
+     P16); a faixa de luz acompanha o marcador pelas colunas. A mesa usa a <table>; o celular, a lista. */
+  .vd-rota {
+    margin-top: 5rem;
+    padding-inline: max(1.5rem, env(safe-area-inset-left), env(safe-area-inset-right));
+  }
+  .vd-rota-titulo {
+    max-width: 18em;
+    font-size: var(--text-numero);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .vd-rota-corpo {
+    position: relative;
+    margin-top: 2.5rem;
+  }
+  .vd-etapas {
+    display: none;
+  }
+  .vd-rota-rosto {
+    flex: none;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .vd-rota-nome {
+    display: block;
+    font-family: var(--font-sub);
+    font-size: 1.1875rem;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+    color: var(--foreground);
+    text-wrap: balance;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .vd-rota-responde {
+    font-weight: 600;
+    color: var(--accent);
+  }
+  /* O trilho no celular: o fio vertical à esquerda da lista, e o marcador desce por ele. */
+  .vd-rota-trilho {
+    position: absolute;
+    left: 0.4375rem;
+    top: 0;
+    bottom: 0;
+    width: 1.5px;
+    background: color-mix(in srgb, var(--primary) 55%, transparent);
+    pointer-events: none;
+  }
+  .vd-rota-marcador {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .vd-rota-marcador::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: -0.5625rem 0 0 -0.5625rem;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--primary) 26%, transparent);
+  }
+  /* A faixa de luz: no celular, desce com o marcador; na mesa, anda com ele pelas colunas. */
+  .vd-rota-janela {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .vd-rota-luz {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .vd-rota-luz::before {
+    content: "";
+    position: absolute;
+    inset-inline: -1.5rem;
+    top: -12rem;
+    height: 12rem;
+    background: linear-gradient(transparent, rgb(255 255 255 / 0.38) 45%, rgb(255 255 255 / 0.38) 55%, transparent);
+  }
+  .vd-rota-lista {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    padding-left: 2.25rem;
+  }
+  .vd-rota-lista li {
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--muted-foreground);
+  }
+  /* A estação de cada etapa, sobre o fio. */
+  .vd-rota-lista li::before {
+    content: "";
+    position: absolute;
+    left: -2.0625rem;
+    top: 0.5rem;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background: var(--deep);
+  }
+  .vd-rota-lista h4 {
+    font-family: var(--font-sub);
+    font-size: var(--text-numero);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+  }
+  .vd-rota-quem {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.875rem;
+    margin-block: 1rem 0.75rem;
+  }
+  .vd-rota-quem .vd-rota-nome {
+    flex: 1 1 8rem;
+  }
+  .vd-rota-apoio {
+    margin-top: 0.75rem;
+  }
+  .vd-rota-apoio strong,
+  .vd-etapas-apoio strong {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+
+  @media (min-width: 768px) {
+    .vd-socios {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 2.5rem;
+      margin-top: 4.5rem;
+    }
+    .vd-rota {
+      padding-inline: 2.5rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .vd-rota {
+      max-width: 88rem;
+      margin: 7rem auto 0;
+    }
+    .vd-rota-titulo {
+      font-size: var(--text-titulo);
+      line-height: 1.05;
+    }
+    .vd-rota-corpo {
+      margin-top: 4rem;
+    }
+    .vd-rota-lista {
+      display: none;
+    }
+    /* O trilho na mesa: o fio em cima das colunas, e o marcador e a faixa correm por ele. */
+    .vd-rota-trilho {
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: auto;
+      overflow: hidden;
+      background: linear-gradient(color-mix(in srgb, var(--primary) 55%, transparent), color-mix(in srgb, var(--primary) 55%, transparent)) top 0.5625rem left / 100% 1.5px no-repeat;
+    }
+    .vd-rota-marcador::before {
+      left: 0;
+      top: 0.625rem;
+    }
+    .vd-rota-luz::before {
+      inset: 0 auto 0 -22%;
+      width: 22%;
+      height: auto;
+      background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.62) 45%, rgb(255 255 255 / 0.62) 55%, transparent);
+    }
+    .vd-etapas {
+      position: relative;
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .vd-etapas :is(th, td) {
+      padding-inline: 0 2rem;
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+    .vd-etapas thead th {
+      position: relative;
+      padding-top: 2.25rem;
+      padding-bottom: 2rem;
+      font-family: var(--font-sub);
+      font-size: 1.75rem;
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.024em;
+      color: var(--foreground);
+    }
+    /* A estação de cada etapa, sobre o fio. */
+    .vd-etapas thead th::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.25rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 50%;
+      background: var(--deep);
+    }
+    .vd-etapas tbody td {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--muted-foreground);
+      text-wrap: pretty;
+    }
+    .vd-etapas-conduz .vd-rota-rosto {
+      display: block;
+      width: 5.5rem;
+      height: 5.5rem;
+      margin-bottom: 0.875rem;
+    }
+    .vd-etapas-conduz .vd-rota-nome {
+      margin-bottom: 0.5rem;
+    }
+    .vd-etapas-apoio td {
+      padding-top: 1.75rem;
+    }
+    .vd-etapas-apoio p + p {
+      margin-top: 0.875rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    .vd-rota {
+      padding-inline: 5rem;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* A aproximação de cada retrato (P13): continua, sem patamar, 16 s para cada lado, cada um numa fase. Só a lente anda;
+     a moldura e o rosto ficam nítidos, sem véu. A borda acende uma vez em cada um, ao entrar na tela (data-visto). */
+  .js .vd-retrato[data-visivel] .vd-retrato-lente {
+    animation: mov-retrato-aproxima 16s cubic-bezier(0.37, 0, 0.63, 1) calc(var(--vez) * -5s) infinite alternate;
+  }
+  .js .vd-retrato[data-visto] > .vd-retrato-luz {
+    animation: mov-luz-uma-vez 1.2s cubic-bezier(0.37, 0, 0.63, 1) 2 alternate both;
+  }
+  /* A rota (P16): o marcador anda sem parar da visita ao suporte, e a faixa de luz vai com ele. Linear, um fluxo. */
+  .js .vd-rota[data-visivel] .vd-rota-marcador {
+    animation: mov-rota-desce 22s linear infinite;
+  }
+  .js .vd-rota[data-visivel] .vd-rota-luz {
+    animation: mov-rota-luz-desce 22s linear infinite;
+  }
+  @media (min-width: 1024px) {
+    .js .vd-rota[data-visivel] :is(.vd-rota-marcador, .vd-rota-luz) {
+      animation: mov-rota-anda 22s linear infinite;
+    }
+  }
+  /* A peça do mito (P17): o céu sobre o ombro. A letra balança devagar em 3D, sem parar, e o globo flutua. */
+  .js .vd-origem-nome[data-visivel] .vd-peca-inclinacao {
+    animation: mov-peca-balanca 7s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  /* No toque, sem o laço na peça: com o giro ou só com a subida, a trava de 45 batidas na rolagem do celular 4× (acabamento,
+     02/11, em A/B: 0 em 7 sem o laço; 3 em 5 com a subida). A entrada, uma vez, fica; quem se move no toque é a leitura
+     das linhas, logo abaixo (P36). */
+  @media (hover: none) {
+    .js .vd-origem-nome[data-visivel] .vd-peca-inclinacao {
+      animation: none;
+    }
+  }
+  /* P36, a leitura do código: a faixa desce pelas quatro linhas que desenham o globo. */
+  .js [data-visivel] .vd-peca-leitura {
+    animation: mov-peca-leitura 8s linear infinite;
+  }
+}
+@keyframes mov-retrato-aproxima {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.09;
+  }
+}
+@keyframes mov-rota-desce {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 100%;
+  }
+}
+@keyframes mov-rota-luz-desce {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(100% + 12rem);
+  }
+}
+@keyframes mov-rota-anda {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 122% 0;
+  }
+}
+@keyframes mov-peca-leitura {
+  to {
+    translate: 0 calc(100% + 4rem);
+  }
+}
+@keyframes mov-peca-balanca {
+  from {
+    rotate: y -7deg;
+  }
+  to {
+    rotate: y 9deg;
+  }
+}
+@keyframes mov-luz-uma-vez {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 1;
+  }
+}

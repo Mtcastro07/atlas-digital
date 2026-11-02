@@ -54,8 +54,15 @@ const texto = localFont({
 // - .js: há script, logo há o botão de pausa; só então o movimento
 //   contínuo roda (sem script, a esfera fica parada e a capa entra uma vez);
 // - .ja-aberto: recarregar ou voltar pelo histórico não repete a entrada
-//   da capa. Ver app/movimento.css.
-const primeiraAbertura = `(function(){var h=document.documentElement;h.classList.add("js");try{var n=performance.getEntriesByType("navigation")[0];if(n&&(n.type==="reload"||n.type==="back_forward"))h.classList.add("ja-aberto")}catch(e){}})()`;
+//   da capa. Ver app/movimento.css;
+// - .ancorando, na carga com âncora (/#fundacao): as seções se desenham
+//   inteiras antes do salto do navegador até ela, que de outro modo caía
+//   numa altura reservada (a contenção de app/globals.css) e às vezes
+//   passava do destino; o ajuste fino subia, e o cabeçalho, que só se
+//   recolhe ao descer, ficava à vista sobre ele (28/10, R10;
+//   registros/atlas/design-v2/60fps-navegacao/RELATO-2.md, 12.5). A ilha
+//   Ancoras tira a classe dois quadros depois de medir.
+const primeiraAbertura = `(function(){var h=document.documentElement;h.classList.add("js");if(location.hash)h.classList.add("ancorando");try{var n=performance.getEntriesByType("navigation")[0];if(n&&(n.type==="reload"||n.type==="back_forward"))h.classList.add("ja-aberto")}catch(e){}})()`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(contato.url),

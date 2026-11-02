@@ -30,8 +30,7 @@
    ============================================================ */
 
 @layer components {
-  .mov-globo ellipse,
-  .mov-meridiano {
+  .mov-globo ellipse {
     transform-box: fill-box;
     transform-origin: center;
   }
@@ -48,210 +47,7 @@
   .mov-palavra {
     display: inline-block;
   }
-
-  /* ---------- esfera da capa (components/marca/esfera.tsx) ---------- */
-  /* O tamanho e a descida (desde 16/10, "Identidade mais profunda"): a esfera tem quase a altura da capa
-     (--lado, 94% de 100svh − 72 px, a altura mínima dela) e desce do centro do bloco de texto o bastante para a
-     metade de baixo atravessar a emenda e pousar no papel dos destaques: --pousa, 80 px na mesa (o pedido: de 64
-     a 112) e 48 no celular. Na mesa, o bloco fica no centro da capa (o mesmo respiro em cima e embaixo): a borda
-     de baixo da capa está a (100svh − 72 px)/2 do centro dele. Até 16/10, 640 px, centrada no bloco, 24 px abaixo,
-     inteira dentro da capa. Se o texto for mais alto que a tela (a capa cresce), a esfera para antes da emenda,
-     sem cobrir nada. */
-  .mov-esfera-palco {
-    --altura-da-capa: calc(100svh - 72px);
-    --lado: min(calc(var(--altura-da-capa) * 0.94), 1000px);
-    --pousa: 80px;
-    --desce: calc((var(--altura-da-capa) - var(--lado)) / 2 + var(--pousa));
-  }
-  /* Nunca maior que o invólucro da máscara (.mov-esfera-tracos, um contêiner) menos a descida dos dois lados: o que
-     passa dele, a máscara corta em linha reta (a 768 px, o fundo saía 11 px e era cortado; corrigido em 14/10). */
-  .mov-esfera-eixo {
-    width: min(var(--lado), 100cqh - 2 * var(--desce));
-    height: min(var(--lado), 100cqh - 2 * var(--desce));
-    translate: 0 var(--desce);
-  }
-  .mov-esfera-eixo svg {
-    overflow: visible;
-    fill: none;
-    stroke: color-mix(in srgb, var(--primary) 62%, transparent);
-    stroke-width: 1.5;
-  }
-  /* O metal (16/10): os traços fixos no degradê do <defs> (aceso do noroeste); a frente inteira, o verso fino e a
-     35%. Os meridianos ficam no tom de antes: o degradê viraria com o scaleX. */
-  .mov-esfera-eixo .mov-metal {
-    stroke: url(#esfera-metal);
-  }
-  .mov-esfera-eixo .mov-contorno {
-    stroke-width: 1.7;
-  }
-  .mov-esfera-eixo .mov-frente {
-    stroke-width: 1.3;
-  }
-  .mov-esfera-eixo .mov-tras {
-    stroke-width: 0.8;
-    opacity: 0.35;
-  }
-  .mov-esfera-eixo .mov-anel.mov-frente {
-    stroke-width: 1;
-  }
-  .mov-esfera-eixo .mov-graduacao {
-    stroke-width: 0.7;
-  }
-  /* Os meridianos em espessura de tela (16/10): o scaleX afinava também o traço, e o meridiano de perfil virava uma
-     linha tracejada. */
-  .mov-esfera-eixo .mov-meridiano {
-    vector-effect: non-scaling-stroke;
-    stroke-width: 2.2px;
-  }
-  .mov-esfera-eixo .mov-acento {
-    stroke: color-mix(in srgb, var(--accent) 92%, transparent);
-    stroke-width: 2.8px;
-  }
-  /* Parado, cada meridiano fica aberto na largura da sua fase. */
-  .mov-meridiano {
-    transform: scaleX(var(--estatico, 1));
-  }
-  /* As metades de cada meridiano (16/10) giram em torno do eixo da esfera (o centro do viewBox), e não da própria
-     caixa, que é deslocada; paradas, cada uma com a opacidade da sua face na pose (--face). */
-  .mov-meia-a,
-  .mov-meia-b {
-    transform-box: view-box;
-    transform-origin: 200px 200px;
-    opacity: var(--face, 1);
-  }
-  /* A sombra de contato onde a esfera pousa (16/10): no papel, sob o ponto mais baixo dela, a 60% da largura e 10%
-     da altura, deslocada para a direita e para baixo, longe da luz do noroeste. Não é halo centrado. O palco começa
-     48 px abaixo do topo do bloco: o centro dele fica 24 px abaixo do centro do bloco. */
-  .mov-esfera-pouso {
-    left: 50%;
-    top: 50%;
-    width: calc(var(--lado) * 0.6);
-    height: calc(var(--lado) * 0.1);
-    translate: calc(-50% + var(--lado) * 0.06) calc(-50% - 24px + var(--desce) + var(--lado) * 0.5 + var(--lado) * 0.015);
-    border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(15 42 71 / 0.16), rgb(15 42 71 / 0.06) 60%, transparent);
-  }
-  /* Halo quente atrás da esfera. */
-  .mov-esfera-brilho {
-    width: min(96vmin, 780px);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(
-      circle,
-      color-mix(in srgb, var(--primary) 34%, transparent) 0%,
-      rgb(30 80 132 / 0.22) 38%,
-      transparent 68%
-    );
-  }
-  /* Véu em duas camadas: a interna garante o contraste do texto; a
-     externa deixa a esfera legível nas bordas. */
-  .mov-esfera-veu {
-    background: radial-gradient(
-      70% 56% at 50% 47%,
-      color-mix(in srgb, var(--anteparo, var(--background)) 46%, transparent) 0%,
-      color-mix(in srgb, var(--anteparo, var(--background)) 20%, transparent) 62%,
-      transparent 86%
-    );
-  }
-  /* Os traços se dissolvem atrás do texto da capa: uma máscara radial só
-     nos traços (o halo e o véu ficam inteiros), sem forma pintada por cima
-     do fundo. Antes, um anteparo da cor do fundo atrás do bloco de texto,
-     ainda a 80% na borda de cima e a ~50% na de baixo, cortava o globo e o
-     halo em linha reta (pedido do usuário, 01/10: "parte de um retângulo
-     está recortando o globo").
-     A máscara fica no invólucro dos traços (ilhas/esfera-viva.tsx): o bloco
-     de texto mais 60% da altura dele em cima e embaixo (2,2 vezes o bloco;
-     a esfera inteira cabe). O palco começa 48 px abaixo do bloco, e as
-     porcentagens de top e bottom são da altura do palco (a do bloco menos
-     48 px): daí as contas. Assim o bloco ocupa sempre de 27,3% a 72,7% do
-     invólucro, em qualquer largura, e o raio da elipse pode ser porcentagem
-     pura (o Chromium recusa calc com porcentagem e pixel no raio de um
-     gradiente radial). Até a meia altura do bloco (22,7% = 76,9% do raio
-     de 29,6%), os traços somem; dali, voltam numa transição longa (~15% da
-     altura do bloco, uns 60 px), sem degrau. Na horizontal, a elipse tem a
-     largura do palco: atrás do texto, a faixa vai de borda a borda da
-     esfera. */
-  /* Desde 16/10, o invólucro vai do bloco mais 150% da altura dele em cima e embaixo (4 vezes o bloco; até então,
-     60%, 2,2 vezes), para caber a esfera que desce (a 768 px, com 3 vezes, ela encolhia e não chegava ao papel): o
-     bloco ocupa de 37,5% a 62,5% dele. O raio vertical da elipse passa de 29,6% a 18,75%: 0,75 vez o bloco (até
-     então, 0,651; com a esfera que desce, os meridianos cruzavam a borda de baixo de "Conhecer o método", a 3,9:1
-     no pior ponto). Na mesa, o raio horizontal deixa de ser a largura do palco (a faixa de borda a borda): fica em
-     480 px (o título de 96 px tem ±345), e os lados da esfera e o anel aparecem ao lado do texto, em vez de a esfera
-     virar duas calotas. */
-  .mov-esfera-tracos {
-    container-type: size;
-    position: absolute;
-    inset-inline: 0;
-    top: calc(-48px * 2.5 - 150%);
-    bottom: calc(-150% - 48px * 1.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    --mascara-rx: 100%;
-    --mascara: radial-gradient(
-      var(--mascara-rx) 18.75% at 50% 50%,
-      transparent 0%,
-      transparent 76.9%,
-      rgb(0 0 0 / 0.08) 81%,
-      rgb(0 0 0 / 0.3) 86%,
-      rgb(0 0 0 / 0.62) 91%,
-      rgb(0 0 0 / 0.88) 96%,
-      #000 100%
-    );
-    -webkit-mask-image: var(--mascara);
-    mask-image: var(--mascara);
-  }
-  /* Atrás do bloco de texto (acima da esfera: z-[1], components/secoes/capa.tsx),
-     um gradiente radial da cor do fundo apaga o halo onde há letra e volta
-     a deixá-lo aparecer devagar. Ele é a "transição de cor para o texto"
-     do pedido: a elipse cabe na própria caixa (closest-side) e chega a
-     transparente nas quatro bordas, então não sobra contorno. Medido pixel
-     a pixel em 10 instantes da rotação (390, 768, 1024 e 1440 px): título
-     ≥ 10,9:1, lide ≥ 6,45:1, "Conhecer o método" ≥ 5,96:1 — no nível do
-     anteparo retangular ou acima (9,3; 6,44; 5,8). O topo da caixa é fixo, em rem: em
-     porcentagem, subia enquanto o texto da capa chegava em partes, e o
-     navegador contava um deslocamento de layout (CLS até 0,06, 01/10). */
-  .mov-anteparo {
-    position: relative;
-    isolation: isolate;
-  }
-  .mov-anteparo::before {
-    content: "";
-    position: absolute;
-    inset: -3rem -6% -16%;
-    z-index: -1;
-    pointer-events: none;
-    /* Desde 16/10, da cor da cena na altura do texto (--anteparo, que a capa define), e não do navy chapado: a capa
-       tem luz. */
-    background: radial-gradient(
-      closest-side,
-      color-mix(in srgb, var(--anteparo, var(--background)) 92%, transparent) 0%,
-      color-mix(in srgb, var(--anteparo, var(--background)) 86%, transparent) 50%,
-      color-mix(in srgb, var(--anteparo, var(--background)) 52%, transparent) 78%,
-      transparent 100%
-    );
-  }
-}
-
-/* No celular, desde 14/10, a esfera passa da largura e emoldura o texto em cima e embaixo, como na mesa (até então,
-   100vmin: ficava inteira atrás do bloco de texto, e só a bacia de baixo aparecia); as laterais saem pela capa
-   (overflow-hidden), e a altura do invólucro da máscara a limita (acima). */
-@media (max-width: 767.98px) {
-  /* No celular (16/10), a esfera em sangria e 48 px de pouso. O bloco fica acima do centro da capa (96 px de respiro
-     em cima, 208 embaixo, components/secoes/capa.tsx): a borda de baixo está a (100svh − 72 px)/2 + 56 px do centro
-     dele. Para o título ficar dentro da esfera e ela ainda pousar no papel, o lado vai do pouso até 260 px acima do
-     centro do bloco (a metade dele, ~200 px, mais 60): ~1,9 vez a largura da tela (750 px a 390 × 844). Com 1,6 vez,
-     como pedia a direção, a esfera inteira ficava abaixo do título, só a bacia à vista. */
-  .mov-esfera-palco {
-    --pousa: 48px;
-    --lado: calc(var(--altura-da-capa) / 2 + 56px + var(--pousa) + 260px);
-    --desce: calc((var(--altura-da-capa) - var(--lado)) / 2 + 56px + var(--pousa));
-  }
-}
-@media (min-width: 1024px) {
-  .mov-esfera-tracos {
-    --mascara-rx: 480px;
-  }
+  /* A esfera da capa mora em app/paginas/inicio.css desde 28/10 (R10, fase 0). */
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -291,69 +87,57 @@
     animation: mov-giro-completo 1.15s var(--ease-atlas) 1;
   }
 
-  /* Esfera da capa: cada meridiano dá uma volta a cada 16 s, cada um
-     numa fase (--fase); o halo pulsa devagar. Pausa fora de vista
-     (data-pausa, ilhas/esfera-viva.tsx). */
-  .js .mov-meridiano {
-    animation: mov-meridiano 16s linear infinite;
-    animation-delay: var(--fase, 0s);
-  }
-  /* As metades (16/10): o mesmo giro, e a troca de face no meio e no fim da volta, quando o meridiano está todo
-     aberto. O atalho apaga o atraso: ele vem depois. */
-  .js .mov-meia-a {
-    animation: mov-meridiano 16s linear infinite, mov-face-a 16s steps(1, end) infinite;
-    animation-delay: var(--fase, 0s);
-  }
-  .js .mov-meia-b {
-    animation: mov-meridiano 16s linear infinite, mov-face-b 16s steps(1, end) infinite;
-    animation-delay: var(--fase, 0s);
-  }
-  .js .mov-esfera-brilho {
-    animation: mov-pulsa 8s var(--ease-atlas) infinite alternate;
-  }
-  [data-pausa] :is(.mov-meridiano, .mov-esfera-brilho) {
-    animation-play-state: paused;
-  }
-
-  /* Globo de O Atlas (marca/globo.tsx, `girando`): cada meridiano percorre
-     a sua longitude, uma volta a cada 36 s, a partir da fase do desenho
-     parado (--atraso-longitude). Só depois de entrar na tela (data-visivel). */
-  .js [data-visivel] .mov-longitude {
-    animation: mov-longitude 36s linear infinite;
-    animation-delay: var(--atraso-longitude, 0s);
-  }
-  /* A frente e o verso do globo (16/10): cada metade troca de face no meio e no fim da volta, quando o meridiano está
-     todo aberto, no mesmo atraso do giro (herdado do meridiano). */
-  .js [data-visivel] .mov-longitude > .mov-face-a {
-    animation: mov-face-a 36s steps(1, end) infinite;
-    animation-delay: var(--atraso-longitude, 0s);
-  }
-  .js [data-visivel] .mov-longitude > .mov-face-b {
-    animation: mov-face-b 36s steps(1, end) infinite;
-    animation-delay: var(--atraso-longitude, 0s);
-  }
-
-  /* Um reflexo atravessa o título da chamada final a cada 8 s, depois que
-     ele entra na tela (data-visivel): na carga, ele está abaixo da dobra, e
-     correr ali custaria um recálculo de estilo por quadro, sem ninguém ver. */
-  .js .mov-reflexo[data-visivel] {
-    background-image: linear-gradient(100deg, var(--foreground) 0 40%, #ffffff 50%, var(--foreground) 60% 100%);
-    background-size: 260% 100%;
-    background-position: 100% 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: mov-reflexo 8s var(--ease-atlas) infinite;
-  }
-
+  /* A esfera e o reflexo do Fim (app/paginas/inicio.css) e o globo de O Atlas (app/paginas/o-atlas.css) moram no CSS
+     da página desde 28/10 (R10, fase 0); a pausa de cada um continua aqui, por nome. */
   /* Pausa: fora da tela, ou pelo botão do cabeçalho. A lista nomeia as
      peças que correm (aqui e em app/demos/demos.css), em vez de "tudo
      dentro de [data-ambiente]": um seletor universal seria testado em
      cada elemento da página a cada recálculo de estilo. */
-  .ambiente-pausado :is(.mov-meridiano, .mov-esfera-brilho, .mov-reflexo, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude, .mov-longitude > *),
-  [data-fora] :is(.mov-meridiano, .mov-esfera-brilho, .mov-cintila-janela, .mov-cintila-luz, .mov-longitude, .mov-longitude > *),
-  .mov-reflexo[data-fora] {
+  .ambiente-pausado :is(.mov-cintila-janela, .mov-cintila-luz, .mov-longitude, .mov-longitude > *),
+  [data-fora] :is(.mov-cintila-janela, .mov-cintila-luz, .mov-longitude, .mov-longitude > *) {
     animation-play-state: paused !important;
+  }
+}
+
+/* ---------- as passivas e as constantes (R10, 28/10, S1) ----------
+   O movimento sem ação de quem visita (a decisão do aprovador, 27 e 28/10: duas ou mais por página, nas sete, em
+   objetos e mecanismos diferentes). O contrato de cada uma (registros/atlas/design-v2/R10/construcao/CONTRATO.md, 4.1):
+   - a passiva é um elemento com data-passiva="<pagina>-<objeto>", dentro de um [data-ambiente] que vem no HTML do
+     servidor (o observador de components/ilhas/controle-do-movimento.tsx só vê o que existe na troca de caminho e lhe
+     dá data-visivel e data-fora); o elemento que anima leva .mov-passiva. A constante (o laço sob o ponteiro de cada
+     página) leva .mov-constante;
+   - a animação se declara no CSS da página (app/paginas/), sob .js [data-visivel] .<classe>, com keyframes só de
+     transform, translate, rotate, scale e opacity, num alvo HTML (ou num <svg> inteiro, nunca num filho dele: no
+     Chrome, o transform de um filho de SVG repinta o desenho a cada quadro na linha principal);
+   - aqui, por três regras, toda passiva e toda constante param na pausa (html.ambiente-pausado), fora da tela
+     ([data-fora]) e com o movimento reduzido (sem animação: o repouso de cada uma se lê sozinho), também nos
+     pseudoelementos. A classe fica à direita do seletor (o custo que o comentário da pausa, acima, evita). Depois da
+     pausa, nenhuma animação infinita segue rodando (Q15, 11-anti-ia.md). A conferência: ferramentas/regua/conferir-passivas.mjs. */
+.ambiente-pausado :is(.mov-passiva, .mov-constante),
+.ambiente-pausado .mov-passiva::before,
+.ambiente-pausado .mov-passiva::after,
+.ambiente-pausado .mov-constante::before,
+.ambiente-pausado .mov-constante::after,
+[data-fora] :is(.mov-passiva, .mov-constante),
+[data-fora] .mov-passiva::before,
+[data-fora] .mov-passiva::after,
+[data-fora] .mov-constante::before,
+[data-fora] .mov-constante::after,
+:is(.mov-passiva, .mov-constante)[data-fora],
+.mov-passiva[data-fora]::before,
+.mov-passiva[data-fora]::after,
+.mov-constante[data-fora]::before,
+.mov-constante[data-fora]::after {
+  animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mov-passiva,
+  .mov-passiva::before,
+  .mov-passiva::after,
+  .mov-constante,
+  .mov-constante::before,
+  .mov-constante::after {
+    animation: none !important;
   }
 }
 
@@ -386,24 +170,8 @@
     transform: none;
   }
 }
-@keyframes mov-reflexo {
-  0%,
-  55% {
-    background-position: 100% 0;
-  }
-  85%,
-  100% {
-    background-position: 0 0;
-  }
-}
-@keyframes mov-meridiano {
-  0% { transform: scaleX(1); }
-  25% { transform: scaleX(0); }
-  50% { transform: scaleX(-1); }
-  75% { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
-}
-/* A face de cada metade do meridiano: na frente (inteira) ou atrás (a 35%). */
+/* A face de cada metade do meridiano: na frente (inteira) ou atrás (a 35%). Comum à esfera do início e ao globo de O
+   Atlas: fica aqui (R10, fase 0). */
 @keyframes mov-face-a {
   0% { opacity: 1; }
   50%, 100% { opacity: 0.35; }
@@ -411,33 +179,6 @@
 @keyframes mov-face-b {
   0% { opacity: 0.35; }
   50%, 100% { opacity: 1; }
-}
-/* A largura aparente de um meridiano ao longo da volta é o cosseno da
-   longitude: doze pontos, para a passagem não parecer um vaivém linear. */
-@keyframes mov-longitude {
-  0% { transform: scaleX(1); }
-  8.333% { transform: scaleX(0.866); }
-  16.667% { transform: scaleX(0.5); }
-  25% { transform: scaleX(0); }
-  33.333% { transform: scaleX(-0.5); }
-  41.667% { transform: scaleX(-0.866); }
-  50% { transform: scaleX(-1); }
-  58.333% { transform: scaleX(-0.866); }
-  66.667% { transform: scaleX(-0.5); }
-  75% { transform: scaleX(0); }
-  83.333% { transform: scaleX(0.5); }
-  91.667% { transform: scaleX(0.866); }
-  100% { transform: scaleX(1); }
-}
-@keyframes mov-pulsa {
-  from {
-    transform: scale(0.96);
-    opacity: 0.75;
-  }
-  to {
-    transform: scale(1.06);
-    opacity: 1;
-  }
 }
 @keyframes mov-giro-completo {
   0% { transform: scaleX(1); }
@@ -475,121 +216,12 @@
    A espera (--depois-da-troca): na navegação interna, a página nova só
    aparece 160 ms depois do clique e entra em 700 ms; aos 360 ms ela já
    está a 0,83 de opacidade, e o momento não se perde na transição. Na
-   carga direta, a espera é menor que os 420 ms da figura de antes. */
+   carga direta, a espera é menor que os 420 ms da figura de antes.
+   Desde 28/10 (R10, fase 0), cada momento mora no CSS da sua página
+   (app/paginas/planos.css, o-trabalho.css e duvidas.css); a espera fica
+   aqui, comum às três. */
 :root {
   --depois-da-troca: 360ms;
-}
-@media (prefers-reduced-motion: no-preference) {
-  /* Planos: os três degraus sobem até o corrimão, que fica parado,
-     desenhado desde o primeiro quadro: o traçado primeiro, a obra depois.
-     Partem de 40% da própria altura, visíveis, com o nome do plano à vista
-     (o chão da figura recorta o resto), um depois do outro (--i), 480 ms
-     cada, 60 ms entre um e outro, na curva da casa; o texto sobe junto, sem
-     se deformar. Assentam aos 960 ms. Até 15/10, partiam de 101%,
-     escondidos (a metade direita da abertura ficava vazia por 360 ms), e o
-     corrimão se riscava depois deles, até os 1.500 ms. */
-  html:not(.ja-aberto) .mov-degrau {
-    animation: mov-degrau 480ms var(--ease-atlas) calc(var(--depois-da-troca) + var(--i, 0) * 60ms) backwards;
-  }
-  /* O trabalho: os traços de dia descem da linha da trena, um a um (--d),
-     150 ms cada, 30 ms entre um e outro (16 traços: 450 ms de
-     escalonamento, dentro dos 500 do token; a 40 ms, passava). É traço que
-     se desenha, como o sublinhado do vínculo, e não objeto que cresce do
-     nada. A centragem é a propriedade translate, que não briga com o
-     transform. No mesmo passo, a janela dos trechos corre em 450 ms,
-     linear: chega ao dia d aos 30·d ms, quando o traço dele começa a
-     descer. A janela corre da esquerda para a direita e o conteúdo, ao
-     contrário, dentro dela (os 101% se anulam): os trechos ficam parados e
-     aparecem onde a janela já passou. Só aqui o traço anda da esquerda
-     para a direita: é o eixo do tempo, do dia 0 ao 15. */
-  html:not(.ja-aberto) .mov-risca {
-    transform-origin: top;
-    animation: mov-risca 150ms cubic-bezier(0.05, 0.7, 0.1, 1) calc(var(--depois-da-troca) + var(--d, 0) * 30ms) backwards;
-  }
-  html:not(.ja-aberto) .mov-trena {
-    animation: mov-corrimao 450ms linear var(--depois-da-troca) backwards;
-  }
-  html:not(.ja-aberto) .mov-trena-conteudo {
-    animation: mov-corrimao-traco 450ms linear var(--depois-da-troca) backwards;
-  }
-}
-/* Dúvidas: a pergunta escolhida no mapa acende ao ser alcançada (mostra
-   para onde o clique levou). Uma camada de bronze atrás da pergunta, só de
-   opacidade, em 1.400 ms: acende em 200 ms, segura e se apaga nos últimos
-   150 ms. A espera (--chegada) é a duração da rolagem até lá, que a ilha
-   Ancoras escreve no <details> junto com data-chegou
-   (components/ilhas/ancoras.tsx); sem script, vale a chegada pelo salto
-   nativo (:target), sem espera. Com movimento reduzido, a rolagem é
-   instantânea, e a camada acende sem passagem e se apaga em 150 ms. */
-.vd-duvida > summary {
-  position: relative;
-  isolation: isolate;
-}
-.vd-duvida > summary::before {
-  content: "";
-  position: absolute;
-  inset: 0 -1rem;
-  z-index: -1;
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--primary) 14%, transparent);
-  opacity: 0;
-  pointer-events: none;
-}
-.vd-duvida:is(:target, [data-chegou]) > summary::before {
-  animation: mov-chegada-reduzida 1400ms linear var(--chegada, 0ms);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .vd-duvida:is(:target, [data-chegou]) > summary::before {
-    animation: mov-chegada 1400ms linear var(--chegada, 0ms);
-  }
-}
-/* A janela e o conteúdo da trena (o nome vem do corrimão, que os usou até 15/10). */
-@keyframes mov-corrimao {
-  from {
-    transform: translateX(-101%);
-  }
-}
-@keyframes mov-corrimao-traco {
-  from {
-    transform: translateX(101%);
-  }
-}
-@keyframes mov-risca {
-  from {
-    transform: scaleY(0);
-  }
-}
-@keyframes mov-degrau {
-  from {
-    transform: translateY(40%);
-  }
-}
-@keyframes mov-chegada {
-  0% {
-    opacity: 0;
-    animation-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1);
-  }
-  14.286% {
-    opacity: 1;
-    animation-timing-function: linear;
-  }
-  89.286% {
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes mov-chegada-reduzida {
-  0%,
-  89.286% {
-    opacity: 1;
-    animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
-  }
-  100% {
-    opacity: 0;
-  }
 }
 
 /* ---------- transição entre páginas ----------
@@ -609,13 +241,13 @@
 ::view-transition-new(.pagina-entra) {
   animation: 700ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both vt-pagina-entra;
 }
-/* O Atlas (app/(atlas)/template.tsx, desde 14/10): a saída acaba antes de a
-   entrada começar, e os dois títulos não se sobrepõem. */
-::view-transition-old(.atlas-sai) {
-  animation: 150ms cubic-bezier(0.4, 0, 1, 1) both vt-pagina-sai;
-}
-::view-transition-new(.atlas-entra) {
-  animation: 700ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both vt-pagina-entra;
+/* O Atlas (app/(atlas)/template.tsx), desde 27/10 sem a View Transition: só a
+   entrada, a mesma de antes, na página viva (components/ilhas/entrada-da-pagina.tsx).
+   Sem o atraso de 160 ms, que esperava a saída. O fixo que mora fora da caixa,
+   no <body> ([data-entra-com-a-pagina]: a faixa do montador), entra com ela (28/10). */
+.atlas-entra,
+#conteudo:has(> .atlas-entra) ~ [data-entra-com-a-pagina] {
+  animation: 700ms cubic-bezier(0.22, 1, 0.36, 1) vt-pagina-entra;
 }
 ::view-transition-group(cabecalho) {
   animation: none;
@@ -640,6 +272,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .atlas-entra,
+  #conteudo:has(> .atlas-entra) ~ [data-entra-com-a-pagina] {
+    animation: none;
+  }
   ::view-transition-old(*),
   ::view-transition-new(*),
   ::view-transition-group(*) {
