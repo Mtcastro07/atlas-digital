@@ -62,6 +62,7 @@ Hospedadas junto ao site (`web/app/fontes/`, no repositório do Atlas). A pilha 
 4. **Monoespaçada só para código, dado ou medida.** Nunca como fantasia de "técnico" (piso de ofício do Impeccable, https://github.com/pbakaus/impeccable) [FU].
    - **Uma terceira família, de dados, não entra:** a decisão do usuário de 07.10.2026 é "no máximo duas famílias" (`CLAUDE.md` do repositório do Atlas). O depósito de exemplo (Oswald nos títulos, Barlow no texto, IBM Plex Mono nos códigos e nas medidas) é divergência registrada, a decidir pelos sócios; até lá, dado e medida usam uma das duas famílias, com algarismos tabulares (RATIFICADO).
    - **Rótulo de formulário em monoespaçada** ("01 NOME", no talão do depósito) já é fantasia: marca de IA registrada na linha de base (`11-anti-ia.md`).
+   - **O código mostrado como tema** (`19-o-padrao-atlas.md`, seção 4.3) usa a mono do próprio aparelho, sem `@font-face`, 0 byte: não conta como família.
 5. **Uma fonte de sistema não serve como voz de exibição** de um mundo próprio (Impact, Arial Black, a sans da plataforma). "A fonte instalada mais próxima é uma falha, não uma reserva" (piso de ofício do Impeccable) [FU]. A exceção é o Atlas, por decisão registrada (2.1).
 6. **Registrar no `identidade.md`:**
    - família e versão;

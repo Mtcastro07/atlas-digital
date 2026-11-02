@@ -420,7 +420,7 @@ Se a régua mudar e um trecho do porte deixar de existir, ela para e diz qual. O
    Em `sondas.mjs`, nas ações (`acoes`):
    - **Os rótulos dos controles do site** (menu, índice, pausa) estão em português do Atlas. Acrescente os do cliente se forem outros, ou a composição acusará o botão de menu como ação.
 
-   Em `quadros.mjs`: o gatilho do menu e a figura do site (seção 12, "No repositório novo").
+   Em `quadros.mjs`: a figura do site e, se não for o da base, o gatilho do menu (seção 12, "No repositório novo").
 5. **Navegador.** Na máquina do desenvolvedor, `chromium.launch({ channel: "chrome" })` usa o Chrome instalado. Na integração contínua, dentro do contêiner do Playwright, tire o `channel` (usa o Chromium do contêiner) ou instale o Chrome (`13-integracao-continua.md`).
 6. **Calibre:** rode a régua três vezes no site pronto e leia **todo** aviso e toda falha. O que for erro da régua é corrigido na régua, e a correção entra na tabela da seção 6 deste documento e, resumida, no README da régua ("Falha e aviso").
 
@@ -515,7 +515,7 @@ node ferramentas/regua/quadros.mjs --autoteste
 | Gesto | Celular | Mesa |
 |---|---|---|
 | `rolagem` | Arremessos de 600 px a 2.400 px/s, com fling, do topo ao rodapé e de volta | A roda, em tiras de 1.200 px a 2.000 px/s |
-| `menu` | Abrir e fechar o gatilho do menu do cabeçalho (`[aria-haspopup="dialog"][aria-expanded]`, nos 140 px do topo) | Idem, onde houver |
+| `menu` | Abrir e fechar o gatilho do menu do cabeçalho (`[aria-haspopup="dialog"][aria-expanded]` ou o `a[href="#indice"]` da base, nos 140 px do topo) | Idem, onde houver |
 | `navegacao` | Cada vínculo interno do menu, até 7, e o voltar | Cada vínculo do cabeçalho (ou da primeira `<nav>`), até 7, e o voltar |
 | `figura` | O arraste da peça pelo dedo | O arraste pelo mouse; no canvas, também o ponteiro solto |
 
@@ -537,9 +537,11 @@ O gesto que a página não tem não aparece no resultado: a régua não acusa a 
 
 **No Claude Code,** como a régua dos blocos: com o sandbox desligado.
 
-**No repositório novo.** O `portar-regua.mjs` copia `quadros.mjs` com o resto (seção 9). Três ajustes, à mão:
+**No repositório novo.** O `portar-regua.mjs` copia `quadros.mjs` com o resto (seção 9). Três pontos, à mão quando o site os pede:
 1. **As páginas,** sempre por `--pagina`.
-2. **O gatilho do menu.** A régua procura `[aria-haspopup="dialog"][aria-expanded]` (`botaoDoMenu`). O gatilho da base é `a[href="#indice"]`, sem esses atributos: sem o ajuste do seletor, o menu não se mede, e a navegação do celular não passa pelo menu (o cabeçalho da base esconde a lista de páginas abaixo de 1024 px: `hidden lg:block`). O painel aberto, o `<dialog>` nativo da base, a régua já reconhece (`dialog[open]`).
+2. **O gatilho do menu.** A régua procura `[aria-haspopup="dialog"][aria-expanded]` ou o gatilho da base, `a[href="#indice"]` (`botaoDoMenu`). Só um gatilho próprio pede o ajuste do seletor: sem ele, o menu não se mede, e a navegação do celular não passa pelo menu (o cabeçalho da base esconde a lista de páginas abaixo de 1024 px: `hidden lg:block`). O painel aberto, o `<dialog>` nativo da base, a régua já reconhece (`dialog[open]`).
 3. **A figura.** O seletor da peça do site (o canvas da peça-assinatura, o mapa, a galeria de arrastar) entra na lista de `prepararFigura`, ao lado dos do Atlas (`.vd-terra-controle`, `.vd-carta-regiao`, `a[data-simulador]`, `canvas.bb-palco, canvas.od-palco`).
 
-Os ajustes 2 e 3 não foram conferidos num site feito pela base: A CONFIRMAR no primeiro site, com o registro no README da régua.
+O gatilho da base foi conferido em 02.11.2026, numa cópia compilada: o menu abre, os vínculos saem do `<dialog>`, e a navegação aprova no celular 4× em `/` e `/servicos`. Sem o seletor, `/` nem aparece no celular, e `/servicos` mede só a `<nav>` que tiver à vista. O ponto 3 não foi conferido: A CONFIRMAR no primeiro site, com o registro no README da régua.
+
+**A conferência das passivas** (`conferir-passivas.mjs`, desde 02.11.2026) não mede quadros: mede a regra de `../esteira/09-movimento.md`, seção 14. Tem autoteste (`--autoteste`, treze casos) e grava `.regua/passivas.json`.

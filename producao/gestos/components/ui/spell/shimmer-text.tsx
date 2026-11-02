@@ -15,7 +15,7 @@ type Props = {
 
 export function ShimmerText({ children, className = "" }: Props) {
   return (
-    <span data-ambiente="" className={`mov-cintila ${className}`}>
+    <span data-ambiente="" className={`mov-cintila mov-constante ${className}`}>
       {children}
       <span aria-hidden="true" data-nosnippet="" className="mov-cintila-janela">
         <span className="mov-cintila-luz">{children}</span>

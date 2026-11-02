@@ -15,7 +15,7 @@ A regra de uso está em `producao/esteira/09-movimento.md`, seção 6: o gesto e
 | `components/ui/spell/gradient-wave-text.tsx` | A onda de cor, uma vez | [C] | Servidor, só CSS |
 | `components/ui/spell/shimmer-text.tsx` | O brilho, ambiente contínuo (a cada 3 s) | [C] | Servidor, só CSS; precisa da ilha de pausa |
 | `components/ui/spell/tilt-card.tsx` | A inclinação sob o ponteiro | [C] | Ilha |
-| `components/ilhas/controle-do-movimento.tsx` | O botão de pausa do ambiente e o observador que liga o ambiente só na tela | [C] | Ilha |
+| `components/ilhas/controle-do-movimento.tsx` | O botão de pausa do ambiente e o observador que liga o ambiente só na tela | [C] com o brilho; todo plano com passivas | Ilha |
 | `app/gestos.css` | O desenho de todos, com as curvas da esteira e a pausa | — | — |
 | `components/ui/spell/LICENCA-spell-ui.txt` | A licença MIT do Spell UI ("Copyright (c) 2025 Spell UI"), que vai junto de toda cópia (desde 13.10.2026; `../componentes/README.md`, seção 3) | — | — |
 | `components.json` | A configuração do shadcn do Atlas (estilo `base-nova`, registro `@spell`) | — | — |
@@ -27,11 +27,13 @@ A regra de uso está em `producao/esteira/09-movimento.md`, seção 6: o gesto e
 1. **Copie** só os do plano:
    - `components/ui/spell/<gesto>.tsx` para `components/ui/spell/` do site;
    - sempre, o `components/ui/spell/LICENCA-spell-ui.txt` junto: a licença MIT pede o aviso em toda cópia;
-   - no Completo com o brilho, também `components/ilhas/controle-do-movimento.tsx`.
+   - com o brilho [C] ou com passivas (todo plano), também `components/ilhas/controle-do-movimento.tsx`.
 2. **Copie** `app/gestos.css` para `app/` e importe-o em `app/globals.css`, depois da identidade: `@import "./gestos.css";`. Apague do arquivo os blocos dos gestos que o site não usa.
-3. **O ambiente** [C]:
+3. **O ambiente** (o brilho [C]; as passivas, em todo plano):
    - ponha o `<ControleDoMovimento />` no cabeçalho, ao lado do menu;
-   - toda peça de ambiente nova entra na lista de pausa, no fim do `gestos.css`.
+   - toda peça de ambiente nova entra na lista de pausa, no fim do `gestos.css`;
+   - as passivas usam as classes `.mov-passiva` e `.mov-constante`, que já param pelas três regras do fim do `gestos.css`, e se conferem com `conferir-passivas` (`producao/esteira/09-movimento.md`, seção 14). Elas valem em todo plano: a ilha de pausa e esse bloco entram também no Essencial e no Profissional;
+   - o `ShimmerText` já leva `.mov-constante`: o brilho não conta como passiva, e a conferência não o acusa.
 4. **As cores** vêm dos tokens da identidade:
    - a tarja: `--primary` e `--primary-foreground`;
    - o marca-texto: `--marcador`;

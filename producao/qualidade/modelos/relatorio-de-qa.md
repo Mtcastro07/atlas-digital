@@ -34,6 +34,7 @@
 ## 5 · Desempenho
 <a barreira do travamento no aparelho médio (a maior tarefa, o bloqueio somado, os quadros lentos, o LCP); os bytes, relatados; o Lighthouse só se a barreira reprovou, com a causa>
 <a régua dos quadros: por página, perfil e gesto, o em dia, o p95 e o pior [as vezes] de cada uma das duas sessões, com a data, a hora, a carga da máquina e o Chrome; o que reprovou, com a causa provada por retirada>
+<as passivas: por página e largura, quantas, quais mecanismos, a cobertura (telas em movimento, a maior sequência parada) e a que roda uma vez, com a medida que reprovou>
 
 ## 6 · Segurança e privacidade
 <auditoria, cabeçalhos, coleta, segredos>

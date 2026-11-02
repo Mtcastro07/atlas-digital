@@ -399,9 +399,58 @@ Um crítico de fora da frente revisou o que está acima e achou sete defeitos. C
 **Como foi conferido** (28.10.2026, sem compilar nada e sem abrir o navegador, por instrução da sessão): `node producao/qualidade/regua/quadros.mjs --autoteste` ("a conta dos quadros confere"); a cópia igual, byte a byte, à do repositório do Atlas; `node --check` no `portar-regua.mjs`; cada número dos documentos conferido contra os três relatos.
 
 **O que ficou pendente:**
-1. **A base.** `../base/` ainda traz o `<ViewTransition>` e o `CabecalhoFixo`, e não tem a página no topo. Todo site novo nasce reprovando a navegação no celular 4×. Levar à base as regras 4 e 9 da seção 3.7 de `13-tecnologia-e-estrutura.md`, compilar e medir com a régua dos quadros (o código delas é o do Atlas, não compilado na base).
-2. **O porte da régua dos quadros** num site feito pela base: o seletor do gatilho do menu e o da figura (`../qualidade/02-regua.md`, seção 12). A CONFIRMAR no primeiro site.
-3. **O site do Atlas não cumpre a regra na navegação.** A implementação de 27 e 28.10.2026 não está no site: a verificação não a aprovou (a navegação instável, sobretudo na mesa, e a faixa fixa do montador de `/orcamento` fora da tela durante a entrada). Decisão do aprovador, Matheus Castro Oliveira de Luna Garcia.
+1. **A base.** Resolvido em 02.11.2026 (seção 10).
+2. **O porte da régua dos quadros** num site feito pela base: o gatilho do menu foi conferido em 02.11.2026 (seção 10); o da figura, A CONFIRMAR no primeiro site (`../qualidade/02-regua.md`, seção 12).
+3. **O site do Atlas não cumpre a regra na navegação.** A implementação de 27 e 28.10.2026 não entrou no site: a verificação não a aprovou (a navegação instável, sobretudo na mesa, e a faixa fixa do montador de `/orcamento` fora da tela durante a entrada). A entrada por CSS só chegou com o redesenho de 02.11.2026 (seção 10), e a navegação segue fora da porta no celular 4×. Decisão do aprovador, Matheus Castro Oliveira de Luna Garcia.
 4. **O aparelho real e o Safari:** nenhuma medida da régua dos quadros num celular de verdade.
 5. **As demos** continuam com o `<ViewTransition>` e reprovam a navegação no celular; a medida de 22.10.2026 é anterior à reversão do site e precisa ser refeita.
 6. **Levar o kit ao repositório principal** e registrar a decisão em `documentacao/atlas--decisoes.md`, como na seção 8, pendência 1.
+
+---
+
+## 10. Registro de 02.11.2026: o que o redesenho do site do Atlas ensinou
+
+**O pedido.** Do aprovador, Matheus Castro Oliveira de Luna Garcia, antes de um commit: "antes de commitar, atualize a pasta de producao com mudancas que valem para novos projetos". Nada do cliente nem do Atlas entrou como regra; os números do site ficam aqui, nos registros e, como o caso que ensinou a técnica, em `15-desempenho.md`, seção 5.18.
+
+**As fontes.** No repositório do Atlas, `registros/atlas/design-v2/` (pasta fora do git): `R10/R10-sintese.md` (2.1), `R10/B-referencias.md` (seção 6, as regras A1 a A15), `R10/C-codigo.md`, `R10/construcao/CONTRATO.md` (seção 4), `R10/construcao/INTEGRACAO.md`, `R10/construcao/CRITICA.md`, `R10/construcao/CONFERENCIA-DECISOES.md`, `R10/construcao/REVISAO-CODIGO.md` e `60fps-navegacao/RELATO-2.md`.
+
+| O que entrou | De onde | Onde no kit |
+|---|---|---|
+| O nível Apple, condensado (A1 a A15; A6, A10 e A12 ajustados às regras do kit) | `B-referencias.md`, 6; `CRITICA.md`, 1 | `19-o-padrao-atlas.md`, 4.2 e 11 |
+| O código como tema, no recipiente único e na mono do sistema | `R10-sintese.md`, 2.7; `C-codigo.md`, 0 a 6; `CONTRATO.md`, D2 | `19-o-padrao-atlas.md`, 4.3; `05-tipografia.md`, 2; `modelos/identidade.md` |
+| O colofão gerado de relatório medido | `CONTRATO.md`, S14; `REVISAO-CODIGO.md`, 4 | `19-o-padrao-atlas.md`, 4.3, item 7 |
+| As passivas e o mecanismo | `CONTRATO.md`, 4.1 e 4.3 | `09-movimento.md`, 14; `11-anti-ia.md`, M4; `../gestos/app/gestos.css` |
+| A cobertura (60% das telas; até duas seguidas paradas; a peça de 28 px não conta) | `CRITICA.md`, M1 e 10; `CONFERENCIA-DECISOES.md`, 1 e 2 | `09-movimento.md`, 14; `conferir-passivas.mjs`, casos (g) e (h) |
+| A construção por contrato, com as etapas separadas | `CONTRATO.md`; `INTEGRACAO.md`, 2 e 8 | `19-o-padrao-atlas.md`, 8.8; `01-processo.md`, etapa 6; `../01-roteiro-da-sessao.md`, etapa 6 |
+| A data por página, vinda do git, e o que acontece sem `.git` | `CONTRATO.md`, S13; `REVISAO-CODIGO.md`, B3 e 4 | `21-busca-e-ias.md`, 3 |
+| `reais()` com espaço fixo | `CONTRATO.md`, S11; `REVISAO-CODIGO.md`, B4 | `10-texto-e-conteudo.md`, 7; o teste de `../base/testes/lib.test.ts` |
+| O portal para o que fica preso à tela | `RELATO-2.md`, 11.2 | `15-desempenho.md`, 5.15; `13-tecnologia-e-estrutura.md`, 3.7; `../04-construcao.md`, 4 |
+| O componente comum que muda atinge as demos | `REVISAO-CODIGO.md`, A1 e A2 | `../qualidade/07-regressao-visual.md`, 1 |
+| A navegação pesa pelo commit, e o que aliviou; as travas de compositor | `INTEGRACAO.md`, 4 e 8.1 | `15-desempenho.md`, 5.18 |
+| O agente que devolve saída estruturada não espera em segundo plano | A construção desta sessão, pelo pedido de 02.11.2026 (sem relato escrito) | `../01-roteiro-da-sessao.md`, seção 6 |
+| Os falsos positivos do detector; `npm run anti-ia` sem alvo | `CRITICA.md`, 6 e 9; `INTEGRACAO.md`, 6 | `../qualidade/15-revisao-do-impeccable.md`, 7 |
+
+**As medidas do site de origem, que motivaram as regras** (01.11.2026): 20 de 56 telas com passiva a 1440 px e 17 de 63 a 390 px, depois 32 de 121 (26%) noutra varredura; Nielsen 22/32 e auditoria 13/20; 48 de 74 rotas de demo mudadas por peça comum; na navegação no celular 4×, 1 de 7 páginas aprova, e nenhuma passa de 4 batidas depois dos cortes.
+
+**As ferramentas.**
+- `../qualidade/regua/conferir-passivas.mjs`: vem da conferência escrita na construção do redesenho, que não ficou em `ferramentas/regua/` do site (a única cópia é esta), com as páginas do Atlas retiradas (a lista agora é obrigatória) e a cobertura acrescentada, medida na peça que anima. O `portar-regua` a leva a cada site.
+- `../ferramentas/conferir-pausa.mjs`: o botão pelo nome, e não o primeiro `aria-pressed`, com `--autoteste`.
+- `../qualidade/regua/quadros.mjs`: o comentário que citava a `TransicaoDePagina` e o gatilho do menu da base em `botaoDoMenu`. **Difere nessas duas linhas da cópia do repositório do Atlas.**
+
+**A base** (`../base/`): saíram `components/transicao-de-pagina.tsx`, o `CabecalhoFixo` e as regras `::view-transition` de `app/globals.css`. Entraram `components/ilhas/entrada-da-pagina.tsx` e `components/ilhas/ao-topo.tsx`, portados do site do Atlas sem nada dele. Saíram também do git os dez PNG `10-00` a `10-09` da raiz da base, iguais entre si e sem nenhuma citação, e o `AGENTS.md` vazio, que o `novo-site` passou a criar (`13-tecnologia-e-estrutura.md`, seção 2).
+
+**Como foi conferido** (02.11.2026; Apple M2, Chrome instalado), numa cópia da base compilada, sem editar a cópia:
+- `tsc` sem erro; `npm test`, 11 de 11; `npm run build` e o `postbuild` sem erro;
+- no navegador, a 1440 e a 390 px: de uma página rolada, cada chegada lida quadro a quadro, a ida, o voltar, o avançar e a ida seguinte em y 0, e a recarga em y 0; a entrada só na ida; `/#indice` no destino, sem a entrada; nenhum erro no console; nenhuma View Transition iniciada; 0 `view-transition` na folha. O mesmo roteiro contra o site do Atlas deu o mesmo resultado nas chegadas e na entrada;
+- a régua dos quadros, navegação, mediana de 3: na mesa, `/` e `/servicos`; no celular 4×, as duas pelo menu, com o seletor ajustado numa cópia da régua: 100% em dia, pior de 1 batida. Uma sessão só, com outro Chrome aberto na máquina e carga de 2,4 a 3,3: a porta pede duas;
+- `conferir-passivas.mjs --autoteste`, treze casos; `conferir-pausa.mjs --autoteste`, cinco casos; `quadros.mjs --autoteste`; `node --check` no `portar-regua.mjs`;
+- depois da conferência independente do diff, numa cópia gerada pelo `novo-site`, com o `AGENTS.md` vazio, a ilha, o `ShimmerText` e duas passivas: `tsc` e o build sem erro; `conferir-passivas` e `conferir-pausa` aprovam, e duas peças de 10 px em seções de 5.000 px reprovam (0 de 13 telas); a ilha só liga o que entra depois de a rolagem parar 200 ms; o menu da base se mede sem ajuste, em `/servicos`, no celular 4×, numa sessão.
+
+**O que ficou pendente:**
+1. **O roteiro de medida do nível Apple** (`medirTela`, em `R10/scripts/medir-referencias.mjs`) não está no kit. As faixas da seção 4.2 de `19-o-padrao-atlas.md` se conferem à mão ou pelo crítico.
+2. **A cobertura das passivas** só rodou no autoteste, em páginas de prova; nenhuma página real a mediu com a ferramenta. O site do Atlas, medido por outro roteiro, não a cumpre (26% a 36%): a decisão é do aprovador.
+3. **A base antes da troca** não foi medida: "todo site novo reprova" vem das demos, e não de uma medida na base. O ganho sobre a versão anterior fica sem número.
+4. **A entrada e o rodapé:** o rodapé da base fica no layout, fora da caixa. Em página curta, a página nova passa sobre ele nos 400 ms da entrada [I]; não se viu nem se mediu.
+5. **Registrar a mudança em `documentacao/atlas--decisoes.md`,** no repositório principal (a pasta não existe nesta cópia), e **as demos e as referências** continuam com o `<ViewTransition>`.
+6. **As passivas em todo plano.** O kit segue `19-o-padrao-atlas.md`, seção 9, e tirou o ambiente dos "fora do plano" de `03-planos.md`, seções 3.8 e 4.8, que vinham de antes da decisão de 09.10.2026. Levar as passivas ao Essencial e ao Profissional muda o que esses planos entregam: pede a confirmação do aprovador.
+7. **`conferir-passivas` não mede** o mecanismo diferente nem o limite de 10 s (`09-movimento.md`, seção 14): ficam com o crítico de fora.

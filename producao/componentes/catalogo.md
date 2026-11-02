@@ -2683,7 +2683,7 @@ A navegação, as abas, o menu e a troca de página (`../esteira/09-movimento.md
   - `view-transition-name`: objeto da marca que muda de forma entre páginas
   - `@view-transition { navigation: auto; }`: transição entre documentos
 - **Por quê:** Transição de página sem dependência, que degrada para a troca instantânea.
-- **Cuidados:** Mesma página: Chrome 111+, Safari 18.0+, Firefox 144+ (Baseline desde 16/10/2025); entre documentos: Chrome 126+, Safari 18.2+, sem Firefox. O <ViewTransition> do Next é experimental; next-view-transitions 0.3.5 se o roteamento pedir.
+- **Cuidados:** Mesma página: Chrome 111+, Safari 18.0+, Firefox 144+ (Baseline desde 16/10/2025); entre documentos: Chrome 126+, Safari 18.2+, sem Firefox. O <ViewTransition> do Next é experimental e saiu da base em 02.11.2026: a captura reprova os 60 quadros no celular (`esteira/15-desempenho.md`, seção 5.15); toda transição desta linha passa pela régua dos quadros.
 - **Trazer:** sem instalação: CSS ou API do navegador
 - **Origem:** [site](https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using) · inventário: estudo de 12.10.2026
 
@@ -2769,8 +2769,8 @@ A navegação, as abas, o menu e a troca de página (`../esteira/09-movimento.md
 
 - **Peças:**
   - `@ssgoi/react/nextjs`: transição de página sobre a Web Animations API
-- **Por quê:** Saída testável para a transição de página se o <ViewTransition> falhar no Safari.
-- **Cuidados:** Projeto jovem, sem versões no GitHub; versão de 07/10/2026 (esperar os 7 dias do kit). Peso e movimento reduzido não documentados; concorre com o <ViewTransition> da base.
+- **Por quê:** Transição de página sobre a Web Animations API, se a entrada por CSS da base não bastar.
+- **Cuidados:** Projeto jovem, sem versões no GitHub; versão de 07/10/2026 (esperar os 7 dias do kit). Peso e movimento reduzido não documentados; concorre com a entrada por CSS da base, e passa pela régua dos quadros antes de ficar.
 - **Trazer:** `npm install @ssgoi/react@7.4.1`
 - **Origem:** [repositório](https://github.com/meursyphus/ssgoi) · [site](https://ssgoi.dev) · último commit em 07.10.2026 · inventário: estudo de 12.10.2026
 

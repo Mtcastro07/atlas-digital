@@ -113,14 +113,14 @@ O "Estado" do `CLAUDE.md` diz em que etapa o site está. Cada etapa só começa 
 - **Faz, em dois passes, nesta ordem, cada um com foco total, nunca os dois juntos** (`producao/esteira/00-principios.md`, seção 5). O "Estado" do `CLAUDE.md` registra o passe em curso.
 
   **Passe 1 · a mesa** (1440 px):
-  1. **As páginas** do roteiro:
+  1. **As páginas** do roteiro, no nível Apple (`producao/esteira/19-o-padrao-atlas.md`, seção 4.2) e, se o nicho admitir, com o código como tema (seção 4.3):
      - adaptar as de fábrica;
      - criar as novas pela receita;
      - apagar a marca `[EXEMPLO]` de cada página reescrita.
   2. **As funcionalidades do plano:** a do ofício, no Profissional e no Completo; a peça-assinatura e a segunda funcionalidade, no Completo.
   3. **Os módulos** (`modulos/README.md`): as dependências deles já estão aprovadas (o `nodemailer` e o `mysql2`, desde 08.10.2026).
   4. **As fotos:** por `preparar-fotos`, com o `alt` em `conteudo/`; sem foto, os substitutos (`producao/esteira/08-imagem-e-fotografia.md`).
-  5. **O movimento da camada do plano** (`producao/esteira/09-movimento.md`), acabado na mesa.
+  5. **O movimento da camada do plano** (`producao/esteira/09-movimento.md`), acabado na mesa, com as passivas e a cobertura medida (seção 14: `node ferramentas/regua/conferir-passivas.mjs`).
   6. **A cada página:** `npm run build` e a conferência a 1440 px. O celular não se julga neste passe: o que é da mesa vai com o prefixo `lg:`, e o valor sem prefixo fica para o passe 2.
   7. **As rodadas de lapidação** (`producao/esteira/19-o-padrao-atlas.md`, seção 8.4): no mínimo três. Em cada uma, as capturas a 1440 px com o movimento normal, a vitrine ao lado, **o crítico de fora** (um agente novo, sem o histórico da construção, com as capturas e a seção 8.5) e as dez maiores distâncias corrigidas. O registro de cada rodada vai a `registros/lapidacao.md`.
   8. **A porta da mesa:** as capturas a 1440 px aprovadas (`node ferramentas/fotografar.mjs --movimento`), o teste da vitrine (lado a lado com o Atlas e o exemplo do mesmo plano: `producao/esteira/00-principios.md`, seção 9), a régua sem falha nas larguras de mesa e a avaliação anti-IA na mesa, a página chapada inclusive, com a contagem de cada efeito e de cada molde por página, sem nada em série (`producao/esteira/20-repeticao-dentro-do-site.md`, seção 3).
@@ -131,6 +131,7 @@ O "Estado" do `CLAUDE.md` diz em que etapa o site está. Cada etapa só começa 
   3. **A cada página:** `npm run build` e a conferência a 390 px e no celular deitado (844 × 390). A mesa só se mexe para corrigir defeito; mexeu, reabre a porta dela.
   4. **As rodadas de lapidação no celular,** como na mesa, a 390 px: a assinatura na primeira tela, a versão de toque de cada momento, o crítico de fora.
   5. **A porta do celular:** as capturas a 390 px aprovadas, o teste da vitrine no celular, a régua inteira (as larguras de toque, o celular deitado e a barreira do travamento no aparelho médio, na passagem 2b) e a avaliação anti-IA no celular, com a contagem da série a 390 px.
+- **Construção em partes** (mais de um agente, ou um redesenho): o contrato, os patches sobre árvore fixa, a integração, a crítica e a verificação independente, como etapas separadas (`producao/esteira/19-o-padrao-atlas.md`, seção 8.8).
 - **Porta:** o build sem erro; as páginas do plano completas, com texto e fotos reais; as portas da mesa e do celular, nesta ordem.
 
 ### Etapa 7 · Verificação — `/verificar`
@@ -143,7 +144,7 @@ O "Estado" do `CLAUDE.md` diz em que etapa o site está. Cada etapa só começa 
 
   | # | Item | Como |
   |---|---|---|
-  | 1 | A régua inteira, sem falha; cada aviso com decisão. A régua dos quadros sem falha, em duas sessões | `npm run regua -- --base=http://localhost:3100`; `node ferramentas/regua/quadros.mjs --base=http://localhost:3100 --pagina=<cada página>` |
+  | 1 | A régua inteira, sem falha; cada aviso com decisão. A régua dos quadros sem falha, em duas sessões. As passivas sem falha, e nada mudando na pausa (`producao/esteira/09-movimento.md`, seção 14) | `npm run regua -- --base=http://localhost:3100`; `node ferramentas/regua/quadros.mjs --base=http://localhost:3100 --pagina=<cada página>`; `node ferramentas/regua/conferir-passivas.mjs --base=http://localhost:3100 --pagina=<cada página>`; `node producao/ferramentas/conferir-pausa.mjs http://localhost:3100 <cada página>` |
   | 2 | A avaliação anti-IA, sem marca de peso alto | `node ferramentas/fotografar.mjs`; `producao/esteira/11-anti-ia.md`; `producao/qualidade/11-design-e-anti-ia.md`, seção 3 |
   | 3 | A lista de 22 itens | `producao/qualidade/11-design-e-anti-ia.md`, seção 5 |
   | 4 | As normas do nicho no texto, frase a frase | `producao/qualidade/10-conteudo-normas-e-texto.md`, seção 3 |
@@ -240,6 +241,9 @@ O tempo de referência (`producao/esteira/01-processo.md`, seção 3), contado d
 | `npm run estatico` | Serve `out/` na 3100, comprimido e com os cabeçalhos do `.htaccess`. Em segundo plano: não retorna | Desligado, para o Chrome acessar a porta |
 | `SAIDA=servidor npm run build && PORT=3100 npm run servidor` | O modo servidor (formulário, Agenda): o `server.js` do standalone, como a Hostinger o roda. Em segundo plano; reinicie a cada build. O `SAIDA` só é preciso quando o padrão do `next.config.ts` é o estático | — |
 | `npm run regua -- --base=http://localhost:3100` | A régua (`producao/qualidade/02-regua.md`): ~45 s em 5 páginas | Desligado |
+| `node ferramentas/regua/quadros.mjs --base=http://localhost:3100 --pagina=<cada página>` | A régua dos quadros (`producao/qualidade/02-regua.md`, seção 12), em duas sessões | Desligado |
+| `node ferramentas/regua/conferir-passivas.mjs --base=http://localhost:3100 --pagina=<cada página>` | As passivas e a cobertura (`producao/esteira/09-movimento.md`, seção 14) | Desligado |
+| `node producao/ferramentas/conferir-pausa.mjs http://localhost:3100 <cada página>` | A pausa e o movimento reduzido: 0 pixel muda | Desligado |
 | `npm test` | Os testes de unidade (base e módulos) | — |
 | `npm run pronto` | A conferência de conteúdo antes do rascunho e da publicação | — |
 | `node ferramentas/baixar-fonte.mjs "<Família:wght@400..700>" titulo\|texto` | Na direção de arte | Desligado (rede) |
@@ -277,5 +281,8 @@ E duas linhas gravadas:
 | O build falha com "WhatsApp fora do formato" | O número em `conteudo/contato.ts` | Só algarismos, com o 55 e o DDD |
 | O `gerar-htaccess` falha com o domínio | O domínio em `conteudo/contato.ts` com `www` ou `https://` | Só o domínio |
 | O Chrome não abre (régua, fotos, capturas) | O sandbox do Claude Code | Rode com o sandbox desligado |
+| A peça presa à tela some durante a troca de página e aparece de uma vez | `position: fixed` dentro da caixa da entrada: o `transform` faz dela a referência | No layout, ou num portal para o `<body>` (`producao/esteira/15-desempenho.md`, seção 5.15) |
+| Uma mudança no site quebrou uma demo que ninguém tocou | A peça comum mudou (classe, componente) | Compare todas as rotas que a usam (`producao/qualidade/07-regressao-visual.md`, seção 1, item 3) |
+| O agente devolve vazio, ou a saída estruturada se perde, depois de uma medida longa | Um agente de longa duração que precisa devolver saída estruturada terminou esperando algo em segundo plano: o turno acaba antes do resultado | Nesse agente, nada em segundo plano: comandos em primeiro plano, em pedaços que cabem no limite do comando, com o progresso em arquivo; a régua longa roda fora dele, ou o agente devolve o caminho do relatório |
 | O `npm run pronto` acusa `[EXEMPLO]` | Arquivo de fábrica não reescrito | Reescreva pelo briefing e apague a marca. Nunca apague a marca sem reescrever |
 | A fonte baixada não tem o peso que o título usa | A faixa pedida ao `baixar-fonte` | Peça a faixa variável que cobre os pesos usados; o CSS usa `font-synthesis-weight: none`, e o navegador não inventa negrito |

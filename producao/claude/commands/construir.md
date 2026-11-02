@@ -14,7 +14,7 @@ Etapa 6 (`producao/04-construcao.md`; `producao/01-roteiro-da-sessao.md`, etapa 
      - a receita de `producao/modulos/README.md`;
      - as dependências dos módulos (`nodemailer` 10.0.13 e `mysql2` 3.24.5) entram no passo 1 da instalação, sem novo pedido: foram aprovadas pelo usuário em 08.10.2026 (`producao/modulos/README.md`, seção 3);
      - até o contrato de operador, que depende do CNPJ do Atlas, a coleta fica desligada (`producao/00-do-pedido-ao-site.md`, seção 4).
-   - **Os gestos do plano:** `producao/gestos/` (copiar e espera [P]; onda, brilho, inclinação e pausa [C]), com o `LICENCA-spell-ui.txt` junto.
+   - **Os gestos do plano:** `producao/gestos/` (copiar e espera [P]; onda, brilho e inclinação [C]; a pausa, em todo plano, com as passivas), com o `LICENCA-spell-ui.txt` junto.
    - **As peças de terceiros** escolhidas na identidade vêm de `producao/componentes/`, pelos passos da seção 2 do README:
      - a licença relida no dia, no commit copiado;
      - a origem conferida;
@@ -30,7 +30,7 @@ Etapa 6 (`producao/04-construcao.md`; `producao/01-roteiro-da-sessao.md`, etapa 
 
    Falta foto: os substitutos de `producao/esteira/08-imagem-e-fotografia.md`, nunca banco de imagens nem IA.
 4. O logotipo e o mapa do bairro: `producao/04-construcao.md`, seção 5 (`node ferramentas/gerar-mapa.mjs`).
-5. O movimento e o acabamento: a camada do plano **inteira** (`producao/esteira/09-movimento.md`, seção 4) e os efeitos da identidade da tabela "O acabamento" do `identidade.md` (seção 12). O gesto do Spell UI vai uma vez, fora do título; com movimento reduzido, nada se desloca, e a matéria e a luz ficam na pose final.
+5. O movimento e o acabamento: a camada do plano **inteira** (`producao/esteira/09-movimento.md`, seção 4) e os efeitos da identidade da tabela "O acabamento" do `identidade.md` (seção 12). O gesto do Spell UI vai uma vez, fora do título; com movimento reduzido, nada se desloca, e a matéria e a luz ficam na pose final. As passivas, em todo plano: duas ou mais por página, com a cobertura medida (`node ferramentas/regua/conferir-passivas.mjs`; `producao/esteira/09-movimento.md`, seção 14). A composição segue o nível Apple (`producao/esteira/19-o-padrao-atlas.md`, seção 4.2); dividida entre agentes, a construção segue a seção 8.8 de lá.
 6. A cada página: `npm run build` sem erro, e conferir com o site servido em segundo plano (`node ferramentas/fotografar.mjs`).
 
 **Tudo isso em dois passes, nesta ordem, cada um com foco total, nunca os dois juntos** (`producao/esteira/00-principios.md`, seção 5; o roteiro, etapa 6):

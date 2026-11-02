@@ -52,6 +52,7 @@ test("horário resumido: dias seguidos iguais se juntam", () => {
 
 test("moeda: R$ sem centavos quando inteiro; duração", () => {
   assert.equal(reais(50).replace(/\s/g, " "), "R$ 50");
+  assert.ok(reais(1500).includes("\u00a0"), "o espaço fixo: a linha nunca separa o símbolo do número");
   assert.equal(reais(49.9).replace(/\s/g, " "), "R$ 49,90");
   assert.equal(duracao(90), "1h30");
   assert.equal(duracao(60), "1h");

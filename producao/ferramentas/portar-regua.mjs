@@ -27,7 +27,7 @@ if (!destino || !existsSync(path.join(destino, "package.json"))) {
 const ORIGEM = path.resolve(import.meta.dirname, "../qualidade/regua");
 const PASTA = path.join(destino, "ferramentas", "regua");
 mkdirSync(PASTA, { recursive: true });
-for (const arquivo of ["regua.mjs", "sondas.mjs", "contraste.mjs", "teclado.mjs", "png.mjs", "quadros.mjs", "README.md"]) {
+for (const arquivo of ["regua.mjs", "sondas.mjs", "contraste.mjs", "teclado.mjs", "png.mjs", "quadros.mjs", "conferir-passivas.mjs", "README.md"]) {
   copyFileSync(path.join(ORIGEM, arquivo), path.join(PASTA, arquivo));
 }
 

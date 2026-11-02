@@ -303,3 +303,21 @@
 [data-fora] :is(.mov-cintila-janela, .mov-cintila-luz) {
   animation-play-state: paused !important;
 }
+
+/* As passivas (producao/esteira/09-movimento.md, seção 14): .mov-passiva no que anima, dentro de um [data-passiva] e de um
+   [data-ambiente]; .mov-constante no laço sob o ponteiro e no brilho (ShimmerText). As três paradas: a pausa, fora da tela e o movimento reduzido. */
+.ambiente-pausado :is(.mov-passiva, .mov-constante),
+.ambiente-pausado .mov-passiva::before,
+.ambiente-pausado .mov-passiva::after,
+[data-fora] :is(.mov-passiva, .mov-constante),
+[data-fora] .mov-passiva::before,
+[data-fora] .mov-passiva::after {
+  animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.mov-passiva, .mov-constante),
+  .mov-passiva::before,
+  .mov-passiva::after {
+    animation: none !important;
+  }
+}

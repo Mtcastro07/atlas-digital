@@ -8,7 +8,9 @@
 >
 > **O site do próprio Atlas** (desde 09.10.2026): `atlas/`, a cópia gerada da página inicial e das páginas do Atlas, com os componentes e o CSS das técnicas do acabamento (a esfera, os globos, o vidro líquido, as caixas empilhadas, a chamada final com o grão, a faixa de luz, o orbe sob o cursor). É a referência de nível de todo site (`../esteira/19-o-padrao-atlas.md`, seção 8.3). As duas cópias levam o `app/globals.css` e o que ele importa (`vidro.css`, `movimento.css`): antes, o código das técnicas vinha sem o CSS delas.
 >
-> **Atualizado em:** 09.10.2026.
+> **A troca de página destes sites é anterior à regra.** Eles ainda trazem o `<ViewTransition>` (`transicao-de-pagina.tsx`), que reprova os 60 quadros no celular: **não o copie.** Num site novo, vale a entrada por CSS da base (`../esteira/13-tecnologia-e-estrutura.md`, seção 3.7, regra 4).
+>
+> **Atualizado em:** 02.11.2026.
 
 ---
 

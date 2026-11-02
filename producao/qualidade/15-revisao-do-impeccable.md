@@ -67,6 +67,7 @@ O que contradiz a identidade, ou muda uma cena aprovada, **não se corrige sozin
 **Como conferir:**
 - o detector de novo, nas mesmas páginas e larguras, com a contagem antes e depois;
 - `node producao/ferramentas/conferir-pausa.mjs <base> <páginas>`: a pausa precisa pausar de verdade (Q15 do `11-anti-ia.md`);
+- `node ferramentas/regua/conferir-passivas.mjs --base=<endereço> --pagina=<cada página>`: as passivas, com a cobertura medida (`../esteira/09-movimento.md`, seção 14);
 - a régua nas páginas tocadas;
 - os testes, o `tsc` e o build de produção;
 - cada decisão em `registros/<site>/decisoes.md`.
@@ -199,3 +200,20 @@ Cada fechamento acrescenta aqui o que aprendeu sobre a ferramenta: os falsos pos
   - **na avaliação A:** a esfera de /o-atlas cortada a 390 (a I8, de novo); a leitura de /para-quem sem o halo de carta; a tinta do cabeçalho claro fora da tabela da direção; os módulos de /orcamento escolhidos sem saber o preço, a 390; o texto ambíguo do valor cheio riscado; e o jargão de ofício (X9).
 
   **O que só o teste do desconhecido achou:** a composição da conta, lida como "não sei" por 3 de 3 (um caso novo da Q18), e o anel das horas da Terra, que nenhum leu. Limite do teste: os três viram as mesmas capturas, e não se sabe se foram pessoas de fora ou agentes. Se foram agentes, vale como ensaio, e o teste com pessoa real (`11-design-e-anti-ia.md`, seção 4) continua pendente.
+- **01.11.2026, o fechamento de um redesenho inteiro** (R10; origem em `../esteira/99-rastreabilidade.md`, seção 10). De 153 achados do detector, 2 eram reais, e os dois eram o mesmo halo nas duas larguras. **Tudo o que importou veio da avaliação A e do kit:** a falta de cena, a capa-molde, a página-documento e as passivas que não se viam.
+
+  **Os falsos positivos (conferir antes de corrigir):**
+  - **`low-contrast` sobre papel com fibra:** "1,0:1" e "2,2:1 via solid-background", em 97 casos, sobre o fundo com textura; nos pixels, nenhum dos 1.252 textos abaixo do mínimo. Vale a medida nos pixels.
+  - **`dark-glow` em sombra navy:** a sombra numa tinta escura, e não um brilho colorido. A C6 não se aplica (já visto em 18.10.2026).
+  - **`content-hidden-at-rest` (e `clipped-overflow-container`) em galeria `display: none`:** a galeria do celular, escondida na mesa de propósito.
+  - **`text-occlusion` na entrada:** em repouso, o texto está por cima (`elementFromPoint`). A leitura caiu no momento da entrada.
+  - **`heading-rhythm` em `h3` corrido:** o `h3` dentro da frase, decidido.
+  - **`ai-color-palette` sem gradiente:** nenhum gradiente violeta em elemento nenhum, por busca nos estilos computados. Nada à vista.
+
+  **As ferramentas do kit:**
+  - **`npm run anti-ia` sem alvo** lê a entrada padrão e não examina nada: sai com 0, sem valor de prova. Passe sempre os caminhos ou o endereço, e confira a contagem.
+  - **A `conferir-pausa` clicava no primeiro `aria-pressed` visível,** e num seletor de plano relatava telas que "mudavam com a pausa". Corrigida em 02.11.2026: procura o botão pelo nome, com `--autoteste`.
+  - **A régua não reprova o que não se vê.** As passivas passaram na contagem e na amplitude, e a crítica reprovou. Daí a cobertura (`../esteira/09-movimento.md`, seção 14), medida por `conferir-passivas`.
+  - **A letra a 200%** pela preferência real do Chrome (CDP `Page.setFontSizes`, 32 px) achou o que a régua não vê: o código sem `pre-wrap` e o rodapé em duas colunas (Q16).
+
+  **Um limite do processo:** sem subagentes, as avaliações A e B rodam no mesmo contexto, e isso se escreve no alto do relatório: o isolamento vira só de ordem.

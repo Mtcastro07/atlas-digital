@@ -6,6 +6,7 @@
 > - **DECIDIDO** (decisões de 30.09 a 03.10.2026): só `transform` e `opacity`, movimento reduzido respeitado, nada ligado à rolagem salvo as exceções decididas, a camada por plano.
 > - **RATIFICADO** em 08.10.2026: os tokens de duração e curva, a partir da pesquisa.
 > - **DECIDIDO** em 14.10.2026: nenhum efeito em série dentro do site (seção 5, item 13; `20-repeticao-dentro-do-site.md`).
+> - **DECIDIDO** em 02.11.2026: as passivas em todo site novo, com a cobertura medida (seção 14).
 
 ---
 
@@ -263,10 +264,10 @@ O detalhe está em `14-funcionalidades/08-peca-assinatura.md`.
 
 ## 8. As transições entre páginas
 
-- **O mecanismo** (desde 28.10.2026): a entrada por CSS, no `template.tsx` de cada site. A página nova sobe e acende a partir do commit, a que sai some de uma vez, e o cabeçalho fica parado no layout (`13-tecnologia-e-estrutura.md`, seção 3.7, regra 4). Até então, era o `<ViewTransition>` do React, com o cabeçalho ancorado (`CabecalhoFixo`): a captura dele reprova os 60 quadros no celular (`15-desempenho.md`, seções 2.4 e 5.15). A base ainda o traz (PENDENTE).
+- **O mecanismo** (desde 28.10.2026): a entrada por CSS, no `template.tsx` de cada site. A página nova sobe e acende a partir do commit, a que sai some de uma vez, e o cabeçalho fica parado no layout (`13-tecnologia-e-estrutura.md`, seção 3.7, regra 4). Até então, era o `<ViewTransition>` do React, com o cabeçalho ancorado: a captura dele reprova os 60 quadros no celular (`15-desempenho.md`, seções 2.4 e 5.15). A base traz a entrada por CSS desde 02.11.2026.
   - **A entrada da receita do guia do Next.js 16.4** [V]: esmaecida, com deslocamento de 400 ms em 60 px, mas sem o atraso de 210 ms, que esperava a saída; 0 s com movimento reduzido. A saída de 150 ms da receita sai junto com a View Transition.
   - **Todo navegador** recebe a entrada, que é CSS; antes, sem suporte a View Transitions, a troca era imediata.
-  - **O Atlas não segue a receita** (seção 2): ele usa 150 ms de saída e 700 ms de entrada, a partir dos 160 ms, na curva da casa. A troca autorizada pelo usuário em 27.10.2026 ("Trocar a transição") tira a saída e a espera; ainda não está no site (`15-desempenho.md`, seção 2.4). Num site novo, vale a receita.
+  - **O Atlas não segue a receita** (seção 2): ele usa 700 ms de entrada, na curva da casa. Até 27.10.2026, com 150 ms de saída e a entrada a partir dos 160 ms; a troca autorizada pelo usuário nessa data ("Trocar a transição") tirou a saída e a espera, e entrou no site com o redesenho de 02.11.2026 (`99-rastreabilidade.md`, seção 10). Num site novo, vale a receita.
 - **Nunca um `view-transition-name` fixo num ancestral do vidro:** ele vira raiz de fundo e apaga o desfoque.
 - **Animação dentro de diálogo modal** (o simulador do Atlas): Web Animations API no próprio diálogo, nunca a View Transitions API, que fotografa a página sem a camada de topo, e o diálogo some durante a transição.
 - **A rolagem suave das âncoras** (`scroll-behavior: smooth`) exige `data-scroll-behavior="smooth"` no `<html>` (Next 16): sem o atributo, a página nova rolava animada até o topo.
@@ -317,7 +318,7 @@ O detalhe está em `14-funcionalidades/08-peca-assinatura.md`.
 | O detalhe revelado no hover | Visível de saída, ou atrás de um toque explícito (um botão, um `<details>`) | Nunca escondido sem caminho: a régua avisa a paridade (bloco 7) |
 | A cena que se desenha ao rolar, a assinatura decidida [C] | A mesma cena, em menos camadas e com o curso mais curto | Nenhuma outra peça ligada à rolagem (seção 5, item 7) |
 | O 3D em WebGL [C] | O mesmo objeto, carregado depois da primeira tela, com a resolução ajustada para manter 60 quadros por segundo, parado fora da tela. Em aparelho que não sustenta, a reserva desenhada (seção 7) | Menos polígonos e luzes; sombra só pintada na textura, nunca calculada a cada quadro |
-| O ambiente contínuo [C] | O mesmo ambiente, pausado fora da tela, com a pausa ao alcance do polegar | Menos partículas e camadas |
+| O ambiente contínuo | O mesmo ambiente, pausado fora da tela, com a pausa ao alcance do polegar | Menos partículas e camadas |
 | A tipografia de cartaz | A escala do celular mantém o contraste entre o título e o corpo do `identidade.md`, sem partir palavra | O título cabe em até quatro linhas a 360 px |
 | A grade de peças paralelas | A galeria de deslizar, com o trilho do avanço (`07-composicao.md`, seção 8) | — |
 | A transição entre páginas | A mesma, em até 300 ms | — |
@@ -434,3 +435,57 @@ Passa nas cinco perguntas de `11-anti-ia.md`, seção 6. O que continua marca: a
 - **A tabela do `identidade.md`,** "O vocabulário de interação", com cada papel e a sua resposta na mesa, no toque e com movimento reduzido.
 - **As capturas do hover** de cada papel, no teste da vitrine (`19-o-padrao-atlas.md`, seção 8.6).
 - **No Completo:** o crítico de fora conta, cena por cena, o que responde à mão (`19-o-padrao-atlas.md`, seção 8.5).
+
+---
+
+## 14. As passivas: o movimento sem ação de quem visita
+
+> **DECIDIDO** para o site do Atlas em 27.10.2026, pelo aprovador, Matheus Castro Oliveira de Luna Garcia ("quer movimento passivo"; depois da primeira construção, "ainda não vi animações passivas suficientes" e "elas precisam ser visíveis"), e levado a todo site novo em 02.11.2026. Vale em todo plano: o plano não as restringe (`19-o-padrao-atlas.md`, seção 9), e cada um as faz com o que tem. Os números são a proposta do contrato de 28.10.2026, com a cobertura corrigida pela crítica de 01.11.2026 [I].
+
+**A regra.**
+1. **Duas ou mais por página, em objetos e mecanismos diferentes, sem série.** Um mecanismo é a propriedade, a trajetória e o ritmo; ele aparece uma vez no site (`20-repeticao-dentro-do-site.md`). Cada passiva nasce do sentido do objeto (a agulha que assenta, a água que respira, o ponteiro que anda): é o que a separa da marca M4, o movimento que não responde a nada.
+2. **A cobertura medida, e não só a contagem:** pelo menos **60% das telas** com movimento visível depois de assentar; **nunca mais de duas telas seguidas paradas**; e peça pequena, de 28 px, **não conta** como visível. Se a cobertura não fecha, o caminho é uma peça grande que ocupe a tela no lugar de várias pequenas (`19-o-padrao-atlas.md`, seção 4.2). As telas da próxima página e do rodapé não entram na conta: são peças comuns (item 7), e medir com elas leva a pôr passiva onde a regra veda.
+3. **Só `transform` e `opacity`** (e `translate`, `rotate` e `scale`). O alvo é HTML ou um `<svg>` inteiro, nunca um elemento de dentro do `<svg>`: no Chrome, o `transform` de um filho de SVG repinta o desenho a cada quadro na linha principal. A exceção é declarada na peça (`data-passiva-svg`) e medida.
+4. **Paradas** fora da tela, na pausa e com movimento reduzido. Cada uma tem um repouso que se lê sozinho: é o que o movimento reduzido mostra.
+5. **Visíveis:** no pico do ciclo, um canto do objeto se desloca **6 px ou mais**, ou a opacidade muda **0,3 ou mais**. Entre dois movimentos do mesmo objeto, **no máximo 10 s**. Luz muito lenta conta na régua e quase não se vê: compare também dois quadros seguidos, e não só o acumulado.
+6. **Cada uma na régua dos quadros,** com as outras correndo (`../qualidade/02-regua.md`, seção 12). **A que reprova sem conserto roda uma vez naquele perfil** (`animation-iteration-count: 1`), e a medida fica no registro.
+7. **As peças comuns ficam quietas:** o cabeçalho, o menu, a próxima página e o rodapé não têm passiva. Uma faixa de luz neles se repete em toda página: é efeito em série (`20-repeticao-dentro-do-site.md`).
+
+**O acabamento.** O vaivém em curva senoidal (`cubic-bezier(0.37, 0, 0.63, 1)`), nunca linear; o linear só na volta contínua e no fluxo. Perspectiva de 800 a 1.200 px no que gira em 3D. Nada pisca: a opacidade nunca vai a zero em menos de 600 ms.
+
+**O mecanismo** (a ilha de pausa de `../gestos/components/ilhas/controle-do-movimento.tsx` e o fim de `../gestos/app/gestos.css`):
+- a passiva é o elemento com `data-passiva="<pagina>-<objeto>"`, dentro de um `[data-ambiente]`; o que anima leva `.mov-passiva`; o laço sob o ponteiro e o brilho do `ShimmerText` levam `.mov-constante`: não contam como passiva e param pelas mesmas regras;
+- o `[data-ambiente]` vem no HTML do servidor: o que nasce depois da troca de caminho não é observado e nunca recebe `data-visivel`;
+- a animação só se declara sob `.js [data-visivel] .<classe>`, com as listas de seletores por extenso (`::before` não entra em `:is()`):
+
+```css
+.ambiente-pausado :is(.mov-passiva, .mov-constante),
+.ambiente-pausado .mov-passiva::before,
+.ambiente-pausado .mov-passiva::after,
+[data-fora] :is(.mov-passiva, .mov-constante),
+[data-fora] .mov-passiva::before,
+[data-fora] .mov-passiva::after {
+  animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.mov-passiva, .mov-constante),
+  .mov-passiva::before,
+  .mov-passiva::after {
+    animation: none !important;
+  }
+}
+```
+
+**O que custou, medido no primeiro site com elas** (01.11.2026, o detalhe em `15-desempenho.md`, seção 5.18):
+- **A troca de `data-visivel` em pleno arremesso** derrubou a rolagem: o que entra na tela passou a esperar a página parar 200 ms para começar, e o que sai para na hora. O preço é que, em rolagem contínua, ela só começa quando a página para.
+- **A animação no compositor pode travar a parada entre dois arremessos,** com a linha principal parada e a tela em dia. Nem toda trava teve causa isolada: mede-se cada peça com a peça desligada, em A/B.
+- **A amplitude não salva a peça pequena:** um ponteiro de 2 × 12 px num mostrador de 28 px passou no piso e mudou 0,01% da tela.
+- **Duas passivas que somam na mesma página** merecem um gatilho próprio: a luz que passa uma vez por três retratos, a partir de um gatilho só, rodou com o terceiro fora da tela.
+
+**Objetivo.** O site se mantém vivo sem pedir nada de quem visita, e sem que a pausa minta (Q15). A contagem sozinha enganou: com duas ou mais por página em todas, a maioria das telas seguia parada (os números em `99-rastreabilidade.md`, seção 10).
+
+**Como conferir.**
+- `node ferramentas/regua/conferir-passivas.mjs --base=<endereço> --pagina=<cada página>`: os oito casos, a 1440 e a 390 px (as propriedades, as três paradas, a contagem, a amplitude, o SVG, o que roda sem dono e a cobertura). Grava `.regua/passivas.json`.
+- `node producao/ferramentas/conferir-pausa.mjs <base> <páginas>`: com a pausa e com movimento reduzido, 0 pixel muda.
+- A régua dos quadros.
+- **O que nenhuma das três vê:** se cada passiva tem mecanismo próprio (regra 1), se o objeto se move ao menos a cada 10 s (regra 5) e se o movimento diz alguma coisa. Isso é do crítico de fora, e das tiras de quadros em tempo real.

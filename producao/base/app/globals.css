@@ -143,31 +143,10 @@
   }
 }
 
-/* 3. A troca de página (a receita do guia do Next: producao/esteira/09-movimento.md, seção 8):
-      saída de 150 ms; entrada de 400 ms, em 60 px, depois de 210 ms; o cabeçalho parado. */
-::view-transition {
-  pointer-events: none;
-}
-::view-transition-old(.pagina-sai) {
-  animation: 150ms cubic-bezier(0.3, 0, 0.8, 0.15) both vt-pagina-sai;
-}
-::view-transition-new(.pagina-entra) {
-  animation: 400ms cubic-bezier(0.05, 0.7, 0.1, 1) 210ms both vt-pagina-entra;
-}
-::view-transition-group(cabecalho) {
-  animation: none;
-  z-index: 100;
-}
-::view-transition-old(cabecalho) {
-  display: none;
-}
-::view-transition-new(cabecalho) {
-  animation: none;
-}
-@keyframes vt-pagina-sai {
-  to {
-    opacity: 0;
-  }
+/* 3. A troca de página (producao/esteira/13-tecnologia-e-estrutura.md, seção 3.7, regra 4): a entrada por CSS, 400 ms em
+      60 px, sem atraso e sem preenchimento (forwards ou both): acabada a entrada, a caixa fica sem transform. */
+.pagina-entra {
+  animation: 400ms cubic-bezier(0.05, 0.7, 0.1, 1) vt-pagina-entra;
 }
 @keyframes vt-pagina-entra {
   from {
@@ -176,11 +155,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(*),
-  ::view-transition-new(*),
-  ::view-transition-group(*) {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
+  .pagina-entra {
+    animation: none;
   }
 }
 

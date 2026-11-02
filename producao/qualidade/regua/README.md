@@ -2,7 +2,7 @@
 
 *Os caminhos deste arquivo partem da raiz do projeto: valem aqui, no kit, e na cópia que o `portar-regua` leva para `ferramentas/regua/` de cada site.*
 
-Cópia dos cinco arquivos da régua (e da autoconferência do contraste, desde 16.10.2026) do repositório do Atlas (`web/ferramentas/regua/`), em 08.10.2026, para que um repositório novo não dependa do repositório privado do Atlas. O que cada bloco mede, os limites, a calibração e os resultados estão em `producao/qualidade/02-regua.md`; **como portá-la** para um site de cliente, na seção 9 de lá.
+Cópia dos arquivos da régua (com a autoconferência do contraste, desde 16.10.2026) do repositório do Atlas (`web/ferramentas/regua/`), em 08.10.2026, para que um repositório novo não dependa do repositório privado do Atlas. O que cada bloco mede, os limites, a calibração e os resultados estão em `producao/qualidade/02-regua.md`; **como portá-la** para um site de cliente, na seção 9 de lá.
 
 | Arquivo | O que faz |
 |---|---|
@@ -12,7 +12,8 @@ Cópia dos cinco arquivos da régua (e da autoconferência do contraste, desde 1
 | `teclado.mjs` | O teclado: o foco que muda a aparência e a armadilha de foco (até 6 repetições, pelo campo de data) |
 | `png.mjs` | A leitura de PNG para o contraste, sem dependência |
 | `quadros.mjs` | A régua dos quadros (desde 28.10.2026 no kit): o ritmo de 60 por segundo na rolagem, no menu, na navegação e na figura, no celular 4× e na mesa, contado no rastro do Chrome; grava `.regua/quadros.json` na pasta corrente (`producao/qualidade/02-regua.md`, seção 12) |
-| `autoconferencia.mjs` e `autoconferencia.html` | A autoconferência do contraste do texto misturado e, desde 17.10.2026, do texto das figuras e do meio-tom (fundos conhecidos, 23 verificações): `node ferramentas/regua/autoconferencia.mjs` (ou `node producao/qualidade/regua/autoconferencia.mjs`, para esta cópia). Não vai para o cliente: o `portar-regua` porta só os cinco arquivos acima e este README |
+| `conferir-passivas.mjs` | A conferência das passivas (desde 02.11.2026 no kit): duas ou mais por página, só `transform` e `opacity`, paradas na pausa, fora da tela e com movimento reduzido, a amplitude mínima e a cobertura (60% das telas, no máximo duas seguidas paradas, peça de 28 px não conta). Lê o mecanismo da ilha de pausa de `producao/gestos/`. Grava `.regua/passivas.json` (`producao/esteira/09-movimento.md`, seção 14) |
+| `autoconferencia.mjs` e `autoconferencia.html` | A autoconferência do contraste do texto misturado e, desde 17.10.2026, do texto das figuras e do meio-tom (fundos conhecidos, 23 verificações): `node ferramentas/regua/autoconferencia.mjs` (ou `node producao/qualidade/regua/autoconferencia.mjs`, para esta cópia). Não vai para o cliente: o `portar-regua` porta só os arquivos acima e este README |
 
 **Ao copiar para `ferramentas/regua/` do cliente:**
 - Os pontos que mudam estão em `producao/qualidade/02-regua.md`, seção 9, passo 4:

@@ -123,7 +123,7 @@ As mesmas de `../esteira/README.md`, seção 3:
 |---|---|
 | `00-entender-o-projeto.md` | O que ler, o que mapear e a matriz de risco, antes de testar |
 | `01-metodologia.md` | Estratégia por risco, camadas, porta determinística, exploração, oráculos, severidade, ciclo de defeito |
-| `02-regua.md` | A régua: blocos, limites, calibração, resultados, como portar para um repositório novo; a régua dos quadros (seção 12) |
+| `02-regua.md` | A régua: blocos, limites, calibração, resultados, como portar para um repositório novo; a régua dos quadros (seção 12) e a conferência das passivas |
 | `03-estatica.md` | Tipos, ESLint 10 com as regras da casa, Prettier, verificação do CSS compilado |
 | `04-unidade.md` | O `node:test`: o que testar e como, com exemplos; quando o Vitest |
 | `05-ponta-a-ponta.md` | Playwright Test: configuração, fixture de vigia, fluxos nomeados |

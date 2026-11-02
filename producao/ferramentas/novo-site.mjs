@@ -11,7 +11,7 @@
 // Entram no site:
 // - a base (producao/base/), copiada para a raiz, e a régua portada (portar-regua.mjs);
 // - os documentos do projeto, a partir de producao/esteira/modelos/: CLAUDE.md, briefing.md, identidade.md,
-//   decisoes.md e conteudo/ROTEIRO.md;
+//   decisoes.md e conteudo/ROTEIRO.md, além do AGENTS.md vazio;
 // - os comandos do Claude Code (.claude/commands/) e a pasta registros/, dos relatórios de QA.
 // A pasta producao/ fica como veio: é a biblioteca do projeto, e uma versão nova do kit entra trocando a pasta.
 // Nada do cliente vai para dentro dela.
@@ -223,6 +223,8 @@ try {
     () => `## Estado\n\n- ${dataBR(hoje)} — repositório criado por \`producao/ferramentas/novo-site.mjs\` a partir de \`producao/base/\`, com a régua portada. Próximo passo: \`producao/01-roteiro-da-sessao.md\`, etapa 2 (instalar, compilar, servir e rodar a régua), e depois o comando \`/proxima-etapa\`.\n`,
   );
   writeFileSync(path.join(raiz, "CLAUDE.md"), claude);
+  // Vazio, antes do primeiro npm run dev: sem ele, o Next grava o bloco dele dentro do CLAUDE.md (esteira/13, seção 2).
+  writeFileSync(path.join(raiz, "AGENTS.md"), "");
 
   // O briefing: o recebido (cliente) ou o modelo, com a legenda dos ● (exemplo, para o briefing fictício).
   writeFileSync(

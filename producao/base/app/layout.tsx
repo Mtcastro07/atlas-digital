@@ -1,7 +1,8 @@
 // app/layout.tsx — o layout raiz (producao/esteira/13-tecnologia-e-estrutura.md, seção 7): o idioma, as fontes,
-// o script curto do <head>, o vínculo "Ir para o conteúdo", o cabeçalho e o rodapé.
+// o script curto do <head>, o vínculo "Ir para o conteúdo", o cabeçalho e o rodapé, fora da caixa da entrada (app/template.tsx).
 import type { Metadata, Viewport } from "next";
 import { Cabecalho } from "@/components/cabecalho";
+import { AoTopo } from "@/components/ilhas/ao-topo";
 import { Revelacao } from "@/components/ilhas/revelacao";
 import { Rodape } from "@/components/rodape";
 import { negocio } from "@/conteudo/negocio";
@@ -42,6 +43,7 @@ export default function LayoutRaiz({ children }: { children: React.ReactNode }) 
         {children}
         <Rodape />
         <Revelacao />
+        <AoTopo />
       </body>
     </html>
   );

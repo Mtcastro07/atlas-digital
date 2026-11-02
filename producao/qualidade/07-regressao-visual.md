@@ -11,6 +11,9 @@
 **Regra.** Passa pela comparação visual:
 1. **Toda mudança que não deveria mudar a tela.** Exemplos: revisão de código, atualização do Next, do React ou do Tailwind, troca de dependência, reorganização de componentes.
 2. **Toda mudança que deveria mudar só uma parte.** A comparação prova que o resto ficou igual.
+3. **Toda mudança numa peça comum** (um componente, uma regra de CSS, uma ilha) num repositório com mais de um site ou com demos. A busca é pela classe no CSS, além do `import`, e a comparação é de todas as rotas que a usam, a 1440 e a 390 px, inclusive o estilo calculado.
+   - **Por quê:** num redesenho (01.11.2026), nenhum arquivo das demos mudou, e 48 de 74 combinações de rota e largura mudaram. A regra base `.vd-orbe` saiu do CSS comum com o orbe do site, e a cena de uma demo, que só acrescentava o tamanho e o tom, quebrou; a pausa "só com a palavra", decidida para um site, chegou às outras por um componente comum, com o estado dela preso a `aria-pressed`. A integração procurou leitores só do lado do site que mudava.
+   - **O conserto:** a variação fica numa propriedade que só o site que a pediu passa, e a regra base volta.
 
 **Objetivo.**
 - O olho não vê 3 px de diferença num espaçamento, nem uma sombra que sumiu numa página que ninguém abriu.

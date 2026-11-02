@@ -90,17 +90,17 @@ Os passos abaixo são o que o `novo-site` faz e o que se faz à mão sem ele (`.
 | `06-cor-forma-e-superficie.md` | Paleta em OKLCH, contraste medido, cantos, sombras, texturas, degradês |
 | `07-composicao.md` | Grade, hierarquia, primeira tela, leitura, medida da linha, ritmo |
 | `08-imagem-e-fotografia.md` | Direção da foto, protocolo do celular, pedido ao fotógrafo, formatos, vídeo |
-| `09-movimento.md` | Para que serve, tokens de duração e curva, camadas por plano, gestos, 3D, transições |
+| `09-movimento.md` | Para que serve, tokens de duração e curva, camadas por plano, gestos, 3D, transições, as passivas |
 | `10-texto-e-conteudo.md` | Registro verbal, conteúdo tipado, metadados, microtexto, o que cada conselho veda no texto |
 | `11-anti-ia.md` | O método para julgar se um site tem cara de gerado, e a disciplina para não gerar |
 | `12-inspiracao-e-referencias.md` | Como buscar e estudar os melhores, sem copiar, e as referências por nicho |
 | `13-tecnologia-e-estrutura.md` | A pilha, a estrutura do repositório, as convenções de código, os scripts, a regra de tecnologia nova |
 | `14-funcionalidades/` | Cada funcionalidade: plano, nicho, objetivo e implementação |
-| `15-desempenho.md` | Os orçamentos, como medir e as técnicas que os cumprem |
+| `15-desempenho.md` | Os orçamentos, o ritmo de 60 quadros, como medir e as técnicas que os cumprem |
 | `16-acessibilidade.md` | WCAG 2.2 AA como obrigação legal, e como cumprir |
 | `17-conformidade-e-normas.md` | LGPD, cookies, imagem, conselhos, crédito, a porta de publicação |
 | `18-publicacao-e-manutencao.md` | Hospedagem, domínio, publicação, manutenção mensal, atualização em ondas |
-| `19-o-padrao-atlas.md` | O padrão Atlas (09.10.2026): o diagnóstico medido de seis sites, o mundo da marca, a página em cenas, as três estratégias de cor, a interface, a unicidade entre os sites, o que o plano restringe e o método (o andaime, o roteiro de cenas, as referências de código, a lapidação, o crítico de fora, a vitrine) |
+| `19-o-padrao-atlas.md` | O padrão Atlas (09.10.2026): o diagnóstico medido de seis sites, o mundo da marca, a página em cenas, o nível Apple, as três estratégias de cor, a interface, a unicidade entre os sites, o que o plano restringe e o método (o andaime, o roteiro de cenas, as referências de código, a lapidação, o crítico de fora, a vitrine, a construção em partes) |
 | `20-repeticao-dentro-do-site.md` | A repetição dentro do site (14.10.2026): nenhum componente nem efeito em série, e depois nenhum molde de seção ou de cena; o mesmo efeito entre sites, liberado; a contagem por página na porta da mesa e no passe do celular; o estudo de 14 a 16.10.2026 nos sete sites, com as contagens, os vereditos dos críticos de fora e as lições |
 | `21-busca-e-ias.md` | A busca e as respostas de IA em todo site, de qualquer plano (16.10.2026): o que cada robô faz e como tratá-lo, o `robots.txt` por tipo de site, o mapa do site com a data verdadeira, o título que diz o que se vende e onde, o JSON-LD do conteúdo visível, o texto que o robô lê, o `llms.txt` com a evidência honesta, o IndexNow depois de cada publicação, o que depende do dono e a linha da porta de publicação |
 | `nichos/` | Um documento por nicho (doze) e o quadro comum |

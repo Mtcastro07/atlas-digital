@@ -100,6 +100,11 @@ Fontes: as páginas oficiais de cada empresa, consultadas em 16.10.2026 (lista n
 
 **Como fazer.** A base já faz (`../base/app/sitemap.ts`). A cada publicação com mudança de conteúdo, `ultimaAlteracao` passa à data do dia. É uma data para o site inteiro: quando uma mudança tocar uma página só, a data pode passar para cada entrada (o `shortcut:` está no código).
 
+**Uma data por página, vinda do git** (desde 02.11.2026, a forma preferida, quando o site tiver mais de uma página que muda sozinha). A base nasce com a data à mão, de uma só; ao passar para cada página:
+- uma tabela liga cada caminho aos arquivos que a compõem, mais os comuns (o layout, o CSS e o texto comuns; o arquivo de preços, em toda página que os mostra, inclusive os dados estruturados): a data é a do último commit que tocou neles (`git log -1 --format=%cs -- <arquivos>`), lida só no servidor, uma vez por build;
+- **sem `.git` no build, ou com o clone raso** (`git rev-parse --is-shallow-repository`), a página sai **sem** `<lastmod>`, e o build avisa e termina. Data nenhuma é melhor que data errada: o clone raso daria a todas a data do último commit. Medido em 01.11.2026, numa cópia sem `.git`, em modo servidor: o build termina com saída 0, e o mapa lista as páginas sem data. Quem publica sem `.git` perde a data, e por isso confere o mapa no endereço temporário;
+- a página nova entra na tabela, e a falta dela para o build. Sem commit, a data não muda: o mapa só diz a verdade depois do commit.
+
 **Como conferir.** `curl -s https://<domínio>/sitemap.xml`: as páginas do menu e as legais, com o domínio certo, a barra no fim (no estático), a data da última mudança e nenhum `changefreq` nem `priority`.
 
 ---

@@ -10,9 +10,9 @@
 > - Os tetos de bytes e de CLS são DECIDIDO: estão na régua do repositório do Atlas desde 07.10.2026. Nos sites de marca, os de bytes subiram em 08.10.2026, à noite (pedido do usuário em 08.10.2026: "deixe claro que os sites devem haver o design premium, independente do plano, onde você pode aumentar o peso de cada aplicação, tanto no pc quanto no mobile, para que ele consiga manter e não se limitar à criação de designs como o Awwwards").
 > - As metas de LCP e TBT são as da especificação do site do Atlas (seção 7), de 30.09.2026. O TBT com CPU 20× **não é cumprido hoje** (seção 6).
 > - A meta de INP e a da troca de página são RATIFICADO (vêm do padrão de design de 07.10.2026); nenhuma das duas foi medida.
-> - O ritmo de 60 quadros por segundo (seção 2.4) é porta de entrega de todo site desde 28.10.2026, por pedido do usuário (22 e 27.10.2026). As técnicas das seções 5.15 a 5.17 foram medidas no site do Atlas em 27 e 28.10.2026 e ainda não estão no site nem na base (seção 6).
+> - O ritmo de 60 quadros por segundo (seção 2.4) é porta de entrega de todo site desde 28.10.2026, por pedido do usuário (22 e 27.10.2026). As técnicas das seções 5.15 a 5.17 foram medidas no site do Atlas em 27 e 28.10.2026, e a 5.18 em 01 e 02.11.2026. A entrada por CSS e a página no topo estão na base desde 02.11.2026 (seção 2.4); o site do Atlas ainda não cumpre a porta na navegação (seção 6).
 >
-> **Atualizado em:** 28.10.2026.
+> **Atualizado em:** 02.11.2026.
 
 ---
 
@@ -103,9 +103,9 @@ Valem para **todo plano e todo site** ([todos]), **no computador e no celular**:
   - a navegação melhora: no celular 4×, 43 de 63 vezes em 3 batidas ou menos (hoje, 0 de 63); no 6×, nenhuma vez em 7 batidas ou mais (hoje, 30 de 63);
   - mas a navegação fica no limiar: só 5 das 14 portas aprovam nas quatro sessões; as outras ficam entre 3 e 4 batidas. Na mesa, em A/B intercalado, o ganho quase some.
   - O que resta: o commit da página nova, com o estilo e o leiaute que o roteador do Next força para decidir a rolagem, e o voltar, que o React renderiza de forma síncrona (22 a 24 ms com a CPU 4×).
-  - **A cópia não está no site:** a verificação de 28.10.2026 não a aprovou, pela navegação instável e por um defeito visível (seção 5.15, "Nada com `position: fixed` dentro da caixa"). **O site do Atlas ainda não cumpre esta regra na navegação** (PENDENTE).
+  - **A cópia de 28.10.2026 não entrou no site:** a verificação de 28.10.2026 não a aprovou, pela navegação instável e por um defeito visível (seção 5.15, "Nada com `position: fixed` dentro da caixa"). A entrada por CSS só chegou ao site com o redesenho de 02.11.2026 (`99-rastreabilidade.md`, seção 10). **O site do Atlas ainda não cumpre esta regra na navegação** (PENDENTE).
 - **Nas demos** (22.10.2026, antes da reversão do site; a navegação precisa ser medida de novo): a rolagem e as figuras aprovam em todos os perfis, inclusive com o 3D da barbearia e a arcada da odontologia. A navegação reprova no celular 4× nas cinco demos em que se mediu (no depósito, a régua não achou o vínculo), com 4 a 5 batidas (67 a 84 ms), pelo mesmo `<ViewTransition>`; o menu da odontologia também reprova.
-- **A base** traz o mesmo `<ViewTransition>` (`../base/app/template.tsx`): todo site novo nasce reprovando a navegação no celular, até a troca da seção 5.15 chegar à base (PENDENTE; seção 6).
+- **A base** traz a entrada por CSS e a página no topo desde 02.11.2026. Medida na cópia compilada, em `/` e `/servicos`, com a mediana de 3: a navegação aprova na mesa e no celular 4×, com 100% em dia e o pior de 1 batida, numa sessão só (a porta pede duas) e numa máquina em uso (no celular, pelo gatilho do menu da base, `../qualidade/02-regua.md`, seção 12). É a página mais leve possível: não prova o site pronto, que se mede de novo.
 
 **Varia por:** nada. O plano decide quanto movimento, nunca o ritmo.
 
@@ -503,10 +503,10 @@ Cada técnica nasceu de uma medição. Valem em todo site; a coluna "Varia por" 
   - tudo o que não muda nada visível, junto (o vidro e as seções): a mesa aprovou; o celular 4× ficou em 4 batidas em `/` e `/planos`.
 - **A correção medida:** a entrada por CSS, com as seções poupadas (seção 5.17) e o vidro guardado (seção 5.16), aprovou nas seis medidas do ensaio (as três páginas, no celular 4× e na mesa). Nas sete páginas e em quatro sessões, o resultado é o da seção 2.4: muito melhor que hoje, e no limiar da porta.
 - **Os cuidados,** cada um achado no Atlas:
-  - **O cabeçalho fica fora da caixa animada,** no layout, e sem o `CabecalhoFixo`. Com ele, o React abre uma View Transition só para a barra, e a captura volta.
+  - **O cabeçalho fica fora da caixa animada,** no layout, e sem `<ViewTransition>` em volta dele. Com ele, o React abre uma View Transition só para a barra, e a captura volta.
   - **A entrada só na ida.** Na carga, no voltar, no avançar e na chegada com âncora, nada: a ilha de âncoras mede o destino no primeiro quadro, e o deslocamento o tiraria do lugar. O voltar se guarda pelo caminho a que leva, e não por um sim ou não: um voltar dentro da mesma página não remonta o template, e a ida seguinte perdia a entrada.
   - **Sem `setState` no `useLayoutEffect` da entrada.** Tirar a classe com um novo render adiantava os efeitos da página inteira para dentro do commit: `/planos` no celular 4× foi a [4, 4, 4], e a mesa reprovou em seis páginas. A classe sai direto no elemento.
-  - **Nada com `position: fixed` dentro da caixa.** O `transform` da entrada faz da caixa o bloco de referência do `fixed`. Abaixo de 1024 px, a faixa fixa do montador de `/orcamento` ficou fora da tela durante os 700 ms da entrada e apareceu de uma vez no fim (a verificação de 28.10.2026, com os quadros da tela gravados; hoje, ela sobe junto com a página desde os 35 ms). O que fica preso à tela mora fora da caixa: no layout, ou num portal para o `<body>` (não testado).
+  - **Nada com `position: fixed` dentro da caixa.** O `transform` da entrada faz da caixa o bloco de referência do `fixed`. Abaixo de 1024 px, a faixa fixa do montador de `/orcamento` ficou fora da tela durante os 700 ms da entrada e apareceu de uma vez no fim (a verificação de 28.10.2026, com os quadros da tela gravados). O que fica preso à tela mora fora da caixa: no layout, ou num portal para o `<body>` (`createPortal`, depois da hidratação, para o HTML servido não mudar). **O portal foi testado na faixa** (28.10.2026): ela sobe com a página porque o site acrescentou à regra da entrada um seletor que a alcança, por um atributo próprio (a base não o traz: quem usa o portal o acrescenta), e sai da página junto com ela. Ao usá-lo, confira a ordem do Tab, que passa a seguir o `<body>`.
   - **Sem preenchimento na animação** (`forwards` ou `both`). Acabada a entrada, a caixa fica sem `transform`; com o preenchimento, o defeito do `fixed` ficaria para sempre.
   - **O que a captura escondia aparece.** A View Transition cobria a tela por centenas de milissegundos; sem ela, o primeiro quadro da página nova se vê. No Atlas, a barra leu o fundo no painel do menu que ainda saía e ficou escura sobre a página clara (corrigido: a leitura ignora a peça que sai, `[data-ending-style]` do Base UI); e a ação flutuante, vinda de uma página rolada, aparece no topo da nova e some em ~150 ms. Confira a troca pelo menu, no celular, quadro a quadro.
 - **O que muda para quem visita:** a página que sai deixa de se apagar (150 ms); a nova chega igual, sem esperar a saída; o segundo clique durante a troca passa a valer (a View Transition o engolia); e o navegador sem View Transitions ganha a entrada. No Atlas, a troca foi autorizada pelo usuário em 27.10.2026 ("Trocar a transição").
@@ -568,6 +568,18 @@ Cada técnica nasceu de uma medição. Valem em todo site; a coluna "Varia por" 
   - o voltar, de uma página rolada até o fim;
   - a tela parada (`../qualidade/07-regressao-visual.md`).
 
+### 5.18 · A navegação pesa pelo commit: o que aliviou
+
+- **Regra:** depois de tirada a captura (seção 5.15), o que resta da troca de página é o commit da página nova, com o estilo e o leiaute que o roteador força. Corta-se o que entra nele, com a régua dos quadros em A/B intercalado, de cinco vezes por célula. O limiar se aceita por decisão escrita, nunca em silêncio.
+- **Objetivo:** nas passivas e nos efeitos a culpa parece óbvia, e não é. Sem nenhuma passiva, a navegação medida ficou igual; o peso era o commit: até 442 objetos e 49 ms na ida à página mais pesada, no celular 4×.
+- **O que aliviou** (01 e 02.11.2026, no site do Atlas, com a tarefa da pior ida em 46 ms; as duas juntas levaram as células de 5 batidas a 4):
+  - **a contenção só durante a entrada.** A seção pesada que não pode ficar sob `content-visibility` para sempre (contida, ela travava a rolagem ao voltar à tela; seção 5.17) fica contida só durante a entrada: `.pagina-entra:not(.pagina-entrou) #secao-pesada`, com a classe `pagina-entrou` posta 1,2 s depois, no próprio elemento, sem `setState` (46 para 36 ms);
+  - **as `@font-face` no CSS comum.** A fonte que uma só página usa, declarada só nela, traz uma folha nova na troca de página: `next/font` com `preload: false`, importada do layout, põe a declaração na folha comum sem baixar a fonte antes de ela aparecer (46 para 42 ms).
+- **O que enganou:** num primeiro ensaio, conter três seções de uma vez mudou pouco ([5,4] contra [5,5]). A medida por destino (em qual ida está o pior intervalo) é que achou a seção certa.
+- **O limiar:** mesmo assim, 6 de 7 páginas de site denso ficaram em 4 batidas, uma além da porta, no celular 4×. A decisão de aceitar isso ou cortar peso é do aprovador.
+- **As travas de compositor:** na rolagem, as piores travas (de 18 a 45 batidas) não eram trabalho. No rastro, a linha principal fica parada, e cada quadro vem `STATE_DROPPED`, com `has_compositor_animation: true`, na parada entre dois arremessos, e a tela segue em dia (`piorDaTela` de 1 ou 2 batidas). Três cortes as reduziram, cada um medido com a peça desligada: o gesto de uma vez que disparava ao entrar na tela, no rodapé, saiu; `visibility` e `box-shadow` saíram das transições de faixas fixas (rodam na linha principal); o laço em retratos virou uma passada só no celular. Não se provou quem dispara todas: uma trava intermitente, de causa não isolada, e uma luz em laço que reprova na mesa ficaram registradas, e não escondidas.
+- **Como conferir:** a seção 11 de `../qualidade/08-desempenho.md`, e a medida por troca: em qual destino está o pior intervalo.
+
 ---
 
 ## 6. Os custos conhecidos
@@ -588,7 +600,7 @@ O que está acima da meta, ou nunca foi medido, no repositório do Atlas em 08.1
 | **Folha global em todas as páginas** | 139 KB crus, 24,6 KB comprimidos, nas 23 páginas, inclusive nas 16 dos sites de exemplo (auditoria técnica de 07.10.2026) | Os sites de exemplo moram sob o layout raiz do Atlas e herdam a folha e a fonte dele | Um layout raiz próprio para cada site que divide o app (`05-tipografia.md`, seção 4.1) | PENDENTE |
 | **HTML com a carga do React** | 117 KB crus no início, dos quais ~70 KB (59%) são a carga RSC embutida (auditoria técnica de 07.10.2026) | O Next embute os dados da página para a hidratação | Menos ilhas e props menores (seção 5.2); medir o HTML antes e depois | Acompanhar |
 | **A navegação do Atlas no limiar dos 60 quadros** | Com as correções das seções 5.15 a 5.17, só 5 das 14 portas de navegação aprovam em quatro sessões; as outras, 3 a 4 batidas. Sem elas (o site de hoje), 4 ou 5 batidas | Na ida, o commit da página nova e o estilo e o leiaute forçados pelo roteador do Next; no voltar, o render síncrono do React | Decidir com o aprovador. Candidatos, não medidos: menos elementos por página; `scroll={false}` nos vínculos (o leiaute forçado só mudaria de lugar) | PENDENTE |
-| **A base com o `<ViewTransition>`** | Todo site novo reprova a navegação no celular 4× (as demos: 67 a 84 ms, 22.10.2026) | A captura da View Transition (seção 5.15) | Levar à base a entrada por CSS e a página no topo (`13-tecnologia-e-estrutura.md`, seção 3.7, regras 4 e 9), compilar e medir com a régua dos quadros | PENDENTE |
+| **O site novo além da base** | A base aprova a navegação (seção 2.4), mas cada página real acrescenta peso ao commit | O commit da página nova (seção 5.18) | Medir a navegação a cada página; os cortes da seção 5.18 | Acompanhar |
 | **Leitura de tons do cabeçalho ao rolar** | 13 chamadas de `elementsFromPoint` e cadeias de `getComputedStyle` até a cada 80 ms durante a rolagem (auditoria técnica de 07.10.2026); ~12 ms por leitura com a CPU 4×, o maior script da rolagem do início, sem derrubar quadros (régua dos quadros, 22.10.2026) | O cabeçalho infere os tons que as seções já declaram em `data-tom` | Trocar por um `IntersectionObserver` sobre os `[data-tom]` (`06-cor-forma-e-superficie.md`, seção 10) | PENDENTE |
 
 ---

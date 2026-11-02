@@ -14,6 +14,8 @@ O projeto Next.js de onde nasce cada site do Atlas: a camada que todo site tem, 
 > | CLS | 0 | 0,05 |
 >
 > A primeira ação aparece a 51% da tela do celular no início e a 46% em Serviços.
+>
+> **02.11.2026.** A troca de página passou à entrada por CSS, e a página abre sempre no topo. Conferido numa cópia limpa: `tsc`, os testes e o build sem erro; cada chegada a y 0, na troca, no voltar, no avançar e na recarga, a 1440 e a 390 px, igual ao site do Atlas; nenhum `view-transition` no CSS; a navegação aprova na régua dos quadros, na mesa e no celular 4×, numa sessão só (a porta pede duas; `producao/qualidade/02-regua.md`, seção 12). A régua inteira de blocos não rodou de novo nessa data. **A base não traz passivas:** `conferir-passivas` reprova nela (0 passivas) até o site pôr as dele (`producao/esteira/09-movimento.md`, seção 14).
 
 ## O que já vem pronto
 
@@ -36,7 +38,7 @@ O projeto Next.js de onde nasce cada site do Atlas: a camada que todo site tem, 
 | A âncora decodificada sem derrubar a página | `lib/ancoras.ts` | Seção 16 |
 | O menu do celular: `<dialog>` nativo, com o índice do rodapé como reserva sem script | `components/ilhas/menu-celular.tsx`, `components/ilhas/navegacao.tsx` | Seção 17 |
 | "Ir para o conteúdo", o foco sempre visível e os alvos de 44 px | `app/layout.tsx`, `app/globals.css` | `producao/esteira/16-acessibilidade.md` |
-| A troca de página com `<ViewTransition>` e o cabeçalho parado | `app/template.tsx`, `components/transicao-de-pagina.tsx` | `producao/esteira/09-movimento.md`, seção 8 |
+| A troca de página pela entrada em CSS, com o cabeçalho parado, e a página que abre sempre no topo | `app/template.tsx`, `components/ilhas/entrada-da-pagina.tsx`, `components/ilhas/ao-topo.tsx` | `producao/esteira/13-tecnologia-e-estrutura.md`, seção 3.7, regras 4 e 9 |
 | A camada de movimento do Essencial: revelação única ao entrar na tela e o marca-texto (fora do título), nada com movimento reduzido | `app/globals.css`, `components/ilhas/revelacao.tsx` | `producao/esteira/09-movimento.md`, seção 4 |
 | As fontes hospedadas, com a licença ao lado | `app/fontes.ts`, `app/fontes/` | `producao/esteira/05-tipografia.md`, seção 4 |
 | Os cabeçalhos de segurança: no `next.config.ts` (servidor) e no `.htaccess` gerado (estático) | `next.config.ts`, `ferramentas/htaccess.modelo` | `producao/esteira/13-tecnologia-e-estrutura.md`, seção 5; `producao/esteira/18-publicacao-e-manutencao.md`, seção 3.2 |

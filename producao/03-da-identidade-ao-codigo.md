@@ -128,9 +128,11 @@ A camada é a do plano (`producao/esteira/09-movimento.md`, seção 4). O gesto 
 
 | Plano | O que a base já tem | O que se acrescenta |
 |---|---|---|
-| **[E]** | A revelação, uma vez, só onde ela é o momento da cena, nunca em toda seção (`data-revela`; `producao/esteira/20-repeticao-dentro-do-site.md`), a troca de página (`<ViewTransition>`) e o marca-texto (`.marca-texto`, numa palavra-chave do lide, nunca no título) | A cor do marca-texto (`--marcador`). Se a identidade pedir a tarja, `producao/gestos/` (`highlighted-text`) |
+| **[E]** | A revelação, uma vez, só onde ela é o momento da cena, nunca em toda seção (`data-revela`; `producao/esteira/20-repeticao-dentro-do-site.md`), a troca de página (a entrada por CSS, `components/ilhas/entrada-da-pagina.tsx`), a página que abre no topo (`components/ilhas/ao-topo.tsx`) e o marca-texto (`.marca-texto`, numa palavra-chave do lide, nunca no título) | A cor do marca-texto (`--marcador`). Se a identidade pedir a tarja, `producao/gestos/` (`highlighted-text`) |
 | **[P]** | O mesmo | A galeria de deslizar com o trilho; o vidro no cabeçalho; a aba atual; o estado ao vivo ("aberto agora"); os gestos de utilidade, copiar e espera, prontos em `producao/gestos/` (`producao/esteira/09-movimento.md`, seções 4 e 6.2) |
-| **[C]** | O mesmo | O ambiente contínuo, pausável e parado fora da tela, com a ilha de pausa de `producao/gestos/`; a peça-assinatura (`producao/esteira/14-funcionalidades/08-peca-assinatura.md`); a onda, o brilho e a inclinação, prontos em `producao/gestos/`; o 3D nas cinco condições (`producao/esteira/09-movimento.md`, seção 7) |
+| **[C]** | O mesmo | A peça-assinatura (`producao/esteira/14-funcionalidades/08-peca-assinatura.md`); a onda, o brilho e a inclinação, prontos em `producao/gestos/`; o 3D nas cinco condições (`producao/esteira/09-movimento.md`, seção 7) |
+
+**Em todo plano:** o ambiente da assinatura e as passivas, pausáveis e parados fora da tela, com a ilha de pausa de `producao/gestos/` (`producao/esteira/09-movimento.md`, seções 4 e 14).
 
 **Os gestos do Spell UI já adaptados** (os seis do Atlas e a ilha de pausa) estão em `producao/gestos/`, com o CSS e a receita de instalação (`producao/gestos/README.md`): copiar, importar o `gestos.css`, usar. Um gesto **novo** do Spell UI segue `producao/esteira/09-movimento.md`, seção 6.3:
 - `--dry-run` antes;
@@ -155,7 +157,7 @@ O primeiro componente do shadcn num site pede o `components.json`: copie o de `p
 - entrada: até 600 ms, uma vez;
 - com movimento reduzido, nada se desloca.
 
-A base já segue a receita da troca de página e a revelação em 500 ms.
+A base já segue a entrada da troca de página (400 ms, em 60 px, sem a saída nem o atraso da receita antiga; `producao/esteira/09-movimento.md`, seção 8) e a revelação em 500 ms.
 
 ## 8. A conferência visual
 

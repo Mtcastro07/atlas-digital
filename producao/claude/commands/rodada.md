@@ -11,5 +11,5 @@ Etapa 9 (`producao/esteira/01-processo.md`, etapa 9; `producao/esteira/03-planos
    - contra a norma do conselho: recuse com o artigo.
 2. **Registre em `decisoes.md`:** data, pedido, classificação, o que se fez ou se recusou, e quem pediu.
 3. **Fora do plano:** pare e devolva ao usuário o orçamento (valores de `producao/esteira/03-planos.md`). Não faça.
-4. **Dentro do plano:** aplique; rode `npm run build`, `npm run pronto` e a régua; mostre a captura antes e depois.
+4. **Dentro do plano:** aplique; rode `npm run build`, `npm run pronto` e a régua, e, se mexeu em movimento, `conferir-passivas` e a régua dos quadros; mostre a captura antes e depois.
 5. **Conte as rodadas:** duas estão incluídas (`producao/esteira/01-processo.md`, etapa 9). A terceira excede o escopo e se orça antes, como todo pedido fora do plano. O valor não está decidido: pergunte aos sócios e registre.

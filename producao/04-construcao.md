@@ -22,7 +22,7 @@
 | Preço e duração | `reais()` e `duracao()` | Formatar à mão |
 | Os metadados da página | `export const metadata = metadadosDaPagina(paginaDe("<id>"))` | `title` escrito na página |
 | O texto legal | `<TextoLegal />` com `conteudo/legal.ts` | Página legal em JSX |
-| O menu, o cabeçalho, o rodapé, a troca de página, a 404, os erros | Já montados no `layout.tsx` e no `template.tsx` | Um segundo cabeçalho; um menu com estado próprio |
+| O menu, o cabeçalho, o rodapé, a troca de página, a página que abre no topo, a 404, os erros | Já montados no `layout.tsx` e no `template.tsx` | Um segundo cabeçalho; um menu com estado próprio; um `<ViewTransition>` na troca de página |
 | A revelação ao entrar na tela | `data-revela` só na seção em que a entrada é o momento da cena (abaixo da dobra; nunca no título nem no lide da primeira tela) | A mesma entrada em todas as seções, ou em cada item de uma lista; nenhum efeito em série (`producao/esteira/20-repeticao-dentro-do-site.md`; `producao/esteira/11-anti-ia.md`, M1) |
 | O recuo lateral | `envelope` | `px-6 md:px-10` (perde a área segura do celular com recorte) |
 
@@ -110,6 +110,7 @@ Só onde há estado: menu, galeria, montador, calculadora, agendador. A esteira 
 3. **Sem `cn`, sem biblioteca nova.** Componente do shadcn, só pela receita de `03-da-identidade-ao-codigo.md`, seção 7. Peça de outra biblioteca, só pelo catálogo, com a licença relida e o aviso ao lado do código (`componentes/README.md`, seção 2).
 4. **Movimento:** com movimento reduzido, nada se desloca, e o estado diz a verdade (`producao/esteira/09-movimento.md`, seção 5).
 5. **Sem script:** a página continua usável. O menu leva ao índice do rodapé; o montador mostra a tabela.
+   **Preso à tela:** nada com `position: fixed` dentro de `app/template.tsx`: a caixa da entrada animada vira a referência dele. Vai no layout, ou num portal para o `<body>` depois da hidratação (`producao/esteira/15-desempenho.md`, seção 5.15).
 6. **Medir:** o script inicial pela régua, no bloco 5, antes e depois. Nos sites de marca não há teto desde 08.10.2026, à noite (eram 600 KB, e 180 até a véspera), e a base dá 116,1 KB: o peso compra o acabamento que se vê, nunca dependência sem efeito na tela.
 
 ## 5. O logotipo e o mapa

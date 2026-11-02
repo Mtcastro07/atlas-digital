@@ -105,6 +105,11 @@ Escala (do menor ao maior degrau, com a entrelinha): [ ... ] · Razão título/c
 | O rodapé | Três colunas | |
 | Os separadores entre seções | Fundo levemente diferente | |
 
+### As passivas e o código
+
+- **As passivas, por página** (`09-movimento.md`, seção 14): o objeto, o mecanismo e o sentido; a peça grande que dá a cobertura.
+- **O código como tema** (`19-o-padrao-atlas.md`, seção 4.3): se o nicho admite, e o trecho verdadeiro de cada página, com a frase para o leigo; ou "não entra", com o motivo.
+
 ### O vocabulário de interação
 
 *Cada papel com a sua resposta, saída da matéria da marca; dois papéis nunca com a mesma (`producao/esteira/09-movimento.md`, seção 13). No Completo, também as interações de conteúdo.*

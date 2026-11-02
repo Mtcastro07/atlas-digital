@@ -14,7 +14,7 @@
 //   rolagem    celular: arremessos do dedo (Input.synthesizeScrollGesture, toque, com fling) do topo ao rodapé e de
 //              volta; mesa: a roda (o mesmo gesto com gestureSourceType "mouse", rodadas a cada quadro), em tiras
 //   menu       abrir e fechar o menu (o botão aria-haspopup="dialog" do cabeçalho), onde houver
-//   navegacao  cada vínculo interno do cabeçalho ou do menu (a troca do app router, com a TransicaoDePagina) e o voltar
+//   navegacao  cada vínculo interno do cabeçalho ou do menu (a troca do app router) e o voltar
 //   figura     o arraste do globo (/), da lente (/para-quem), o simulador (/planos, só na mesa) e, nos exemplos, o
 //              ponteiro e o arraste sobre o canvas da capa
 // Os perfis: o celular (390 × 844, toque, densidade 3) com a CPU 4× (o aparelho médio do kit) e 6× (o de entrada), e a
@@ -266,7 +266,7 @@ const pontoDe = (p, seletor) =>
   }, seletor);
 const tocar = (p, perfil, { x, y }) => (perfil.contexto.hasTouch ? p.touchscreen.tap(x, y) : p.mouse.click(x, y));
 const botaoDoMenu = async (p) => {
-  const ponto = await pontoDe(p, '[aria-haspopup="dialog"][aria-expanded]');
+  const ponto = await pontoDe(p, '[aria-haspopup="dialog"][aria-expanded], a[href="#indice"]'); // o segundo é o gatilho da base
   return ponto && ponto.y < 140 ? ponto : null; // o do cabeçalho, no topo
 };
 const dialogoAberto = (p, aberto = true) =>

@@ -438,8 +438,8 @@ Os sintomas da lista acima aparecem em quase todo catálogo. Os mais comuns, med
    }
    ```
    As durações e as curvas estão em `09-movimento.md`, seção 8. Com movimento reduzido, a troca é imediata.
-   - **Os cuidados** (`15-desempenho.md`, seção 5.15): nada com `position: fixed` dentro da caixa (o `transform` da entrada faz dela a referência do `fixed`, e a peça fixa some durante a entrada); o cabeçalho sem o `CabecalhoFixo`; a troca pelo menu conferida quadro a quadro no celular.
-   - **A base ainda traz o `<ViewTransition>`** (`producao/base/app/template.tsx`, `components/transicao-de-pagina.tsx` e o `CabecalhoFixo` do cabeçalho): PENDENTE (`15-desempenho.md`, seção 6). O código acima é o do site do Atlas (27 e 28.10.2026), com os nomes da base [NV: não compilado na base].
+   - **Os cuidados** (`15-desempenho.md`, seção 5.15): nada com `position: fixed` dentro da caixa (o `transform` da entrada faz dela a referência do `fixed`, e a peça fixa some durante a entrada): o que fica preso à tela mora no layout ou num portal para o `<body>`; o cabeçalho fora da caixa e sem `<ViewTransition>`; a troca pelo menu conferida quadro a quadro no celular.
+   - **A base traz este código desde 02.11.2026** (`producao/base/app/template.tsx`, `components/ilhas/entrada-da-pagina.tsx`, `components/ilhas/ao-topo.tsx`, `app/globals.css`), compilado e medido: a navegação aprova na mesa e no celular 4× na base do exemplo, numa sessão (a porta pede duas; `15-desempenho.md`, seção 2.4). O `<ViewTransition>` sai também de qualquer site copiado das referências (`../referencias/`), que ainda o trazem.
 5. **Regra:** **nunca** um `view-transition-name` fixo num ancestral de vidro (`backdrop-filter`).
    - **Objetivo:** o elemento nomeado vira raiz de fundo, e o desfoque deixa de ver a página.
 6. **Regra:** animação dentro de diálogo modal (`<dialog>` com `showModal`) é feita pela **Web Animations API** no próprio diálogo, nunca pela View Transitions API.
@@ -979,7 +979,7 @@ O detalhe está em `14-funcionalidades/08-peca-assinatura.md`.
 |---|---|---|
 | Banco de dados (o MySQL do plano Hostinger) | A Agenda e o formulário com histórico | Decidir a arquitetura da Agenda (`14-funcionalidades/`) |
 | CMS (Pages CMS, Keystatic, Payload) | O cliente editar o próprio conteúdo sem desenvolvedor | Medir o custo na manutenção mensal e no peso (seção 8.2) |
-| Transição entre documentos do navegador (`@view-transition`) | A troca de página sem script | Firefox sem suporte (Chrome 126+, Safari 18.2+) [V]; a do React já está em uso |
+| Transição entre documentos do navegador (`@view-transition`) | A troca de página sem script | Firefox sem suporte (Chrome 126+, Safari 18.2+) [V]; a do React saiu da base em 02.11.2026 (seção 3.7, regra 4) |
 | GSAP, gratuito desde 2025 (inclusive SplitText e ScrollTrigger) | Coreografias que o CSS e o Motion não fazem bem | Um caso concreto; hoje, nenhum. A licença é proprietária e gratuita, e veda o uso em ferramentas que concorram com o construtor visual do Webflow, dono do GSAP [FU]: ler antes de adotar |
 | A opção experimental `sri` do Next | Tirar o `'unsafe-inline'` do script na política de conteúdo | Experimentar e medir (`../qualidade/`) |
 | WebGPU | 3D mais leve | Suporte amplo no celular; nenhum caso que o WebGL próprio não resolva |

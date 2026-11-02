@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // producao/ferramentas/conferir-pausa.mjs — a pausa pausa? (16.10.2026, fechamento com o Impeccable; 11-anti-ia.md, Q15)
-// Em cada página, a 1440 e a 390 px: aperta o botão de pausa (o de aria-pressed, ou o que se chama "Pausar…"), rola a página e lista
+// Em cada página, a 1440 e a 390 px: aperta o botão de pausa (o que se chama "Pausar…"; nunca um aria-pressed qualquer), rola a página e lista
 // toda animação infinita que continua rodando (document.getAnimations()). O atributo não prova nada: no pet shop e no
 // depósito, aria-pressed="true" convivia com a luz e a ficha andando (o atalho `animation` vencia a regra da pausa).
 //
@@ -17,7 +17,11 @@
 // faz a conta uma vez ao entrar na tela, saía com 242,6 s e mudava com a pausa: o avanço vinha antes do
 // IntersectionObserver, e a conta caía entre as duas capturas. Por isso a espera de 300 ms depois de cada rolagem.
 //
+// Até 02.11.2026, ela clicava no primeiro aria-pressed visível: um seletor de plano ou uma tecla de vista, no lugar da pausa,
+// e relatava telas que "mudavam com a pausa".
+//
 // Uso: node producao/ferramentas/conferir-pausa.mjs <base> <caminho>... [--fotos=<pasta>]
+//      node producao/ferramentas/conferir-pausa.mjs --autoteste
 //   (ex.: http://localhost:3000 / /servicos). Com --fotos, guarda a tela de antes e a de depois de cada mudança, para
 //   julgar com os olhos.
 // Sai com 1 se alguma página tiver animação infinita rodando, ou pixel mudando, depois da pausa ou com movimento reduzido.
@@ -29,6 +33,7 @@ const argumentos = process.argv.slice(2);
 const fotos = argumentos.find((a) => a.startsWith("--fotos="))?.slice(8);
 const [base, ...caminhos] = argumentos.filter((a) => !a.startsWith("--"));
 const nav = await chromium.launch({ channel: "chrome" });
+if (argumentos.includes("--autoteste")) await autoteste();
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 let falhas = 0;
 
@@ -46,6 +51,43 @@ function diferenca(antes, depois) {
     [x0, y0, x1, y1] = [Math.min(x0, x), Math.min(y0, y), Math.max(x1, x), Math.max(y1, y)];
   }
   return { n, caixa: n ? [x0, y0, x1 - x0 + 1, y1 - y0 + 1] : null };
+}
+
+// O botão de pausa, pelo nome: o que se chama "Pausar…" (à vista, depois o fora da vista: no celular, a pausa pode morar
+// no índice fechado; clicado pelo próprio elemento); depois, o de aria-pressed que fala de movimento ("Movimento",
+// "Parar animações"). Um aria-pressed de outro assunto (um seletor, uma tecla de vista) não é a pausa.
+function apertarPausa() {
+  const nome = (b) => (b.getAttribute("aria-label") || b.textContent || "").trim();
+  const visivel = (b) => b.getClientRects().length > 0;
+  const botoes = [...document.querySelectorAll("button")];
+  const chamaPausar = botoes.filter((b) => /^paus/i.test(nome(b)));
+  const alvo =
+    chamaPausar.find(visivel) ??
+    chamaPausar[0] ??
+    botoes.find((b) => b.hasAttribute("aria-pressed") && visivel(b) && /\b(pausa|parar|anima|movimento)/i.test(nome(b)));
+  if (!alvo) return null;
+  alvo.click();
+  return nome(alvo).slice(0, 40);
+}
+
+async function autoteste() {
+  const p = await nav.newPage();
+  const casos = [
+    ['<button aria-pressed="false">Essencial</button><button>Pausar animações</button>', "Pausar animações"],
+    ['<button aria-pressed="true">Vista em peças</button><button aria-pressed="false" style="display:none">Pausar</button>', "Pausar"],
+    ['<button aria-pressed="false">Essencial</button><button aria-pressed="false">Parar animações</button>', "Parar animações"],
+    ['<button aria-pressed="false"><span>Pausar animações</span></button>', "Pausar animações"],
+    ['<button aria-pressed="false">Essencial</button>', null],
+  ];
+  let erros = 0;
+  for (const [corpo, espera] of casos) {
+    await p.setContent(corpo);
+    const deu = await p.evaluate(apertarPausa);
+    if (deu !== espera) erros++, console.log(`ERRO: em ${corpo}, esperava ${espera}, deu ${deu}`);
+  }
+  console.log(erros ? `autoteste: ${erros} erro(s)` : `autoteste: os ${casos.length} casos conferem`);
+  await nav.close();
+  process.exit(erros ? 1 : 0);
 }
 
 const foto = (p) => p.screenshot({ scale: "css" });
@@ -106,18 +148,7 @@ async function medir(caminho, largura, reduzido) {
     const a = await foto(p);
     await esperar(1000);
     r.semPausa = diferenca(a, await foto(p)).n;
-    // O botão: o de aria-pressed à vista; senão, o que se chama "Pausar…" (o rótulo que troca de nome, sem aria-pressed),
-    // mesmo fora da vista (no celular, a pausa pode morar no índice fechado): clicado pelo próprio elemento.
-    r.botao = await p.evaluate(() => {
-      const visivel = (b) => b.getClientRects().length > 0;
-      const botoes = [...document.querySelectorAll("button")];
-      const alvo =
-        botoes.find((b) => b.hasAttribute("aria-pressed") && visivel(b)) ??
-        botoes.find((b) => /^paus/i.test((b.getAttribute("aria-label") || b.textContent || "").trim()));
-      if (!alvo) return null;
-      alvo.click();
-      return (alvo.getAttribute("aria-label") || alvo.textContent || "").trim().slice(0, 40);
-    });
+    r.botao = await p.evaluate(apertarPausa);
     if (!r.botao) return ctx.close().then(() => r);
     await esperar(600);
   }

@@ -174,6 +174,8 @@ export const paginaDe = (id: IdDaPagina) => paginas.find((p) => p.id === id)!;
 - **Preço numa fonte só.** Os planos do Atlas leem de `conteudo/planos.ts` a tabela, o montador, os destaques da capa e os dados estruturados.
 - **A ilha recebe só os campos que usa, nunca o objeto inteiro do site.** O objeto vai serializado no HTML de cada página. Até 03.10.2026, o estado da loja do depósito levava ~11 KB por página e o agendador da barbearia, ~6 KB; com só os campos usados, o HTML das 23 páginas ficou **73,5 KB menor**.
 
+**O valor em reais tem espaço fixo.** `reais()` (`lib/moeda.ts`) separa "R$" do número por U+00A0: a linha nunca os parte. A base já faz, e o teste confere. O mesmo caractere vai aos dados estruturados (`priceRange`, `description`), ao `llms.txt` e à mensagem do WhatsApp; as palavras são as mesmas, e o efeito em busca não foi medido [I]. Quem compara o JSON-LD byte a byte espera essa diferença.
+
 ---
 
 ## 8. Títulos, botões, erros e estados

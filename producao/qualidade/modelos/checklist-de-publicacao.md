@@ -52,6 +52,7 @@ Plano: <E|P|C> · Módulos: <…> · Nicho: <…> · Commit: <hash> · Endereço
 - [ ] Avaliação anti-IA sem marca de peso alto; lista de 22 itens; teste do desconhecido (`11`)
 - [ ] A barreira do travamento sem falha no aparelho médio (régua, passagem 2b); o peso, o LCP e o TBT relatados (`08`, seção 1)
 - [ ] A régua dos quadros sem falha, em duas sessões separadas: a rolagem, o menu, a navegação e a figura, no celular 4× e na mesa; os avisos do 6× lidos (`02`, seção 12; `08`, seção 11)
+- [ ] As passivas sem falha: `conferir-passivas`, a contagem, as três paradas, a amplitude e a cobertura (`../../esteira/09-movimento.md`, seção 14)
 - [ ] `npm audit --omit=dev` sem vulnerabilidade alta ou crítica (`09`, seção 7)
 - [ ] Segredos só nas variáveis de ambiente do servidor (`09`, seção 6)
 - [ ] Mapa do site, `robots.txt`, canônicos e dados estruturados (`10`, seção 7)

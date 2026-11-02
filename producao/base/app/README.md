@@ -4,8 +4,8 @@ As rotas (App Router do Next 16) e as folhas globais.
 
 | Arquivo | O que faz |
 |---|---|
-| `layout.tsx` | O layout raiz: `lang="pt-BR"`, as fontes, o script curto do `<head>` (`.js` e `.ja-aberto`), "Ir para o conteúdo", cabeçalho, rodapé e a revelação. No exemplo, `noindex` |
-| `template.tsx` | Remonta a cada navegação: a troca de página (`TransicaoDePagina`) |
+| `layout.tsx` | O layout raiz: `lang="pt-BR"`, as fontes, o script curto do `<head>` (`.js` e `.ja-aberto`), "Ir para o conteúdo", cabeçalho, rodapé, a revelação e a página no topo (`AoTopo`). No exemplo, `noindex` |
+| `template.tsx` | Remonta a cada navegação: a entrada da página (`EntradaDaPagina`) |
 | `page.tsx` | O início: título, lide com o marca-texto, a ação, o resumo de preço por porte, o cuidado, as ausências, o horário e o endereço |
 | `servicos/`, `onde/` | As páginas de conteúdo do exemplo (pet shop, Essencial). Num cliente, as páginas do nicho e do plano (`producao/esteira/nichos/<nicho>.md`, seção 4) |
 | `privacidade/`, `acessibilidade/` | As páginas legais, de `conteudo/legal.ts`; fora do menu e do limite de páginas do plano |

@@ -52,7 +52,7 @@
 
 | # | Verificação | Onde | Bloqueia |
 |---|---|---|---|
-| 1 | A régua inteira, **sem falha**, nas páginas do plano; cada aviso com decisão. **A régua dos quadros** (desde 28.10.2026): 60 quadros por segundo na rolagem, no menu, na navegação e na figura, no celular 4× e na mesa, em duas sessões separadas | `02`; a dos quadros, `02`, seção 12, e `08`, seção 11 | Sim |
+| 1 | A régua inteira, **sem falha**, nas páginas do plano; cada aviso com decisão. **A régua dos quadros** (desde 28.10.2026): 60 quadros por segundo na rolagem, no menu, na navegação e na figura, no celular 4× e na mesa, em duas sessões separadas. **As passivas** (desde 02.11.2026): `conferir-passivas` sem falha e `conferir-pausa` sem nada mudando | `02`; a dos quadros, `02`, seção 12, e `08`, seção 11; as passivas, `../esteira/09-movimento.md`, seção 14 | Sim |
 | 2 | A avaliação anti-IA completa: capturas a 390 e a 1440 px; **nenhuma marca de peso alto**, a página chapada inclusive; **o teste da vitrine com o veredito** (nunca "pendente"), depois do crítico de fora; **a unicidade** (`npm run unicidade`) sem falha; **a contagem da série**, por página, a 1440 e a 390 px, sem efeito nem molde em série sem decisão escrita | `11`, seções 3 e 9; `../esteira/19-o-padrao-atlas.md`, seções 7 e 8; `../esteira/20-repeticao-dentro-do-site.md`, seção 3 | Sim |
 | 3 | A lista de 22 itens | `11`, seção 5 | Sim, nos itens que a régua mede; nos outros, decisão registrada |
 | 4 | As normas do nicho no texto, frase a frase | `10`, seção 3 | Sim |
@@ -199,6 +199,7 @@ O quadro de `../esteira/03-planos.md`, seção 9, com o lugar de cada verificaç
 | Normas do nicho conferidas no texto final | ✓ | ✓ | ✓ | `10`, seção 3 |
 | Ação na primeira tela do celular | ✓ | ✓ | ✓ | Régua, bloco 6 (aviso que, no aceite, precisa estar resolvido ou decidido) |
 | A régua dos quadros sem falha, em duas sessões (desde 28.10.2026) | ✓ | ✓ | ✓ | `02`, seção 12; `08`, seção 11 |
+| As passivas sem falha (desde 02.11.2026) | ✓ | ✓ | ✓ | `../esteira/09-movimento.md`, seção 14 |
 | Funcionalidade sob medida de ponta a ponta, com e sem script | — | ✓ (uma) | ✓ (duas) | `05`, seção 4 |
 | Formulário: envio, falha e aviso de privacidade | — | ✓ | ✓ | `05`, seção 4; `09`, seção 5 |
 | Agenda: marcar, corrida de dois pedidos, cancelar, lembrete, fuso | Se contratada | Se contratada | Se contratada | `05`, seção 5.6; `09`, seção 5; `04`, seção 4.6 |

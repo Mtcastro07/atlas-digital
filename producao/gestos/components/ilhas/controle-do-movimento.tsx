@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 
 /**
  * Controle do movimento contínuo da página ([data-ambiente]; no kit, o brilho do texto, ShimmerText), do
- * site do Atlas para o kit de produção (producao/gestos/, 08.10.2026). Só no Completo, que é o plano com
- * ambiente contínuo (producao/esteira/09-movimento.md, seções 4 e 5). Vai no cabeçalho, ao lado do menu.
+ * site do Atlas para o kit de produção (producao/gestos/, 08.10.2026). Em todo plano que tenha passivas ou
+ * ambiente contínuo (producao/esteira/09-movimento.md, seções 4, 5 e 14). Vai no cabeçalho, ao lado do menu.
  * - Fora da tela, cada elemento de ambiente pausa (data-fora). O que nasce
  *   abaixo da dobra (a faixa de nichos, o reflexo da chamada final) só
  *   começa a correr quando entra na tela (data-visivel): antes, animava
@@ -32,14 +32,39 @@ export function ControleDoMovimento() {
   }, []);
 
   useEffect(() => {
-    const observador = new IntersectionObserver((entradas) => {
-      for (const entrada of entradas) {
-        entrada.target.toggleAttribute("data-fora", !entrada.isIntersecting);
-        entrada.target.toggleAttribute("data-visivel", entrada.isIntersecting);
+    // Ligar em pleno arremesso derruba a rolagem (seção 14): o que entra espera a página parar 200 ms; o que sai para na hora.
+    const entrando = new Set<Element>();
+    let espera: ReturnType<typeof setTimeout> | undefined;
+    const ligar = () => {
+      for (const elemento of entrando) {
+        elemento.removeAttribute("data-fora");
+        elemento.setAttribute("data-visivel", "");
       }
+      entrando.clear();
+    };
+    const adiar = () => {
+      clearTimeout(espera);
+      if (entrando.size) espera = setTimeout(ligar, 200);
+    };
+    const observador = new IntersectionObserver((entradas) => {
+      for (const { target, isIntersecting } of entradas) {
+        if (isIntersecting) {
+          entrando.add(target);
+        } else {
+          entrando.delete(target);
+          target.setAttribute("data-fora", "");
+          target.removeAttribute("data-visivel");
+        }
+      }
+      adiar();
     });
     document.querySelectorAll("[data-ambiente]").forEach((elemento) => observador.observe(elemento));
-    return () => observador.disconnect();
+    window.addEventListener("scroll", adiar, { passive: true });
+    return () => {
+      observador.disconnect();
+      window.removeEventListener("scroll", adiar);
+      clearTimeout(espera);
+    };
   }, [caminho]);
 
   useEffect(() => {

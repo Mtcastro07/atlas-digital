@@ -152,7 +152,7 @@ export default function Pagina() {
    - o ícone que significa algo;
    - o indicador de foco;
    - a marca do item escolhido num controle segmentado.
-3. **Regra:** o contraste se **mede nos pixels desenhados**, não se calcula do hexadecimal, sempre que o fundo não é liso: degradê, foto, vidro, a esfera, o 3D.
+3. **Regra:** o contraste se **mede nos pixels desenhados**, não se calcula do hexadecimal, sempre que o fundo não é liso: degradê, foto, vidro, a esfera, o 3D. **Sob uma passiva de luz, vale o pico:** pare as animações em quatro fases e meça em cada uma; a régua vê uma fase só. O conserto preferido é clarear o texto apagado sob a luz, porque baixar a luz até passar a torna invisível (site do Atlas, 02.11.2026).
    - **Como conferir:** a régua, bloco 4. Ela fotografa cada tela com e sem o texto e mede nos pixels do texto; vale o pior trecho (5º percentil).
    - **Avisos para conferir à mão:**
      - o texto com cópia decorativa por cima;
@@ -295,11 +295,8 @@ export default function Pagina() {
 
    /* A troca de página fica imediata. */
    @media (prefers-reduced-motion: reduce) {
-     ::view-transition-old(*),
-     ::view-transition-new(*),
-     ::view-transition-group(*) {
-       animation-duration: 0s !important;
-       animation-delay: 0s !important;
+     .pagina-entra {
+       animation: none;
      }
    }
    ```
@@ -345,6 +342,8 @@ export default function Pagina() {
    - **Objetivo:** o texto só em `vw` não cresce com o zoom de texto. Faixa larga demais estoura o 200% do 1.4.4 [FU: OddBird, https://www.oddbird.net/2025/08/26/type-visual/].
 5. **Regra:** nada trava a orientação da tela (1.3.4).
 6. **Regra:** conteúdo que aparece no hover ou no foco pode ser fechado com Esc, pode receber o ponteiro sem sumir e fica até ser dispensado (1.4.13).
+
+**Regra:** `<br>` escondido por `display: none` cola as palavras em volta dele ("uma vezR$ 190"). Sempre há um espaço antes do `<br>`; em JSX, `{" "}`. A captura não denuncia em toda largura: confira o `innerText` em cada lado do ponto de quebra (site do Atlas, 02.11.2026).
 
 ### 3.9 · A cor nunca é a única pista
 
