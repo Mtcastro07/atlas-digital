@@ -7,6 +7,7 @@
 > - **RATIFICADO** em 08.10.2026: os tokens de duração e curva, a partir da pesquisa.
 > - **DECIDIDO** em 14.10.2026: nenhum efeito em série dentro do site (seção 5, item 13; `20-repeticao-dentro-do-site.md`).
 > - **DECIDIDO** em 02.11.2026: as passivas em todo site novo, com a cobertura medida (seção 14).
+> - **DECIDIDO** em 03.11.2026, pedido do usuário no site do Atlas, levado a todo site novo: nada preso com animação ligada à rolagem (seção 5, item 7). Na mesma rodada, o acabamento das passivas e o começo só à vista (seção 14).
 
 ---
 
@@ -126,6 +127,10 @@ São divergências registradas para decisão, não modelo a seguir. Entre 14 e 1
      - **na barbearia de exemplo,** o palco 3D (WebGL) e as peças em CSS 3D acompanham a rolagem (01.10.2026).
    - **Não são exceção,** porque respondem à direção ou ao tom, e não à posição: o cabeçalho, que recolhe ao rolar para baixo (abaixo de 1024 px, depois de 280 px) e troca de vidro conforme o que passa por trás; o atalho do WhatsApp do Atlas e o botão flutuante da nutrição, que acompanham a direção.
    - **A esfera da capa e o giro do globo** também não leem a posição da rolagem: são a assinatura da marca, exceção a "movimento só por ação", e seguem as regras do ambiente (itens 4 e 5).
+   - **Nada preso com animação ligada à rolagem** (desde 03.11.2026, pedido do usuário no site do Atlas; em todo plano, o Completo incluído). A peça presa (`position: sticky`) cujo estado anda com a rolagem sai: o movimento vira passiva, com ciclo próprio, que só corre à vista (seção 14). É parente da seção que prende a rolagem (M8). A cena da assinatura do Completo continua a acompanhar a rolagem, mas sem peça presa.
+     - **No Atlas:** na mesa, a carta de `/para-quem` ficava presa à direita, e cada público acendia o seu bairro ao passar pelo meio da tela; agora ela fica parada ao lado do título, e os bairros acendem um de cada vez, num ciclo de 12 s (`app/paginas/para-quem.css`, "a leitura"). O nome do plano preso sobre a galeria de `/planos`, que trocava com a rolagem no celular, saiu.
+     - **O que fica preso sem animação, quando ajuda a ler, fica:** o resumo da conta ao lado do formulário (`app/paginas/orcamento.css`, `.orc-conta`) e o cabeçalho de uma tabela longa (`app/paginas/planos.css`, `.vd-tabela-chave`).
+     - As demos feitas antes da regra não mudaram (o percurso preso da odontologia).
    - **Objetivo:** o WCAG 2.3.3 trata o parallax como não essencial e gatilho de enjoo [V]; o "scrolljacking" desorienta, mais ainda no celular (NN/g) [V].
    - **O motivo não é desempenho:** a animação ligada à rolagem por CSS (`animation-timeline`) roda fora da linha principal, com suporte no Chrome 115+ e no Safari 26+; no Firefox, só em teste (padrão de design do Atlas, 08.10.2026) [V].
    - **Os premiados usam rolagem ligada** (Aventura Dental Arts, "scroll interaction"; Phive, "homepage scroll animation"; estudo do Awwwards de 07.10.2026) [FU]. Até 08.10.2026 a regra abria mão dessa alavanca em todo plano; desde então, ela é do Completo, e a hierarquia a guarda.
@@ -453,9 +458,23 @@ Passa nas cinco perguntas de `11-anti-ia.md`, seção 6. O que continua marca: a
 
 **O acabamento.** O vaivém em curva senoidal (`cubic-bezier(0.37, 0, 0.63, 1)`), nunca linear; o linear só na volta contínua e no fluxo. Perspectiva de 800 a 1.200 px no que gira em 3D. Nada pisca: a opacidade nunca vai a zero em menos de 600 ms.
 
+**O objeto com trajetória não volta pelo mesmo caminho** (03.11.2026, no site do Atlas). O vaivém (`animation-direction: alternate`) com a mesma velocidade nos dois sentidos parece mecânico. A agulha, a varredura e o traço assentam e se apagam; o vaivém senoidal fica com o que respira (a luz, o halo). O código: `app/paginas/duvidas.css` (`du-busca`, `.vd-momento-1`).
+- **Assenta amortecido,** como a agulha de uma bússola: cada balanço menor que o anterior (no Atlas, −38°, +16°, −7°, +3° e 0°), com a curva por trecho, e não uma curva só no ciclo. O primeiro trecho desacelera (`cubic-bezier(0.33, 0, 0.2, 1)`); os outros vão na senoidal.
+- **Some por opacidade antes de recomeçar,** parado no repouso: o ciclo seguinte nasce do apagado, e a volta ao começo não salta. No Atlas, a agulha acende até 8% do ciclo de 7 s, assenta em 76% e se apaga até o fim.
+- **A deriva que vai e volta** (a folha que flutua) soma dois vaivéns de durações primas entre si, e o gesto demora a se repetir (no Atlas, 13 s e 9 s: o par só volta ao começo depois de 234 s; `app/paginas/o-trabalho.css`, P23).
+- **A borda do `conic-gradient` leva rampa dos dois lados.** A parada dura (`#cor 0 24deg, transparent 24deg`) não é suavizada e serrilha. A rampa de ~1,5° vai no começo e no fim da cunha, até a mesma cor com opacidade 0: `rgb(<cor> / 0) 0deg, <cor> 1.5deg 24.5deg, rgb(<cor> / 0) 26deg`, com o `from` recuado 1,5° para a cunha não sair do lugar. Com rampa só no fim, o lado do 0° segue serrilhado.
+
 **O mecanismo** (a ilha de pausa de `../gestos/components/ilhas/controle-do-movimento.tsx` e o fim de `../gestos/app/gestos.css`):
 - a passiva é o elemento com `data-passiva="<pagina>-<objeto>"`, dentro de um `[data-ambiente]`; o que anima leva `.mov-passiva`; o laço sob o ponteiro e o brilho do `ShimmerText` levam `.mov-constante`: não contam como passiva e param pelas mesmas regras;
 - o `[data-ambiente]` vem no HTML do servidor: o que nasce depois da troca de caminho não é observado e nunca recebe `data-visivel`;
+- **só começa o que está à vista de fato** (03.11.2026, no site do Atlas: `components/ilhas/controle-do-movimento.tsx`, `aVista`): metade do `[data-ambiente]` na tela, ou um quarto da altura da tela se ele for maior. O observador usa `threshold: [0, 0.5]`. O que entrou e ainda não está à vista fica pendente e se confere de novo na próxima parada da rolagem (a mesma espera de "O que custou", abaixo). A passiva que nascia numa fresta do pé da tela, no fim de um arremesso, corria onde ninguém olha, e na faixa que a régua dos quadros não vê no celular (`../qualidade/08-desempenho.md`, seção 11, item 8). A ilha de `../gestos/` ainda não faz essa conta (PENDENTE, `99-rastreabilidade.md`, seção 11):
+
+  ```ts
+  const aVista = (elemento: Element) => {
+    const r = elemento.getBoundingClientRect();
+    return Math.min(r.bottom, innerHeight) - Math.max(r.top, 0) >= Math.min(r.height / 2, innerHeight / 4) - 1;
+  };
+  ```
 - a animação só se declara sob `.js [data-visivel] .<classe>`, com as listas de seletores por extenso (`::before` não entra em `:is()`):
 
 ```css

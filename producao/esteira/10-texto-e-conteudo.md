@@ -6,7 +6,7 @@
 >
 > **Depende de.** `02-briefing.md` (os fatos do cliente), `nichos/<nicho>.md` (o que o conselho veda no texto), `17-conformidade-e-normas.md`, `11-anti-ia.md` (o texto que soa a modelo).
 >
-> **Atualizado em:** 16.10.2026: o título que diz o que se vende e onde, a definição no início e a cópia decorativa fora do HTML (seções 9 e 10; `21-busca-e-ias.md`). Antes, 08.10.2026.
+> **Atualizado em:** 03.11.2026: o texto para o cliente, sem bastidores, e a palavra do que se mede (seção 1). Antes, 16.10.2026: o título que diz o que se vende e onde, a definição no início e a cópia decorativa fora do HTML (seções 9 e 10; `21-busca-e-ias.md`). Antes, 08.10.2026.
 
 ---
 
@@ -15,9 +15,16 @@
 **Regra.** Texto **impessoal, simples e moderadamente formal**, sem gíria nem intimidade:
 - **no site do Atlas, a agência nunca é sujeito** ("O rascunho chega em 24 horas", não "Nós entregamos em 24 horas");
 - **nos sites de cliente e de exemplo,** o registro impessoal vale do mesmo modo: sem coloquialismo e sem superlativo sem prova (`contextos/atlas--contexto-02-nichos.md`, seção 2, no repositório do Atlas);
-- **a mensagem de WhatsApp que o site compõe** também é impessoal, e as dúvidas frequentes ficam em terceira pessoa, nunca na voz do cliente (`contextos/atlas--contexto-01-produto.md`, seção 2, no repositório do Atlas);
+- **a mensagem de WhatsApp que o site compõe** também é impessoal, e as dúvidas frequentes ficam em terceira pessoa, nunca na voz do cliente (`contextos/atlas--contexto-01-produto.md`, seção 2, no repositório do Atlas); no site do Atlas, revisto em 03.11.2026 (abaixo);
 - **no atendimento presencial,** "o senhor" e "a senhora".
 - **o público presumido** é de donos de comércio de 35 a 60 anos, que chegam pelo cartão ou por busca fria [NV: presunção, sem pesquisa]. É para ele que o texto é simples e específico, e não informal.
+
+**Para o cliente, o que ele ganha, e não como se fez** (03.11.2026, pedido do usuário no site do Atlas: "textos mais direcionados ao cliente com linguagem simples"):
+- **sem processo nem bastidores:** o texto diz o que muda para quem lê, e não a regra técnica, a ferramenta ou a fonte do desenho. No Atlas, a frase sobre a regra de segurança do site virou "O seu site sai igual: sem rastreador e sem aviso de cookies para o seu cliente aceitar." (`conteudo/paginas/inicio.ts`); a explicação do OpenStreetMap saiu da carta, e fica só o crédito que a licença exige (`conteudo/paginas/para-quem.ts`);
+- **o termo técnico pelo que faz ao cliente:** "aviso de cookies", e não "banner de consentimento"; "extra", e não "módulo"; "dez testes", e não "dez blocos de verificação" (`conteudo/duvidas.ts`). O termo que fica vem depois do que ele faz: "o endereço próprio (o domínio)";
+- **nenhum número que o site não mede:** a palavra é a do que o relatório conta. Se ele conta acessos, a frase diz "acessos", e não "visitas", que é outra conta. No Atlas, até 03.11.2026, o relatório mensal dizia "pedidos", que o leigo lê como encomendas (`conteudo/paginas/planos.ts`).
+
+**No site do Atlas, desde 03.11.2026,** as respostas das dúvidas falam com o cliente ("você"), e a mensagem do WhatsApp vai na voz de quem a envia ("Olá! Vi o site do Atlas Digital e quero conversar sobre um site."), pelo mesmo pedido (`conteudo/duvidas.ts`, `conteudo/contato.ts`). É decisão do Atlas: nos sites de cliente, o registro acima continua.
 
 **Objetivo.** O registro é parte do posicionamento: padrão de execução antes de preço, à maneira da Apple, sóbrio e verificável. **O calor vem da especificidade, nunca da informalidade:** "Corte na tesoura, 40 minutos, R$ 45" aquece mais que "Vem cortar com a gente!".
 
@@ -73,7 +80,7 @@
 | **Narrativa de dor e remate de contraste** | "Cansado de…?", "Chega de…" | A régua verbal de setembro vedava (ESTEIRA v2.0 e v2.1, de 12.09 e 30.09.2026, bloco 10, no repositório do Atlas). Manipula em vez de informar |
 | **Intensificador** | "muito", "extremamente", "super", "realmente" | Também vedado pela régua verbal de setembro: pede ênfase em vez de dar o fato. O calor vem da especificidade (seção 1) |
 | **Conector de ligação** | [NV] A fonte lista o termo sem exemplos; os usuais são "além disso", "dessa forma", "ademais" | Também vedado pela régua verbal de setembro (ESTEIRA v2.0 e v2.1, bloco 10, no repositório do Atlas). A definição e os exemplos são A CONFIRMAR com os sócios; até lá, a leitura humana procura o conectivo que só costura um período ao outro |
-| **Segunda pessoa no site do Atlas** | "você", "seu negócio" | O registro é impessoal; o slogan ("Sua empresa online em 24h") é a única exceção decidida |
+| **Segunda pessoa no site do Atlas** | "você", "seu negócio" | O registro é impessoal; o slogan ("Sua empresa online em 24h") era a única exceção decidida. Desde 03.11.2026, também as respostas das dúvidas e a frase para o leigo (seção 1) |
 | **Palavras-moldura de IA** | "eleve", "transforme", "potencialize", "solução completa", "de ponta", "nível empresarial", "próxima geração" | Marca de texto gerado (Impeccable, `marketing-buzzword`) [FU] |
 | **Aforismo em dois tempos** | "Não é um site. É uma vitrine.", "X. Sem Y." repetido em várias seções | A cadência de contraste fabricado é marca de texto gerado (Impeccable, `aphoristic-cadence`) [FU]. No site do Atlas, "Quatro etapas. Nenhuma delas opcional." e "A distância não está na lista. Está na tela." seguem essa cadência (linha de base, `11-anti-ia.md`) |
 | **Travessão em excesso** | Vários travessões por parágrafo | Cadência de texto gerado, quando satura (Impeccable, `em-dash-overuse`) [FU]. Humano usa travessão; o problema é a saturação |
@@ -288,7 +295,7 @@ A conclusão prática não depende deles: sem cliente não há prova, e prova in
 
 ## 13. Lista de conferência
 
-1. Registro impessoal e moderadamente formal; nenhuma intimidade; o calor está nos fatos específicos.
+1. Registro impessoal e moderadamente formal; nenhuma intimidade; o calor está nos fatos específicos. O texto diz o que o cliente ganha, sem bastidores; o termo técnico, pelo que faz; o número, pela palavra do que se mede.
 2. Cada fato uma vez por página; nenhuma repetição fora da ação.
 3. Mediana de até 14 palavras por período; nenhum acima de 28.
 4. Nenhum termo da tabela da seção 4; nenhum aforismo em dois tempos repetido; nenhum excesso de travessões.

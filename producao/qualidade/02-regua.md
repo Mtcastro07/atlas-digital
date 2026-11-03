@@ -533,7 +533,7 @@ O gesto que a página não tem não aparece no resultado: a régua não acusa a 
 - `extras.aoCarregar(p)`: um passo depois da carga, para retirar um efeito suspeito;
 - `extras.eventos`: recebe o rastro cru, que se grava em `.json` e abre no painel Performance.
 
-**O que ela não vê.** O estrangulamento do DevTools freia só a linha principal: a rasterização, a GPU e o compositor rodam na velocidade da máquina. O que pesa na GPU de um celular (`backdrop-filter`, máscara, `mix-blend-mode`, filtros SVG, camadas do tamanho da página) aparece aqui menor do que é, e o Safari não se mede. Isso fica com o aparelho real (`08-desempenho.md`, seção 8).
+**O que ela não vê.** O estrangulamento do DevTools freia só a linha principal: a rasterização, a GPU e o compositor rodam na velocidade da máquina. O que pesa na GPU de um celular (`backdrop-filter`, máscara, `mix-blend-mode`, filtros SVG, camadas do tamanho da página) aparece aqui menor do que é, e o Safari não se mede. Isso fica com o aparelho real (`08-desempenho.md`, seção 8). E, no celular, o que muda só nos ~84 px do pé da tela não se apresenta no Chrome sem janela e conta como quadro parcial (`08-desempenho.md`, seção 11, item 8).
 
 **No Claude Code,** como a régua dos blocos: com o sandbox desligado.
 

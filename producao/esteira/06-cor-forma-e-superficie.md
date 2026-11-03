@@ -6,7 +6,7 @@
 >
 > **Depende de.** `04-direcao-de-arte.md`, `nichos/<nicho>.md` (o clima de cor do ramo), `11-anti-ia.md` (as cores e as superfícies que denunciam um site gerado), `16-acessibilidade.md` (o contraste como obrigação legal).
 >
-> **Atualizado em:** 08.10.2026.
+> **Atualizado em:** 03.11.2026: o vidro durante a rolagem (seção 10). Antes, 08.10.2026.
 
 ---
 
@@ -285,6 +285,7 @@ Ficam até a decisão dos sócios; em site novo, não se repetem sem motivo escr
 - **Contraste sobre vidro se mede em muitas posições.** O menu do Atlas foi medido em 87 posições da página, todas acima de 5,1:1 (01.10.2026). Toda mudança no vidro remede.
 - **Cabeçalho que muda de tom com o que passa por trás.** O do Atlas lê o fundo em 13 pontos a cada ~80 ms durante a rolagem, e a auditoria de 07.10.2026 recomendou trocar por um `IntersectionObserver` sobre os `data-tom` (`15-desempenho.md`).
 - **Nunca** um `view-transition-name` fixo num ancestral do vidro: ele vira raiz de fundo e apaga o desfoque (lição do Atlas).
+- **Enquanto a página rola, o vidro sai** e fica numa tinta densa do mesmo tom; sobre fundo liso que anda junto, o desfoque não entra (`15-desempenho.md`, seção 5.19; desde 03.11.2026).
 
 ---
 

@@ -454,3 +454,28 @@ Um crítico de fora da frente revisou o que está acima e achou sete defeitos. C
 5. **Registrar a mudança em `documentacao/atlas--decisoes.md`,** no repositório principal (a pasta não existe nesta cópia), e **as demos e as referências** continuam com o `<ViewTransition>`.
 6. **As passivas em todo plano.** O kit segue `19-o-padrao-atlas.md`, seção 9, e tirou o ambiente dos "fora do plano" de `03-planos.md`, seções 3.8 e 4.8, que vinham de antes da decisão de 09.10.2026. Levar as passivas ao Essencial e ao Profissional muda o que esses planos entregam: pede a confirmação do aprovador.
 7. **`conferir-passivas` não mede** o mecanismo diferente nem o limite de 10 s (`09-movimento.md`, seção 14): ficam com o crítico de fora.
+
+## 11. Registro de 03.11.2026: os ajustes depois do R10
+
+**A origem.** Os ajustes de 02 e 03.11.2026 no site do Atlas (commit `2029e99`), levados ao kit antes do commit e do push da rodada. Entrou o que vale para novos projetos; nada do gosto do Atlas entrou como regra.
+
+**As fontes.** O código do site do Atlas no commit `2029e99` e a mensagem dele: `components/ilhas/cabecalho-retratil.tsx`, `app/vidro.css`, `components/ilhas/controle-do-movimento.tsx`, `app/paginas/duvidas.css`, `o-trabalho.css`, `para-quem.css`, `orcamento.css` e `planos.css`, `components/secoes/rodape.tsx` e `conteudo/` (`duvidas.ts`, `contato.ts`, `paginas/inicio.ts`, `paginas/planos.ts`, `paginas/para-quem.ts`). O ponto cego do pé da tela e a injeção de CSS vêm dos roteiros de medida da sessão, fora do repositório; dos ~84 px, o comentário de `aVista` é o registro.
+
+| O que entrou | De onde | Onde no kit |
+|---|---|---|
+| O vidro sai enquanto a página rola: o atributo no `<header>`, o `scrollend` com 400 ms, a tinta densa sem transição | `cabecalho-retratil.tsx`; `vidro.css`, "rolando" e "vidro"; a mensagem do commit (−60% e −77% de GPU) | `15-desempenho.md`, 5.19 e 7; `06-cor-forma-e-superficie.md`, 10 |
+| Nada preso com animação ligada à rolagem; o que fica preso sem animação | `para-quem.css`, "a leitura"; `orcamento.css`, `.orc-conta`; `planos.css`, `.vd-tabela-chave` | `09-movimento.md`, 5, item 7 |
+| O objeto com trajetória assenta e se apaga; dois vaivéns de períodos primos; a rampa do `conic-gradient` dos dois lados | `duvidas.css`, `du-busca` e `.vd-momento-1`; `o-trabalho.css`, P23 | `09-movimento.md`, 14, "O acabamento" |
+| A passiva só começa à vista | `controle-do-movimento.tsx`, `aVista` | `09-movimento.md`, 14, "O mecanismo" |
+| O pé da tela, ponto cego da régua dos quadros; a injeção de CSS antes da carga | O comentário de `aVista`; os roteiros da sessão | `../qualidade/08-desempenho.md`, 11, itens 6 e 8; `../qualidade/02-regua.md`, 12 |
+| O texto para o cliente, sem bastidores; o termo pelo que faz; a palavra do que se mede; o "você" no Atlas | `conteudo/` | `10-texto-e-conteudo.md`, 1, 4 e 13 |
+| O código como tema, retirado do site do Atlas | A mensagem do commit; `rodape.tsx` | `19-o-padrao-atlas.md`, 4.3 |
+
+**O que não entrou.** O fundo frio, os cartões brancos, a agenda de `/orcamento` e o azul de `/o-atlas`: são do Atlas. A medida de "34 para 58 quadros por segundo numa GPU fraca" não está no código nem no commit; o kit cita a do código (de 25–27% para 69–80% das batidas em dia).
+
+**O que ficou pendente:**
+1. **A ilha de `../gestos/`** não tem a conta de `aVista` nem o limiar de 0,5 (`09-movimento.md`, seção 14): a cópia se atualiza no próximo porte, com a medida.
+2. **A base** não tem vidro nem o limitante da rolagem: o site que puser vidro sob a página o acrescenta (`15-desempenho.md`, seção 5.19).
+3. **O ponto cego do pé da tela** foi visto só no perfil de celular da régua (390 × 844, densidade 3). A régua não o desconta: a leitura é a do item 8 de `../qualidade/08-desempenho.md`, seção 11.
+4. **Registrar a rodada em `documentacao/atlas--decisoes.md`,** no repositório principal (a pasta não existe nesta cópia).
+5. **A `medir` da régua dos quadros** não tem um passo antes da carga: o `extras.aoCarregar` roda depois dela e não serve à retirada por CSS (`../qualidade/08-desempenho.md`, seção 11, item 6).

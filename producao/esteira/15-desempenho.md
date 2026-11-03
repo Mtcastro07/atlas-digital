@@ -12,7 +12,7 @@
 > - A meta de INP e a da troca de página são RATIFICADO (vêm do padrão de design de 07.10.2026); nenhuma das duas foi medida.
 > - O ritmo de 60 quadros por segundo (seção 2.4) é porta de entrega de todo site desde 28.10.2026, por pedido do usuário (22 e 27.10.2026). As técnicas das seções 5.15 a 5.17 foram medidas no site do Atlas em 27 e 28.10.2026, e a 5.18 em 01 e 02.11.2026. A entrada por CSS e a página no topo estão na base desde 02.11.2026 (seção 2.4); o site do Atlas ainda não cumpre a porta na navegação (seção 6).
 >
-> **Atualizado em:** 02.11.2026.
+> **Atualizado em:** 03.11.2026: o vidro sai enquanto a página rola (seção 5.19) e a passiva começa com metade à vista (seção 5.8). Antes, 02.11.2026.
 
 ---
 
@@ -402,7 +402,7 @@ Cada técnica nasceu de uma medição. Valem em todo site; a coluna "Varia por" 
 
 ### 5.8 · Movimento contínuo só onde se vê
 
-- **Regra:** o que se move sozinho leva `data-ambiente`, para fora da tela e pausa pelo controle do cabeçalho. Se nasce abaixo da dobra, só começa ao entrar na tela (`09-movimento.md`).
+- **Regra:** o que se move sozinho leva `data-ambiente`, para fora da tela e pausa pelo controle do cabeçalho. Se nasce abaixo da dobra, só começa ao entrar na tela e, desde 03.11.2026, com metade à vista (`09-movimento.md`, seção 14, "O mecanismo").
 - **Objetivo:** o movimento que ninguém vê ainda custa CPU, e no celular custa bateria.
 - **Casos reais:**
   - **Fora da tela:** com a faixa e o reflexo só na tela, os recálculos de estilo caíram de 119 para 42.
@@ -580,6 +580,47 @@ Cada técnica nasceu de uma medição. Valem em todo site; a coluna "Varia por" 
 - **As travas de compositor:** na rolagem, as piores travas (de 18 a 45 batidas) não eram trabalho. No rastro, a linha principal fica parada, e cada quadro vem `STATE_DROPPED`, com `has_compositor_animation: true`, na parada entre dois arremessos, e a tela segue em dia (`piorDaTela` de 1 ou 2 batidas). Três cortes as reduziram, cada um medido com a peça desligada: o gesto de uma vez que disparava ao entrar na tela, no rodapé, saiu; `visibility` e `box-shadow` saíram das transições de faixas fixas (rodam na linha principal); o laço em retratos virou uma passada só no celular. Não se provou quem dispara todas: uma trava intermitente, de causa não isolada, e uma luz em laço que reprova na mesa ficaram registradas, e não escondidas.
 - **Como conferir:** a seção 11 de `../qualidade/08-desempenho.md`, e a medida por troca: em qual destino está o pior intervalo.
 
+### 5.19 · Enquanto a página rola, o vidro sai
+
+- **Regra:** a página não fixa a taxa de quadros: ela tira o custo da GPU durante a rolagem. O vidro sob o qual a página passa (a barra do cabeçalho, uma faixa fixa) deixa o `backdrop-filter` enquanto a página rola e fica numa tinta densa do mesmo tom, a ~0,94 de opacidade, sem transição. Parada a página, o vidro volta pela transição de sempre.
+- **Objetivo:** o desfoque é uma passada a mais da GPU a cada quadro. A régua dos quadros não o vê, porque só freia a linha principal (`../qualidade/02-regua.md`, seção 12, "O que ela não vê"); a GPU do celular paga.
+- **Como fazer** (no site do Atlas: `components/ilhas/cabecalho-retratil.tsx` e `app/vidro.css`, procure "rolando"):
+  1. **O atributo no próprio `<header>`, e não no `<html>`.** No `<html>`, cada começo e cada fim de rolagem recalculavam o estilo de 400 a 900 elementos, de 3 a 8 ms na mesa; no `<header>`, de 33 a 57, ~1 ms.
+  2. **O fim pelo `scrollend`, 400 ms depois.** A roda do mouse dá um `scrollend` a cada entalhe; sem a espera, o vidro piscava entre um entalhe e outro. Só um prazo sem eventos de rolagem não basta: com a GPU sobrecarregada, os quadros e os eventos se espaçam além da espera, e o vidro voltava no meio do gesto. Sem `scrollend` (o Safari antigo), a parada é o silêncio de 200 ms.
+  3. **Nenhuma transição durante a rolagem,** na barra e no que há dentro dela. A troca de tom com transição repintava a barra na linha principal a cada emenda de seção, e o texto passava por um tom intermediário ilegível.
+  4. **A tinta de cada tom é a cor que o vidro dá sobre o fundo liso daquele tom,** para a troca não se notar.
+
+  ```css
+  /* Um background-color por tom do cabeçalho; .barra é a superfície de vidro. */
+  header[data-rolando] .barra {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background-color: rgb(10 29 50 / 0.94);
+  }
+  header[data-rolando] :is(.barra, .barra *) {
+    transition: none !important;
+  }
+  ```
+
+  ```ts
+  // Na ilha do cabeçalho (cabecalho: o <header>). Remova os dois ouvintes ao desmontar.
+  const comFim = "onscrollend" in window;
+  let parada = 0;
+  const parar = () => cabecalho.removeAttribute("data-rolando");
+  window.addEventListener("scroll", () => {
+    window.clearTimeout(parada);
+    if (!cabecalho.hasAttribute("data-rolando")) cabecalho.setAttribute("data-rolando", "");
+    if (!comFim) parada = window.setTimeout(parar, 200);
+  }, { passive: true });
+  window.addEventListener("scrollend", () => {
+    window.clearTimeout(parada);
+    parada = window.setTimeout(parar, 400);
+  });
+  ```
+- **O vidro que não se vê sai de vez.** Sobre fundo liso que anda junto com o controle, o desfoque não muda a tela e custa a mesma passada. No Atlas, os segmentos de vidro no fluxo diferiam de `blur(20px) saturate(170%)` em até 3 níveis de 255, e o desfoque saiu deles em 03.11.2026 (`app/vidro.css`, "vidro").
+- **Caso real** (02 e 03.11.2026, o site do Atlas): numa GPU fraca, na mesa, de 25–27% para 69–80% das batidas em dia (`app/vidro.css`); no rastro, o tempo de GPU na rolagem caiu 60% a 1440 px e 77% a 390 px (commit `2029e99`).
+- **Como conferir:** a rolagem com a categoria `gpu` no rastro, com e sem o atributo, em A/B intercalado; a captura do cabeçalho parado sobre cada tom, para a tinta casar com o vidro; e o aparelho real (`../qualidade/08-desempenho.md`, seção 8).
+
 ---
 
 ## 6. Os custos conhecidos
@@ -617,6 +658,7 @@ Antes do rascunho e antes da publicação (o ciclo completo está em `../qualida
 - [ ] A maior imagem da primeira tela com prioridade; as outras preguiçosas, com dimensão.
 - [ ] Nenhuma fonte de outro site pré-carregada; nenhuma fonte de servidor externo.
 - [ ] Nenhum script escrevendo estilo a cada quadro; o ambiente pausa fora da tela.
+- [ ] O vidro sob o qual a página passa deixa o desfoque enquanto ela rola (seção 5.19).
 - [ ] **[C]** 3D: carga por partes, reserva sem WebGL, resolução ajustada, TBT medido no perfil de computador e no de celular.
 - [ ] Depois de publicar: Lighthouse e primeiro byte no endereço real (`18-publicacao-e-manutencao.md`).
 - [ ] As medidas registradas no `README.md` ou no `decisoes.md` do cliente, com data, máquina e commit.

@@ -218,6 +218,8 @@ Nove sites premiados no Awwwards entre junho e outubro de 2026, lidos pelo CSS e
 ### 4.3 · O código como tema de luxo, quando o nicho admitir
 
 > **DECIDIDO** para o site do Atlas em 27.10.2026, pelo aprovador ("algumas tematicas de programacao codigo"), com o melhor acerto de direção da crítica de 01.11.2026. Para sites novos, **é opção da direção de arte, decidida no `identidade.md`, e nunca obrigação:** entra quando o nicho admite (um ofício técnico, de precisão ou de medida) e sai onde o tom do ofício ou o conselho não o querem. Vale em todo plano: é HTML e 0 byte.
+>
+> **Retirado do site do Atlas em 03.11.2026,** a pedido do usuário: saíram o trecho de cada página, o mapa em XML, a moldura graduada e o colofão com a medida da régua (commit `2029e99`; `components/secoes/rodape.tsx`). A regra abaixo fica como registro e como opção para os sites novos, nos termos acima. Os sites de nicho nunca tiveram o código como tema, e nada muda para eles.
 
 **Regra.**
 1. **Um trecho verdadeiro por página,** do próprio site, com o arquivo e a linha na origem. Código inventado, de prova ou decorativo não entra. Se o valor pode mudar, o trecho se lê do arquivo no build e, se o arquivo faltar, o build para.
