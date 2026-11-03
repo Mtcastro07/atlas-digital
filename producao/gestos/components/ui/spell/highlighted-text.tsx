@@ -7,8 +7,8 @@
 // desce o mesmo tanto — fica no lugar e aparece onde a faixa já passou —, só
 // por transform, em CSS (app/gestos.css, .mov-tarja): componente de
 // servidor, sem script. Com movimento reduzido, a tarja já está no lugar.
-// A cópia é só desenho: fora da árvore de acessibilidade e dos trechos da
-// busca (data-nosnippet). Uma palavra só: duas quebrariam dentro da tarja
+// A cópia é só desenho, fora da árvore de acessibilidade, e vem só do CSS desde
+// 03.11.2026 (o ::before lê o data-texto): o HTML leva a palavra uma vez. Uma palavra só: duas quebrariam dentro da tarja
 // numa tela estreita.
 // Variante marca-texto (`marcador`, desde 03/10; na folha impressa da
 // nutrição): a faixa passa por trás do texto, na metade de baixo, da
@@ -17,7 +17,7 @@
 // abaixo da dobra, quando a palavra entra na tela (ilhas/demos/revelacao.tsx).
 
 type Props = {
-  children: React.ReactNode;
+  children: string;
   className?: string;
   /** Espera antes da tarja, em milissegundos (a linha termina de subir antes). */
   atraso?: number;
@@ -33,8 +33,10 @@ export function HighlightedText({ children, className = "", atraso = 0, marcador
       style={{ "--atraso-tarja": `${atraso}ms` } as React.CSSProperties}
     >
       {children}
-      <span aria-hidden="true" data-nosnippet="" className="mov-tarja-janela">
-        <span className="mov-tarja-faixa">{!marcador && <span className="mov-tarja-tinta">{children}</span>}</span>
+      <span aria-hidden="true" className="mov-tarja-janela">
+        <span className="mov-tarja-faixa">
+          {!marcador && <span className="mov-tarja-tinta before:content-[attr(data-texto)]" data-texto={children} />}
+        </span>
       </span>
     </span>
   );

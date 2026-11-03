@@ -7,6 +7,8 @@
 > - **Retiradas:** o depoimento (vedado em vários conselhos e, nos outros, prova que o Atlas não confere) e o módulo "Conteúdo" e o e-mail profissional, de vigência indefinida.
 > - **Valores que mudaram:** a duração de 20 a 30 minutos do formulário v1.0 passa a 30 minutos no Essencial, 45 no Profissional e 1 hora no Completo (`03-planos.md`, seção 10; RATIFICADO); e o "mínimo de seis fotos" do v1.0 passa a "no mínimo três por categoria do nicho" (Bloco 7; padrão de design de 08.10.2026), que com duas ou mais categorias já passa de seis.
 >
+> **A folha impressa.** Desde 03.11.2026, o formulário 2.0 (`modelos/formulario-de-briefing.html`) leva estes campos para a visita, com a numeração do modelo; ele substitui o v1.0, que ainda pedia depoimento, e-mail profissional, o módulo "Conteúdo" e o mínimo de seis fotos, e não tinha o CNPJ, o registro do conselho, a direção de arte, os campos de plano, de módulo e de nicho (`99-rastreabilidade.md`, seção 13).
+>
 > **Estado.** RATIFICADO em 08.10.2026; os campos bloqueantes vêm da ESTEIRA v2.1 (II.1) e do formulário v1.0.
 
 ---
@@ -61,7 +63,7 @@ Cada campo traz **por que** existe. As marcas [E], [P] e [C] indicam os campos q
 | ● **Prazo de resposta ao contato** | Em quanto tempo o senhor responde uma mensagem? | **O site publica o prazo**, e ele precisa ser cumprido: é barato, verificável, e nenhum concorrente o declara (setembro de 2026; NN/g [V]) |
 | **E-mail** | Se houver | Para o formulário [P][C] e o aviso de privacidade |
 | **Redes sociais** | Instagram, Facebook | Vínculo no rodapé; nunca incorporar o feed (pedido externo) |
-| **Perfil no Google** | Já tem cadastro? Aparece na busca pelo nome? | Testar na hora, no celular. Se não aparece, é argumento para o módulo Presença |
+| **Perfil no Google** | Já tem cadastro? Aparece na busca pelo nome? | Testar na hora, no celular. Se não aparece, é argumento para o módulo Presença, que só se oferece com o titular da função confirmado pelos sócios (`14-funcionalidades/06-presenca.md`) |
 
 ### Bloco 4 · Registro e norma (nichos regulados)
 
@@ -166,6 +168,7 @@ Cada campo traz **por que** existe. As marcas [E], [P] e [C] indicam os campos q
 - [ ] Endereço conferido no mapa.
 - [ ] WhatsApp do cliente salvo com o nome do negócio.
 - [ ] O cliente sabe que o **rascunho** chega em 24 horas, por qual canal, e que **não é o site publicado**.
+- [ ] Com formulário [P][C] ou Agenda: o cliente sabe que a coleta de dados entra só depois do contrato de operador (`../00-do-pedido-ao-site.md`, seção 4).
 - [ ] Briefing, fotos, logotipo e contrato enviados ao grupo no mesmo dia.
 
 ---

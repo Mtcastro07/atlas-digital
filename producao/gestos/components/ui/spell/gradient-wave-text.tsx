@@ -12,11 +12,12 @@
 //   com CPU 20×, 716 ms de linha principal e o LCP da capa ~0,25 s mais tarde.
 //   Foi trocado no mesmo dia;
 // - componente de servidor, sem script; a cópia é só desenho (fora da árvore
-//   de acessibilidade e dos trechos da busca). Com movimento reduzido, nada
-//   passa.
+//   de acessibilidade). Com movimento reduzido, nada passa.
+// - desde 03.11.2026 (B2 do kit, como no site do Atlas desde 16/10), a cópia vem só do CSS: o ::before lê
+//   o data-texto (Tailwind, before:content-[attr(data-texto)]), e nenhum leitor de HTML lê a palavra duas vezes.
 
 type Props = {
-  children: React.ReactNode;
+  children: string;
   className?: string;
   /** Espera, em ms, contada da primeira pintura (a palavra termina de subir antes). */
   atraso?: number;
@@ -26,8 +27,8 @@ export function GradientWaveText({ children, className = "", atraso = 0 }: Props
   return (
     <span className={`mov-onda ${className}`} style={{ "--atraso-onda": `${atraso}ms` } as React.CSSProperties}>
       {children}
-      <span aria-hidden="true" data-nosnippet="" className="mov-onda-janela">
-        <span className="mov-onda-tinta">{children}</span>
+      <span aria-hidden="true" className="mov-onda-janela">
+        <span className="mov-onda-tinta before:content-[attr(data-texto)]" data-texto={children} />
       </span>
     </span>
   );

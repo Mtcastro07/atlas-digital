@@ -6,7 +6,7 @@
 > - **DECIDIDO** (decisões de 30.09 a 03.10.2026): só `transform` e `opacity`, movimento reduzido respeitado, nada ligado à rolagem salvo as exceções decididas, a camada por plano.
 > - **RATIFICADO** em 08.10.2026: os tokens de duração e curva, a partir da pesquisa.
 > - **DECIDIDO** em 14.10.2026: nenhum efeito em série dentro do site (seção 5, item 13; `20-repeticao-dentro-do-site.md`).
-> - **DECIDIDO** em 02.11.2026: as passivas em todo site novo, com a cobertura medida (seção 14).
+> - **DECIDIDO** em 02.11.2026: as passivas em todo site novo (seção 14). **Revisto em 03.11.2026:** sem cota; a cobertura se mede como aviso.
 > - **DECIDIDO** em 03.11.2026, pedido do usuário no site do Atlas, levado a todo site novo: nada preso com animação ligada à rolagem (seção 5, item 7). Na mesma rodada, o acabamento das passivas e o começo só à vista (seção 14).
 
 ---
@@ -445,11 +445,11 @@ Passa nas cinco perguntas de `11-anti-ia.md`, seção 6. O que continua marca: a
 
 ## 14. As passivas: o movimento sem ação de quem visita
 
-> **DECIDIDO** para o site do Atlas em 27.10.2026, pelo aprovador, Matheus Castro Oliveira de Luna Garcia ("quer movimento passivo"; depois da primeira construção, "ainda não vi animações passivas suficientes" e "elas precisam ser visíveis"), e levado a todo site novo em 02.11.2026. Vale em todo plano: o plano não as restringe (`19-o-padrao-atlas.md`, seção 9), e cada um as faz com o que tem. Os números são a proposta do contrato de 28.10.2026, com a cobertura corrigida pela crítica de 01.11.2026 [I].
+> **DECIDIDO** para o site do Atlas em 27.10.2026, pelo aprovador, Matheus Castro Oliveira de Luna Garcia ("quer movimento passivo"; depois da primeira construção, "ainda não vi animações passivas suficientes" e "elas precisam ser visíveis"), e levado a todo site novo em 02.11.2026. Vale em todo plano: o plano não as restringe (`19-o-padrao-atlas.md`, seção 9), e cada um as faz com o que tem. **Revisto em 03.11.2026, a pedido do usuário** ("analise se isso é bom no geral ou é IA Slop, caso seja, retire"): a passiva que nasce do sentido do objeto fica; **a cota sai** (as duas por página, os 60% das telas, as duas telas paradas no máximo). Movimento exigido por cota, sem objeto que o peça, é a marca M4 em série (`11-anti-ia.md`); a cota vinha do gosto do site do Atlas [I], sem fonte, e o próprio site não a cumpria (26% a 36%). Os números são a proposta do contrato de 28.10.2026, com a cobertura corrigida pela crítica de 01.11.2026 [I].
 
 **A regra.**
-1. **Duas ou mais por página, em objetos e mecanismos diferentes, sem série.** Um mecanismo é a propriedade, a trajetória e o ritmo; ele aparece uma vez no site (`20-repeticao-dentro-do-site.md`). Cada passiva nasce do sentido do objeto (a agulha que assenta, a água que respira, o ponteiro que anda): é o que a separa da marca M4, o movimento que não responde a nada.
-2. **A cobertura medida, e não só a contagem:** pelo menos **60% das telas** com movimento visível depois de assentar; **nunca mais de duas telas seguidas paradas**; e peça pequena, de 28 px, **não conta** como visível. Se a cobertura não fecha, o caminho é uma peça grande que ocupe a tela no lugar de várias pequenas (`19-o-padrao-atlas.md`, seção 4.2). As telas da próxima página e do rodapé não entram na conta: são peças comuns (item 7), e medir com elas leva a pôr passiva onde a regra veda.
+1. **Só onde o objeto pede, sem cota e sem série.** Cada passiva nasce do sentido de um objeto do ofício (a agulha que assenta, a água que respira, o ponteiro que anda): é o que a separa da marca M4, o movimento que não responde a nada. Sem objeto que se mova por natureza, a página fica sem passiva, e isso não reprova. Um mecanismo é a propriedade, a trajetória e o ritmo; ele aparece uma vez no site (`20-repeticao-dentro-do-site.md`). Na dúvida, menos: uma passiva que se nota vale mais que três que disputam.
+2. **A cobertura se lê, não se cumpre.** O `conferir-passivas` relata, como aviso, quantas telas têm movimento visível e a maior sequência parada; serve para achar a passiva que ninguém vê (a peça de 28 px não conta como visível), nunca como meta a fechar com peça a mais.
 3. **Só `transform` e `opacity`** (e `translate`, `rotate` e `scale`). O alvo é HTML ou um `<svg>` inteiro, nunca um elemento de dentro do `<svg>`: no Chrome, o `transform` de um filho de SVG repinta o desenho a cada quadro na linha principal. A exceção é declarada na peça (`data-passiva-svg`) e medida.
 4. **Paradas** fora da tela, na pausa e com movimento reduzido. Cada uma tem um repouso que se lê sozinho: é o que o movimento reduzido mostra.
 5. **Visíveis:** no pico do ciclo, um canto do objeto se desloca **6 px ou mais**, ou a opacidade muda **0,3 ou mais**. Entre dois movimentos do mesmo objeto, **no máximo 10 s**. Luz muito lenta conta na régua e quase não se vê: compare também dois quadros seguidos, e não só o acumulado.
@@ -467,7 +467,7 @@ Passa nas cinco perguntas de `11-anti-ia.md`, seção 6. O que continua marca: a
 **O mecanismo** (a ilha de pausa de `../gestos/components/ilhas/controle-do-movimento.tsx` e o fim de `../gestos/app/gestos.css`):
 - a passiva é o elemento com `data-passiva="<pagina>-<objeto>"`, dentro de um `[data-ambiente]`; o que anima leva `.mov-passiva`; o laço sob o ponteiro e o brilho do `ShimmerText` levam `.mov-constante`: não contam como passiva e param pelas mesmas regras;
 - o `[data-ambiente]` vem no HTML do servidor: o que nasce depois da troca de caminho não é observado e nunca recebe `data-visivel`;
-- **só começa o que está à vista de fato** (03.11.2026, no site do Atlas: `components/ilhas/controle-do-movimento.tsx`, `aVista`): metade do `[data-ambiente]` na tela, ou um quarto da altura da tela se ele for maior. O observador usa `threshold: [0, 0.5]`. O que entrou e ainda não está à vista fica pendente e se confere de novo na próxima parada da rolagem (a mesma espera de "O que custou", abaixo). A passiva que nascia numa fresta do pé da tela, no fim de um arremesso, corria onde ninguém olha, e na faixa que a régua dos quadros não vê no celular (`../qualidade/08-desempenho.md`, seção 11, item 8). A ilha de `../gestos/` ainda não faz essa conta (PENDENTE, `99-rastreabilidade.md`, seção 11):
+- **só começa o que está à vista de fato** (03.11.2026, no site do Atlas: `components/ilhas/controle-do-movimento.tsx`, `aVista`): metade do `[data-ambiente]` na tela, ou um quarto da altura da tela se ele for maior. O observador usa `threshold: [0, 0.5]`. O que entrou e ainda não está à vista fica pendente e se confere de novo na próxima parada da rolagem (a mesma espera de "O que custou", abaixo). A passiva que nascia numa fresta do pé da tela, no fim de um arremesso, corria onde ninguém olha, e na faixa que a régua dos quadros não vê no celular (`../qualidade/08-desempenho.md`, seção 11, item 8). A ilha de `../gestos/` faz a mesma conta desde 03.11.2026:
 
   ```ts
   const aVista = (elemento: Element) => {
@@ -501,7 +501,7 @@ Passa nas cinco perguntas de `11-anti-ia.md`, seção 6. O que continua marca: a
 - **A amplitude não salva a peça pequena:** um ponteiro de 2 × 12 px num mostrador de 28 px passou no piso e mudou 0,01% da tela.
 - **Duas passivas que somam na mesma página** merecem um gatilho próprio: a luz que passa uma vez por três retratos, a partir de um gatilho só, rodou com o terceiro fora da tela.
 
-**Objetivo.** O site se mantém vivo sem pedir nada de quem visita, e sem que a pausa minta (Q15). A contagem sozinha enganou: com duas ou mais por página em todas, a maioria das telas seguia parada (os números em `99-rastreabilidade.md`, seção 10).
+**Objetivo.** O objeto do ofício se mostra vivo sem pedir nada de quem visita, e sem que a pausa minta (Q15). O movimento que só existe para cumprir número vira enfeite: é o que a avaliação anti-IA acusa (M4, M1).
 
 **Como conferir.**
 - `node ferramentas/regua/conferir-passivas.mjs --base=<endereço> --pagina=<cada página>`: os oito casos, a 1440 e a 390 px (as propriedades, as três paradas, a contagem, a amplitude, o SVG, o que roda sem dono e a cobertura). Grava `.regua/passivas.json`.

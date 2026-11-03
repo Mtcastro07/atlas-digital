@@ -1,23 +1,24 @@
 // A conferência das passivas (producao/esteira/09-movimento.md, seção 14; origem: o site do Atlas, R10, 01.11.2026): o
-// movimento sem ação de quem visita, duas ou mais por página, só transform e opacity, parado na pausa, fora da tela e
-// com o movimento reduzido, e visível. Não mede os quadros (isso é quadros.mjs): mede a regra.
+// movimento sem ação de quem visita, só transform e opacity, parado na pausa, fora da tela e com o movimento reduzido,
+// e visível. Desde 03.11.2026 não há cota (09-movimento.md, seção 14): a página pode não ter nenhuma passiva, e a
+// cobertura (g, h) se relata como aviso, sem reprovar. Não mede os quadros (isso é quadros.mjs): mede a regra.
 //
 // Uma passiva é o elemento com data-passiva, com as animações dele, dos filhos e dos pseudoelementos
 // (getAnimations({ subtree: true })), fora as ligadas à rolagem (animation-timeline que não é a do documento). Para
 // cada uma: o nome, o alvo, as propriedades das keyframes, a duração e a amplitude, medida com a animação parada em 24
 // pontos do ciclo (currentTime): o maior deslocamento de um canto da caixa e a maior variação de opacidade.
 //
-// Sai com 1 em oito casos:
+// Sai com 1 em seis casos (os avisos g e h não reprovam):
 //   (a) uma keyframe toca outra propriedade que não transform, opacity, translate, rotate ou scale;
 //   (b) uma passiva segue rodando com html.ambiente-pausado, com o [data-ambiente] fora da tela ou com
 //       prefers-reduced-motion: reduce (ou está fora de todo [data-ambiente], e nada a para fora da tela);
-//   (c) a página tem menos de duas passivas, ou duas com o mesmo data-passiva;
+//   (c) duas passivas com o mesmo data-passiva;
 //   (d) uma passiva fica abaixo da amplitude mínima: menos de 6 px de deslocamento e menos de 0,3 de opacidade;
 //   (e) o alvo de uma animação é um elemento de dentro de um <svg> (o <svg> inteiro pode), salvo a exceção declarada
 //       no elemento da passiva com data-passiva-svg;
 //   (f) uma animação infinita roda fora de toda [data-passiva] e de toda .mov-constante;
-//   (g) a cobertura: menos de 60% das telas têm movimento visível depois de assentar (paradas a cada 85% da tela);
-//   (h) mais de duas telas seguidas paradas.
+//   aviso (g) a cobertura: quantas telas têm movimento visível depois de assentar (paradas a cada 85% da tela), abaixo
+//       de 60%; aviso (h) mais de duas telas seguidas paradas. Servem para ler a página, não são meta.
 // Numa parada, "movimento visível" é uma animação infinita rodando numa peça à vista com o maior lado acima de 28 px; sem
 // nenhuma, duas fotos com 1,2 s de intervalo e 0,05% dos pixels mudando (o canvas e o laço por script, que o
 // getAnimations() não vê). A contagem de (c) passou num site com a maioria das telas parada: daí (g) e (h).
@@ -220,7 +221,6 @@ async function conferir(navegador, url, largura, preparar) {
   const passivas = await pagina.evaluate(inventario);
 
   const nomes = passivas.map((p) => p.nome);
-  if (passivas.length < 2) falhas.push({ caso: "c", motivo: `${passivas.length} passiva(s); o mínimo é 2` });
   for (const nome of new Set(nomes)) if (nomes.filter((n) => n === nome).length > 1) falhas.push({ caso: "c", passiva: nome, motivo: "data-passiva repetido" });
 
   // A pausa: nenhuma passiva nem constante rodando com html.ambiente-pausado.
@@ -337,9 +337,10 @@ async function cobertura(navegador, url, largura, preparar) {
   let piorSequencia = 0;
   for (const t of telas) piorSequencia = Math.max(piorSequencia, (seguidas = t.pecas.length ? 0 : seguidas + 1));
   const falhas = [];
-  if (comMovimento / telas.length < COBERTURA.minima) falhas.push({ caso: "g", motivo: `${comMovimento} de ${telas.length} telas com movimento visível; o mínimo é ${COBERTURA.minima * 100}%` });
-  if (piorSequencia > COBERTURA.seguidasParadas) falhas.push({ caso: "h", motivo: `${piorSequencia} telas seguidas paradas; o máximo é ${COBERTURA.seguidasParadas}` });
-  return { telas: telas.length, comMovimento, piorSequencia, falhas };
+  const avisos = [];
+  if (comMovimento / telas.length < COBERTURA.minima) avisos.push({ caso: "g", motivo: `${comMovimento} de ${telas.length} telas com movimento visível; o mínimo é ${COBERTURA.minima * 100}%` });
+  if (piorSequencia > COBERTURA.seguidasParadas) avisos.push({ caso: "h", motivo: `${piorSequencia} telas seguidas paradas; o máximo é ${COBERTURA.seguidasParadas}` });
+  return { telas: telas.length, comMovimento, piorSequencia, falhas, avisos };
 }
 
 // ---------- o autoteste: uma página mínima com uma passiva certa e uma de cada erro ----------
@@ -374,7 +375,7 @@ const CASOS = {
   a: { corpo: CERTAS + `<div data-ambiente><div data-passiva="t-a" class="caixa mov-passiva largura"></div></div><div class="vao"></div>`, espera: ["a"] },
   b: { corpo: CERTAS + `<div data-ambiente><div data-passiva="t-b" class="caixa anda-sempre"></div></div><div class="vao"></div>`, espera: ["b"] },
   "c-repetida": { corpo: CERTAS + `<div data-ambiente><div data-passiva="t-uma" class="caixa mov-passiva anda"></div></div><div class="vao"></div>`, espera: ["c"] },
-  "c-sozinha": { corpo: `<div data-ambiente><div data-passiva="t-uma" class="caixa mov-passiva anda"></div></div><div class="vao"></div>`, espera: ["c"] },
+  "c-sozinha": { corpo: `<div data-ambiente><div data-passiva="t-uma" class="caixa mov-passiva anda"></div></div><div class="vao"></div>`, espera: [] },
   d: { corpo: CERTAS + `<div data-ambiente><div data-passiva="t-d" class="caixa mov-passiva pouco"></div></div><div class="vao"></div>`, espera: ["d"] },
   e: { corpo: CERTAS + `<div data-ambiente><svg data-passiva="t-e" width="40" height="40"><circle class="mov-passiva anda" cx="20" cy="20" r="10"/></svg></div><div class="vao"></div>`, espera: ["e"] },
   f: { corpo: CERTAS + `<span class="caixa livre"></span>`, espera: ["f"] },
@@ -404,8 +405,8 @@ async function autoteste(navegador) {
   };
   Object.assign(CASOS, COBERTURAS);
   for (const [nome, caso] of Object.entries(COBERTURAS)) {
-    const { falhas } = await cobertura(navegador, `${ORIGEM}/${nome}`, "mesa", preparar);
-    const achados = [...new Set(falhas.map((f) => f.caso))].sort();
+    const { falhas, avisos } = await cobertura(navegador, `${ORIGEM}/${nome}`, "mesa", preparar);
+    const achados = [...new Set([...falhas, ...avisos].map((f) => f.caso))].sort();
     const certo = JSON.stringify(achados) === JSON.stringify(caso.espera);
     if (!certo) erros++;
     console.log(`${certo ? "ok" : "ERRO"} · ${nome}: esperava [${caso.espera.join(", ")}], deu [${achados.join(", ")}]${certo ? "" : " — " + falhas.map((f) => f.motivo).join("; ")}`);
@@ -436,6 +437,7 @@ try {
         console.log(`${caminho} · ${largura}: ${passivas.length} passiva(s)${largura === "mesa" ? `, ${naPrimeira} na primeira tela` : ""}; ${medida.comMovimento} de ${medida.telas} telas em movimento, até ${medida.piorSequencia} seguidas paradas — ${falhas.length ? `REPROVA (${falhas.length})` : "aprova"}`);
         for (const p of passivas) console.log(`  ${p.nome}: ${p.animacoes.map((a) => `${a.nome} em ${a.alvo} [${a.propriedades.join(", ")}] ${a.duracao} ms`).join("; ") || "sem animação"} · amplitude ${p.deslocamento} px, ${p.opacidade} de opacidade`);
         for (const f of falhas) console.log(`  (${f.caso})${f.passiva ? " " + f.passiva + ":" : ""} ${f.motivo}`);
+        for (const f of medida.avisos) console.log(`  aviso (${f.caso}) ${f.motivo}`);
       }
     }
     await mkdir(".regua", { recursive: true });

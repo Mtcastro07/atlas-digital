@@ -54,6 +54,7 @@ const itens = [
   ["typescript-language-server (o plugin typescript-lsp)", naPath("typescript-language-server"), false, "`npm install -g typescript-language-server@6.0.1 typescript@5.9.3`"],
   ["poppler (o Read abre PDF de mais de dez páginas: as normas)", naPath("pdftoppm"), false, MAC ? "`brew install poppler`" : "`sudo apt-get install poppler-utils`"],
   ["Playwright MCP no projeto (.mcp.json)", mcp.includes("@playwright/mcp@"), false, "`claude mcp add --scope project playwright -- npx -y @playwright/mcp@0.0.83 --headless --isolated --output-dir .playwright-mcp`"],
+  ["MCP do Figma no projeto (.mcp.json), obrigatório desde 03.11.2026", mcp.includes("mcp.figma.com/mcp"), true, "`claude mcp add --scope project --transport http figma https://mcp.figma.com/mcp`; depois, na sessão seguinte, `/mcp` → figma → Authenticate (o login no Figma, no navegador)"],
   ["Plugins do projeto (.claude/settings.json)", pluginsFaltando.length === 0, false, pluginsFaltando.map((p) => `\`claude plugin install ${p}@claude-plugins-official --scope project\``).join("; ")],
   ["Docker (só para testar o formulário e a Agenda contra um banco)", naPath("docker"), false, "https://www.docker.com/products/docker-desktop/ (producao/modulos/README.md, seção 8)"],
 ];

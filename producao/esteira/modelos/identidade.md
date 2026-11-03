@@ -8,6 +8,7 @@
 
 - **Plano:** [E · P · C]
 - **Aprovada em:** [dia.mês.ano], por [nome completo] (a identidade e a mesa)
+- **Arquivo do Figma:** [endereço] (o design inicial, a mesa e o celular; `producao/01-roteiro-da-sessao.md`, etapa 4)
 - **O celular aprovado em:** [dia.mês.ano], por [nome completo] (no fim do passe do celular: `producao/esteira/00-principios.md`, seção 5)
 - **Ponto de partida:** [o sistema do nicho (`producao/esteira/nichos/<nicho>.md`) · identidade própria]
 
@@ -107,7 +108,7 @@ Escala (do menor ao maior degrau, com a entrelinha): [ ... ] · Razão título/c
 
 ### As passivas e o código
 
-- **As passivas, por página** (`09-movimento.md`, seção 14): o objeto, o mecanismo e o sentido; a peça grande que dá a cobertura.
+- **As passivas, por página** (`09-movimento.md`, seção 14): o objeto, o mecanismo e o sentido; ou "nenhuma", se a página não tem objeto que se mova por natureza.
 - **O código como tema** (`19-o-padrao-atlas.md`, seção 4.3): se o nicho admite, e o trecho verdadeiro de cada página, com a frase para o leigo; ou "não entra", com o motivo.
 
 ### O vocabulário de interação

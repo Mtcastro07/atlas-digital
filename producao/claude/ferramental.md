@@ -11,6 +11,8 @@
 > - os custos de contexto vêm de `claude plugin details`, e as versões, do npm, em 08.10.2026.
 >
 > Nada foi instalado nem removido: a instalação e a poda são decisões do usuário.
+>
+> **Atualizado em 03.11.2026:** o MCP do Figma passou de opcional a obrigatório em todo projeto, a pedido do usuário ("adicione o mcp do figma como obrigatorio"): seção 2, com o comando; a conferência do ambiente o acusa como bloqueio. O registro, em `../esteira/99-rastreabilidade.md`, seção 12. No mesmo dia, a pedido do usuário ("baixe as habilidades recomendadas e adicione isso ao kit"), quatro habilidades de Emil Kowalski entraram no kit, em `skills/` (seção 2.1), e a taste-skill e as outras doze de Kowalski ficaram fora, lidas (seções 5 e 7); o registro, na seção 13 do mesmo arquivo.
 
 ---
 
@@ -38,6 +40,7 @@
 | **frontend-design** (plugin) | A direção visual contra o padrão de IA: o tema do ramo, a tipografia com propósito, a contenção. Complementa `../esteira/04-direcao-de-arte.md` e `../esteira/11-anti-ia.md`; não os substitui, e o briefing vence | 4, 6 | ~80 tokens | Anthropic |
 | **security-guidance** (plugin) | Três camadas:<br>- o aviso imediato, ao editar, de cerca de 25 padrões perigosos, como o segredo no código e o `innerHTML` cru;<br>- a revisão do diff por um modelo ao fim de cada turno;<br>- a revisão do commit.<br><br>Serve sobretudo aos módulos (o formulário, a Agenda e o painel) | 6, 7 | 0 (ganchos) | Anthropic. As revisões por modelo gastam uso da conta a cada turno; `ENABLE_STOP_REVIEW=0` desliga a do fim de turno |
 | **typescript-lsp** (plugin) | O erro de tipo e a navegação pelo código enquanto se edita | 6 | 0 | Anthropic. **Exige o `typescript-language-server`** na máquina: sem ele, o plugin não faz nada, e a conferência do ambiente o acusa |
+| **MCP do Figma** (servidor remoto oficial, `https://mcp.figma.com/mcp`, configurado direto). **Obrigatório desde 03.11.2026** | O design inicial no Figma (etapa 4: os painéis e a página inicial levados ao arquivo do cliente e lidos de volta, para ver o design como está), as capturas das portas da mesa e do celular (etapa 6) e a leitura de um desenho que o cliente traga (`../01-roteiro-da-sessao.md`) | 4, 6 | ~0 (as ferramentas carregam sob demanda) | Figma. Servidor remoto: age com a conta do Figma de quem autenticou e lê todo arquivo que ela vê. Remoto, não tem versão a fixar |
 
 **O Playwright MCP vai configurado direto, e não pelo plugin.** O plugin `playwright` inicia `npx @playwright/mcp@latest`, sem versão fixa. Configurado direto, a versão fica fixa, e entram duas opções:
 - **`--headless`:** a janela visível deixava o mouse físico de quem está na máquina entrar nos testes de hover (achado de 03.10.2026);
@@ -58,9 +61,25 @@ claude plugin install frontend-design@claude-plugins-official --scope project
 claude plugin install security-guidance@claude-plugins-official --scope project
 claude plugin install typescript-lsp@claude-plugins-official --scope project
 claude mcp add --scope project playwright -- npx -y @playwright/mcp@0.0.83 --headless --isolated --output-dir .playwright-mcp
+claude mcp add --scope project --transport http figma https://mcp.figma.com/mcp
 ```
 
+**O Figma é o único item desta seção que bloqueia** (a conferência do ambiente sai com código 1 sem ele no `.mcp.json`). Depois de gravado, na sessão seguinte: `/mcp`, escolher `figma`, **Authenticate** e aprovar no navegador; a conferência não vê a autenticação, só a configuração. O comando e o endereço são os da documentação do Figma (https://developers.figma.com/docs/figma-mcp-server/remote-server-installation, consultada em 03.11.2026). Se a conta já tiver o Figma por um plugin de escopo de usuário (por exemplo, `plugin:design:figma`), as ferramentas aparecem em dobro: desabilite uma das cópias. Antes de usar as ferramentas de escrita no Figma (`use_figma`, `generate_figma_design`), carregue as habilidades que o próprio servidor indica (`/figma-use`, `/figma-generate-design`, `/figma-design-to-code`).
+
 O TypeScript global acompanha a versão da base (`../base/package.json`). O `poppler` é o que o Read do Claude Code usa para abrir um PDF por páginas: sem ele, o Código de Ética Odontológica, de mais de dez páginas, não abriu no teste de 08.10.2026; a conferência do ambiente o acusa (`commands/normas.md`). Depois, abra a sessão de novo, ou use `/reload-plugins`, e aprove o servidor do `.mcp.json` quando o Claude Code perguntar. O mercado `claude-plugins-official` é o oficial da Anthropic e não precisa de registro. As capturas automáticas do MCP ficam em `.playwright-mcp/`, fora do git (`../base/.gitignore`).
+
+### 2.1 · As habilidades da produção (desde 03.11.2026)
+
+Ficam em `skills/` e o `novo-site` as copia para `.claude/skills/` do site; não se instalam por `npx skills@latest` (versão fixa, seção 1). São a cópia fiel do commit `f1090be` (02.11.2026) de `github.com/emilkowalski/skill` (MIT, Emil Kowalski; a licença, `LICENCA-emilkowalski.txt`, ao lado de cada uma), lida inteira em 03.11.2026, sem gancho, script nem chamada de rede. A única mudança é **uma nota de precedência** logo depois do cabeçalho: em conflito, vence o kit (`../esteira/09-movimento.md`, `15-desempenho.md`, `16-acessibilidade.md`; o Motion mini; nenhuma dependência nova).
+
+| Habilidade | O que faz na produção | Etapas | Dispara | Custo fixo por sessão |
+|---|---|---|---|---|
+| **animation-performance** | Acha a causa quando a régua dos quadros reprova: a propriedade que pinta, o estilo escrito a cada quadro, a variável herdada, o desfoque, o `will-change` | 6, 7 | Sozinha, pela descrição | ~200 tokens (800 caracteres) |
+| **break-ui** | Testa cada tela com o pior caso dos dados do cliente (o nome longo, o preço, o horário partido, a lista vazia, 320 px, zoom de 200%) e relata antes de corrigir | 6, 7 | Sozinha, pela descrição | ~130 tokens (517 caracteres) |
+| **review-animations** | A segunda opinião sobre o movimento, depois da régua e do `/verificar` | 7 | Só pelo nome (`/review-animations`) | ~0 (`disable-model-invocation`) |
+| **prototype** | De três a cinco variantes divergentes de uma peça, atrás de um seletor, numa rota descartável, antes do `identidade.md` aprovado | 4 | Só pelo nome (`/prototype`) | ~0 (`disable-model-invocation`) |
+
+Os custos são estimativa pela contagem de caracteres da descrição (cerca de quatro por token), não medida pelo `/context`. **Na atualização:** relê-se o repositório, copia-se o commit novo à mão, conserva-se a nota de precedência e registra-se aqui.
 
 **Na atualização:** a versão do Playwright MCP sobe como dependência, pela regra de `13`, seção 10, e a desta tabela muda junto. Os plugins se atualizam pelo próprio Claude Code.
 
@@ -108,7 +127,6 @@ O TypeScript global acompanha a versão da base (`../base/package.json`). O `pop
 | Item | Quando | Por que não está na seção 2 |
 |---|---|---|
 | **chrome-devtools-mcp** (plugin; Google, 1.9.0, versão fixa) | Quando a régua acusa o travamento (ou, no site do Atlas, uma regressão de desempenho) e é preciso achar a causa: o rastro de carregamento com o diagnóstico do LCP, do CLS e da interação | Custa ~806 tokens em toda sessão. O Lighthouse do método segue pela linha de comando (`../qualidade/08-desempenho.md`, seção 3): o deste plugin roda noutra versão e noutra configuração, e o número dele não se compara aos do método |
-| **Conector do Figma** (claude.ai) | O cliente trouxe um desenho no Figma | É raro no comércio local. Age com a conta do usuário: lê todo arquivo que ela vê |
 | **Conector do Google Drive** (claude.ai) | O cliente compartilhou fotos ou logotipo por uma pasta do Drive; o material vai para `material/`, fora do git | Lê todo o Drive da conta |
 | **Conector do GitHits** (claude.ai) | Antes de uma dependência entrar ou subir de versão: as vulnerabilidades, as mudanças entre versões e a revisão da atualização (`13`, seção 10; a atualização em ondas, `../esteira/18-publicacao-e-manutencao.md`) | Só nessas horas |
 | **Habilidade verificacao-fontes** (da conta) | Etapa 3 e a conformidade: a norma na fonte primária (`../esteira/17-conformidade-e-normas.md`) | Já está na conta; não se instala no projeto |
@@ -129,6 +147,8 @@ O TypeScript global acompanha a versão da base (`../base/package.json`). O `pop
 | **Servidor MCP `magicui`** (`.mcp.json` do Atlas: `npx -y @magicuidesign/mcp@latest`) | Não tem versão fixa: cada publicação nova roda na máquina. E é um catálogo de componentes animados, o "enfeite de catálogo" que `../esteira/09-movimento.md`, seção 6, veda. |
 | **liquid-glass** (`stormaref-skills`, MIT, de Aref Azizian; lida em 08.10.2026) | É a receita do vidro, com diretiva em Angular, e pede ao fundo "brilhos radiais em violeta, rosa e ciano": a marca C6 de `../esteira/11-anti-ia.md`. Serve ao vidro do site do Atlas (decisão de 01.10.2026), não a cliente |
 | **apple-design-skill** (`apple-design-skill-marketplace`) | Está habilitada no `.claude/settings.json` do Atlas, mas sem instalação nem mercado registrado, e a busca de 08.10.2026 não achou pacote com esse nome. Sem leitura, não entra |
+| **As outras doze habilidades de Emil Kowalski** (`emilkowalski/skill`, commit `f1090be`, lidas em 03.11.2026) | **remove-animations** apaga as passivas, o ambiente e a contagem que `../esteira/09-movimento.md`, seções 13 e 14, exigem, e edita o código; **emil-design-eng** e **animate** repetem a `09` com outros valores, importam do `framer-motion` e aceitam o quique (`09`, seção 3: "Nunca quique") e o hover que cresce; **pick-ui-library** e **ask-sonner** levam a Sonner, cmdk, input-otp e next-themes, vedados (`../componentes/README.md`); **improve-animations** tem planos e subagentes próprios, que concorrem com o roteiro; **apple-design** recomenda a fonte do sistema como voz e o vidro de 20 px (T4, T11 e C10 de `../esteira/11-anti-ia.md`), e fica como leitura de estudo; **find-animation-opportunities** puxa para menos movimento, contra as seções 13 e 14; **mobile-native** e **animation-vocabulary** custam contexto sem ganho sobre o kit; **animate-expo** e **write-swift** são de React Native e Swift |
+| **taste-skill** (`Leonxlnx/taste-skill`, MIT, commit `12af471`, lida em 03.11.2026) | Veda o kit em pontos que bloqueiam: aceita imagem gerada por IA e foto de banco servida por `picsum.photos` (contra `../esteira/08-imagem-e-fotografia.md`); impõe dez passos próprios ("Adopt it. Do not blend it"), que concorrem com o roteiro e com o `identidade.md`; sorteia a direção, a paleta e as seções de um catálogo (contra `04`, "a identidade sai do assunto", e `20`); proíbe degradê, brilho e vidro (contra as camadas de `00-principios.md`); manda entrada animada em toda seção e cenas presas à rolagem com GSAP e Lenis (contra `09`, seção 5); carrega fontes e scripts de CDN. Os arquivos não se copiam: a lista de marcas do kit já cobre quase toda a deles, e o resto a contraria (os filetes, o degradê, o vidro, a palavra destacada). Duas marcas que faltavam e não conflitam entraram em `../esteira/11-anti-ia.md`: K7 e K8 (03.11.2026) |
 | **Conectores Gmail e Google Calendar** | Agem para fora, em nome do usuário. Nenhuma etapa manda mensagem nem marca compromisso pelo agente |
 | **Conectores Canva, Notion, Claude Docs, PubMed, Spotify e Strava** | Nenhuma etapa os usa: o site leva foto real e desenho em código, e os documentos moram no repositório |
 
@@ -205,7 +225,7 @@ Registradas para não se pesquisar de novo. A cópia local da triagem-ferramenta
 
 - **MCP do shadcn** (`shadcn mcp`): repete a CLI, que já tem `search`, `view`, `docs` e `add`. Na produção, a CLI, e nunca `shadcn apply` nem `init --preset`.
 - **axe MCP Server**, da Deque: repete o que o kit já faz, o axe-core nos testes (`@axe-core/playwright`, `../qualidade/06-acessibilidade.md`) e o Lighthouse pela linha de comando. E pede conta na Deque (chave ou token de acesso), roda em Docker e, por padrão, manda a análise à instância da Deque nos EUA. Faz parte do axe DevTools for Web; o preço, a busca não mostrou.
-- **Plugin `figma`** do mercado oficial: repete o conector do Figma, já ligado na conta.
+- **Plugin `figma`** do mercado oficial: repete o MCP do Figma, obrigatório desde 03.11.2026 (seção 2).
 - **Plugin `github`:** repete o `gh`.
 - **Plugins `vercel` e `sentry`:** a hospedagem é a Hostinger, e o site não manda dado a serviço de terceiro.
 - **`apple-design-skill`:** não achada com esse nome.

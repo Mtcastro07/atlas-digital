@@ -89,6 +89,7 @@ O "Estado" do `CLAUDE.md` diz em que etapa o site está. Cada etapa só começa 
      - o `app/icon.svg`.
   4. **[P][C]** Os **painéis de estilo**, dois ou três, cada um com tipo, cor, textura e um botão, sem página (`producao/esteira/04-direcao-de-arte.md`), e o **teste de unicidade** contra os clientes do mesmo nicho e três concorrentes locais (`identidade.md`, seções 5 e 7).
   5. **As capturas a 1440 px** da página inicial com a identidade nova (`node ferramentas/fotografar.mjs`), para aprovar. As de 390 px são do passe do celular, na etapa 6 (`producao/esteira/00-principios.md`, seção 5).
+  6. **O design inicial no Figma** (obrigatório desde 03.11.2026; o MCP do Figma, `producao/claude/ferramental.md`, seção 2): carregue antes as habilidades que o servidor indica (`/figma-use`, `/figma-generate-design`). Abra o arquivo do Figma do cliente, ou crie um (`create_new_file`, com o nome da pasta do site), e leve a ele os painéis de estilo e a página inicial com a identidade nova, a 1440 px, como telas. Depois, leia o arquivo de volta (`get_screenshot`) para conferir o design como ele está, e não como o código diz que está: o que diverge do `identidade.md` se corrige antes de aprovar. O endereço do arquivo vai para o `identidade.md` e para o "Estado" do `CLAUDE.md`; a aprovação pode ser dada por comentário no próprio arquivo, e vale registrada no `identidade.md`.
 - **Porta:** o `identidade.md` aprovado, com data e nome de quem aprovou. Quem decide é Matheus Castro Oliveira de Luna Garcia ou outro sócio de desenvolvimento; nunca Gabriel Ribeiro Ota Yida sozinho (`producao/esteira/01-processo.md`, seção 1). Também a avaliação anti-IA do plano, sem escolha por omissão sem motivo.
 - **Pare e pergunte:** sempre, para a aprovação. Nenhum componente novo antes dela.
 
@@ -113,24 +114,24 @@ O "Estado" do `CLAUDE.md` diz em que etapa o site está. Cada etapa só começa 
 - **Faz, em dois passes, nesta ordem, cada um com foco total, nunca os dois juntos** (`producao/esteira/00-principios.md`, seção 5). O "Estado" do `CLAUDE.md` registra o passe em curso.
 
   **Passe 1 · a mesa** (1440 px):
-  1. **As páginas** do roteiro, no nível Apple (`producao/esteira/19-o-padrao-atlas.md`, seção 4.2) e, se o nicho admitir, com o código como tema (seção 4.3):
+  1. **As páginas** do roteiro, no nível de site premiado (`producao/esteira/19-o-padrao-atlas.md`, seção 4.2) e, se o nicho admitir, com o código como tema (seção 4.3):
      - adaptar as de fábrica;
      - criar as novas pela receita;
      - apagar a marca `[EXEMPLO]` de cada página reescrita.
   2. **As funcionalidades do plano:** a do ofício, no Profissional e no Completo; a peça-assinatura e a segunda funcionalidade, no Completo.
   3. **Os módulos** (`modulos/README.md`): as dependências deles já estão aprovadas (o `nodemailer` e o `mysql2`, desde 08.10.2026).
   4. **As fotos:** por `preparar-fotos`, com o `alt` em `conteudo/`; sem foto, os substitutos (`producao/esteira/08-imagem-e-fotografia.md`).
-  5. **O movimento da camada do plano** (`producao/esteira/09-movimento.md`), acabado na mesa, com as passivas e a cobertura medida (seção 14: `node ferramentas/regua/conferir-passivas.mjs`).
+  5. **O movimento da camada do plano** (`producao/esteira/09-movimento.md`), acabado na mesa, com as passivas onde o objeto as pede, sem cota (seção 14: `node ferramentas/regua/conferir-passivas.mjs`).
   6. **A cada página:** `npm run build` e a conferência a 1440 px. O celular não se julga neste passe: o que é da mesa vai com o prefixo `lg:`, e o valor sem prefixo fica para o passe 2.
   7. **As rodadas de lapidação** (`producao/esteira/19-o-padrao-atlas.md`, seção 8.4): no mínimo três. Em cada uma, as capturas a 1440 px com o movimento normal, a vitrine ao lado, **o crítico de fora** (um agente novo, sem o histórico da construção, com as capturas e a seção 8.5) e as dez maiores distâncias corrigidas. O registro de cada rodada vai a `registros/lapidacao.md`.
-  8. **A porta da mesa:** as capturas a 1440 px aprovadas (`node ferramentas/fotografar.mjs --movimento`), o teste da vitrine (lado a lado com o Atlas e o exemplo do mesmo plano: `producao/esteira/00-principios.md`, seção 9), a régua sem falha nas larguras de mesa e a avaliação anti-IA na mesa, a página chapada inclusive, com a contagem de cada efeito e de cada molde por página, sem nada em série (`producao/esteira/20-repeticao-dentro-do-site.md`, seção 3).
+  8. **A porta da mesa:** as capturas a 1440 px aprovadas (`node ferramentas/fotografar.mjs --movimento`) e levadas ao arquivo do Figma do cliente, ao lado das da etapa 4, o teste da vitrine (lado a lado com o Atlas e o exemplo do mesmo plano: `producao/esteira/00-principios.md`, seção 9), a régua sem falha nas larguras de mesa e a avaliação anti-IA na mesa, a página chapada inclusive, com a contagem de cada efeito e de cada molde por página, sem nada em série (`producao/esteira/20-repeticao-dentro-do-site.md`, seção 3).
 
   **Passe 2 · o celular** (390 px), só depois da porta da mesa:
   1. **A tabela "O premium no celular"** do `identidade.md`: cada momento da mesa e a versão de toque dele (`producao/esteira/09-movimento.md`, seção 11).
   2. **As mesmas páginas, inteiras, no celular:** a disposição própria de cada peça (`producao/esteira/07-composicao.md`, seção 8), a versão de toque de cada momento, o vídeo e as fotos na versão do celular, o formulário com o teclado certo.
   3. **A cada página:** `npm run build` e a conferência a 390 px e no celular deitado (844 × 390). A mesa só se mexe para corrigir defeito; mexeu, reabre a porta dela.
   4. **As rodadas de lapidação no celular,** como na mesa, a 390 px: a assinatura na primeira tela, a versão de toque de cada momento, o crítico de fora.
-  5. **A porta do celular:** as capturas a 390 px aprovadas, o teste da vitrine no celular, a régua inteira (as larguras de toque, o celular deitado e a barreira do travamento no aparelho médio, na passagem 2b) e a avaliação anti-IA no celular, com a contagem da série a 390 px.
+  5. **A porta do celular:** as capturas a 390 px aprovadas e levadas ao arquivo do Figma do cliente, o teste da vitrine no celular, a régua inteira (as larguras de toque, o celular deitado e a barreira do travamento no aparelho médio, na passagem 2b) e a avaliação anti-IA no celular, com a contagem da série a 390 px.
 - **Construção em partes** (mais de um agente, ou um redesenho): o contrato, os patches sobre árvore fixa, a integração, a crítica e a verificação independente, como etapas separadas (`producao/esteira/19-o-padrao-atlas.md`, seção 8.8).
 - **Porta:** o build sem erro; as páginas do plano completas, com texto e fotos reais; as portas da mesa e do celular, nesta ordem.
 

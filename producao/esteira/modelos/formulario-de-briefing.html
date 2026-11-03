@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas Digital — Formulário de Briefing 2.0</title>
+<!--
+  Formulário de briefing 2.0 (03.11.2026), a versão impressa de producao/esteira/modelos/briefing.md:
+  a mesma numeração de blocos e os mesmos campos ●, para a transcrição ser direta. O porquê de cada
+  campo está em producao/esteira/02-briefing.md. Substitui o formulário 1.0 (atlas-formulario-briefing.html).
+  Depois da visita: transcreva para briefing.md (o modelo), na raiz do projeto, e fotografe estas páginas
+  para material/. Não deixe este arquivo nem a foto dele na raiz: o novo-site só reconhece o projeto vazio
+  com producao/, ordem.json, briefing.md e material/.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0F2A47; --cream:#F3EFEC; --cinza:#4B5F75; --linha:#D8D2CD; --branco:#FFFFFF;
+  --display:'Inter',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+  --rotulo:'Poppins','Inter',sans-serif;
+  --u:8px; --larg:860px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:var(--display);background:var(--cream);color:var(--navy);font-size:16px;line-height:1.55}
+.wrap{max-width:var(--larg);margin:0 auto;padding:0 calc(var(--u)*4)}
+@media(max-width:640px){.wrap{padding:0 16px}}
+
+.capa{background:var(--navy);color:var(--cream);padding:calc(var(--u)*10) 0 calc(var(--u)*7)}
+.marca{display:flex;flex-direction:column;line-height:.92;margin-bottom:calc(var(--u)*4)}
+.marca .m1{font-weight:900;font-size:clamp(26px,4vw,36px);letter-spacing:-.02em}
+.marca .m2{font-weight:200;font-size:clamp(26px,4vw,36px);letter-spacing:.005em}
+.capa h1{font-weight:200;font-size:clamp(26px,4vw,38px);line-height:1.12;letter-spacing:-.015em;margin-top:calc(var(--u)*4)}
+.capa h1 strong{font-weight:800;display:block}
+.capa .lide{font-weight:300;font-size:16px;line-height:1.5;color:rgba(243,239,236,.82);max-width:58ch;margin-top:calc(var(--u)*2.5)}
+.meta{font-family:var(--rotulo);font-weight:300;font-size:12.5px;display:flex;flex-wrap:wrap;
+  gap:6px calc(var(--u)*4);padding-top:calc(var(--u)*2.5);border-top:1px solid rgba(243,239,236,.22);margin-top:calc(var(--u)*5)}
+.meta span{color:rgba(243,239,236,.85)}
+.meta b{font-weight:300;color:rgba(243,239,236,.5)}
+
+section{padding:calc(var(--u)*6) 0;border-bottom:1px solid var(--linha)}
+section:last-of-type{border-bottom:none}
+.olho{font-family:var(--rotulo);font-weight:400;font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cinza);margin-bottom:var(--u)}
+h2{font-weight:800;font-size:clamp(20px,2.6vw,26px);letter-spacing:-.02em;line-height:1.1}
+h2 em{font-style:normal;font-weight:200}
+p{max-width:66ch;margin-bottom:var(--u)}
+.apoio{font-weight:300;font-size:14.5px;color:var(--cinza);max-width:66ch;margin-top:var(--u)}
+.selo{display:inline-block;font-family:var(--rotulo);font-size:10.5px;letter-spacing:.08em;border:1px solid var(--navy);
+  padding:1px 6px;margin-left:6px;vertical-align:2px;text-transform:uppercase}
+
+.instr{border-left:2px solid var(--navy);padding:calc(var(--u)*2) 0 calc(var(--u)*2) calc(var(--u)*3);margin:calc(var(--u)*3) 0}
+.instr p{font-weight:300;font-size:15.5px;margin-bottom:6px}
+.instr p:last-child{margin-bottom:0}
+
+.campo{margin-top:calc(var(--u)*3);break-inside:avoid}
+.campo .rot{font-family:var(--rotulo);font-weight:400;font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--cinza);display:block;margin-bottom:5px}
+.campo .rot .obr{color:var(--navy);font-weight:500}
+.campo .perg{font-weight:600;font-size:15.5px;margin-bottom:3px;max-width:66ch}
+.campo .dica{font-weight:300;font-size:13.5px;color:var(--cinza);margin-bottom:var(--u);max-width:66ch;font-style:italic}
+.linha-resp{border-bottom:1px solid var(--navy);height:28px;margin-bottom:6px}
+.linha-resp.curta{max-width:340px}
+.caixa-resp{border:1px solid var(--navy);min-height:84px;background:var(--branco)}
+.caixa-resp.alta{min-height:140px}
+.duplo{display:grid;grid-template-columns:1fr 1fr;gap:0 calc(var(--u)*3)}
+@media(max-width:640px){.duplo{grid-template-columns:1fr}}
+
+.item-rep{border:1px solid var(--linha);background:var(--branco);padding:calc(var(--u)*1.5) calc(var(--u)*2);margin-top:var(--u)}
+.item-rep .num{font-family:var(--rotulo);font-weight:400;font-size:11px;letter-spacing:.1em;color:var(--cinza)}
+
+.check{margin-top:calc(var(--u)*2)}
+.check li{list-style:none;padding:calc(var(--u)*1.3) 0;border-bottom:1px solid var(--linha);
+  font-size:15px;position:relative;padding-left:calc(var(--u)*4);max-width:70ch}
+.check li::before{content:"";position:absolute;left:0;top:calc(var(--u)*1.7);width:15px;height:15px;border:1.5px solid var(--navy)}
+
+.opc{display:inline-block;white-space:nowrap;margin-right:calc(var(--u)*2.5)}
+.opc::before{content:"";display:inline-block;width:12px;height:12px;border:1.5px solid var(--navy);margin-right:6px;vertical-align:-1px}
+
+.tabela{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:calc(var(--u)*2.5);font-size:14.5px}
+th{font-family:var(--rotulo);font-weight:400;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cinza);text-align:left;padding:0 calc(var(--u)*2) var(--u) 0;border-bottom:1px solid var(--navy)}
+td{padding:calc(var(--u)*1.3) calc(var(--u)*2) calc(var(--u)*1.3) 0;border-bottom:1px solid var(--linha);vertical-align:top;height:40px}
+td:first-child{font-weight:600}
+table.grade td:first-child{font-weight:400}
+.opostos td{font-weight:400}
+.opostos td:nth-child(1),.opostos td:nth-child(3){width:30%}
+.opostos td:nth-child(2){color:var(--cinza);font-size:13px;white-space:nowrap}
+
+footer{background:var(--navy);color:rgba(243,239,236,.7);padding:calc(var(--u)*6) 0;
+  font-family:var(--rotulo);font-weight:300;font-size:12.5px}
+footer .meta{border-top:none;padding-top:0;margin-top:0}
+
+@media print{
+  body{background:var(--branco);font-size:14px}
+  section{padding:calc(var(--u)*4) 0}
+  .capa,footer{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table,tr,.item-rep{break-inside:avoid}
+  @page{margin:16mm}
+}
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <div class="marca"><span class="m1">ATLAS</span><span class="m2">DIGITAL</span></div>
+    <h1><strong>Formulário de</strong> briefing</h1>
+    <p class="lide">Preenchido pelo sócio de vendas, conversando com o dono, no estabelecimento. É a origem de cada fato do site: o que não estiver aqui não entra no site.</p>
+    <div class="meta">
+      <span><b>nome de fachada |</b> ________________________</span>
+      <span><b>quem fez (nome completo) |</b> ______________________</span>
+      <span><b>visita |</b> ____/____/______ às ____h____</span>
+      <span><b>material completo no grupo |</b> ____/____/______ às ____h____</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="olho">Antes de começar</div>
+  <h2>Como usar <em>este formulário</em></h2>
+  <div class="instr">
+    <p><strong>Preencha você, conversando.</strong> Não entregue este papel ao cliente para responder depois: ele não responde, e o prazo morre esperando.</p>
+    <p><strong>Duração:</strong> 30 minutos no Essencial, 45 no Profissional, 1 hora no Completo, mais as fotos. É conversa, não interrogatório: pergunte com as suas palavras.</p>
+    <p><strong>Campos com ● são bloqueantes.</strong> Sem eles o site não sai, e a visita não termina sem eles. As marcas <span class="selo">P</span> e <span class="selo">C</span> indicam o que só vale no Profissional e no Completo.</p>
+    <p><strong>"Não sei" é resposta útil:</strong> significa que o Atlas decide. Em branco, não.</p>
+    <p><strong>Antes da visita, leia o arquivo do nicho</strong> (<code>producao/esteira/nichos/&lt;nicho&gt;.md</code>, seção 4) e copie para o Bloco 12 os campos "bloqueante neste nicho". Nos nichos de saúde, de direito e no pet shop com veterinário, o Bloco 4 é obrigatório.</p>
+    <p><strong>Fotos e logotipo chegam hoje.</strong> No Essencial, o cliente envia as fotos, orientado por você pelo protocolo; no Profissional e no Completo, você as faz no local. "Depois eu mando" é a causa número um de atraso.</p>
+    <p><strong>Trate por "o senhor" ou "a senhora",</strong> conforme a pessoa.</p>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 01</div>
+  <h2>O negócio</h2>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Nome de fachada</span>
+    <div class="perg">Como o senhor quer que apareça escrito no site?</div>
+    <div class="dica">O nome de fachada pode ser diferente do nome no CNPJ. Vale o de fachada.</div>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Razão social e CNPJ</span>
+    <div class="dica">Do contrato. Se for pessoa física, o nome completo e o registro profissional. Vão para o rodapé e para o aviso de privacidade de todo site.</div>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> O que faz, nas palavras do dono</span>
+    <div class="perg">Se alguém perguntar na rua o que o senhor faz, o que responde?</div>
+    <div class="dica">Anote entre aspas, com as palavras dele. É daqui que sai a frase de abertura do site.</div>
+    <div class="caixa-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Três diferenciais específicos</span>
+    <div class="perg">Por que um cliente compra aqui e não na concorrência?</div>
+    <div class="dica">Insista até ter três respostas específicas. "Atendimento" não serve; "o mesmo barbeiro há 30 anos" serve. Se ele disser "atendimento", pergunte por que o atendimento é melhor.</div>
+    <div class="item-rep"><span class="num">1.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">2.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">3.</span><div class="linha-resp"></div></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">História</span>
+    <div class="perg">Desde quando está aberto? Como começou?</div>
+    <div class="dica">Vira a página "A casa" ou "Sobre". O ano de fundação é fato: anote o ano exato.</div>
+    <div class="caixa-resp"></div>
+  </div>
+
+  <div class="duplo">
+    <div class="campo">
+      <span class="rot">Cliente típico</span>
+      <div class="perg">Quem é a maior parte dos seus clientes?</div>
+      <div class="linha-resp"></div>
+    </div>
+    <div class="campo">
+      <span class="rot"><span class="obr">●</span> Modelo de negócio</span>
+      <div class="perg">De bairro ou de alto padrão? Poucos clientes fiéis ou muito volume?</div>
+      <div class="linha-resp"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 02</div>
+  <h2>O que <em>vende</em></h2>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Serviços ou produtos</span>
+    <div class="perg">Quais são os principais? O que entra em cada um? Qual é o carro-chefe?</div>
+    <div class="dica">De três a seis, com o nome que o dono usa ("O Clássico", e não "Corte 1"). Se vende centenas de itens, agrupe por categoria. A duração é obrigatória quando o arquivo do nicho a pede; o preço, só quando o nicho permite.</div>
+    <div class="tabela">
+    <table class="grade">
+      <thead><tr><th>Nome</th><th>O que compreende</th><th>Duração</th><th>Preço</th><th>Carro-chefe</th></tr></thead>
+      <tbody>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> O que o negócio não faz</span>
+    <div class="perg">Tem alguma coisa que pedem e o senhor não faz?</div>
+    <div class="dica">Dizer o que não se faz poupa o contato inútil e dá confiança.</div>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="duplo">
+    <div class="campo">
+      <span class="rot">Entrega</span>
+      <div class="perg">Entrega? Até onde? Quanto custa?</div>
+      <div class="linha-resp"></div>
+    </div>
+    <div class="campo">
+      <span class="rot">Formas de pagamento</span>
+      <div class="linha-resp"></div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Preços no site</span>
+    <div class="perg">O senhor quer que apareçam preços?</div>
+    <div class="dica">Antes de perguntar, confira o nicho: vedado na odontologia e no honorário da advocacia; na medicina, só o da consulta; na psicologia e na nutrição, sem moldura promocional. Explique: o preço atrai quem já quer comprar, mas obriga a manter atualizado.</div>
+    <span class="opc">Sim</span><span class="opc">Não</span><span class="opc">Vedado no nicho</span>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 03</div>
+  <h2>Contato e <em>localização</em></h2>
+
+  <div class="duplo">
+    <div class="campo">
+      <span class="rot"><span class="obr">●</span> WhatsApp</span>
+      <div class="dica">O número que atende de verdade.</div>
+      <div class="linha-resp"></div>
+    </div>
+    <div class="campo">
+      <span class="rot">Telefone fixo</span>
+      <div class="dica">Se houver.</div>
+      <div class="linha-resp"></div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Endereço completo</span>
+    <div class="dica">Com CEP e ponto de referência. Confira no mapa do celular ainda na visita.</div>
+    <div class="linha-resp"></div>
+    <div class="linha-resp"></div>
+    <span class="opc">Conferido no mapa</span>
+  </div>
+
+  <div class="campo">
+    <span class="rot">O prédio</span>
+    <div class="dica">Só o que você confere no lugar: entrada sem degrau, elevador, estacionamento. Vai para a página de acessibilidade.</div>
+    <span class="opc">Sem degrau</span><span class="opc">Elevador</span><span class="opc">Estacionamento</span>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Horário, dia a dia</span>
+    <div class="dica">Pergunte se fecha para almoço e como fica nos feriados: é a informação que mais falta em site de comércio local.</div>
+    <div class="tabela">
+    <table class="grade">
+      <thead><tr><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th><th>Dom</th><th>Feriados</th></tr></thead>
+      <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Prazo de resposta</span>
+    <div class="perg">Em quanto tempo o senhor responde uma mensagem?</div>
+    <div class="dica">O site publica esse prazo, e ele precisa ser cumprido. Anote o que ele garante, não o que deseja.</div>
+    <div class="linha-resp curta"></div>
+  </div>
+
+  <div class="duplo">
+    <div class="campo">
+      <span class="rot">E-mail</span>
+      <div class="linha-resp"></div>
+    </div>
+    <div class="campo">
+      <span class="rot">Instagram, Facebook</span>
+      <div class="linha-resp"></div>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Perfil no Google</span>
+    <div class="perg">O senhor já tem cadastro no Google? Aparece quando alguém busca o nome?</div>
+    <div class="dica">Teste na hora, no seu celular, e anote o resultado. Não ofereça o módulo Presença antes de os sócios confirmarem quem o faz: a função está sem titular.</div>
+    <span class="opc">Aparece</span><span class="opc">Não aparece</span><span class="opc">Testado no celular</span>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 04 · nichos regulados</div>
+  <h2>Registro <em>e norma</em></h2>
+  <p class="apoio">Saúde, psicologia, nutrição, advocacia, imobiliária, academia e pet shop com veterinário. Nesses nichos, publicar sem o registro fere a norma: a produção para.</p>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Conselho e número de registro</span>
+    <div class="dica">O do profissional e, na clínica, o da própria pessoa jurídica (CRO, CRM, CRN, CRP, CREF, CRECI, OAB, CRMV), com o RQE, se for especialista.</div>
+    <div class="linha-resp"></div>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Responsável técnico</span>
+    <div class="dica">Nome e registro. Na clínica, no estabelecimento de saúde e no pet shop com veterinário.</div>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Atendimento a distância</span>
+    <span class="opc">Sim</span><span class="opc">Não</span>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 05</div>
+  <h2>O que o site <em>precisa fazer</em></h2>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> A ação principal (uma só)</span>
+    <div class="perg">Quando alguém entrar no site, o que o senhor quer que essa pessoa faça?</div>
+    <div class="dica">Chamar no WhatsApp, ligar, ir até a loja, pedir orçamento, marcar horário. Uma só: é ela que vira o botão da primeira tela.</div>
+    <div class="linha-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">O problema de hoje</span>
+    <div class="perg">Hoje, o que o senhor perde por não ter site?</div>
+    <div class="dica">Entre aspas, com as palavras dele.</div>
+    <div class="caixa-resp"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Três concorrentes locais <span class="selo">P</span><span class="selo">C</span></span>
+    <div class="perg">Quais são os seus principais concorrentes aqui perto? Algum tem site?</div>
+    <div class="dica">Bloqueante no Profissional e no Completo: o site é comparado com eles no teste de unicidade. No Essencial, ajuda o texto.</div>
+    <div class="item-rep"><span class="num">1.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">2.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">3.</span><div class="linha-resp"></div></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Sites que o dono acha bonitos</span>
+    <div class="perg">Existe algum site que o senhor ache bonito? Por quê?</div>
+    <div class="dica">Não precisa ser do ramo. Serve para entender o gosto, nunca como modelo a copiar. Se ele não souber, pule.</div>
+    <div class="linha-resp"></div>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 06</div>
+  <h2>Direção <em>de arte</em></h2>
+  <p class="apoio">Pergunte por pares de opostos: "O senhor diria que aqui é mais tradicional ou mais moderno?" Marque um lado de cada par.</p>
+
+  <div class="tabela">
+  <table class="opostos">
+    <tbody>
+      <tr><td><span class="opc">● Tradicional</span></td><td>ou</td><td><span class="opc">Moderno</span></td></tr>
+      <tr><td><span class="opc">● Sóbrio</span></td><td>ou</td><td><span class="opc">Caloroso</span></td></tr>
+      <tr><td><span class="opc">● Popular</span></td><td>ou</td><td><span class="opc">Exclusivo</span></td></tr>
+      <tr><td><span class="opc">Técnico</span></td><td>ou</td><td><span class="opc">Acolhedor</span></td></tr>
+      <tr><td><span class="opc">Discreto</span></td><td>ou</td><td><span class="opc">Expressivo</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="apoio">Os três primeiros pares são bloqueantes (●).</p>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Referências do mundo físico (mínimo cinco, fotografadas)</span>
+    <div class="dica">De onde sai a identidade do site: o letreiro, a fachada, um material, uma ferramenta, o uniforme, a embalagem, o cardápio ou um impresso. Fotografe cada uma e anote o que é.</div>
+    <div class="item-rep"><span class="num">1.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">2.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">3.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">4.</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">5.</span><div class="linha-resp"></div></div>
+  </div>
+
+  <div class="duplo">
+    <div class="campo">
+      <span class="rot">Cores da empresa</span>
+      <div class="dica">Se houver logotipo, saem dele; se não, o Atlas propõe.</div>
+      <div class="linha-resp"></div>
+    </div>
+    <div class="campo">
+      <span class="rot">O que o dono não quer</span>
+      <div class="dica">Uma cor, um estilo, uma coisa. Evita uma rodada inteira.</div>
+      <div class="linha-resp"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 07</div>
+  <h2>Material <em>visual</em></h2>
+  <p class="apoio">É o bloco que mais atrasa a entrega. Resolva tudo na visita. O site nunca usa foto de banco de imagens nem imagem gerada por IA: sem foto real, o site sai com tipografia e mapa.</p>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Logotipo</span>
+    <div class="tabela">
+    <table>
+      <tbody>
+        <tr><td>Tem arquivo digital?</td><td>Peça pelo WhatsApp agora, em SVG, PDF ou PNG</td></tr>
+        <tr><td>Só tem impresso?</td><td>Fotografe de frente, sem sombra, sobre superfície clara</td></tr>
+        <tr><td>Não tem?</td><td>Anote "não há". O Atlas usa o nome em letreiro tipográfico e nunca redesenha a marca sem contrato</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="linha-resp" style="margin-top:12px"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Fotos pelo protocolo</span>
+    <div class="dica">No mínimo três por categoria do nicho. Luz do dia, lente 1×, sem zoom, nas duas orientações. O protocolo inteiro está em <code>producao/esteira/08-imagem-e-fotografia.md</code>, seção 6.</div>
+    <ul class="check">
+      <li>Fachada, de cada lado e em horas diferentes</li>
+      <li>Interior, mostrando o espaço</li>
+      <li>Produtos ou serviço, e o trabalho em andamento</li>
+      <li>Equipe ou profissional, só com a autorização assinada</li>
+      <li>As categorias próprias do nicho (arquivo do nicho, seção 4)</li>
+    </ul>
+    <div class="linha-resp" style="margin-top:12px"></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Autorização de imagem</span>
+    <div class="dica">Escrita, uma por pessoa que aparece (modelo em <code>producao/esteira/modelos/autorizacao-de-imagem.md</code>). Com animal, a do tutor. Sem ela, a pessoa não aparece.</div>
+    <div class="tabela">
+    <table class="grade">
+      <thead><tr><th>Nome</th><th>Assinada</th></tr></thead>
+      <tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Restrições do nicho conferidas</span>
+    <div class="dica">Sem paciente, sem corpo, sem antes e depois, sem estrutura física (advocacia), sem aluno identificável, a data da foto do imóvel. Conforme o nicho.</div>
+    <span class="opc">Conferidas</span>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Vídeo curto</span>
+    <div class="dica">Restaurante e academia: até 15 segundos, sem som, na horizontal.</div>
+    <span class="opc">Feito</span><span class="opc">Não se aplica</span>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 08</div>
+  <h2>Domínio</h2>
+
+  <div class="campo">
+    <span class="rot"><span class="obr">●</span> Endereço desejado e duas alternativas</span>
+    <div class="perg">Qual endereço o senhor quer? Por exemplo, nomedaloja.com.br.</div>
+    <div class="dica">Verifique a disponibilidade no registro.br ainda na visita.</div>
+    <div class="item-rep"><span class="num">Desejado</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">Alternativa 1</span><div class="linha-resp"></div></div>
+    <div class="item-rep"><span class="num">Alternativa 2</span><div class="linha-resp"></div></div>
+    <span class="opc" style="margin-top:8px">Verificado no registro.br</span>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Domínio que já existe</span>
+    <div class="perg">Se já tem, onde foi registrado e quem tem o acesso?</div>
+    <div class="dica">Descubra agora o login ou a autorização para a transferência.</div>
+    <div class="linha-resp"></div>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 09 · Profissional e Completo</div>
+  <h2>O que o plano <em>acrescenta</em></h2>
+
+  <div class="campo">
+    <span class="rot">A funcionalidade sob medida <span class="selo">P</span><span class="selo">C</span></span>
+    <div class="dica">Escolhida com o dono, na lista do nicho (arquivo do nicho, seção 5).</div>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">Para onde vai o formulário <span class="selo">P</span><span class="selo">C</span></span>
+    <div class="dica">O e-mail de quem responde. Avise o dono: o rascunho sai no prazo, mas o site só recebe dados de visitantes depois do contrato de operador; até lá, o contato segue pelo WhatsApp.</div>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">As categorias da galeria <span class="selo">P</span><span class="selo">C</span></span>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">O que o relatório de acessos deve responder ao dono <span class="selo">P</span><span class="selo">C</span></span>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">A segunda funcionalidade <span class="selo">C</span></span>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">A peça-assinatura <span class="selo">C</span></span>
+    <div class="dica">O objeto do ofício que só esta marca tem.</div>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">As páginas de busca <span class="selo">C</span></span>
+    <div class="dica">Uma por serviço, por profissional, por bairro atendido.</div>
+    <div class="caixa-resp"></div>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 10 · módulos</div>
+  <h2>Agenda <em>e Presença</em></h2>
+  <p class="apoio">Só se o módulo foi contratado. A Agenda também coleta dados: vale o mesmo aviso do formulário (Bloco 9).</p>
+
+  <div class="campo">
+    <span class="rot">Agenda: serviços com duração</span>
+    <div class="dica">Os do Bloco 2, com a duração de cada um.</div>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">Agenda: profissionais e o expediente de cada um</span>
+    <div class="caixa-resp"></div>
+  </div>
+  <div class="duplo">
+    <div class="campo">
+      <span class="rot">Agenda: folgas e feriados</span>
+      <div class="linha-resp"></div>
+    </div>
+    <div class="campo">
+      <span class="rot">Agenda: antecedência mínima e máxima</span>
+      <div class="linha-resp"></div>
+    </div>
+  </div>
+  <div class="campo">
+    <span class="rot">Agenda: regra de cancelamento</span>
+    <div class="linha-resp"></div>
+  </div>
+  <div class="campo">
+    <span class="rot">Agenda: e-mail do dono para os avisos</span>
+    <div class="linha-resp"></div>
+    <span class="opc">Quer o evento na agenda do Google</span>
+  </div>
+  <div class="campo">
+    <span class="rot">Presença: acesso ao perfil no Google (ou criar), categorias</span>
+    <div class="dica">Só com o titular da função confirmado pelos sócios. Nunca na psicologia nem na advocacia.</div>
+    <div class="linha-resp"></div>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Bloco 11 · só o vendedor</div>
+  <h2>Contratação</h2>
+  <p class="apoio">Não é pergunta ao cliente.</p>
+
+  <div class="tabela">
+  <table>
+    <thead><tr><th>● Item</th><th>Registro</th></tr></thead>
+    <tbody>
+      <tr><td>Plano</td><td><span class="opc">Essencial</span><span class="opc">Profissional</span><span class="opc">Completo</span></td></tr>
+      <tr><td>Módulos</td><td><span class="opc">Agenda</span><span class="opc">Presença</span><span class="opc">Página adicional × ____</span></td></tr>
+      <tr><td>Condição de Fundação</td><td><span class="opc">Sim</span><span class="opc">Não</span> contrato n.º ____ (de 1 a 3)</td></tr>
+      <tr><td>Criação</td><td>R$ __________ · forma: ______________ · 1.ª parcela (metade) em ____/____/______</td></tr>
+      <tr><td>Mensalidade</td><td>R$ __________ · vencimento no dia ______</td></tr>
+      <tr><td>Contrato assinado</td><td><span class="opc">Sim, fotografado</span><span class="opc">Não</span></td></tr>
+      <tr><td>Rascunho prometido para</td><td>____/____/______ às ____h · canal: ______________</td></tr>
+      <tr><td>Publicação prometida até</td><td>____/____/______</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="campo">
+    <span class="rot">Autorização do estudo de caso (Condição de Fundação)</span>
+    <span class="opc">Assinada</span><span class="opc">Não se aplica</span>
+  </div>
+  <p class="apoio" style="margin-top:20px"><strong>O relógio das 24 horas começa quando o briefing completo, as fotos, o logotipo e o contrato chegam ao grupo</strong>, não na hora da visita. Faltando material, anote quando ele chegou e recalcule.</p>
+</section>
+
+<section>
+  <div class="olho">Bloco 12</div>
+  <h2>Campos <em>do nicho</em></h2>
+  <p class="apoio">Copie antes da visita a lista "No briefing, bloqueante neste nicho" de <code>producao/esteira/nichos/&lt;nicho&gt;.md</code>, seção 4. Exemplos: no pet shop, a tabela por porte e pelagem; na construção, o catálogo com unidade e consumo; na imobiliária, a autorização de cada imóvel. Nicho fora dos doze: os campos saem das páginas e da funcionalidade que o site terá.</p>
+  <div class="tabela">
+  <table class="grade">
+    <thead><tr><th>Campo do nicho</th><th>Resposta</th></tr></thead>
+    <tbody>
+      <tr><td></td><td></td></tr><tr><td></td><td></td></tr><tr><td></td><td></td></tr>
+      <tr><td></td><td></td></tr><tr><td></td><td></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <div class="olho">Antes de sair</div>
+  <h2>Conferência <em>do vendedor</em></h2>
+  <ul class="check">
+    <li>Todos os campos ● preenchidos, inclusive os do nicho (Bloco 12)</li>
+    <li>Fotos pelo protocolo, no mínimo três por categoria, e as autorizações de imagem assinadas (com animal, a do tutor)</li>
+    <li>Logotipo recebido ou fotografado</li>
+    <li>Registro do conselho e responsável técnico anotados (nichos regulados)</li>
+    <li>Três pares de opostos marcados e cinco referências do mundo físico fotografadas</li>
+    <li>Três concorrentes locais anotados (bloqueante no Profissional e no Completo)</li>
+    <li>Contrato assinado e fotografado; primeira parcela paga ou com data</li>
+    <li>Domínio verificado no registro.br, com duas alternativas</li>
+    <li>Endereço conferido no mapa</li>
+    <li>WhatsApp do cliente salvo com o nome do negócio</li>
+    <li>O cliente sabe que recebe um <strong>rascunho</strong> em 24 horas, por qual canal, e que o rascunho <strong>não é o site publicado</strong></li>
+    <li>Com formulário ou Agenda: o cliente sabe que a coleta de dados entra só depois do contrato de operador</li>
+    <li>Formulário, fotos, logotipo e contrato enviados ao grupo hoje, com a hora anotada na capa</li>
+  </ul>
+</section>
+
+<section>
+  <div class="olho">Observações</div>
+  <h2>O que mais <em>foi dito</em></h2>
+  <p class="apoio">O que o cliente falou e não coube nos campos: uma expectativa, uma reclamação, um prazo que ele mencionou, alguém que deve ver o site antes. Nada daqui vira fato no site sem confirmação.</p>
+  <div class="caixa-resp alta" style="margin-top:16px"></div>
+  <div class="caixa-resp alta" style="margin-top:8px"></div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="meta">
+      <span><b>email |</b> contato@agenciaatlasdigital.com</span>
+      <span><b>site |</b> agenciaatlasdigital.com</span>
+      <span><b>documento |</b> briefing · versão 2.0 · 03.11.2026</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

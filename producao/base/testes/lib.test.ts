@@ -12,6 +12,12 @@ import { textoDoLlms } from "../lib/llms.ts";
 import { duracao, reais } from "../lib/moeda.ts";
 import { telefoneVisivel, vinculoDoWhatsapp } from "../lib/whatsapp.ts";
 
+// O nome e o domínio vêm de conteudo/negocio.ts, e não de fábrica: o novo-site os troca pelos da ordem, e o
+// npm test logo depois dele não pode reprovar o site novo (03.11.2026).
+const literal = (texto: string) => texto.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+const NOME = literal(negocio.nome);
+const URL_DO_SITE = literal(negocio.url);
+
 test("WhatsApp: número com máscara vira só algarismos", () => {
   assert.equal(vinculoDoWhatsapp("+55 (21) 90000-0000"), "https://wa.me/5521900000000");
 });
@@ -71,15 +77,15 @@ test("CNPJ: numérico e alfanumérico (desde 31.07.2026)", () => {
 
 test("llms.txt: no exemplo, só o nome e o selo; no cliente, o contato e as páginas pelo canônico, as legais em Optional", () => {
   // A base de fábrica é o exemplo: nada do que é noindex ou fictício (o contato, as páginas).
-  assert.match(textoDoLlms("/"), /^# Banho e Tosa Fonseca\n\n> Estabelecimento fictício, criado pela Atlas Digital[^\n]*\n$/);
+  assert.match(textoDoLlms("/"), new RegExp(`^# ${NOME}\\n\\n> Estabelecimento fictício, criado pela Atlas Digital[^\\n]*\\n$`));
   negocio.exemplo = false;
   try {
     const estatico = textoDoLlms("/");
-    assert.match(estatico, /^# Banho e Tosa Fonseca\n\n> Banho, tosa/);
+    assert.match(estatico, new RegExp(`^# ${NOME}\\n\\n> [^\\n]+`));
     assert.doesNotMatch(estatico, /fictício/);
-    assert.match(estatico, /- Endereço: Alameda São Boaventura/);
-    assert.match(estatico, /\(https:\/\/exemplo\.com\.br\/servicos\/\)/);
-    assert.match(textoDoLlms(""), /\(https:\/\/exemplo\.com\.br\/servicos\)/);
+    assert.match(estatico, /- Endereço: [^\n]+/);
+    assert.match(estatico, new RegExp(`\\(${URL_DO_SITE}/servicos/\\)`));
+    assert.match(textoDoLlms(""), new RegExp(`\\(${URL_DO_SITE}/servicos\\)`));
     assert.match(estatico, /## Optional\n\n- \[Aviso de privacidade\]/);
   } finally {
     negocio.exemplo = true;
@@ -87,8 +93,8 @@ test("llms.txt: no exemplo, só o nome e o selo; no cliente, o contato e as pág
 });
 
 test("JSON-LD da capa: WebSite e o negócio num grafo, ligados pelo @id", () => {
-  const [site, negocio] = dadosDaCapa["@graph"];
+  const [site, organizacao] = dadosDaCapa["@graph"];
   assert.equal(site["@type"], "WebSite");
-  assert.equal(site.publisher?.["@id"], negocio["@id"]);
-  assert.equal(negocio["@id"], "https://exemplo.com.br/#negocio");
+  assert.equal(site.publisher?.["@id"], organizacao["@id"]);
+  assert.equal(organizacao["@id"], `${negocio.url}/#negocio`);
 });

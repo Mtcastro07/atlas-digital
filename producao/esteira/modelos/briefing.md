@@ -3,6 +3,11 @@
   dono (producao/esteira/02-briefing.md diz o porquê de cada campo). Salve como
   briefing.md na raiz do repositório do cliente. ● = bloqueante: sem ele o site
   não sai. "Não sei" é resposta válida (o Atlas decide); em branco, não.
+  A versão impressa, para a visita, é formulario-de-briefing.html (2.0, 03.11.2026), com a mesma
+  numeração de blocos: transcreva-a para cá campo a campo, sem deduzir o que ficou em branco, e
+  guarde a foto das páginas em material/ (nunca na raiz: o novo-site só reconhece o projeto vazio
+  com producao/, ordem.json, briefing.md e material/). Duração da visita: 30 min no Essencial,
+  45 no Profissional, 1 h no Completo, mais as fotos.
 -->
 
 # Briefing · [Nome de fachada]
@@ -124,7 +129,7 @@
 | Agenda: folgas, feriados, antecedência mínima e máxima | |
 | Agenda: regra de cancelamento | |
 | Agenda: e-mail do dono para os avisos; agenda do Google (sim/não) | |
-| Presença: acesso ao perfil no Google (ou criar), categorias | |
+| Presença: acesso ao perfil no Google (ou criar), categorias (só com o titular da função confirmado pelos sócios: `producao/esteira/14-funcionalidades/06-presenca.md`) | |
 
 ## 11. Contratação (só o vendedor)
 
@@ -152,7 +157,7 @@ Copie para cá a lista "**No briefing, bloqueante neste nicho**" de `producao/es
 ## Conferência antes de sair
 
 - [ ] Todos os ● preenchidos
-- [ ] Fotos pelo protocolo e autorizações de imagem
+- [ ] Fotos pelo protocolo e autorizações de imagem (com animal, a do tutor)
 - [ ] Logotipo recebido ou fotografado
 - [ ] Registro do conselho e responsável técnico (regulados)
 - [ ] Três adjetivos e cinco referências do mundo físico
@@ -160,6 +165,8 @@ Copie para cá a lista "**No briefing, bloqueante neste nicho**" de `producao/es
 - [ ] Contrato assinado; primeira parcela paga ou com data
 - [ ] Domínio verificado, com duas alternativas
 - [ ] Endereço conferido no mapa
-- [ ] O cliente sabe que recebe um **rascunho** em 24 horas, e por qual canal
+- [ ] WhatsApp do cliente salvo com o nome do negócio
+- [ ] O cliente sabe que recebe um **rascunho** em 24 horas, por qual canal, e que o rascunho não é o site publicado
+- [ ] Com formulário [P][C] ou Agenda: o cliente sabe que a coleta de dados entra só depois do contrato de operador (`producao/00-do-pedido-ao-site.md`, seção 4)
 - [ ] Os campos do nicho (seção 12) preenchidos
 - [ ] Tudo enviado ao grupo hoje

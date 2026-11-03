@@ -33,6 +33,7 @@ Etapa 4 (`producao/esteira/04-direcao-de-arte.md`; `producao/03-da-identidade-ao
    - o `app/icon.svg`.
 
    Confira com `npm run paleta`. Depois, `npm run build`, o site servido em segundo plano e `node ferramentas/fotografar.mjs`: mostre as capturas de 1440 px da página inicial com a identidade nova. As de 390 px são do passe do celular, na construção (`producao/esteira/00-principios.md`, seção 5).
-5. **Pare para a aprovação** de Matheus Castro Oliveira de Luna Garcia, ou de outro sócio de desenvolvimento. Nunca Gabriel Ribeiro Ota Yida sozinho (`producao/esteira/01-processo.md`, seção 1). Registre a aprovação no `identidade.md` ("Aprovada em").
+5. **O design inicial no Figma** (obrigatório desde 03.11.2026; o MCP do Figma, `producao/claude/ferramental.md`, seção 2): carregue antes as habilidades que o servidor indica (`/figma-use`, `/figma-generate-design`). Abra o arquivo do Figma do cliente, ou crie um (`create_new_file`, com o nome da pasta do site), e leve a ele os painéis de estilo e a página inicial com a identidade nova, a 1440 px, como telas. Depois, leia o arquivo de volta (`get_screenshot`) para conferir o design como ele está, e não como o código diz que está: o que diverge do `identidade.md` se corrige antes de aprovar. O endereço do arquivo vai para o `identidade.md` e para o "Estado" do `CLAUDE.md`; a aprovação pode ser dada por comentário no próprio arquivo, e vale registrada no `identidade.md`.
+6. **Pare para a aprovação** de Matheus Castro Oliveira de Luna Garcia, ou de outro sócio de desenvolvimento. Nunca Gabriel Ribeiro Ota Yida sozinho (`producao/esteira/01-processo.md`, seção 1). Registre a aprovação no `identidade.md` ("Aprovada em").
 
 **Porta:** a avaliação anti-IA do plano, sem escolha por omissão sem motivo.

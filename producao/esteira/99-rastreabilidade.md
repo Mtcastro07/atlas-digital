@@ -170,16 +170,6 @@ O que segue abaixo ficou **fora** da ratificação, por ser da sociedade, do com
 | A titularidade do domínio e dos arquivos no fim do contrato (contador) | `17`, seção 8 |
 | A regra de desconto só na criação: decidida em 05.08 (ata, bloco 07), listada como de vigência indefinida no contexto comercial (§8) | `03-planos.md`, seção 8 |
 | Implantar a integração contínua (o plano e a ordem de adoção estão ratificados; nada implantado) e, quando o volume pedir, a base em monorepo (direção ratificada); decidir a cota de web apps antes do quinto cliente com servidor | `../qualidade/13-integracao-continua.md`, seção 9; `13-tecnologia-e-estrutura.md`, seção 8 |
-| A linha de base anti-IA do site do Atlas e dos exemplos: a tarja no título, a onda no "24h", os rótulos "01 / 06", a capa centralizada, as faixas de números, a grade de cartões iguais, as entradas acima de 600 ms; o título do Atlas entre os extremos da escala | `11-anti-ia.md`, seção 7; `../qualidade/11-design-e-anti-ia.md` |
-| A ordem decrescente dos planos no site do Atlas (do Completo ao Essencial), que contraria a metáfora da escada | `03-planos.md`, seção 1 |
-| Os cantos retos do depósito de exemplo (e as sombras que o chanfro corta) | `06-cor-forma-e-superficie.md`, seção 6 |
-| O texto dos planos no site do Atlas pela tarefa de cada degrau, e os prazos de publicação por plano, que o site também não traz (nada foi mudado; depende de ratificação) | `03-planos.md`, seção 1 |
-| A Página adicional no montador da página Orçamento × "nunca no montador" (contexto comercial, §2) | — (site do Atlas) |
-| Afirmações do texto do site do Atlas sem fonte nos documentos: a avaliação gratuita do site atual do cliente (`conteudo/duvidas.ts`) e a mensalidade a partir do mês seguinte à publicação (a formação dos sócios tem linha própria, nesta seção) | `10-texto-e-conteudo.md`, seção 11; `18-publicacao-e-manutencao.md`, seção 7.1 |
-| Divergências de marca: a tipografia do site × a ata v3.0, V (as fontes de 28/08 voltaram em 05.10, a pedido de Gabriel Ribeiro Ota Yida, e o usuário as manteve em 08.10) e × o manual v3.1, nos detalhes; o Navy Sombra com dois valores (a do logotipo sem a mão × os arquivos-mestre acabou em 05.10, com a volta do original, que entrou na fusão de 08.10) | — (marca) |
-| A formação dos sócios (Ciência da Computação na UFF) a conferir pelos três antes da publicação; as fotos dos sócios ainda não foram enviadas; os JPEG originais seguem publicados em `public/socios/`, sem uso | `08-imagem-e-fotografia.md`, seção 8; `../qualidade/12-ataque-a-falhas.md`, seção 5 |
-| Desativar os subdomínios antigos dos exemplos (`obra.`, `nutricao.`) na publicação | `18-publicacao-e-manutencao.md` |
-| Levar as correções de 07 e 08.10.2026 do `web/` (no ramo `branchCEO`) para a `main`, de onde a Hostinger publica: o site no ar é a versão de 05.10 (conferido em 08.10.2026) | `18-publicacao-e-manutencao.md`, seção 2 |
 | Renovar a Hostinger: lembrar em 20.12.2026; vence em 05.01.2027 | ata v3.0, III.3 |
 | Pendências da sociedade que travam a publicação: a consulta ao contador (desde agosto), a LTDA e o CNPJ; capital e governança; o titular da presença digital dos clientes; os valores da Condição de Fundação em reais `[A CONFIRMAR]`; os números de mercado `[SEM FONTE]`; o modo de publicação (PENDENTE; o web app Node é o recomendado) | ata v3.0, VI; `01-processo.md` (ordem de trabalho); `17-conformidade-e-normas.md`, seção 10; `18-publicacao-e-manutencao.md` |
 | A refação dos doze demos estáticos "depois do primeiro cliente" e o congelamento do núcleo durante ela (decisões de 12.09): revogar, se a refação vier antes | `nichos/README.md`, seção 4 |
@@ -189,38 +179,7 @@ O que segue abaixo ficou **fora** da ratificação, por ser da sociedade, do com
 | Quem fotografa os clientes: o fotógrafo por diária (de R$ 654 a R$ 1.343, levantamento de 07.10) ou o protocolo do celular com um kit de luz; e o estabelecimento real que autorize as fotos do piloto da nutrição | `08-imagem-e-fotografia.md`; `03-planos.md`, seção 2 |
 | O monitoramento dos web apps de cliente: nenhum documento define como saber que um app caiu ou ficou lento, embora a mensalidade da Agenda inclua o "monitoramento" | `18-publicacao-e-manutencao.md`; `14-funcionalidades/05-agenda.md`, seção 13 |
 
-**B. Defeitos no site do Atlas e nos sites de exemplo** (a corrigir; cada um com a regra no kit)
-
-| Defeito | Onde | A regra no kit |
-|---|---|---|
-| Abaixo de 640 px, a barbearia de exemplo fica sem ação na primeira tela (o "Agendar" da barra some, e o da capa cai abaixo da dobra) | `components/ilhas/demos/barra-da-barbearia.tsx`; `app/demos/barbearia/page.tsx` | `07-composicao.md`, seção 6; régua, bloco 6 (aviso) |
-| O 3D pausado continua redesenhando cada quadro | `palco-3d/motor.ts` | `14-funcionalidades/08-peca-assinatura.md`, seção 3.6 |
-| O estado da loja diz "encerrado" antes de a loja abrir | `estado-da-loja.tsx` | `14-funcionalidades/07-funcionalidades-do-oficio.md`, seção 2.2 |
-| `viewportFit: "cover"` sem os recuos laterais | `app/layout.tsx` | `13-tecnologia-e-estrutura.md`, seção 6 |
-| `.ja-aberto` dura o documento: depois de recarregar, a navegação interna perde as entradas | `app/layout.tsx`; `app/movimento.css` | `09-movimento.md`, seção 5 |
-| Dois mecanismos de pausa (`data-pausa` e `data-fora`) | `esfera-viva.tsx`; `movimento.css` | `09-movimento.md`, seção 5 |
-| `decodeURIComponent` solto no clique de vínculo interno | `components/ilhas/ancoras.tsx`, linha 151 | `14-funcionalidades/01-base-de-todo-site.md`, seção 16 |
-| O painel do menu importa `acaoOrcamento` de `conteudo/site.ts`: o pedaço sob demanda (34,5 KB comprimidos) leva frases da página | `components/ilhas/painel-menu.tsx` | `13-tecnologia-e-estrutura.md`, seção 3.2; `15-desempenho.md`, seção 6 |
-| O pedido por mensagem do depósito não funciona sem script | `pedido-por-mensagem.tsx` | `14-funcionalidades/README.md` (degradação) |
-| A hora de São Paulo lida de um texto formatado | `estado-da-loja.tsx` | `14-funcionalidades/01-base-de-todo-site.md`, seção 5 |
-| As setas da galeria andam 16 px, e o vão é de 20 px | `setas-da-galeria.tsx` | `14-funcionalidades/03-galeria.md` |
-| Três campos dos exemplos com `outline-none` (somem com cores forçadas); sem `scroll-padding-top` sob o cabeçalho fixo | Exemplos; `app/globals.css` | `16-acessibilidade.md` |
-| `aria-label` num `<p>`; os nomes das etapas de O trabalho somem no celular; vínculo para outra aba sem aviso | `figuras.tsx`; O trabalho | `16-acessibilidade.md`, seção 5 |
-| Os botões do simulador com 36 px (a régua não os vê: só aparecem com o diálogo aberto) | `painel-do-simulador.tsx` | `../qualidade/02-regua.md` (pontos cegos) |
-| O lide das aberturas entra de opacidade 0, o que deve atrasar o LCP no celular | `abertura-de-pagina.tsx` | `15-desempenho.md`, seção 5.1 |
-| Os detalhes do navegador que faltam (`caret-color`, `scrollbar-color`, `scrollbar-gutter`, `color-scheme`; o `font-synthesis-weight` entrou em 05.10); o `web/app/fontes/README.md` cita uma regra que o `globals.css` não tem | `app/globals.css` | `06-cor-forma-e-superficie.md`, seção 11 |
-| A data do mapa do site escrita à mão (01.10) | `app/sitemap.ts` | `14-funcionalidades/01-base-de-todo-site.md`, seção 12 |
-| Esqueletos com regras diferentes: o dos exemplos (`.dm-esqueleto`) pulsa sem fim; o do Atlas (`.vd-esqueleto`) pulsa seis vezes e para | `app/demos/demos.css`; `app/vidro.css` | `08-imagem-e-fotografia.md`, seção 8; `09-movimento.md`, seção 5 (pausa do que se move sozinho) |
-| O simulador consulta o `iframe` a cada 400 ms, com o diálogo aberto | `painel-do-simulador.tsx`, linha 296 | `15-desempenho.md` (nada de script por quadro sem motivo) |
-| "Costumam", perto do vocabulário vedado, no texto de Dúvidas | `conteudo/site.ts` | `10-texto-e-conteudo.md` |
-| A variante `vidro` sem uso de `button.tsx` e o `Toggle` sem uso de `toggle.tsx` (arquivos marcados "Não alterar": só com pedido) | `components/ui/button.tsx`; `components/ui/toggle.tsx` | `13-tecnologia-e-estrutura.md`, seção 3.5 |
-| A barbearia repete "esquina" em quatro títulos; o fundo `#0b0908` é o quase-preto tingido da lista | Barbearia de exemplo | `11-anti-ia.md` |
-| O Spell UI adaptado vai sem o aviso da licença MIT, que o kit passou a levar em 13.10.2026 (`LICENCA-spell-ui.txt`) | `components/ui/spell/` | `../componentes/README.md`, seção 3.2 |
-| **Corrigidos em 08.10.2026:** o marcador "agora" da entrega do depósito saía da tela de manhã (a régua o achou às 7h31); as telas de erro chamavam o `reset` (agora o `retry` do Next 16.3) e a de erro global saía na serifa padrão | `estado-da-loja.tsx`; `app/error.tsx`; `app/global-error.tsx`; `app/globals.css` | `web/CLAUDE.md`, 08.10; e, com o trabalho de 05.10 que entrou na fusão de 08.10, deixaram de ser defeito a imagem de compartilhamento com a Archivo Black (o site voltou às fontes de 28/08, mantidas em 08.10) e o total do montador abaixo de 375 px (os totais se empilham abaixo de 400 px) |
-
-**C. Melhorias propostas pela auditoria técnica de 07.10** (P1 e P2): o layout raiz próprio dos exemplos (a folha global e o Inter do Atlas nas 16 páginas deles); o recorte do Newsreader; a esfera da capa num `<canvas>`; as ilhas só de ponteiro no ócio; o movimento reduzido lido 18 vezes e não reativo; os 36 seletores `[data-*]` sem tipo; o `<dialog>` nativo no menu; o cartão de compartilhamento PNG de 158 KB; o cache das imagens de `public/`, hoje com `max-age=0` (`15-desempenho.md`, seção 5.13); a leitura de tons do cabeçalho por `IntersectionObserver`, no lugar dos 13 pontos lidos a cada ~80 ms (`06-cor-forma-e-superficie.md`, seção 10); o JSON-LD sem `@id`, `logo` e `sameAs`; `engines` e `.nvmrc`; o `package.json` perdido na raiz (commit `7cf1e85`) e os pacotes estranhos; o `eslint-disable` órfão; vendorizar o `shadcn/tailwind.css`; portar como teste os 12 scripts de `.playwright-mcp/` (fora do git). Onde no kit: `13-tecnologia-e-estrutura.md`, seções 3 e 10; `15-desempenho.md`, seções 5 e 6.
-
-**C2. Pendências de desempenho abertas:** a hidratação seletiva, bloqueada pelo erro 418 (TBT de 716 ms de mediana com CPU 20×); o CLS intermitente de 0,1, em uma execução de sete com CPU 20×; o texto do LCP esmaecido nas aberturas (já listado na seção 5.B). Onde no kit: `15-desempenho.md`, seções 5.14 e 6; `../qualidade/12-ataque-a-falhas.md`, seção 5.
+**B, C e C2.** Os defeitos, as melhorias e as pendências de desempenho do site do Atlas e dos sites de exemplo dele saíram do kit em 03.11.2026, a pedido do usuário ("Isso é sobre o Atlas, pode retirar da pasta produção"): estão em `atlas--pendencias-do-site.md`, na raiz do repositório do site do Atlas, com as linhas da tabela A que eram do site.
 
 **D. A confirmar**
 - **Na Hostinger:** se o plano Business virou o "Unlimited" (150 bancos MySQL de 3 GB, 3 GB de RAM: levantamento de 07.10 [FU]); a cota de web apps (fontes de terceiros dizem 5, contando o do Atlas); as tarefas agendadas para app Node; se o Analytics aparece para web apps Node; a versão do banco (`SELECT VERSION()`); se um domínio estacionado serve um app Node; o tempo de guarda dos registros; o cabeçalho do IP do visitante; o encaminhamento do host para a checagem de origem das Server Actions; os limites de e-mail (em "View limits"); o modo de forçar o HTTPS; o tempo até o app dormir e a partida a frio; o backup.
@@ -229,7 +188,6 @@ O que segue abaixo ficou **fora** da ratificação, por ser da sociedade, do com
 - **Medições nunca feitas:** o INP; o Lighthouse da barbearia ainda dá de 87 a 89 de desempenho.
 - **Conferências nunca feitas:** nenhum teste em aparelho real, nem num Android de entrada nem no Safari do iPhone (até 08.10.2026 só o Chromium foi exercitado; `../qualidade/14-ciclo-de-qa.md`, seção 4); o teclado e o leitor de tela não foram exercitados de ponta a ponta (`../qualidade/06-acessibilidade.md`, seções 4, 5 e 7).
 - **O Node 22.17.1 da máquina** está abaixo do que o Lighthouse 13 declara (22.19).
-- **O site do Atlas em versão estática** nunca foi medido (cota de web apps e partida a frio; `18-publicacao-e-manutencao.md`, seção 1).
 - **Fontes que pedem o texto integral** antes do primeiro cliente do nicho:
   - a CFN 856/2026;
   - a CFMV 1.649/2025;
@@ -349,11 +307,11 @@ Onde no kit: `18-publicacao-e-manutencao.md`; `14-funcionalidades/05-agenda.md`;
 
 **O que ficou pendente:**
 1. **Levar o kit ao repositório principal.** Esta cópia (`producao/` da pasta de implantação) está fora do git (`.gitignore`); a fonte do kit é o repositório do Atlas. As mudanças desta seção vão para lá e para o registro de decisões (`documentacao/atlas--decisoes.md`).
-2. **Compilar a base antes de levar o kit ao repositório principal** (item 1). Em `producao/base`: `npm run build`, `npm run estatico`, `node ferramentas/texto-do-robo.mjs http://localhost:3100` e `curl -s` do `/llms.txt`, do `/sitemap.xml` e do `/robots.txt`, e a régua contra o `out/`. O `llms.txt` no export, o `import` do `next.config.ts` pelo mapa e pela rota e os `{" "}` no HTML não foram vistos num build: o build do coordenador é o da raiz, cujo `tsconfig.json` exclui `producao/`, e não cobre a base.
-3. **Os gestos do kit** (`../gestos/components/ui/spell/`) ainda levam a cópia decorativa no HTML (`14-funcionalidades/01-base-de-todo-site.md`, seção 19, item 2).
+2. **Compilar a base antes de levar o kit ao repositório principal** **Resolvido em 03.11.2026** (seção 14): o build, o export e o `llms.txt`, o `sitemap.xml` e o `robots.txt` conferidos no exemplo e no modo cliente. Antes: (item 1). Em `producao/base`: `npm run build`, `npm run estatico`, `node ferramentas/texto-do-robo.mjs http://localhost:3100` e `curl -s` do `/llms.txt`, do `/sitemap.xml` e do `/robots.txt`, e a régua contra o `out/`. O `llms.txt` no export, o `import` do `next.config.ts` pelo mapa e pela rota e os `{" "}` no HTML não foram vistos num build: o build do coordenador é o da raiz, cujo `tsconfig.json` exclui `producao/`, e não cobre a base.
+3. **Os gestos do kit** **Resolvido em 03.11.2026** (seção 14): a cópia sai do HTML e vem do CSS (`::before` com `data-texto`). Antes: (`../gestos/components/ui/spell/`) ainda levam a cópia decorativa no HTML (`14-funcionalidades/01-base-de-todo-site.md`, seção 19, item 2).
 4. **Conferir na Hostinger,** no primeiro site estático publicado, o `AddDefaultCharset` do `.htaccess` [NV].
 5. **Medir** os pedidos ao `/llms.txt` nos registros de acesso da Hostinger, no site do Atlas (`13-tecnologia-e-estrutura.md`, seção 9.3).
-6. **O aprovador** (Matheus Castro Oliveira de Luna Garcia) confirma: a conta do Search Console no nome do cliente, com o Atlas como usuário; a regra do título interno e a da definição no início, que mudam o texto dos sites (em vigor até lá: `10-texto-e-conteudo.md`, seção 10).
+6. **O aprovador** (Matheus Castro Oliveira de Luna Garcia) confirma: **Resolvido em 03.11.2026** (seção 14): tudo no nome do cliente, e as duas regras de texto confirmadas. Antes: a conta do Search Console no nome do cliente, com o Atlas como usuário; a regra do título interno e a da definição no início, que mudam o texto dos sites (em vigor até lá: `10-texto-e-conteudo.md`, seção 10).
 
 ### 8.1 · As correções da crítica de fora (16.10.2026)
 
@@ -401,9 +359,9 @@ Um crítico de fora da frente revisou o que está acima e achou sete defeitos. C
 **O que ficou pendente:**
 1. **A base.** Resolvido em 02.11.2026 (seção 10).
 2. **O porte da régua dos quadros** num site feito pela base: o gatilho do menu foi conferido em 02.11.2026 (seção 10); o da figura, A CONFIRMAR no primeiro site (`../qualidade/02-regua.md`, seção 12).
-3. **O site do Atlas não cumpre a regra na navegação.** A implementação de 27 e 28.10.2026 não entrou no site: a verificação não a aprovou (a navegação instável, sobretudo na mesa, e a faixa fixa do montador de `/orcamento` fora da tela durante a entrada). A entrada por CSS só chegou com o redesenho de 02.11.2026 (seção 10), e a navegação segue fora da porta no celular 4×. Decisão do aprovador, Matheus Castro Oliveira de Luna Garcia.
+3. **Saiu do kit em 03.11.2026** (é do site do Atlas): `atlas--pendencias-do-site.md`, no repositório do site.
 4. **O aparelho real e o Safari:** nenhuma medida da régua dos quadros num celular de verdade.
-5. **As demos** continuam com o `<ViewTransition>` e reprovam a navegação no celular; a medida de 22.10.2026 é anterior à reversão do site e precisa ser refeita.
+5. **Saiu do kit em 03.11.2026** (é do site do Atlas): `atlas--pendencias-do-site.md`, no repositório do site.
 6. **Levar o kit ao repositório principal** e registrar a decisão em `documentacao/atlas--decisoes.md`, como na seção 8, pendência 1.
 
 ---
@@ -447,13 +405,13 @@ Um crítico de fora da frente revisou o que está acima e achou sete defeitos. C
 - depois da conferência independente do diff, numa cópia gerada pelo `novo-site`, com o `AGENTS.md` vazio, a ilha, o `ShimmerText` e duas passivas: `tsc` e o build sem erro; `conferir-passivas` e `conferir-pausa` aprovam, e duas peças de 10 px em seções de 5.000 px reprovam (0 de 13 telas); a ilha só liga o que entra depois de a rolagem parar 200 ms; o menu da base se mede sem ajuste, em `/servicos`, no celular 4×, numa sessão.
 
 **O que ficou pendente:**
-1. **O roteiro de medida do nível Apple** (`medirTela`, em `R10/scripts/medir-referencias.mjs`) não está no kit. As faixas da seção 4.2 de `19-o-padrao-atlas.md` se conferem à mão ou pelo crítico.
-2. **A cobertura das passivas** só rodou no autoteste, em páginas de prova; nenhuma página real a mediu com a ferramenta. O site do Atlas, medido por outro roteiro, não a cumpre (26% a 36%): a decisão é do aprovador.
+1. **O roteiro de medida do nível Apple** **Resolvido em 03.11.2026** (seção 14): o nível Apple saiu do kit; o dos sites de cliente é o dos premiados (`19-o-padrao-atlas.md`, seção 4.2). Antes: (`medirTela`, em `R10/scripts/medir-referencias.mjs`) não está no kit. As faixas da seção 4.2 de `19-o-padrao-atlas.md` se conferem à mão ou pelo crítico.
+2. **Saiu do kit em 03.11.2026** (é do site do Atlas): `atlas--pendencias-do-site.md`, no repositório do site.
 3. **A base antes da troca** não foi medida: "todo site novo reprova" vem das demos, e não de uma medida na base. O ganho sobre a versão anterior fica sem número.
-4. **A entrada e o rodapé:** o rodapé da base fica no layout, fora da caixa. Em página curta, a página nova passa sobre ele nos 400 ms da entrada [I]; não se viu nem se mediu.
+4. **A entrada e o rodapé:** **Resolvido em 03.11.2026** (seção 14): não se sobrepõem: o rodapé fica 96 px abaixo, e a entrada desloca 60 px; a regra está em `../base/app/globals.css`. Antes: o rodapé da base fica no layout, fora da caixa. Em página curta, a página nova passa sobre ele nos 400 ms da entrada [I]; não se viu nem se mediu.
 5. **Registrar a mudança em `documentacao/atlas--decisoes.md`,** no repositório principal (a pasta não existe nesta cópia), e **as demos e as referências** continuam com o `<ViewTransition>`.
-6. **As passivas em todo plano.** O kit segue `19-o-padrao-atlas.md`, seção 9, e tirou o ambiente dos "fora do plano" de `03-planos.md`, seções 3.8 e 4.8, que vinham de antes da decisão de 09.10.2026. Levar as passivas ao Essencial e ao Profissional muda o que esses planos entregam: pede a confirmação do aprovador.
-7. **`conferir-passivas` não mede** o mecanismo diferente nem o limite de 10 s (`09-movimento.md`, seção 14): ficam com o crítico de fora.
+6. **As passivas em todo plano.** **Resolvido em 03.11.2026** (seção 14): em todo plano, só onde o objeto as pede, sem cota. Antes: O kit segue `19-o-padrao-atlas.md`, seção 9, e tirou o ambiente dos "fora do plano" de `03-planos.md`, seções 3.8 e 4.8, que vinham de antes da decisão de 09.10.2026. Levar as passivas ao Essencial e ao Profissional muda o que esses planos entregam: pede a confirmação do aprovador.
+7. **`conferir-passivas` não mede** **Resolvido em 03.11.2026** (seção 14): o limite de 10 s fica como está, conferido pelo crítico de fora. Antes: o mecanismo diferente nem o limite de 10 s (`09-movimento.md`, seção 14): ficam com o crítico de fora.
 
 ## 11. Registro de 03.11.2026: os ajustes depois do R10
 
@@ -474,8 +432,67 @@ Um crítico de fora da frente revisou o que está acima e achou sete defeitos. C
 **O que não entrou.** O fundo frio, os cartões brancos, a agenda de `/orcamento` e o azul de `/o-atlas`: são do Atlas. A medida de "34 para 58 quadros por segundo numa GPU fraca" não está no código nem no commit; o kit cita a do código (de 25–27% para 69–80% das batidas em dia).
 
 **O que ficou pendente:**
-1. **A ilha de `../gestos/`** não tem a conta de `aVista` nem o limiar de 0,5 (`09-movimento.md`, seção 14): a cópia se atualiza no próximo porte, com a medida.
+1. **A ilha de `../gestos/`** **Resolvido em 03.11.2026** (seção 14): a ilha faz a conta do `aVista`, com `threshold: [0, 0.5]`. Antes: não tem a conta de `aVista` nem o limiar de 0,5 (`09-movimento.md`, seção 14): a cópia se atualiza no próximo porte, com a medida.
 2. **A base** não tem vidro nem o limitante da rolagem: o site que puser vidro sob a página o acrescenta (`15-desempenho.md`, seção 5.19).
 3. **O ponto cego do pé da tela** foi visto só no perfil de celular da régua (390 × 844, densidade 3). A régua não o desconta: a leitura é a do item 8 de `../qualidade/08-desempenho.md`, seção 11.
 4. **Registrar a rodada em `documentacao/atlas--decisoes.md`,** no repositório principal (a pasta não existe nesta cópia).
-5. **A `medir` da régua dos quadros** não tem um passo antes da carga: o `extras.aoCarregar` roda depois dela e não serve à retirada por CSS (`../qualidade/08-desempenho.md`, seção 11, item 6).
+
+## 12. Registro de 03.11.2026: o MCP do Figma obrigatório
+
+**A origem.** Pedido do usuário de 03.11.2026: "adicione o mcp do figma como obrigatorio". Até então, o Figma era opcional, pelo conector da conta, para o cliente que trouxesse desenho (`../claude/ferramental.md`, seção 4).
+
+| O que entrou | Onde no kit |
+|---|---|
+| O MCP remoto do Figma no conjunto de todo projeto, com o comando | `../claude/ferramental.md`, seção 2 |
+| A conferência do ambiente o acusa como bloqueio | `../ferramentas/conferir-ambiente.mjs` |
+| O aviso no comando de entrada: o bloqueio e a autenticação | `../claude/novo-site.md`, "Antes de tudo" |
+
+**A fonte.** O comando e o endereço vêm da documentação do Figma (https://developers.figma.com/docs/figma-mcp-server/remote-server-installation), consultada em 03.11.2026 só por busca; a página não foi aberta.
+
+**O que ficou pendente:**
+1. **Em que etapa o Figma entra:** resolvido em 03.11.2026 (seção 14): no design inicial da etapa 4, "para que você entenda como está o design", e nas portas da etapa 6.
+2. **Registrar em `documentacao/atlas--decisoes.md`,** no repositório principal, e levar a mudança ao repositório do Atlas: **Resolvido em 03.11.2026** (seção 14): o kit em `/Users/Matheus/atlas-digital/producao/` e as decisões em `documentacao/atlas--decisoes.md` de `/Volumes/Matheus/Projetos/atlas-digital/`, sem commit. esta cópia do kit está num projeto, e a regra da pasta manda corrigir o kit lá.
+
+## 13. Registro de 03.11.2026: as habilidades, o formulário 2.0 e o prompt-modelo
+
+**A origem.** Pedido do usuário de 03.11.2026: "baixe as habilidades recomendadas e adicione isso ao kit, nesse projeto você tem essa permissão", a comparação do kit com o formulário de briefing que estava na raiz (`atlas-formulario-briefing.html`, v1.0) e "um prompt-modelo que foque em engenharia e design e o kit de produção". A permissão vale para esta cópia do kit; a regra da pasta ("Não edite esta pasta por cliente") cede a ela, e a mudança deve chegar ao repositório do Atlas.
+
+| O que entrou | De onde | Onde no kit |
+|---|---|---|
+| Quatro habilidades de Emil Kowalski (animation-performance, break-ui, review-animations, prototype), cópia fiel com a nota de precedência do kit e a licença | `emilkowalski/skill`, commit `f1090be` (02.11.2026), MIT, lido inteiro em 03.11.2026 | `claude/skills/`; `claude/ferramental.md`, seção 2.1; o `novo-site` as copia para `.claude/skills/` |
+| As outras doze de Kowalski e a taste-skill, fora, com o motivo | Os dois repositórios, lidos em 03.11.2026 (`Leonxlnx/taste-skill`, commit `12af471`) | `claude/ferramental.md`, seção 5 |
+| O formulário de briefing 2.0, impresso, com a numeração e os campos ● do modelo | O v1.0 da raiz, comparado com `02-briefing.md` e `modelos/briefing.md` | `esteira/modelos/formulario-de-briefing.html`; `02-briefing.md`, "A folha impressa" |
+| No modelo e na conferência: a transcrição sem dedução, a duração por plano, o WhatsApp salvo, o rascunho que não é o site publicado, o aviso da coleta, a autorização do tutor, a Presença sem titular | As lacunas achadas na comparação | `esteira/modelos/briefing.md`; `02-briefing.md`, seções 2 e 3 |
+| O prompt-modelo de abertura e o estudo que o fundamenta | As fontes da Anthropic de 03.11.2026 (`claude/estudo-de-prompts.md`, seção 1) | `claude/prompt-modelo.md`; `claude/estudo-de-prompts.md` |
+
+**O que o v1.0 tinha de errado contra o kit:** pedia depoimento (retirado em 08.10.2026), e-mail profissional e o módulo "Conteúdo" (de vigência indefinida), "mínimo de seis fotos" (hoje, três por categoria do nicho) e 20 a 30 minutos (hoje, por plano); oferecia a Presença sem titular; e afirmava, sem fonte, que "prova social é o que mais converte". **Faltava:** a razão social e o CNPJ, o modelo de negócio, o que o negócio não faz, o prazo de resposta, o prédio, o registro do conselho e o responsável técnico, a direção de arte (os opostos e as cinco referências), a autorização de imagem escrita, a hora do material completo, os campos de plano, de módulo e de nicho, e a autorização do estudo de caso.
+
+**O que ficou pendente:**
+1. **O formulário v1.0 na raiz deste projeto** foi apagado a pedido do usuário (03.11.2026), e o `novo-site` volta a reconhecer o projeto vazio (`ferramentas/novo-site.mjs`, `DO_COMECO`). A cópia do repositório do Atlas (`comercial/atlas--formulario-briefing.html`) segue lá até a troca pelo 2.0.
+2. **A taste-skill como leitura** **Resolvido em 03.11.2026** (seção 14): os arquivos não se copiam; K7 e K8 entraram em `11-anti-ia.md`. Antes: (`references/tells.md`, `critique.md`): não foi copiada ao kit; fica a indicação em `claude/ferramental.md`, seção 5.
+3. **Levar ao repositório do Atlas** e registrar em `documentacao/atlas--decisoes.md`, com as seções 12 e 13 deste arquivo. **Resolvido em 03.11.2026** (seção 14): o kit em `/Users/Matheus/atlas-digital/producao/` e as decisões em `documentacao/atlas--decisoes.md` de `/Volumes/Matheus/Projetos/atlas-digital/`, sem commit.
+
+## 14. Registro de 03.11.2026, à noite: as pendências decididas pelo usuário
+
+**A origem.** As respostas do usuário à lista de pendências de 03.11.2026 (A1 a A4, B1 a B6, C1 a C5), com a regra: o que é só do site do Atlas sai do kit.
+
+| Pendência | A decisão | O que mudou |
+|---|---|---|
+| A1, o Figma | "principalmente no design inicial dentro dos projetos, para que você entenda como está o design"; obrigatório em todo tipo de design | `../01-roteiro-da-sessao.md`, etapa 4, passo 6, e as portas da mesa e do celular da etapa 6; `../claude/commands/direcao-de-arte.md`; `modelos/identidade.md` ("Arquivo do Figma"); `../claude/prompt-modelo.md` |
+| A2, o repositório principal | "Faça isso, ao repositório principal" | O kit levado a `/Users/Matheus/atlas-digital/producao/`, onde ele é mantido no git; o registro em `documentacao/atlas--decisoes.md` de `/Volumes/Matheus/Projetos/atlas-digital/`, a única cópia com essa pasta. Nenhum commit |
+| A3, o formulário | "Troque para o novo formulário" | `comercial/atlas--formulario-briefing.html` do repositório principal trocado pelo 2.0 |
+| A4, a taste-skill | Usar só se não houver conflito futuro | Os arquivos não se copiam; K7 e K8 em `11-anti-ia.md` |
+| B1, a base compilada | "Caso sejam preferíveis para uma melhor produção" | Build e export sem erro, numa cópia do exemplo; no exemplo, o `sitemap.xml` vazio e o `llms.txt` com o nome e o selo, como manda a base; no modo cliente, 5 páginas no mapa e o `llms.txt` inteiro |
+| B2, a cópia decorativa | "Retire, pois estamos focados no CSS, no caso Tailwind CSS" | `../gestos/components/ui/spell/`: a onda, a tarja e o brilho levam a cópia por `before:content-[attr(data-texto)]`; no texto que o robô lê, cada palavra uma vez (conferido no build) |
+| B3, o `aVista` | — (não pedia login) | `../gestos/components/ilhas/controle-do-movimento.tsx` |
+| B4, o nível | "seria nível os sites como o Awwwards, o Apple seria apenas para o site principal do Atlas" | `19-o-padrao-atlas.md`, seção 4.2, reescrita; o texto do nível Apple segue no histórico do git de `/Users/Matheus/atlas-digital` (commit `77c31f0` e anteriores) |
+| B5, a entrada e o rodapé | "Analise e veja se é necessária" | Não é: 96 px de margem contra 60 px de deslocamento; a regra, no comentário de `../base/app/globals.css` |
+| B6, os 10 s | "Mantenha o limite para 10s" | `09-movimento.md`, seção 14, item 5, sem mudança |
+| C1, as passivas | "analise se isso é bom no geral ou é IA Slop, caso seja, retire" | A passiva do objeto fica; a cota sai (`09-movimento.md`, seção 14; `../qualidade/regua/conferir-passivas.mjs`: a cobertura vira aviso, e o autoteste confere os treze casos) |
+| C2, a busca | "Sim, tudo no nome do cliente" | `21-busca-e-ias.md`, seção 9, item 2; `10-texto-e-conteudo.md`, seção 10 |
+| C3 a C5, o site do Atlas | "pode retirar da pasta produção" | As pendências do site saíram desta seção 5 e das seções 9 e 10, para `atlas--pendencias-do-site.md`, na raiz de `/Users/Matheus/atlas-digital` |
+
+**Um defeito achado na conferência.** O site recém-criado pelo `novo-site` reprovava 2 dos 11 testes de unidade, também com o kit anterior a esta rodada (conferido no `HEAD` de `/Users/Matheus/atlas-digital`): `testes/lib.test.ts` esperava o domínio e o nome de fábrica (`exemplo.com.br`), e o `novo-site` grava os da ordem. Os testes passaram a ler `conteudo/negocio.ts`; a base e o site novo aprovam 11 de 11.
+
+**O que não saiu, e por quê.** As pendências da sociedade (o contador, o CNPJ, o advogado, a Presença, a Hostinger) seguem na seção 5: travam a publicação de todo site de cliente. Também ficam no kit as citações do site do Atlas como origem de uma regra ("medido no site do Atlas") e `../referencias/atlas/`, o código de estudo: são a prova das regras, e não pendências.
+

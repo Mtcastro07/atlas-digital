@@ -32,7 +32,7 @@ A regra de uso está em `producao/esteira/09-movimento.md`, seção 6: o gesto e
 3. **O ambiente** (o brilho [C]; as passivas, em todo plano):
    - ponha o `<ControleDoMovimento />` no cabeçalho, ao lado do menu;
    - toda peça de ambiente nova entra na lista de pausa, no fim do `gestos.css`;
-   - as passivas usam as classes `.mov-passiva` e `.mov-constante`, que já param pelas três regras do fim do `gestos.css`, e se conferem com `conferir-passivas` (`producao/esteira/09-movimento.md`, seção 14). Elas valem em todo plano: a ilha de pausa e esse bloco entram também no Essencial e no Profissional;
+   - as passivas usam as classes `.mov-passiva` e `.mov-constante`, que já param pelas três regras do fim do `gestos.css`, e se conferem com `conferir-passivas` (`producao/esteira/09-movimento.md`, seção 14). Elas valem em todo plano, só onde um objeto do ofício as pede, sem cota (desde 03.11.2026): havendo uma, a ilha de pausa e esse bloco entram também no Essencial e no Profissional;
    - o `ShimmerText` já leva `.mov-constante`: o brilho não conta como passiva, e a conferência não o acusa.
 4. **As cores** vêm dos tokens da identidade:
    - a tarja: `--primary` e `--primary-foreground`;

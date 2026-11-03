@@ -399,7 +399,7 @@ O que precisa estar verde para o rascunho sair e para a publicação; o detalhe 
 | Peça-assinatura com reserva sem WebGL e parada com movimento reduzido | — | — | ✓ |
 | A barreira do travamento no aparelho médio, sem falha (régua, passagem 2b; `15-desempenho.md`, seção 2.1); LCP e TBT só medidos, sem meta nem porta de regressão (desde 08.10.2026, à noite, decisão de Gabriel Ribeiro Ota Yida) | ✓ | ✓ | ✓ |
 | A régua dos quadros sem falha, em duas sessões: 60 quadros por segundo na rolagem, no menu, na navegação e na figura, no celular 4× e na mesa (`15-desempenho.md`, seção 2.4; desde 28.10.2026) | ✓ | ✓ | ✓ |
-| As passivas sem falha: a contagem, as três paradas, a amplitude e a cobertura (`conferir-passivas`; `09-movimento.md`, seção 14; desde 02.11.2026) | ✓ | ✓ | ✓ |
+| As passivas, onde houver, sem falha: as três paradas e a amplitude, sem cota (`conferir-passivas`; `09-movimento.md`, seção 14; revisto em 03.11.2026) | ✓ | ✓ | ✓ |
 | Leitor de tela (roteiro curto) | ✓ | ✓ | ✓ |
 | Porta de publicação da conformidade | ✓ | ✓ | ✓ |
 | Aparece nas buscas e nas IAs: `robots.txt`, mapa do site, `llms.txt`, JSON-LD e o texto que o robô lê (`21-busca-e-ias.md`, seção 11; DECIDIDO em 16.10.2026) | ✓ | ✓ | ✓ |

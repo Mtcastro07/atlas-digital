@@ -178,40 +178,27 @@ Nove sites premiados no Awwwards entre junho e outubro de 2026, lidos pelo CSS e
 
 **O que não se copia deles:** as omissões. Premiado não é gabarito de acessibilidade. Nas notas de desenvolvimento conferidas, a acessibilidade é a menor nota; só um dos oito CSS declara o movimento reduzido; dois pintam a seleção de texto com contraste de 2,55 e 3,69:1. Leve deles a direção; o foco visível, o movimento reduzido e o contraste vêm desta esteira.
 
-### 4.2 · O nível Apple: poucas coisas muito grandes
+### 4.2 · O nível de site premiado: a régua dos sites de cliente
 
-> **DECIDIDO** para o site do Atlas em 27.10.2026, pelo aprovador, Matheus Castro Oliveira de Luna Garcia ("nivel apple"), e levado a todo site novo em 02.11.2026 ("mudancas que valem para novos projetos"). É composição, e não recurso: **vale em todo plano**. As faixas abaixo foram medidas em 27.10.2026 nas páginas da Apple, da Stripe, da Linear, da Raycast e da GitHub, a 1440 e a 390 px (origem em `99-rastreabilidade.md`, seção 10). São referência de ofício, e não teto; quem as lê é a avaliação e o crítico de fora.
+> **DECIDIDO** em 03.11.2026, pelo usuário: o nível dos sites de cliente e de exemplo é o dos sites premiados no Awwwards; **o nível Apple fica só no site do Atlas** e saiu do kit ("No caso, seria nível os sites como o Awwwards, o Apple seria apenas para o site principal do Atlas"). Até então, valia aqui o nível Apple de 02.11.2026, com faixas medidas na Apple, na Stripe, na Linear, na Raycast e na GitHub; o texto dele está no histórico do repositório do Atlas (`99-rastreabilidade.md`, seção 14). Vale em todo plano: é composição, e não recurso.
 
-**A regra em uma frase.** Poucas coisas muito grandes, e o tempo de uma coisa ocupa a tela. Muitas peças pequenas e bem-feitas, em caixas estreitas e com o corpo comum, não somam o nível: na crítica do primeiro site feito para isso, as peças aprovaram e o conjunto não.
+**A referência** são os premiados de negócio físico da seção 4.1, lidos pelo CSS e pelo HTML publicados, e os premiados que o arquivo do nicho estuda (`nichos/<nicho>.md`, seção 8). Eles calibram o ofício, nunca a direção (`12-inspiracao-e-referencias.md`): a identidade continua saindo do assunto do cliente.
 
-| # | Regra | A faixa de referência |
+| # | Regra | De onde |
 |---|---|---|
-| 1 | **Uma coisa por tela,** nas páginas que vendem | Por tela, na mediana: até 4 blocos de texto, até 60 palavras e 1 título com 2× o corpo ou mais |
-| 2 | **A cena toma a tela.** Além da capa, pelo menos uma cena por página que ocupa a tela inteira, fora da caixa de conteúdo. E um objeto em 70% das telas que vendem | O objeto tem 5% da tela ou mais; é foto, desenho, CSS 3D, canvas ou o que o plano der (seção 9). Uma peça grande no lugar de três pequenas |
-| 3 | **A escala da letra** não cai depois da capa | Título de cena: de 4 a 5,6× o corpo na mesa e de 2,5 a 3,4× no celular. Título de seção: de 2,3 a 2,8× |
-| 4 | **O lide é uma peça** | De 19 a 21 px na mesa e de 17 a 19 px no celular; entrelinha de 1,35 a 1,45; até 48 caracteres por linha (`05-tipografia.md`, seção 8) |
-| 5 | **A medida curta** | O piso da faixa de `05-tipografia.md`, seção 8: perto de 45 caracteres por linha nas colunas |
-| 6 | **O ar não cresce:** o que falta é objeto, e não espaço (marca L10) | *Padding* de seção de 160 a 288 px na mesa e de 96 a 176 px no celular; os vazios de 48 px ou mais com mediana de 80 a 130 px; o vazio em até 25% da altura da página |
-| 7 | **O campo quieto:** um campo liso por cena, sem degradê entre cenas; a cor saturada mora no objeto e na ação, dentro da estratégia de cor do `identidade.md` (seção 5) | Nas referências, de 0% a 13% dos pixels com cor saturada |
-| 8 | **O número como objeto:** só medida com fonte, com o rótulo acima e a nota; uma ocorrência por página | De 2,3 a 4,7× o corpo; no máximo dois lado a lado, ou três numa comparação (a fileira de 3 ou 4 é a marca L2) |
-| 9 | **Nenhum trecho parece documento** (marca P4). A página seca vira tabela de ofício, ou uma cena. O esqueleto "rótulo e parágrafo" sobre fundo claro, em página após página, volta a ser molde (`20-repeticao-dentro-do-site.md`) | O rótulo em até ¼ da largura; o valor de 35 a 60 caracteres por linha; um filete entre grupos; "—" para a ausência; um desenho por grupo. Numa tabela de comparação, o cabeçalho preso na mesa; no celular, duas colunas com seletor e o cabeçalho em até 20% da tela |
-| 10 | **O detalhe em todo controle** | Transição de 0,1 a 0,32 s em cor e opacidade; foco visível; a pausa para o que se move |
-| 11 | **Zero terceiros e zero cookies** | Nada a acrescentar: é o que o kit já exige, e nenhuma referência cumpre |
+| 1 | **A abertura mostra o lugar ou o ofício,** na largura toda, com a foto ou o vídeo do próprio cliente; sem foto, a tipografia em escala faz o papel (`08-imagem-e-fotografia.md`) | Seis dos nove premiados da seção 4.1 |
+| 2 | **O título é imagem:** de 80 a 100 px na mesa, entrelinha de 0,9 a 1, espaçamento de −0,02 a −0,05 em; no celular, piso de 40 a 56 px, por `clamp` | Seção 4.1 |
+| 3 | **Uma ou duas famílias,** com a escala da letra mantida depois da capa | Seção 4.1; `05-tipografia.md` |
+| 4 | **O ritmo pela inversão do tema** entre as seções, dentro da estratégia de cor do `identidade.md` (seção 5) | Seção 4.1 |
+| 5 | **Uma assinatura atravessa a página** (a cortina entre páginas, o cabeçalho que se inverte, o grão, a faixa da estação), em três cenas ou mais | Seção 4.1; seção 3 |
+| 6 | **Nenhuma capa em duas colunas com um cartão ao lado** (marca L1) | Seção 4.1; `11-anti-ia.md` |
+| 7 | **Nenhum trecho parece documento** (marca P4): a página seca vira tabela de ofício ou cena, e o esqueleto "rótulo e parágrafo" em série volta a ser molde | `11-anti-ia.md`; `20-repeticao-dentro-do-site.md` |
+| 8 | **O detalhe em todo controle:** a resposta de cada papel, o foco visível, a pausa do que se move | `09-movimento.md`, seção 13; `16-acessibilidade.md` |
+| 9 | **Zero terceiros e zero cookies** | `00-principios.md` |
 
-**O que muda nas regras do estudo ao entrar no kit:**
-- **A família:** as referências usam uma família com dois cortes. No site, valem as famílias de `05-tipografia.md`.
-- **A medida:** as referências medem de 35 a 45 caracteres nas colunas e até 85 no lide centrado. Vale a faixa de `05-tipografia.md`, seção 8, que é a da porta: de 45 a 75, nunca acima de 80, e o lide até 48.
-- **A cor:** as faixas da regra 7 vêm de referências sem campo de cor. No campo de cor (seção 5), a cor da marca é o campo, com a sangria total e o degradê com direção dentro da cena; da regra 7, ficam um campo por cena e nenhum degradê entre cenas.
-- **A troca de página:** o estudo pedia View Transitions, que reprovam os 60 quadros. Vale a entrada por CSS (`13-tecnologia-e-estrutura.md`, seção 3.7, regra 4).
-- **A revelação ligada à rolagem:** só por CSS (`animation-timeline` dentro de `@supports`), só `transform` e `opacity`, uma por página, parada com movimento reduzido, e só no plano que a tem (`09-movimento.md`, seção 5, item 7).
+**O que não se copia dos premiados:** as omissões. Nos premiados lidos, a acessibilidade é a menor nota, o movimento reduzido quase nunca é declarado e a seleção de texto tem contraste baixo (seção 4.1); a rolagem com inércia e a seção que prende a rolagem continuam vedadas (`09-movimento.md`, seção 5).
 
-**O que não se copia da Apple:** o vídeo de produto, onde não há produto para filmar; a família própria de 1 MB; o movimento por script em centenas de elementos, que reprova no celular 4×; o texto em degradê (marca C5); o aforismo em dois tempos em série (marca X1); e a seção que prende a rolagem (marca M8).
-
-**Objetivo.** O premium se lê pela escala e pela contenção. O que tira do nível é a página cheia de coisas médias: de 9 a 15 blocos por tela, onde a mediana das referências é de 2 a 3,5.
-
-**Como conferir.**
-- **A crítica:** o crítico de fora (seção 8.5) responde por página "qual é a coisa grande de cada tela" e aponta o trecho que parece documento e a capa que continua o molde (marca L1).
-- **A contagem:** nas capturas a 1440 e a 390 px, os blocos e as palavras por tela, as mídias de 5% da tela ou mais, e a razão do título (a régua, bloco 6, já avisa a capa abaixo de 4×). O roteiro de medida do estudo não está no kit: PENDENTE (`99-rastreabilidade.md`, seção 10).
+**Como conferir.** O crítico de fora (seção 8.5) responde, por página, se o conjunto aguenta o lado a lado com os premiados do nicho e qual é a peça que o sustenta; aponta o trecho que parece documento e a capa que continua o molde. A régua (bloco 6) já avisa a capa com o título abaixo de 4× o corpo.
 
 **Rosto de pessoa real não recebe filtro.** Duotônico, normalização e correção de luz mudam o tom da pele, e quase sempre mudam mais no rosto mais escuro (no site do Atlas, +33% em nível de cinza; medido e desfeito em 02.11.2026). Para unificar retratos, só o recorte, e o cinza do rosto medido antes e depois. O que une de verdade é uma foto nova, com a mesma luz e o mesmo fundo.
 
@@ -539,7 +526,7 @@ A assinatura aparece na primeira tela do celular, na versão de toque (`09-movim
 - **a entrada orquestrada;**
 - **as transições;**
 - **as passivas** (`09-movimento.md`, seção 14);
-- **o nível Apple** (seção 4.2);
+- **o nível de site premiado** (seção 4.2);
 - **a interface no mundo da marca;**
 - **o detalhe.**
 
@@ -591,8 +578,8 @@ O material de cada nicho (o azulejo, a louça, o latão, a cerâmica) é de todo
 - [ ] A estratégia de cor declarada e medida (`medir-cor`); os fundos de cenas vizinhas com ΔL de 0,04 ou mais.
 - [ ] O roteiro de cenas aprovado antes do código: uma ideia por cena; duas cenas seguidas mudam duas de quatro coisas; o evento tipográfico em toda cena; uma cena de sangria além da capa.
 - [ ] A assinatura em três cenas ou mais e na primeira tela do celular.
-- [ ] O nível Apple (seção 4.2): a coisa grande de cada tela; uma cena que toma a tela além da capa; nenhum trecho que pareça documento. Se o nicho admitir, o código da seção 4.3.
-- [ ] As passivas, com a cobertura medida (`09-movimento.md`, seção 14).
+- [ ] O nível de site premiado (seção 4.2): a abertura com o lugar ou o ofício, o título como imagem, a assinatura que atravessa a página, nenhum trecho que pareça documento, o lado a lado com os premiados do nicho. Se o nicho admitir, o código da seção 4.3.
+- [ ] As passivas onde um objeto do ofício as pede, sem cota (`09-movimento.md`, seção 14); a cobertura, lida como aviso.
 - [ ] A interface no mundo da marca, com todos os estados; o vocabulário de interação, uma resposta por papel; no Completo, algo que responde à mão em toda cena; o momento de cada página, sem a mesma entrada em todas; nenhum efeito nem molde em série, com a contagem por página (`20-repeticao-dentro-do-site.md`).
 - [ ] Três rodadas de lapidação em cada passe, com o crítico de fora e o registro.
 - [ ] O teste da vitrine com o veredito, nunca "pendente".

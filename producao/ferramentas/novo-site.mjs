@@ -12,7 +12,7 @@
 // - a base (producao/base/), copiada para a raiz, e a régua portada (portar-regua.mjs);
 // - os documentos do projeto, a partir de producao/esteira/modelos/: CLAUDE.md, briefing.md, identidade.md,
 //   decisoes.md e conteudo/ROTEIRO.md, além do AGENTS.md vazio;
-// - os comandos do Claude Code (.claude/commands/) e a pasta registros/, dos relatórios de QA.
+// - os comandos e as habilidades do Claude Code (.claude/commands/, .claude/skills/) e a pasta registros/, dos relatórios de QA.
 // A pasta producao/ fica como veio: é a biblioteca do projeto, e uma versão nova do kit entra trocando a pasta.
 // Nada do cliente vai para dentro dela.
 // Preenche o que a ordem já sabe: domínio, WhatsApp, telefone, nome, plano, modo de saída e se é exemplo.
@@ -122,6 +122,7 @@ const raiz = noProprioProjeto ? PROJETO_DO_KIT : pastaValida ? path.join(destino
 const raizJaExistia = Boolean(raiz) && existsSync(raiz);
 const antes = new Set(raizJaExistia ? readdirSync(raiz) : []);
 const comandosJaExistiam = existsSync(path.join(raiz, ".claude/commands"));
+const habilidadesJaExistiam = existsSync(path.join(raiz, ".claude/skills"));
 if (!noProprioProjeto && raizJaExistia && antes.size) erros.push(`a pasta ${raiz} já existe e não está vazia`);
 if (erros.length) {
   console.error("Ordem de produção com erro (nada foi criado):\n" + erros.map((e) => `  - ${e}`).join("\n"));
@@ -166,6 +167,8 @@ try {
   execFileSync(process.execPath, [path.join(KIT, "ferramentas/portar-regua.mjs"), raiz], { stdio: "inherit" });
   // Os comandos do Claude Code, no lugar em que ele os procura.
   copiar(path.join(KIT, "claude/commands"), path.join(raiz, ".claude/commands"));
+  // As habilidades da produção (claude/ferramental.md, seção 2): cópia fixa, com a licença e a nota de precedência do kit.
+  copiar(path.join(KIT, "claude/skills"), path.join(raiz, ".claude/skills"));
   // Os relatórios de QA do site ficam fora do kit, para o kit poder ser trocado sem levar nada do projeto.
   mkdirSync(path.join(raiz, "registros"), { recursive: true });
   writeFileSync(
@@ -277,6 +280,7 @@ ${nomeDoc(semComentarioDeModelo(modelo("briefing.md")))}`,
   else {
     for (const e of readdirSync(raiz)) if (!antes.has(e)) rmSync(path.join(raiz, e), { recursive: true, force: true });
     if (!comandosJaExistiam) rmSync(path.join(raiz, ".claude/commands"), { recursive: true, force: true });
+    if (!habilidadesJaExistiam) rmSync(path.join(raiz, ".claude/skills"), { recursive: true, force: true });
   }
   console.error(`A criação falhou, e o que ela criou foi apagado: ${erro.message}`);
   process.exit(1);

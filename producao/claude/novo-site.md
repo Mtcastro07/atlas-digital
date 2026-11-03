@@ -12,14 +12,14 @@ O pedido do usuário: $ARGUMENTS
 Você vai produzir um site do Atlas Digital pelo kit de produção (`producao/`). **Siga os documentos; não improvise processo.**
 
 **Antes de tudo: o ambiente e as permissões.** Num projeto virgem, é a primeira coisa da sessão.
-- **Confira a máquina:** `node producao/ferramentas/conferir-ambiente.mjs`. Ela diz o que bloqueia (o Node 22, o npm, o Chrome), o que é recomendado (o `typescript-language-server`, o `poppler`, o ferramental do projeto) e o comando de cada um. Se nem o `node` existir, peça ao usuário o Node 22 (`brew install node@22`, no macOS, ou https://nodejs.org/) e pare.
+- **Confira a máquina:** `node producao/ferramentas/conferir-ambiente.mjs`. Ela diz o que bloqueia (o Node 22, o npm, o Chrome e, desde 03.11.2026, o MCP do Figma no `.mcp.json`), o que é recomendado (o `typescript-language-server`, o `poppler`, o ferramental do projeto) e o comando de cada um. Se nem o `node` existir, peça ao usuário o Node 22 (`brew install node@22`, no macOS, ou https://nodejs.org/) e pare.
 - **O que é da máquina, o usuário instala.** O Claude Code nunca instala programa na máquina. Dê o comando pronto para o usuário rodar no próprio Claude Code, com `!` na frente (por exemplo, `! brew install poppler`): a saída fica na conversa. Depois, rode a conferência de novo.
   - **O item que bloqueia** para a produção antes do passo 7 (instalar e compilar);
   - **o recomendado** não para nada. Diga o que se perde sem ele: sem o `poppler`, as normas em PDF longo não abrem; sem o ferramental, o navegador do agente e a documentação viva.
 - **Avise, de saída, as permissões que a sessão vai pedir,** para o usuário não estranhar:
   - **rodar fora do sandbox:** o que usa a rede (o `npm ci`, as fontes, o mapa) e o que abre o Chrome (a régua, as capturas, as fotos);
   - **no repositório do Atlas,** escrever na pasta nova, fora do repositório;
-  - **na sessão seguinte,** aprovar o `.claude/settings.json` e o `.mcp.json` do projeto, se o ferramental foi instalado.
+  - **na sessão seguinte,** aprovar o `.claude/settings.json` e o `.mcp.json` do projeto, se o ferramental foi instalado, e autenticar o Figma (`/mcp` → figma → Authenticate).
 - **Ofereça, sem impor, a lista de permissões da produção** (`producao/claude/ferramental.md`, seção 3): os comandos de rotina do site, para o Claude Code não perguntar a cada build. Ela só se grava com o sim do usuário, acrescentada ao que já existe.
 - **Uma mensagem só:** o ambiente, as permissões e as perguntas do pedido (passo 3) vão juntos, cada item com a sua recomendação.
 

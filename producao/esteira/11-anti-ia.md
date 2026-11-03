@@ -348,6 +348,8 @@ Fontes da lista:
 | K4 | **Faixa que rola sem fim**; faixa de logotipos "confiam em nós" | Letreiro contínuo (`marquee`) | Impeccable ("exige uma atenção que não conquistou e esconde metade do conteúdo"); avaliação de 07.10 | [FU] |
 | K5 | **Emoji ou glifo como ícone** | Emoji na navegação, no cartão, no botão | Krebs; piso de ofício ("ícones são desenhados, num traço e num peso") | [V] |
 | K6 | **Ponto pulsando e cursor piscando de enfeite** | Bolinha que pulsa sem dado vivo (`pulsing-dot`); cursor piscando sem campo de texto (`blinking-cursor`) | Impeccable | [FU] |
+| K7 | **Enfeite de ferramenta de desenho** (desde 03.11.2026) | Mira, marca de corte, alça de seleção, guia tracejada e régua como ornamento da página. Não é a marca quando é o próprio ofício (a gráfica, o escritório de arquitetura) e sai do mundo da marca (`19-o-padrao-atlas.md`) | taste-skill, `references/tells.md`, seção 4 (Leonxlnx, commit `12af471`, lida em 03.11.2026) | [FU] |
+| K8 | **Metadados de agência** (desde 03.11.2026) | Hora local, coordenadas, clima, carimbo de versão, "©2026 — Role" espalhados pela tela. Não é a marca o dado vivo que serve a quem visita: o horário de cada dia e o "aberto agora" (`14-funcionalidades/01-base-de-todo-site.md`) | Idem; soma-se à K1 | [FU] |
 
 **Exceção (K6):** o pulso cabe num indicador ligado a dado vivo de verdade (o "aberto agora" calculado pelo relógio, como o estado da loja do depósito).
 

@@ -35,12 +35,19 @@ export function ControleDoMovimento() {
     // Ligar em pleno arremesso derruba a rolagem (seção 14): o que entra espera a página parar 200 ms; o que sai para na hora.
     const entrando = new Set<Element>();
     let espera: ReturnType<typeof setTimeout> | undefined;
+    // Só começa o que está à vista de fato (seção 14, "O mecanismo"; no site do Atlas, `aVista`, 03.11.2026):
+    // metade do elemento na tela, ou um quarto da altura da tela se ele for maior. O que só encosta na borda espera.
+    const aVista = (elemento: Element) => {
+      const r = elemento.getBoundingClientRect();
+      return Math.min(r.bottom, innerHeight) - Math.max(r.top, 0) >= Math.min(r.height / 2, innerHeight / 4) - 1;
+    };
     const ligar = () => {
       for (const elemento of entrando) {
+        if (!aVista(elemento)) continue;
         elemento.removeAttribute("data-fora");
         elemento.setAttribute("data-visivel", "");
+        entrando.delete(elemento);
       }
-      entrando.clear();
     };
     const adiar = () => {
       clearTimeout(espera);
@@ -57,7 +64,7 @@ export function ControleDoMovimento() {
         }
       }
       adiar();
-    });
+    }, { threshold: [0, 0.5] });
     document.querySelectorAll("[data-ambiente]").forEach((elemento) => observador.observe(elemento));
     window.addEventListener("scroll", adiar, { passive: true });
     return () => {

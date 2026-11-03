@@ -15,6 +15,8 @@ Os comandos do Claude Code da produção (`/nome`, com o argumento depois).
 | `commands/conformidade.md` | Idem | Etapa 10: a porta de publicação, item por item, com a prova |
 | `commands/publicar.md` | Idem | Etapas 8 e 11: o rascunho ou o site, **só com pedido explícito**, e a conferência no ar |
 | `commands/manutencao.md` | Idem | Etapa 13: a mudança de texto, preço, horário ou foto, com a régua antes de ir ao ar |
+| `skills/` | Em cada site (o `novo-site` copia para `.claude/skills/`) | As quatro habilidades de Emil Kowalski da produção (animation-performance, break-ui, review-animations, prototype), cópia fixa com a licença e a nota de precedência do kit (`ferramental.md`, seção 2.1) |
+| `prompt-modelo.md` | Em cada projeto novo de cliente | O prompt de abertura, para colar no Claude Code com o formulário de briefing preenchido; o estudo que o fundamenta está em `estudo-de-prompts.md` |
 | `ferramental.md` | Em cada máquina e em cada projeto | Os plugins, o servidor MCP, os conectores e as habilidades da produção, com os comandos de instalação; o que fica de fora, e por quê; o que avaliar depois (08.10.2026) |
 
 **Regra dos comandos.** Cada comando aponta para o roteiro (`../01-roteiro-da-sessao.md`) e para a esteira; não repete regra que mora lá. Se uma regra mudar, ela muda no documento, e o comando continua certo.

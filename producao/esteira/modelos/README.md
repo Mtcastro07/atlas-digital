@@ -6,6 +6,7 @@ Os arquivos que se copiam para o repositório do cliente na etapa 2 (`../01-proc
 |---|---|---|---|
 | `claude-do-projeto.md` | `CLAUDE.md`, na raiz (o nome do modelo é outro para o Claude Code não o carregar como instrução ao abrir esta pasta) | Etapa 2, e o "Estado" a cada etapa | Sócio de desenvolvimento, com o Claude Code |
 | `briefing.md` | `briefing.md`, na raiz | Etapa 1, no estabelecimento | Gabriel Ribeiro Ota Yida |
+| `formulario-de-briefing.html` | Nada no repositório: é a folha impressa da visita (2.0, 03.11.2026), com a numeração do `briefing.md`; transcreve-se para ele, e a foto das páginas vai para `material/` | Etapa 1, no estabelecimento | Gabriel Ribeiro Ota Yida |
 | `decisoes.md` | `decisoes.md`, na raiz | Etapa 3 (as normas) e sempre que algo se decide | Quem decidir |
 | `identidade.md` | `identidade.md`, na raiz | Etapa 4, antes de qualquer componente | Claude Code propõe; Matheus Castro Oliveira de Luna Garcia aprova |
 | `conteudo.md` | `conteudo/ROTEIRO.md` | Etapa 5, antes de escrever `conteudo/*.ts` | Claude Code |
