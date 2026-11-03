@@ -12,8 +12,6 @@ import { capa, simulador } from "@/conteudo/site";
  * etapas, na derrota logo abaixo (cada fato uma vez).
  */
 const fatos = capa.destaques.slice(0, 2);
-/** De onde vem cada ponto, na vertical: chegam de lados diferentes e convergem na linha. */
-const PONTOS_DE_FORA = ["-0.5rem", "0.625rem", "-0.125rem", "0.875rem", "0.25rem"];
 const { demonstrativo } = capa;
 const site = simulador.sites.find((s) => s.id === demonstrativo.site)!;
 const plano = planos.find((p) => p.id === site.plano)!;
@@ -56,7 +54,7 @@ const ultimaDoNome = site.nome.slice(site.nome.lastIndexOf(" ") + 1);
  * esfera. Os dois fatos, em parágrafos (até então, uma lista): o aparelho
  * fica entre eles na ordem do texto.
  * Desde 28/10 (R10), sob "0 cookies e rastreadores neste site.", a frase para o
- * leigo, a barreira e a conferência feita neste aparelho, na carga (a ilha
+ * leigo, os dois itens marcados (até 03/11, a barreira) e a conferência feita neste aparelho, na carga (a ilha
  * Conferencia), numa frase só (até 03/11, embaixo, "Como a conferência é feita", que saiu com a
  * frase da regra de segurança: o pedido de texto simples). A legenda do aparelho, que leva o vínculo do
  * exemplo, sobe de 14 a 16 px (nada que decide abaixo de 16 px) e, no celular, desce para baixo
@@ -119,16 +117,19 @@ export function Destaques() {
             da grade: são a prova dele). */}
         <div className="-mt-6 grid max-w-[34rem] grid-cols-[minmax(0,1fr)] gap-4 lg:col-start-2 lg:row-start-3">
           <p className="max-w-[46ch] text-corpo text-pretty text-muted-foreground">{provaDosDestaques.leigo}</p>
-          {/* A barreira (a passiva P27): o que vem de outro endereço chega até a linha e se dissolve ali. A frase acima diz o mesmo. */}
-          <div aria-hidden="true" className="inicio-barreira" data-ambiente data-passiva="inicio-barreira">
-            <span className="inicio-barreira-casa">{provaDosDestaques.barreira[0]}</span>
-            <span className="inicio-barreira-fora">
-              {PONTOS_DE_FORA.map((y, i) => (
-                <span key={y} className="inicio-barreira-ponto mov-passiva" style={{ "--vez": i, "--y": y } as React.CSSProperties} />
-              ))}
-              <span className="inicio-barreira-rotulo">{provaDosDestaques.barreira[1]}</span>
-            </span>
-          </div>
+          {/* Os dois itens marcados (a passiva P27, desde 03/11): a marca de cada um acende, um depois do outro. */}
+          <ul className="inicio-garantias" data-ambiente data-passiva="inicio-garantias">
+            {provaDosDestaques.garantias.map((g, i) => (
+              <li key={g}>
+                <span aria-hidden="true" className="inicio-garantia-marca mov-passiva" style={{ "--vez": i } as React.CSSProperties}>
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3.5 8.5l3 3 6-7" />
+                  </svg>
+                </span>
+                {g}
+              </li>
+            ))}
+          </ul>
           <Conferencia textos={provaDosDestaques.conferencia} />
         </div>
       </Envelope>

@@ -369,6 +369,8 @@
     flex: none;
     width: 2.25rem;
     height: 2.25rem;
+    /* Centrado no objeto do momento, logo acima (5,5rem): (5,5 − 2,25) / 2 (03/11, a pedido). */
+    margin-inline-end: 1.625rem;
     border-radius: 50%;
     color: var(--foreground);
     box-shadow: inset 0 0 0 1px rgb(15 42 71 / 0.35);

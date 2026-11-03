@@ -57,8 +57,17 @@ export const primeiroDia = {
   escala: ["0 h", "6 h", "12 h", "18 h", "24 h"],
 } as const;
 
-/** Etapa 4: a legenda da janela do site no ar (as páginas e as datas). */
-export const legendaDoSite = "As páginas deste site e a data da última atualização.";
+/** Etapa 4: o site no ar, com a rapidez à frente (03/11, a pedido; até então, as páginas deste site e as datas). Os
+ *  marcos são os prazos das etapas (`trabalho.passos`); 15 dias úteis são três semanas. */
+export const noAr = {
+  selo: "No ar",
+  marcos: [
+    ["Briefing completo", "início"],
+    ["Rascunho", "24 h"],
+    ["Site no ar", "7 a 15 dias úteis"],
+  ],
+  legenda: "Do briefing completo ao seu endereço: em geral, em até três semanas.",
+} as const;
 
 /** Etapa 3: a frase grande (01-processo.md:180: "o cliente aprova por escrito (mensagem basta)"). */
 export const fraseDaAprovacao = "Para aprovar, basta uma mensagem.";

@@ -1,4 +1,4 @@
-import { legendaDoSite, primeiroDia, visita } from "@/conteudo/paginas/o-trabalho";
+import { noAr, primeiroDia, visita } from "@/conteudo/paginas/o-trabalho";
 
 // Os objetos das etapas de O trabalho (R10, 28/10; em escala de cena desde 02/11): um por etapa, cada um tirado
 // de um dado do kit, sem foto nem exemplo inventado. O CSS mora em app/paginas/o-trabalho.css (.ot-*).
@@ -17,7 +17,7 @@ export function MarcaObrigatoria() {
 export function FichaDaVisita({ idDaRegra }: { idDaRegra: string }) {
   return (
     <figure aria-describedby={idDaRegra} className="ot-ficha" data-ambiente data-passiva="o-trabalho-ficha">
-      <div className="ot-ficha-folha mov-passiva">
+      <div className="ot-ficha-folha">
         <p className="ot-ficha-titulo">
           {visita.titulo} <span>{visita.recorte}</span>
         </p>
@@ -130,29 +130,36 @@ export function PrimeiroDia() {
 }
 
 /**
- * Etapa 4: o site no ar, numa janela de navegador: o endereço e as páginas, cada uma com a data em que mudou, as mesmas do
- * mapa do site (ultimaAlteracao, lib/datas-das-paginas.ts). A linha desta página, em bronze. A passiva P25: uma luz desce
- * pelas páginas. Sem data no build (sem git, ou clone raso), a janela não aparece: data nenhuma é melhor que data
- * errada. Desde 03/11, sem a legenda que explicava o mapa do site (o pedido de texto simples): a legenda diz só o que a janela mostra.
+ * Etapa 4: o site no ar, numa janela de navegador, com a rapidez à frente (03/11, a pedido; até então, as páginas deste
+ * site com as datas). O endereço, o "No ar" grande e o trilho do briefing ao ar, com os três marcos. A passiva P25: a
+ * barra corre o trilho depressa e assenta, o ponto do "No ar" acende quando ela chega, e a luz desce pela janela. Sem
+ * movimento, a barra fica cheia e o ponto aceso.
  */
-export function SiteNoAr({ endereco, linhas }: { endereco: string; linhas: { nome: string; data: string; estaPagina: boolean }[] }) {
+export function SiteNoAr({ endereco }: { endereco: string }) {
   return (
     <figure className="ot-site">
       <div className="ot-janela" data-ambiente data-passiva="o-trabalho-site" aria-hidden="true">
         <p className="ot-janela-endereco">{endereco}</p>
         <div className="ot-janela-visor">
           <span className="ot-janela-luz mov-passiva" />
-          <ul>
-            {linhas.map(({ nome, data, estaPagina }) => (
-              <li key={nome} className={estaPagina ? "ot-janela-esta" : undefined}>
+          <p className="ot-no-ar">
+            <span className="ot-no-ar-ponto mov-passiva" />
+            {noAr.selo}
+          </p>
+          <div className="ot-no-ar-trilho">
+            <span className="ot-no-ar-curso mov-passiva" />
+          </div>
+          <ol className="ot-no-ar-marcos">
+            {noAr.marcos.map(([nome, quando]) => (
+              <li key={nome}>
                 <span>{nome}</span>
-                <span className="ot-janela-data">{data}</span>
+                <span className="ot-janela-data">{quando}</span>
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </div>
-      <figcaption className="mt-5 text-corpo text-muted-foreground">{legendaDoSite}</figcaption>
+      <figcaption className="mt-5 text-corpo text-muted-foreground">{noAr.legenda}</figcaption>
     </figure>
   );
 }

@@ -62,9 +62,9 @@ export function QuemFaz() {
   const { ordem, compromissos, etapas } = quemFazDetalhe;
   const socios = ordem.map((i) => quemFaz.socios[i]);
   const fotos = socios.map((socio) => fotoDe(socio.foto));
-  /** O nome, o retrato pequeno e o texto de quem responde pela etapa; os outros, com o nome e o que fazem nela. */
+  /** O nome e o texto de quem responde pela etapa; os outros, com o nome e o que fazem nela. Sem foto na rota (03/11). */
   const naEtapa = (papeis: (typeof etapas)[number]["papeis"]) => {
-    const pessoas = papeis.flatMap((papel, s) => (papel ? [{ ...papel, socio: socios[s], foto: fotos[s] }] : []));
+    const pessoas = papeis.flatMap((papel, s) => (papel ? [{ ...papel, socio: socios[s] }] : []));
     return { conduz: pessoas.find((p) => p.responde)!, participam: pessoas.filter((p) => !p.responde) };
   };
   return (
@@ -137,7 +137,6 @@ export function QuemFaz() {
                   const { conduz } = naEtapa(papeis);
                   return (
                     <td key={etapa}>
-                      {conduz.foto && <img src={conduz.foto.src} alt="" width={64} height={64} loading="lazy" decoding="async" className="vd-rota-rosto" />}
                       <strong className="vd-rota-nome">{conduz.socio.nome}</strong>
                       <span className="vd-rota-responde">{quemFazDetalhe.responde}</span> {conduz.texto}
                     </td>
@@ -168,7 +167,6 @@ export function QuemFaz() {
                 <li key={etapa}>
                   <h4>{etapa}</h4>
                   <div className="vd-rota-quem">
-                    {conduz.foto && <img src={conduz.foto.src} alt="" width={64} height={64} loading="lazy" decoding="async" className="vd-rota-rosto" />}
                     <strong className="vd-rota-nome">{conduz.socio.nome}</strong>
                   </div>
                   <p>

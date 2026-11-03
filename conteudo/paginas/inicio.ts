@@ -19,10 +19,11 @@ export const tituloDosPassos = ["Como o site é feito."];
 /** A prova dos destaques: a frase para o leigo e a conferência feita no aparelho (paginas/inicio.md, 2.2, e a
  *  crítica do esboço). A conferência é montada na ilha (components/ilhas/conferencia.tsx) com estas peças. */
 export const provaDosDestaques = {
-  barreira: ["Este site", "Outras empresas"],
-  /** O que isso dá ao cliente (03/11: até então, a frase da regra de segurança do site, para o leigo). O mesmo fato da
-   *  dúvida 10 (conteudo/duvidas.ts): sem rastreador e sem aviso de cookies. */
-  leigo: "O seu site sai igual: sem rastreador e sem aviso de cookies para o seu cliente aceitar.",
+  /** O que isso dá ao cliente, para o leigo: dois itens marcados (03/11, a pedido; até então, a "barreira", pontos que
+   *  paravam numa linha, que não se entendia). O mesmo fato da dúvida 10 (conteudo/duvidas.ts): nada gravado no
+   *  aparelho de quem visita, sem rastreador de terceiros e sem aviso de cookies. */
+  leigo: "O seu site sai igual:",
+  garantias: ["Sem aquela janela de “Aceitar cookies” para o seu cliente fechar.", "Nenhuma empresa de fora acompanha quem visita o site."],
   conferencia: {
     espera: "A conferência é feita neste aparelho, quando a página abre.",
     /** {hora} vira "às 9h05" (ou "à 1h05"); {cookies} e {arquivos}, a contagem por extenso abaixo. */

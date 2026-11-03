@@ -5,8 +5,8 @@ import path from "node:path";
 // A data de cada página no sitemap.xml, tirada do git (R10, fase 0, S13): a do último commit que tocou um dos arquivos
 // dela. O Google só aceita datas "consistently and verifiably accurate" (app/sitemap.ts). A Hostinger compila sem o
 // histórico, e um clone raso daria a todas a data do último commit: nesses casos vale conteudo/medidas/datas.json, as
-// mesmas datas gravadas por ferramentas/gravar-datas.mjs antes de publicar. Só o servidor a chama (o sitemap.xml e a
-// janela das páginas de /o-trabalho). Conferido por ferramentas/conferir-sistema.mjs, que acusa o arquivo atrasado.
+// mesmas datas gravadas por ferramentas/gravar-datas.mjs antes de publicar. Só o servidor a chama (o sitemap.xml; até
+// 03/11, também a janela das páginas de /o-trabalho). Conferido por ferramentas/conferir-sistema.mjs, que acusa o arquivo atrasado.
 const GRAVADAS = "conteudo/medidas/datas.json";
 
 // shortcut: o conteudo/site.ts e os CSS comuns entram na lista das sete, e uma mudança neles muda a data de todas (o

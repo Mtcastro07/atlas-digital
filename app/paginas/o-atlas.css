@@ -630,9 +630,11 @@
     color: var(--muted-foreground);
     text-wrap: pretty;
   }
+  /* Um pouco menor que a coluna (03/11, a pedido): de ~373 px a 304 px na mesa. */
   .vd-retrato {
     position: relative;
     display: block;
+    max-width: 19rem;
     aspect-ratio: 1;
   }
   .vd-retrato-foto {
@@ -693,13 +695,6 @@
   }
   .vd-etapas {
     display: none;
-  }
-  .vd-rota-rosto {
-    flex: none;
-    width: 4rem;
-    height: 4rem;
-    border-radius: 50%;
-    object-fit: cover;
   }
   .vd-rota-nome {
     display: block;
@@ -902,12 +897,6 @@
       line-height: 1.5;
       color: var(--muted-foreground);
       text-wrap: pretty;
-    }
-    .vd-etapas-conduz .vd-rota-rosto {
-      display: block;
-      width: 5.5rem;
-      height: 5.5rem;
-      margin-bottom: 0.875rem;
     }
     .vd-etapas-conduz .vd-rota-nome {
       margin-bottom: 0.5rem;
