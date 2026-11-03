@@ -38,7 +38,7 @@ export const textos = trabalho.passos.map((p) => p.texto);
 
 /** Etapa 1: a regra dos campos obrigatórios (02-briefing.md:18; 01-processo.md:82) e o formulário da visita. */
 export const visita = {
-  regra: ["Os campos com", "são obrigatórios: as 24 horas só começam a contar com todos preenchidos e o material entregue."],
+  regra: ["Os campos com", "são obrigatórios. As 24 horas começam a contar quando todos estão preenchidos e o material foi entregue."],
   titulo: "Formulário da visita",
   recorte: "trecho",
   // As perguntas literais do kit (02-briefing.md:35, :60, :61, :78 e :150).
@@ -57,12 +57,11 @@ export const primeiroDia = {
   escala: ["0 h", "6 h", "12 h", "18 h", "24 h"],
 } as const;
 
-/** Etapa 3: a frase grande (01-processo.md:180: "o cliente aprova por escrito (mensagem basta)"). */
-export const fraseDaAprovacao = "A aprovação vale por mensagem.";
+/** Etapa 4: a legenda da janela do site no ar (as páginas e as datas). */
+export const legendaDoSite = "As páginas deste site e a data da última atualização.";
 
-/** Etapa 4: a frase para o leigo, sob a linha <lastmod> do mapa do site (R10/paginas/o-trabalho.md, 4). */
-export const fraseDoMapa =
-  "Ao publicar, cada página entra no mapa do site, o arquivo em que o Google procura as páginas e a data em que cada uma mudou. A linha em bronze é a desta página.";
+/** Etapa 3: a frase grande (01-processo.md:180: "o cliente aprova por escrito (mensagem basta)"). */
+export const fraseDaAprovacao = "Para aprovar, basta uma mensagem.";
 
 /**
  * A régua da abertura, como hoje (D10): os trechos de figuras.regua, contados do briefing completo, com o valor junto
@@ -75,5 +74,6 @@ export const regua = {
     figuras.regua.trechos[1].rotulo,
     `Publicação, de ${publicacao.de} a ${publicacao.ate} ${figuras.regua.unidade}, em geral`,
   ],
-  legenda: "Dias úteis, contados do briefing completo.",
+  /** Só na coluna estreita, onde o "dias úteis" do fim da escala não cabe (app/paginas/o-trabalho.css). */
+  legenda: "Em dias úteis.",
 };

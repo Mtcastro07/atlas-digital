@@ -5,25 +5,23 @@ import { indiceDosNichos, textosDaPagina, tituloDosPublicos } from "@/conteudo/p
 import { paraQuem, simulador } from "@/conteudo/site";
 
 /**
- * Os três públicos, a legenda da carta (R10, 28/10, D5). Na mesa, o texto na coluna da esquerda, e a chapa da carta
- * presa ao lado (components/paginas/para-quem/figura.tsx): cada público, ao passar pelo meio da tela, acende o seu
- * bairro nela; sob a mão ou no foco, o marco se ergue e paira. O sinal de cada público é o marco da carta, o mesmo
+ * Os três públicos, a legenda da carta (R10, 28/10, D5). Na mesa, os três lado a lado sob o título; o sinal de cada um
+ * acende por sua vez, no ciclo de 12 s dos bairros da chapa (por tempo); sob a mão ou no foco, o marco do público na
+ * chapa (components/paginas/para-quem/figura.tsx) se ergue e paira. O sinal de cada público é o marco da carta, o mesmo
  * desenho. A frase em Archivo 400, a 21 px (18 no celular); o vínculo do exemplo em duas linhas, "Site de exemplo" a
- * 17 px e o nome a 21 px, com a seta de saída (abre outra aba). 120 px entre as entradas, na mesa: o passo para que
- * cada uma passe sozinha pela carta.
- * Até 28/10: o nome, o texto e o exemplo pronto em três colunas, com o ponto na cor do nicho (de 16/10), e, antes, três
- * blocos brancos com ícone (até 16/10, a marca L3).
- * A seção fica fora da contenção do final-2.patch (data-sem-poupar): a leitura liga a rolagem de cada entrada à carta.
- * Na mesa, 192 px de papel embaixo: com a terceira entrada no meio da tela, a chapa sobe uns 30 px (a 1.440 × 900) a 60
- * (a 768 de altura), com Icaraí e o código à vista; a prova do estudo deixava subir 38 px.
+ * 17 px e o nome a 21 px, com a seta de saída (abre outra aba).
+ * De 28/10 a 03/11, um sob o outro, com a chapa presa ao lado, e cada público acendia o seu bairro ao passar pelo meio
+ * da tela (o pedido de 03/11: nenhuma parte presa). Até 28/10: o nome, o texto e o exemplo pronto em três colunas, com o
+ * ponto na cor do nicho (de 16/10), e, antes, três blocos brancos com ícone (até 16/10, a marca L3).
  */
 export function ParaQuem() {
   return (
-    <Secao id="quem" tom="claro" data-sem-poupar className="vd-pq-legenda pb-8 md:pb-8 lg:pt-36 lg:pb-48">
+    <Secao id="quem" tom="claro" className="vd-pq-legenda pb-8 md:pb-8 lg:pt-36 lg:pb-36">
       <Envelope className="vd-pq-grade">
         <div className="vd-pq-texto">
           <Titulo linhas={tituloDosPublicos} />
-          <ul className="vd-pq-publicos">
+          {/* O ambiente da passiva da legenda (o sinal de cada público acende na vez dele; para-quem.css). */}
+          <ul className="vd-pq-publicos" data-ambiente data-passiva="para-quem-legenda">
             {paraQuem.publicos.map((publico, i) => {
               const site = simulador.sites.find((s) => s.plano === publico.plano);
               return (
@@ -33,7 +31,9 @@ export function ParaQuem() {
                   {site && (
                     // Vínculo comum, e não <Link>: o site de exemplo é outro site (a pré-busca traria as fontes dele).
                     <a href={site.caminho} target="_blank" rel="noopener" className="vd-pq-exemplo vd-acende">
-                      <span aria-hidden="true" className="vd-pq-sinal" />
+                      <span aria-hidden="true" className="vd-pq-sinal mov-passiva">
+                        <span className="vd-pq-onda mov-passiva" />
+                      </span>
                       <span className="flex flex-col">
                         <span className="text-corpo text-muted-foreground">{textosDaPagina.exemplo}</span>{" "}
                         <span className="vd-acende-nome text-destaque font-semibold text-foreground">

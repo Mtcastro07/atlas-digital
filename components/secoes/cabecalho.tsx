@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
  * de vidro líquido (da branchCto), quase transparente: flutua sobre a
  * página, e no Chromium com ponteiro fino o que passa por trás se dobra na
  * borda (ilha VidroLiquido). Ela se adapta ao que passa por trás
- * (ilhas/cabecalho-retratil.tsx): vidro escuro com texto creme sobre o
+ * (ilhas/cabecalho-retratil.tsx): vidro escuro com texto claro sobre o
  * escuro, vidro claro com texto navy sobre o claro. A pílula sai um pouco
  * da coluna (12 px de cada lado; 16 px a partir de 768 px). No hover, cada item do menu só clareia e um traço de bronze se
  * acende embaixo (desde 03/10, a pedido do usuário: sem as letras que

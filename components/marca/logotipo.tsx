@@ -43,6 +43,14 @@ export function Logotipo({ recorte, className, decorativo }: LogotipoProps) {
   );
 }
 
+/** Os quatro traços do globo: o contorno, o meridiano, a linha de cima e a de baixo. Também as peças de PecaDoLogotipo. */
+export const TRACOS_DO_GLOBO = [
+  <circle key="contorno" cx="163" cy="24" r="21.75" />,
+  <ellipse key="meridiano" cx="163" cy="24" rx="9.75" ry="21.75" />,
+  <line key="cima" x1="142.58" y1="16.5" x2="183.42" y2="16.5" />,
+  <line key="baixo" x1="142.58" y1="31.5" x2="183.42" y2="31.5" />,
+];
+
 /**
  * O globo do logotipo, recortado no próprio círculo e na cor do texto.
  * Também no símbolo da nota sobre o nome (secoes/quem-faz.tsx), dentro de
@@ -57,10 +65,7 @@ export function GloboDoLogotipo({ recorte }: { recorte: string }) {
         </clipPath>
       </defs>
       <g clipPath={`url(#${recorte})`} fill="none" stroke="currentColor" strokeWidth="4.5">
-        <circle cx="163" cy="24" r="21.75" />
-        <ellipse cx="163" cy="24" rx="9.75" ry="21.75" />
-        <line x1="142.58" y1="16.5" x2="183.42" y2="16.5" />
-        <line x1="142.58" y1="31.5" x2="183.42" y2="31.5" />
+        {TRACOS_DO_GLOBO}
       </g>
     </>
   );

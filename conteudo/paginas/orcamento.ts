@@ -7,7 +7,7 @@ import { reais } from "@/lib/moeda";
 
 /** O montador, em /orcamento e no início (R10, 28/10: a conta como objeto; as opções com o preço dentro). */
 export const montador = {
-  passos: { plano: "O plano.", modulos: "Os módulos, opcionais." },
+  passos: { plano: "Escolha o plano.", modulos: "Some extras, se quiser." },
   umaVez: "uma vez",
   porMes: "por mês",
   inclui: (plano: string) => `O ${plano} inclui`,
@@ -27,14 +27,12 @@ export const montador = {
   enviar: "Enviar no WhatsApp",
 };
 
-/** A rota direta (D12): a frase, e o código de lib/whatsapp.ts com a tradução. O comentário do código fica literal. */
+/** A rota direta (D12): a frase e as duas pontas do caminho da mensagem. */
 export const rota = {
-  titulo: "A conta é feita neste aparelho.",
-  texto: "Esta página não registra nada. A escolha e a mensagem só saem daqui no envio, direto para o WhatsApp.",
-  origem: "Este aparelho",
+  titulo: "Nada fica salvo.",
+  texto: "A mensagem só sai quando você envia, direto para o WhatsApp.",
+  origem: "Você",
   destino: "WhatsApp",
-  traducao: "Em português: o vínculo do WhatsApp já leva a mensagem escrita, sem passar por um servidor deste site.",
-  fonte: (arquivo: string, linhas: string) => `Do arquivo ${arquivo}, ${linhas}.`,
 };
 
 /**
@@ -48,18 +46,17 @@ export const precoCobre = {
     umaVez: {
       titulo: "Uma vez",
       sobre: "a criação",
-      frase: "Paga em duas parcelas iguais: metade no briefing e metade na publicação, com o site no ar.",
+      frase: "Em duas parcelas iguais: metade no briefing e metade com o site no ar.",
     },
     todoMes: {
       titulo: "Todo mês",
       sobre: "a mensalidade",
-      frase: "Começa no mês seguinte à publicação e cobre o que mantém o site no ar.",
+      frase: "Começa no mês seguinte à publicação e mantém o seu site no ar.",
     },
     aParte: {
       titulo: "À parte",
       sobre: "o que é novo",
-      frase:
-        "Páginas novas e funcionalidades novas são orçadas em separado, antes de serem feitas. A página adicional inclui a redação, a diagramação e a publicação.",
+      frase: "Página nova ou ferramenta nova tem orçamento à parte, antes de ser feita.",
     },
   },
   endereco: { legenda: "O endereço deste site, como exemplo." },
@@ -73,10 +70,10 @@ export const precoCobre = {
    * mesma semana do pedido"). O limite mensal de alterações segue pendente de decisão (7.1): não se promete.
    */
   mensalidade: [
-    { termo: "Certificado de segurança", definicao: "O que permite o https. Sem ele, o navegador mostra “Não seguro”. A renovação é automática e conferida todo mês." },
-    { termo: "Domínio", definicao: "O nome do negócio na internet, registrado no registro.br. O vencimento é acompanhado todo mês." },
-    { termo: "Hospedagem", definicao: "O servidor que entrega o site a quem o abre. A conferência mensal confirma que ele segue no ar." },
-    { termo: "Cópias de segurança", definicao: "A cópia do site fica à parte e é conferida todo mês. A cada trimestre, uma restauração de teste." },
+    { termo: "Certificado de segurança", definicao: "Sem ele, o navegador mostra “Não seguro”. A renovação é automática e conferida todo mês." },
+    { termo: "Domínio", definicao: "O nome do seu negócio na internet, registrado no registro.br. O vencimento é acompanhado todo mês." },
+    { termo: "Hospedagem", definicao: "O lugar onde o site fica guardado. Todo mês, o Atlas confere se ele continua no ar." },
+    { termo: "Cópias de segurança", definicao: "Uma cópia do site, guardada à parte e conferida todo mês. A cada três meses, o Atlas testa se a cópia funciona." },
     { termo: "Alterações", definicao: "Texto, preço ou horário. A mudança simples vai ao ar na mesma semana do pedido." },
   ],
 };

@@ -1,12 +1,10 @@
 import { Celular } from "@/components/aparelho/celular";
-import { Trecho } from "@/components/codigo/trecho";
 import { Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
 import { Conferencia } from "@/components/ilhas/conferencia";
-import { codigoDosDestaques } from "@/conteudo/paginas/inicio";
+import { provaDosDestaques } from "@/conteudo/paginas/inicio";
 import { planos } from "@/conteudo/planos";
 import { capa, simulador } from "@/conteudo/site";
-import { linhasDo, trechoDe } from "@/lib/trecho";
 
 /**
  * Só os dois primeiros destaques (os 10 blocos e os 0 cookies): os outros
@@ -14,15 +12,13 @@ import { linhasDo, trechoDe } from "@/lib/trecho";
  * etapas, na derrota logo abaixo (cada fato uma vez).
  */
 const fatos = capa.destaques.slice(0, 2);
+/** De onde vem cada ponto, na vertical: chegam de lados diferentes e convergem na linha. */
+const PONTOS_DE_FORA = ["-0.5rem", "0.625rem", "-0.125rem", "0.875rem", "0.25rem"];
 const { demonstrativo } = capa;
 const site = simulador.sites.find((s) => s.id === demonstrativo.site)!;
 const plano = planos.find((p) => p.id === site.plano)!;
 const inicioDoNome = site.nome.slice(0, site.nome.lastIndexOf(" "));
 const ultimaDoNome = site.nome.slice(site.nome.lastIndexOf(" ") + 1);
-
-/** O código do início (R10, 28/10): a primeira linha da política de conteúdo, lida do arquivo no build (lib/trecho.ts);
- *  se a linha mudar, o trecho muda com ela, e, se sumir, o build para. */
-const regra = trechoDe("next.config.ts", `"default-src 'self'",`);
 
 /**
  * Logo abaixo da capa, os destaques — o padrão de execução em fatos
@@ -59,13 +55,11 @@ const regra = trechoDe("next.config.ts", `"default-src 'self'",`);
  * pousa no papel, com a sombra de contato do lado oposto à luz, como a
  * esfera. Os dois fatos, em parágrafos (até então, uma lista): o aparelho
  * fica entre eles na ordem do texto.
- * Desde 28/10 (R10), o código, uma linha, verdadeiro: sob "0 cookies e
- * rastreadores neste site.", a primeira linha da regra de segurança do site
- * (next.config.ts), na ficha lisa (components/codigo/trecho.tsx), com a frase
- * para o leigo e a conferência feita neste aparelho, na carga (a ilha
- * Conferencia), numa frase só; embaixo, "Como a conferência é feita",
- * fechado. A legenda do aparelho, que leva o vínculo do exemplo, sobe de 14
- * a 16 px (nada que decide abaixo de 16 px) e, no celular, desce para baixo
+ * Desde 28/10 (R10), sob "0 cookies e rastreadores neste site.", a frase para o
+ * leigo, a barreira e a conferência feita neste aparelho, na carga (a ilha
+ * Conferencia), numa frase só (até 03/11, embaixo, "Como a conferência é feita", que saiu com a
+ * frase da regra de segurança: o pedido de texto simples). A legenda do aparelho, que leva o vínculo do
+ * exemplo, sobe de 14 a 16 px (nada que decide abaixo de 16 px) e, no celular, desce para baixo
  * do aparelho, na largura toda, com o aparelho a 220 px, no eixo.
  */
 export function Destaques() {
@@ -121,27 +115,21 @@ export function Destaques() {
           {segundo.valor} {segundo.rotulo}.
         </p>
 
-        {/* O código, a frase para o leigo e a conferência, sob o segundo fato (na mesa, 24 px mais perto dele que o vão
+        {/* A frase para o leigo e a conferência, sob o segundo fato (na mesa, 24 px mais perto dele que o vão
             da grade: são a prova dele). */}
         <div className="-mt-6 grid max-w-[34rem] grid-cols-[minmax(0,1fr)] gap-4 lg:col-start-2 lg:row-start-3">
-          <Trecho trecho={regra} tintas={[["'self'", "valor"], ["default-src", "nome"]]} />
-          <p className="max-w-[46ch] text-corpo text-pretty text-muted-foreground">{codigoDosDestaques.leigo}</p>
-          {/* A barreira (a passiva P27): o que vem de outro endereço corre até a linha e para ali. A frase acima diz o mesmo. */}
+          <p className="max-w-[46ch] text-corpo text-pretty text-muted-foreground">{provaDosDestaques.leigo}</p>
+          {/* A barreira (a passiva P27): o que vem de outro endereço chega até a linha e se dissolve ali. A frase acima diz o mesmo. */}
           <div aria-hidden="true" className="inicio-barreira" data-ambiente data-passiva="inicio-barreira">
-            <span className="inicio-barreira-casa">{codigoDosDestaques.barreira[0]}</span>
+            <span className="inicio-barreira-casa">{provaDosDestaques.barreira[0]}</span>
             <span className="inicio-barreira-fora">
-              <span className="inicio-barreira-fluxo mov-passiva" />
-              <span className="inicio-barreira-rotulo">{codigoDosDestaques.barreira[1]}</span>
+              {PONTOS_DE_FORA.map((y, i) => (
+                <span key={y} className="inicio-barreira-ponto mov-passiva" style={{ "--vez": i, "--y": y } as React.CSSProperties} />
+              ))}
+              <span className="inicio-barreira-rotulo">{provaDosDestaques.barreira[1]}</span>
             </span>
           </div>
-          <Conferencia textos={codigoDosDestaques.conferencia} />
-          <details className="inicio-como group">
-            <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 py-2.5 text-corpo font-semibold text-accent [&::-webkit-details-marker]:hidden">
-              <span aria-hidden="true" className="transition-transform duration-300 ease-atlas group-open:rotate-45">+</span>
-              {codigoDosDestaques.como.resumo}
-            </summary>
-            <p className="mt-1 max-w-[46ch] text-corpo text-pretty text-muted-foreground">{codigoDosDestaques.como.texto(regra.arquivo, linhasDo(regra))}</p>
-          </details>
+          <Conferencia textos={provaDosDestaques.conferencia} />
         </div>
       </Envelope>
     </Secao>

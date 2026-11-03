@@ -12,7 +12,7 @@
   /* ---------- o menu do celular (components/ilhas/painel-menu.tsx) ----------
      A lista rola sozinha, com 8 px de folga em cima e embaixo (o anel de
      foco da primeira e da última linha não é cortado). Os nomes a 28 px,
-     600; a página aberta em bronze, com "página atual" escrito no creme
+     600; a página aberta em bronze, com "página atual" escrito no claro
      (8,54:1 no pior pixel da linha; o apagado dava 3,89:1 sobre os fios). A
      luz da linha vai de borda a borda do painel. */
   /* O reflexo do vidro de antes (.vd-vidro::before), sem o desfoque: a luz entra pelo canto de cima, à esquerda, a 10%
@@ -133,7 +133,7 @@
      1. o índice das seis páginas, na voz do menu (Inter 600, com fios), de
         18 a 21 px (--text-destaque);
      2. o contato, a 17 px (o corpo), em navy, 500;
-     3. a descrição, o selo e o colofão, a 16/24 px, no apagado.
+     3. a descrição e o selo, a 16/24 px, no apagado.
      A grade de hoje (três colunas da mesma largura, desde 02/10), com o
      logotipo numa linha própria e as colunas alinhadas pela primeira linha
      de base (a nota de 16 px e os vínculos de 44 e 52 px começam juntos).
@@ -242,11 +242,6 @@
     line-height: 1.5;
     color: var(--muted-foreground);
   }
-  .cm-colofao-numero {
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
-    color: var(--foreground);
-  }
   @media (min-width: 768px) {
     .cm-rodape-grade,
     .cm-rodape-pe {
@@ -254,8 +249,7 @@
       column-gap: 2.5rem;
       align-items: baseline;
     }
-    .cm-rodape-grade > :first-child,
-    .cm-rodape-fim {
+    .cm-rodape-grade > :first-child {
       grid-column: 1 / -1;
     }
     /* Lado a lado, o fio de cima sai: com ele, a descrição descia 38 px abaixo do logotipo para casar a linha de base. */
@@ -272,9 +266,12 @@
     .cm-rodape-grade {
       margin-top: 1.75rem;
     }
-    .cm-rodape-grade > :first-child,
-    .cm-rodape-fim {
+    .cm-rodape-grade > :first-child {
       grid-column: auto;
+    }
+    /* Sob o contato, na terceira coluna (desde 03/11, sem o colofão, que ocupava a do meio). */
+    .cm-rodape-fim {
+      grid-column: 3;
     }
     .cm-rodape-pe {
       margin-top: 3rem;

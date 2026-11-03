@@ -117,7 +117,7 @@ export const nutricao = {
   notas: [
     "Horários livres da semana à vista.",
     "Agendamento em dois toques, sem troca de mensagens.",
-    "As etapas da consulta ocupam o lugar do depoimento, vedado pelo conselho da profissão.",
+    "No lugar do depoimento, que o conselho proíbe, as etapas da consulta.",
     "Endereço e modalidade de atendimento.",
   ],
 };

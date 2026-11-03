@@ -16,8 +16,8 @@ type SecaoProps = React.ComponentProps<"section"> & {
  * seguidas no mesmo tom não somam os dois respiros — a segunda começa sem
  * o de cima (app/globals.css). Assim, todo intervalo entre dois conteúdos
  * no mesmo tom mede o mesmo em todo o site (padronizado em 03/10).
- * Desde 16/10, toda seção leva a matéria do tom (.vd-materia, app/vidro.css):
- * o grão e a rampa da água, a fibra do papel, o grão da pedra.
+ * Toda seção leva a superfície do tom (.vd-materia, app/vidro.css): a rampa
+ * da água e a luz fria do canto nas claras.
  */
 export function Secao({ tom = "escuro", className, ...props }: SecaoProps) {
   return <section data-tom={tom} className={cn("vd-materia relative py-24 md:py-36", className)} {...props} />;

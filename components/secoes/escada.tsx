@@ -1,4 +1,3 @@
-import { Trecho } from "@/components/codigo/trecho";
 import { Abertura, Envelope, Secao } from "@/components/estrutura";
 import { IconeSeta } from "@/components/icones";
 import { EscadaDemo } from "@/components/ilhas/escada-demo";
@@ -11,15 +10,6 @@ import { sitesDeExemplo } from "@/conteudo/paginas/planos";
 import { planos } from "@/conteudo/planos";
 import { escada, simulador } from "@/conteudo/site";
 import { reais } from "@/lib/moeda";
-import { linhasDo, trechoDe } from "@/lib/trecho";
-
-/**
- * O código desta página (R10, 28/10): o cabeçalho que o servidor manda junto de cada página dos sites de exemplo,
- * lido de next.config.ts no build (a linha e o número dela são os verdadeiros; se a regra mudar, o build para). A
- * página o mostra como o servidor o manda, "X-Robots-Tag: noindex, nofollow".
- */
-const robots = trechoDe("next.config.ts", '{ key: "X-Robots-Tag", value: "noindex, nofollow" }');
-const [, chaveDoCabecalho, valorDoCabecalho] = /key: "([^"]+)", value: "([^"]+)"/.exec(robots.linhas[0])!;
 
 /**
  * "A diferença entre os planos se vê nos sites.": um site completo em cada
@@ -36,7 +26,7 @@ const [, chaveDoCabecalho, valorDoCabecalho] = /key: "([^"]+)", value: "([^"]+)"
  * A passiva P6 (R10): o aparelho respira na luz, inclinando sozinho (o invólucro
  * de fora em rotateY, o de dentro em rotateX, com períodos diferentes); sob o
  * ponteiro, ele para, e a inclinação do TiltCard assume.
- * No pé, o aviso de ficção e o cabeçalho que tira os sites do Google.
+ * No pé, o aviso de ficção e a frase de que os sites ficam fora do Google.
  */
 export function Escada() {
   // `abrir` é só do palco; o resto dos rótulos vai ao diálogo.
@@ -176,21 +166,9 @@ export function Escada() {
           </EscadaDemo>
         </Simulador>
 
-        {/* O pé: o aviso de ficção (os sites são de estabelecimentos fictícios), fora do diálogo que só abre com script,
-            e, ao lado, o cabeçalho que o servidor manda junto de cada página deles, com a frase para o leigo antes. */}
+        {/* O pé: o aviso de ficção (os sites são de estabelecimentos fictícios), fora do diálogo que só abre com script. */}
         <div className="vd-pe-dos-sites">
-          <div>
-            <p className="font-semibold">{textos.aviso}</p>
-            <p className="mt-2 max-w-[46ch] text-muted-foreground">{sitesDeExemplo.fraseDoCodigo}</p>
-          </div>
-          <Trecho
-            trecho={{ linhas: [`${chaveDoCabecalho}: ${valorDoCabecalho}`] }}
-            tintas={[
-              [valorDoCabecalho, "valor"],
-              [chaveDoCabecalho, "chave"],
-            ]}
-            legenda={`Do arquivo ${robots.arquivo}, ${linhasDo(robots)}.`}
-          />
+          <p className="font-semibold">{textos.aviso}</p>
         </div>
       </Envelope>
     </Secao>

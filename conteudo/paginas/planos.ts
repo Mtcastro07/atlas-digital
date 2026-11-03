@@ -28,18 +28,18 @@ const doCompleto = { essencial: false, profissional: false, completo: true };
  */
 export const tabela = {
   titulo: "O que cada plano inclui.",
-  lide: "O preço está publicado: sem proposta e sem reunião. Cada plano inclui o que o anterior inclui.",
+  lide: "O preço está aqui, sem precisar pedir proposta. Cada plano tem tudo o que o anterior tem.",
   /** O nome da coluna dos rótulos, só para o leitor de tela. */
   item: "Item",
   tarefa: {
-    rotulo: "A tarefa do site",
+    rotulo: "Para que serve",
     valores: {
       essencial: "Para ser encontrado e chamado.",
       profissional: "Para ser escolhido.",
-      completo: "Para o site trabalhar pelo negócio.",
+      completo: "Para o site trabalhar pelo seu negócio.",
     } as Record<Plano["id"], string>,
   },
-  criacao: { rotulo: "Criação", explicacao: "paga uma vez, em duas metades: no briefing e com o site no ar" },
+  criacao: { rotulo: "Criação", explicacao: "paga uma vez: metade no briefing e metade com o site no ar" },
   porMes: { rotulo: "Por mês", explicacao: "a partir do mês seguinte à publicação" },
   grupos: <Grupo[]>[
     {
@@ -48,11 +48,11 @@ export const tabela = {
         { rotulo: "Páginas", valores: { essencial: "Até 3", profissional: "Até 6", completo: "Sem limite" } },
         { rotulo: "Textos escritos pelo Atlas", valores: todos },
         { rotulo: "Botão de WhatsApp e mapa", valores: todos },
-        { rotulo: "Otimização para a busca local", explicacao: "o site preparado para quem procura o bairro no Google", valores: todos },
+        { rotulo: "Otimização para a busca local", explicacao: "preparado para quem procura o seu ramo no bairro, no Google", valores: todos },
         { rotulo: "Galeria e formulário", valores: doProfissional },
         {
-          rotulo: "Funcionalidade sob medida",
-          explicacao: "uma ferramenta do ofício, como a calculadora de materiais do depósito",
+          rotulo: "Ferramenta sob medida",
+          explicacao: "feita para o seu ramo, como a calculadora de materiais do depósito",
           valores: { essencial: false, profissional: "Uma", completo: "Duas" },
         },
       ],
@@ -61,7 +61,7 @@ export const tabela = {
       titulo: "O movimento",
       linhas: [
         { rotulo: "Conteúdo que aparece ao rolar e troca suave de página", valores: todos },
-        { rotulo: "Galeria de fotos que se passa com o dedo, cabeçalho de vidro e menu que marca a página aberta", valores: doProfissional },
+        { rotulo: "Galeria de fotos para deslizar com o dedo, cabeçalho de vidro e menu que mostra a página aberta", valores: doProfissional },
         { rotulo: "Todos os efeitos de movimento", explicacao: "como os deste site, que é do plano Completo", valores: doCompleto },
       ],
     },
@@ -70,12 +70,12 @@ export const tabela = {
       linhas: [
         {
           rotulo: "Domínio, hospedagem, certificado e cópias de segurança",
-          explicacao: "o endereço próprio, o lugar onde o site fica guardado, o que permite o https e a cópia guardada do site",
+          explicacao: "domínio (o endereço), hospedagem (onde o site fica guardado), certificado (evita o aviso “Não seguro”) e cópia de reserva",
           valores: todos,
         },
-        { rotulo: "Manutenção mensal", explicacao: "alterações de texto, preço ou horário", valores: todos },
-        { rotulo: "Relatório mensal de acessos", explicacao: "quantos pedidos o site recebeu no mês", valores: doProfissional },
-        { rotulo: "Revisões trimestrais de conteúdo", explicacao: "a cada três meses, a releitura de textos, preços e fotos", valores: doCompleto },
+        { rotulo: "Manutenção mensal", explicacao: "trocas de texto, preço ou horário", valores: todos },
+        { rotulo: "Relatório mensal de acessos", explicacao: "quantos acessos o site recebeu no mês", valores: doProfissional },
+        { rotulo: "Revisões trimestrais de conteúdo", explicacao: "a cada três meses, a revisão de textos, preços e fotos", valores: doCompleto },
         { rotulo: "Atendimento prioritário", explicacao: "resposta no mesmo dia útil", valores: doCompleto },
       ],
     },
@@ -96,28 +96,27 @@ const emTroca = fundacao.lide.indexOf("Em troca");
 if (emTroca < 0) throw new Error("conteudo/paginas/planos.ts: o lide da fundação perdeu a frase \"Em troca, …\"");
 export const notaDeFundacao = `${condicaoDeFundacao} ${fundacao.lide.slice(emTroca)}`;
 
-/** Os extras (os Módulos de antes): o título é [provisório] (contrato, 3.3, item 3); o lide, a proposta do estudo. */
+/** Os extras (os Módulos de antes): o título é [provisório] (contrato, 3.3, item 3). Desde 03/11, sem o lide, que
+ *  repetia o título e explicava as colunas (o pedido de texto simples). */
 export const extras = {
   titulo: "Extras, para qualquer plano.",
-  lide: "Somam-se ao plano escolhido. Cada um tem o preço de criação e, quando há, o de cada mês.",
   colunas: { extra: "Extra", criacao: "Uma vez", mensal: "Por mês" },
   unidades: { criacao: "uma vez", mensal: "por mês", porPagina: "por página", semMensalidade: "sem mensalidade" },
 };
 
 /**
  * Os sites de exemplo (a escada do simulador): o lide sem ordem ao leitor e com "nicho" (D4); o rótulo dos seletores à
- * vista; as notas de cada plano dizem o que o site faz, e não a animação (R9, 5.3; [provisório]). No pé, a frase para o
- * leigo antes do código (contrato, 3.3, "O código").
+ * vista; as notas de cada plano dizem o que o site faz, e não a animação (R9, 5.3; [provisório]). Desde 03/11, sem a
+ * frase do pé (os sites fora do Google e o aviso do servidor): o aviso de ficção, logo acima dela, fica.
  */
 export const sitesDeExemplo = {
-  lide: "Sites completos, um por nicho, agrupados por plano. Cada site de exemplo funciona por inteiro.",
+  lide: "Escolha um plano e abra o site de exemplo. Todos funcionam de verdade.",
   rotuloDoPlano: "Plano",
   notas: {
     essencial: "Essencial: três páginas, com quem é, o que faz, onde fica e como chamar.",
     profissional: "Profissional: até seis páginas e uma ferramenta; no depósito, a calculadora de material.",
-    completo: "Completo: páginas sem limite e duas ferramentas; na barbearia, o pedido de horário e a janela de retorno.",
+    completo: "Completo: páginas sem limite e duas ferramentas; na barbearia, o agendamento e a agenda de retorno.",
   } satisfies Record<Plano["id"], string>,
   /** No celular, o simulador não abre (pedido de 17/10): o botão abre o site em nova aba. */
   abrirOSite: "Abrir o site",
-  fraseDoCodigo: "Os sites de exemplo são fictícios e ficam fora do Google: o servidor manda este aviso junto de cada página deles.",
 };

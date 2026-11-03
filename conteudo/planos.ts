@@ -48,10 +48,10 @@ export const planos: Plano[] = [
     itens: [
       "Até seis páginas",
       "Galeria e formulário",
-      "Uma funcionalidade sob medida",
+      "Uma ferramenta sob medida",
       "Relatório mensal de acessos",
       // Até 16/10, "Movimento: galeria, vidro e navegação viva". A navegação viva é o menu que marca a página aberta.
-      "Galeria de fotos que se passa com o dedo, cabeçalho de vidro e menu que marca a página aberta",
+      "Galeria de fotos para deslizar com o dedo, cabeçalho de vidro e menu que mostra a página aberta",
     ],
   },
   {
@@ -61,7 +61,7 @@ export const planos: Plano[] = [
     mensal: 400,
     itens: [
       "Páginas sem limite definido",
-      "Duas funcionalidades sob medida",
+      "Duas ferramentas sob medida",
       "Revisões trimestrais de conteúdo",
       "Atendimento prioritário",
       // Até 16/10, "Movimento: camada completa".
@@ -88,8 +88,7 @@ export const modulos: Modulo[] = [
   {
     id: "pagina-adicional",
     nome: "Página adicional",
-    descricao:
-      "Redação, diagramação e publicação de uma página nova, quando houver o pedido.",
+    descricao: "Uma página nova, com texto, montagem e publicação.",
     criacao: 250,
     porPagina: true,
   },

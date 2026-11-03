@@ -127,8 +127,8 @@ function Rosa() {
         <div className="vd-rosa-viva mov-passiva mov-constante">
           <div className="vd-rosa-gira">
             <svg viewBox={VISTA}>
-              <path d="M0 -47L3.4 0H-3.4Z" fill="#f3efec" />
-              <path d="M0 -47L3.4 0H0Z" fill="#d6cfc4" />
+              <path d="M0 -47L3.4 0H-3.4Z" fill="#f2f5f9" />
+              <path d="M0 -47L3.4 0H0Z" fill="#cfd6df" />
               <path d="M0 30L3.4 0H-3.4Z" fill="#0b2440" />
               <path d="M0 30L-3.4 0H0Z" fill="#163a61" />
               <circle r="4.6" fill="#f1d3a1" stroke="#8a5a24" strokeWidth=".8" />

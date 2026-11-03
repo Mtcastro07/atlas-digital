@@ -14,12 +14,8 @@ type Orcamento = {
   mensal: number;
 };
 
-/** Mensagem impessoal gerada pelo montador (contexto de produto, seção 2). */
+/** A mensagem do montador, na voz de quem a envia, o cliente (desde 03/11; até então, impessoal, como um formulário). */
 export function mensagemDeOrcamento({ plano, modulos, criacao, mensal }: Orcamento) {
-  const partes = [`Orçamento composto no site. Plano ${plano}.`];
-  if (modulos.length === 1) partes.push(`Módulo: ${modulos[0]}.`);
-  if (modulos.length > 1) partes.push(`Módulos: ${modulos.join(" e ")}.`);
-  partes.push(`Criação: ${reais(criacao)}. Mensalidade: ${reais(mensal)}.`);
-  partes.push("Contato solicitado por esta mensagem.");
-  return partes.join(" ");
+  const extras = modulos.length ? ` com ${new Intl.ListFormat("pt-BR").format(modulos)}` : "";
+  return `Olá! Montei um orçamento no site: plano ${plano}${extras}, ${reais(criacao)} de criação e ${reais(mensal)} por mês. Podemos conversar?`;
 }

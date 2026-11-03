@@ -30,7 +30,7 @@ export function Portas() {
         </Abertura>
         <div data-ambiente data-passiva="inicio-indice" className="vd-galeria-quadro inicio-indice mt-14 md:mt-18" style={{ "--galeria-polegar": 1 / paginasInternas.length } as React.CSSProperties}>
           <ul className="vd-galeria inicio-folha">
-            {paginasInternas.map((pagina) => {
+            {paginasInternas.map((pagina, i) => {
               const Desenho = DESENHOS[pagina.id];
               return (
                 <li key={pagina.id}>
@@ -40,14 +40,12 @@ export function Portas() {
                     <span className="inicio-linha-frase text-corpo text-muted-foreground">{pagina.porta.frase}</span>
                     <IconeSeta className="vd-acende-seta size-[18px] text-accent" />
                   </Link>
+                  {/* A leitura do índice (a passiva P28): a luz passa de linha em linha. */}
+                  <span aria-hidden="true" className="inicio-linha-luz mov-passiva" style={{ "--vez": i } as React.CSSProperties} />
                 </li>
               );
             })}
           </ul>
-          {/* A leitura do índice (a passiva P28): a luz desce pelas linhas (no celular, passa pelo quadro). */}
-          <span aria-hidden="true" className="inicio-indice-janela">
-            <span className="inicio-indice-luz mov-passiva" />
-          </span>
           <div aria-hidden="true" className="vd-galeria-trilho" />
         </div>
       </Envelope>

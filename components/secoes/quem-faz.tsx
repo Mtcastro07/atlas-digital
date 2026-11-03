@@ -99,7 +99,7 @@ export function QuemFaz() {
                 <p className="vd-socio-funcao">{socio.funcao}</p>
                 <p className="vd-socio-compromisso">{compromissos[s]}</p>
                 {aviso && (
-                  <p className="mt-1.5 font-mono text-base text-accent">
+                  <p className="mt-1.5 text-base text-accent">
                     {aviso.rotulo} {aviso.caminho}
                   </p>
                 )}

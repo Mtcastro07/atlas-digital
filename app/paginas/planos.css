@@ -60,7 +60,7 @@
     padding: 0.625rem 0.5rem;
     border-radius: var(--radius-pedra) var(--radius-pedra) 0 0;
     box-shadow:
-      inset 0 3px 0 oklch(0.95 0.012 74),
+      inset 0 3px 0 oklch(0.95 0.012 250),
       inset -2px 0 0 rgb(255 255 255 / 0.35),
       inset 2px 0 0 rgb(15 42 71 / 0.08);
   }
@@ -208,6 +208,17 @@
     bottom: -14px;
     background: repeating-linear-gradient(180deg, var(--accent) 0 6px, transparent 6px 14px);
   }
+  .vd-corrimao-fio::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, rgb(246 226 190 / 0), #f6e2be 50%, rgb(246 226 190 / 0));
+  }
+  .vd-corrimao-v > .vd-corrimao-fio::after {
+    transform: translateY(100%);
+    background: linear-gradient(0deg, rgb(246 226 190 / 0), #f6e2be 50%, rgb(246 226 190 / 0));
+  }
 
   .vd-chao-da-escada {
     position: absolute;
@@ -302,24 +313,33 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
   }
 }
 
-/* P5, o corrimão corre (R10): o tracejado de bronze anda escada acima, ao longo dele, um período do padrão (14 px) a
-   cada 3 s, em laço, linear (o fluxo é contínuo). Nos trechos de cima de cada degrau, para o leste; nos vãos, para
-   cima. Para fora da tela, na pausa e com o movimento reduzido pelas regras do sistema (app/movimento.css); parado, o
-   tracejado é o de sempre. */
-.js [data-visivel] .vd-corrimao-h > .vd-corrimao-fio {
-  animation: planos-corrimao-leste 3s linear infinite;
+/* P5, o corrimão (R10): o tracejado fica; uma luz sem aresta sobe a escada, trecho a trecho (--ordem), cada um começando
+   antes de o anterior acabar. Nos trechos de cima de cada degrau, para o leste; nos vãos, para cima. Para fora da tela, na
+   pausa e com o movimento reduzido pelas regras do sistema (app/movimento.css); parado, o tracejado de sempre. */
+.js [data-visivel] .vd-corrimao-h > .vd-corrimao-fio::after {
+  animation: planos-corrimao-leste 7s linear calc(var(--ordem) * 1s - 7s) infinite;
 }
-.js [data-visivel] .vd-corrimao-v > .vd-corrimao-fio {
-  animation: planos-corrimao-sobe 3s linear infinite;
+.js [data-visivel] .vd-corrimao-v > .vd-corrimao-fio::after {
+  animation: planos-corrimao-sobe 7s linear calc(var(--ordem) * 1s - 7s) infinite;
 }
 @keyframes planos-corrimao-leste {
-  to {
-    transform: translateX(14px);
+  0% {
+    transform: translateX(-100%);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  26%,
+  100% {
+    transform: translateX(100%);
   }
 }
 @keyframes planos-corrimao-sobe {
-  to {
-    transform: translateY(-14px);
+  0% {
+    transform: translateY(100%);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  26%,
+  100% {
+    transform: translateY(-100%);
   }
 }
 
@@ -397,59 +417,6 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
      #plano-<id> chega ao alto da tabela (components/ilhas/ancoras.tsx mede a caixa do destino). */
   .vd-tabela-moldura {
     display: none;
-  }
-
-  /* O nome do plano, preso, no celular (só onde há linha do tempo; sem ela, o nome fica no alto do quadro): acende quando
-     o <h3> sai de baixo do cabeçalho e troca com a galeria, sem script. O polegar da galeria é o --plano-topo. */
-  .vd-planos-preso {
-    display: none;
-  }
-  @supports (animation-timeline: scroll()) {
-    @media (max-width: 767.98px) {
-      .vd-galeria-quadro.vd-planos-galeria {
-        timeline-scope: --galeria, --plano-topo;
-      }
-      .vd-planos-galeria > .vd-galeria-trilho {
-        view-timeline: --plano-topo block;
-      }
-      .vd-planos-preso {
-        position: sticky;
-        top: 4.75rem;
-        z-index: 2;
-        display: flex;
-        justify-content: center;
-        height: 0;
-        pointer-events: none;
-      }
-      .vd-planos-preso > span {
-        display: grid;
-        height: fit-content;
-        padding: 0.25rem 1rem;
-        border-radius: 999px;
-        background: var(--ficha);
-        box-shadow: var(--sombra-curta);
-        font-family: var(--font-sub);
-        font-size: 1rem;
-        font-weight: 500;
-        line-height: 1.5;
-        color: #0f2a47;
-        animation: vd-preso-acende linear both;
-        animation-timeline: --plano-topo;
-        animation-range: cover calc(100% - 64px) cover calc(100% - 32px);
-      }
-      .vd-planos-preso > span > span {
-        grid-area: 1 / 1;
-        text-align: center;
-        animation: vd-preso-nome-1 linear both;
-        animation-timeline: --galeria;
-      }
-      .vd-planos-preso > span > span:nth-child(2) {
-        animation-name: vd-preso-nome-2;
-      }
-      .vd-planos-preso > span > span:nth-child(3) {
-        animation-name: vd-preso-nome-3;
-      }
-    }
   }
 
   /* O quadro de cada plano, na galeria: o nome, a tarefa, os dois preços, os três grupos e a ação. */
@@ -696,7 +663,6 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       container: tabela / inline-size;
     }
     .vd-tabela {
-      --grao-da-agua: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='m' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .2 -.07'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>");
       position: relative;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -728,7 +694,7 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       padding: 0;
       font-weight: 400;
     }
-    /* D7: a placa navy atrás da coluna do Profissional, da chave à última linha, com o grão da água, o raio de 28 px e
+    /* D7: a placa navy atrás da coluna do Profissional, da chave à última linha, com o raio de 28 px e
        a sombra longa da manhã (a mesma do cartão recomendado de antes). Um item da grade só, atrás das linhas. */
     .vd-tabela::before {
       content: "";
@@ -739,10 +705,9 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       z-index: 0;
       border-radius: var(--radius-xl);
       background-color: #0f2a47;
-      background-image: var(--grao-da-agua);
       box-shadow:
-        inset 0 0 0 1px rgb(243 239 236 / 0.08),
-        inset 0 1px 0 rgb(243 239 236 / 0.1),
+        inset 0 0 0 1px rgb(242 245 249 / 0.08),
+        inset 0 1px 0 rgb(242 245 249 / 0.1),
         calc(var(--sombra-dx, 0) * 6px) 4px 8px rgb(15 42 71 / 0.1),
         calc(var(--sombra-dx, 0) * 28px) 28px 56px -18px rgb(15 42 71 / 0.3);
     }
@@ -763,10 +728,10 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       height: 100%;
     }
     .vd-na-placa {
-      --foreground: #f3efec;
+      --foreground: #f2f5f9;
       --muted-foreground: #aebdcd;
       --accent: #d9a76b;
-      --border: rgb(243 239 236 / 0.13);
+      --border: rgb(242 245 249 / 0.13);
       color: var(--foreground);
     }
 
@@ -798,7 +763,6 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       width: calc(400% + 7.5rem);
       z-index: -1;
       background-color: var(--background);
-      background-image: var(--fibra);
       box-shadow: 0 1px 0 var(--border);
       transition: opacity 200ms var(--ease-lugar);
     }
@@ -807,7 +771,6 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       padding-inline: 0.5rem;
       border-radius: var(--radius-xl) var(--radius-xl) 0 0;
       background-color: #0f2a47;
-      background-image: var(--grao-da-agua);
     }
     .vd-tabela-chave .vd-cartela {
       left: 50%;
@@ -828,7 +791,6 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
       .vd-tabela-chave > .vd-na-placa {
         border-radius: 0;
         background-color: #0f2a47;
-        background-image: var(--grao-da-agua);
       }
     }
     .vd-tabela-plano {
@@ -918,7 +880,7 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
     }
     .vd-tabela-linha > .vd-na-placa::after {
       border-radius: 0;
-      background: rgb(243 239 236 / 0.07);
+      background: rgb(242 245 249 / 0.07);
     }
     @media (hover: hover) {
       .vd-tabela-linha:hover::after,
@@ -1049,7 +1011,7 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
     }
   }
 
-  /* O pé: o aviso e a frase à esquerda; o cabeçalho do servidor à direita (no celular, embaixo). */
+  /* O pé: o aviso à esquerda e a frase à direita (no celular, embaixo). */
   .vd-pe-dos-sites {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
@@ -1177,49 +1139,20 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
   scroll-margin-top: 17rem;
 }
 
-@keyframes vd-preso-acende {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes vd-preso-nome-1 {
-  0%, 24% {
-    opacity: 1;
-  }
-  26%, 100% {
-    opacity: 0;
-  }
-}
-@keyframes vd-preso-nome-2 {
-  0%, 24% {
-    opacity: 0;
-  }
-  26%, 74% {
-    opacity: 1;
-  }
-  76%, 100% {
-    opacity: 0;
-  }
-}
-@keyframes vd-preso-nome-3 {
-  0%, 74% {
-    opacity: 0;
-  }
-  76%, 100% {
-    opacity: 1;
-  }
-}
-
 @layer components {
-  /* A faixa da corrente: um período de 560 px, na placa da mesa e no quadro do Profissional, no celular. */
+  /* A luz da placa da mesa e do quadro do Profissional, no celular: duas poças largas, sem aresta, que derivam em períodos
+     diferentes, uma dentro da outra. O pico das duas somadas fica no piso de contraste do texto apagado (abaixo). */
   .vd-corrente {
     position: absolute;
-    inset: 0 0 -560px;
+    inset: -14rem -10%;
     display: block;
-    background: repeating-linear-gradient(180deg, transparent 0 240px, rgb(241 211 161 / 0.115) 400px, transparent 560px);
+    background: radial-gradient(70% 15rem at 50% 30%, rgb(241 211 161 / 0.17), rgb(241 211 161 / 0));
+  }
+  .vd-corrente::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 12rem at 42% 70%, rgb(241 211 161 / 0.09), rgb(241 211 161 / 0));
   }
   .vd-quadro-corrente {
     position: absolute;
@@ -1251,6 +1184,9 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
     margin-left: -24rem;
     transform-origin: 50% 0;
     background: conic-gradient(from 166deg at 50% 0, transparent 0deg, rgb(241 211 161 / 0.09) 14deg, transparent 28deg);
+    /* O facho se apaga antes de o quadro o cortar: sem a borda reta embaixo. */
+    -webkit-mask-image: radial-gradient(circle at 50% 0, #000 45%, transparent 82%);
+    mask-image: radial-gradient(circle at 50% 0, #000 45%, transparent 82%);
   }
   .vd-refletor + .vd-refletor {
     left: 74%;
@@ -1265,7 +1201,10 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
 }
 @media (prefers-reduced-motion: no-preference) {
   .js [data-visivel] .vd-corrente {
-    animation: pl-corrente 14s linear infinite;
+    animation: pl-corrente 9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+  }
+  .js [data-visivel] .vd-corrente::after {
+    animation: pl-corrente-dentro 13s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
   .js [data-visivel] .vd-refletor {
     animation: pl-refletor 13s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
@@ -1276,8 +1215,19 @@ html:not(.js) [data-palco-sites] > [data-site] + [data-site] {
   }
 }
 @keyframes pl-corrente {
+  from {
+    translate: 0 -24%;
+  }
   to {
-    translate: 0 -560px;
+    translate: 0 24%;
+  }
+}
+@keyframes pl-corrente-dentro {
+  from {
+    translate: 14% 26%;
+  }
+  to {
+    translate: -12% -30%;
   }
 }
 @keyframes pl-refletor {

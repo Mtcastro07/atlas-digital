@@ -12,7 +12,7 @@
   /* O amanhecer do Fim do início (17/10, passe 4b): o horizonte, e não mais o bronze em alfa baixo sobre o navy (o
      cinza-lama, a marca C14). De baixo para cima, na pintura: o céu, da noite ao navy mais claro; a luz fria que sobe
      do horizonte em --agua-rasa (o mesmo matiz, nunca sob o texto); o mar, a água funda, do horizonte ao pé; a linha
-     do horizonte, um fio creme que some nas pontas; e o fio quente, curto e sólido, onde o sol vai nascer. Parado:
+     do horizonte, um fio claro que some nas pontas; e o fio quente, curto e sólido, onde o sol vai nascer. Parado:
      nenhuma luz anda.
      Desde o segundo fechamento com o Impeccable (17/10): o mar com 4 rem em toda largura (até então, 9 rem no celular
      e 20% da cena na mesa, uma faixa escura vazia antes do rodapé, de 180 a 290 px, a avaliação A), e o sol ao meio,
@@ -22,27 +22,24 @@
     --horizonte: calc(100% - 4rem);
     --subida: 6rem;
     background-image:
-      var(--materia, none),
       linear-gradient(90deg, transparent 36%, var(--bronze-brilho) 50%, transparent 64%),
-      linear-gradient(90deg, transparent, rgb(243 239 236 / 0.24) 14%, rgb(243 239 236 / 0.24) 86%, transparent),
+      linear-gradient(90deg, transparent, rgb(242 245 249 / 0.24) 14%, rgb(242 245 249 / 0.24) 86%, transparent),
       linear-gradient(in oklch 180deg, var(--deep), var(--moldura)),
       radial-gradient(in oklch 52% var(--subida) at 50% var(--horizonte), var(--agua-rasa), transparent),
       linear-gradient(in oklch 180deg, var(--deep), var(--background) 45%, var(--meio));
     background-size:
-      auto,
       100% 2px,
       100% 1px,
       100% calc(100% - var(--horizonte)),
       auto,
       auto;
     background-position:
-      0 0,
       0 calc(var(--horizonte) - 1px),
       0 var(--horizonte),
       0 100%,
       0 0,
       0 0;
-    background-repeat: repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat;
+    background-repeat: no-repeat;
   }
   @media (min-width: 768px) {
     .vd-amanhecer {
@@ -54,7 +51,7 @@
      As quatro etapas plotadas na água como o rumo de uma carta
      (components/secoes/passos.tsx): o arco do rumo, em bronze, gravado (o
      sulco cai para o sudeste, longe da luz da madrugada), as estações com o
-     símbolo da posição (o círculo com o ponto) e as cotas em creme, com o
+     símbolo da posição (o círculo com o ponto) e as cotas em claro, com o
      traço oblíquo nas pontas. --u é a unidade da prancha (1.120 na coluna).
      Três arranjos, pela largura da coluna, e não da tela (a letra a 200%
      estreita a coluna em rem): de 40 rem para cima, a prancha inteira, com
@@ -121,6 +118,8 @@
   /* O marcador do percurso (P26). --uc e os valores do celular; a mesa troca na consulta do contêiner, abaixo. */
   .vd-derrota-via {
     --t0-agora: var(--t0c);
+    --m1-agora: var(--m1c);
+    --m2-agora: var(--m2c);
     --t1-agora: var(--t1c);
     position: absolute;
     inset: 0;
@@ -185,6 +184,8 @@
   @container (min-width: 40rem) {
     .vd-derrota-via {
       --t0-agora: var(--t0);
+      --m1-agora: var(--m1);
+      --m2-agora: var(--m2);
       --t1-agora: var(--t1);
     }
     .vd-derrota-pivo {
@@ -466,13 +467,25 @@
     background: rgb(15 42 71 / 0.05);
     border-radius: 0 var(--radius-pedra) var(--radius-pedra) 0;
   }
-  .inicio-barreira-fluxo {
+  /* O que vem de fora: cada ponto na sua camada, da largura do quadro (o translate se mede nela). Em repouso, a fila. */
+  .inicio-barreira-ponto {
     position: absolute;
-    inset-block: 0;
-    left: 0;
-    right: -3rem;
+    inset: 0;
     display: block;
-    background: radial-gradient(circle at 1.5rem 62%, rgb(15 42 71 / 0.55) 0 0.5rem, transparent 0.5625rem) 0 0 / 3rem 100% repeat-x;
+    opacity: 0.6;
+    translate: calc(var(--vez) * 17% + 8%) var(--y);
+    transform-origin: 0.875rem 62%;
+  }
+  .inicio-barreira-ponto::before {
+    content: "";
+    position: absolute;
+    left: 0.25rem;
+    top: 62%;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: -0.625rem;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(15 42 71 / 0.72) 45%, rgb(15 42 71 / 0));
   }
   .inicio-barreira-rotulo {
     position: absolute;
@@ -705,39 +718,18 @@
       box-shadow: 0 -1px 0 rgb(var(--tinta) / 0.1);
     }
   }
-  /* A luz do índice (P28): uma faixa só, por cima das linhas. Na mesa, desce; no celular, atravessa o quadro. */
-  .inicio-indice {
+  /* A luz do índice (P28): uma poça de luz em cada linha, sem aresta, que acende quando a anterior começa a se apagar. */
+  .inicio-indice li {
     position: relative;
   }
-  .inicio-indice-janela {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .inicio-indice-luz {
+  .inicio-linha-luz {
     position: absolute;
     inset: 0;
     display: block;
-  }
-  .inicio-indice-luz::before {
-    content: "";
-    position: absolute;
-    inset-block: 0;
-    left: -40%;
-    width: 40%;
-    background: linear-gradient(90deg, transparent, rgb(192 138 74 / 0.24), transparent);
-  }
-  @media (min-width: 768px) {
-    .inicio-indice-luz::before {
-      inset-block: auto;
-      inset-inline: 0;
-      left: 0;
-      top: -7rem;
-      width: auto;
-      height: 7rem;
-      background: linear-gradient(transparent, rgb(192 138 74 / 0.2), transparent);
-    }
+    opacity: 0;
+    pointer-events: none;
+    /* Termina dentro da linha, em cima e embaixo: um raio maior que a metade da altura deixaria a borda reta à vista. */
+    background: radial-gradient(70% 50% at 38% 50%, rgb(192 138 74 / 0.2), rgb(192 138 74 / 0));
   }
   /* A mesa: o desenho, o nome na coluna de 3 de 12 (a regra A9: o rótulo em até ¼), a frase e a seta, numa linha. */
   @media (min-width: 1024px) {
@@ -828,7 +820,7 @@
   .inicio-reflexo-luz {
     padding: 0.1em 0.06em 0.16em;
     transform: translateX(101%);
-    /* A luz do bronze aceso sobre o creme: quente e mais clara que a letra, sem brilho em volta (nada de halo, C6). */
+    /* A luz do bronze aceso sobre o claro: quente e mais clara que a letra, sem brilho em volta (nada de halo, C6). */
     color: color-mix(in oklch, var(--bronze-brilho) 70%, #fff);
   }
   .inicio-reflexo-luz::before {
@@ -896,7 +888,7 @@
 /* ---------- as passivas do início (R10, 28/10; CONTRATO.md, 4.2) ----------
    P1, a esfera: cada meridiano passa de aberto a aberto do outro lado (scaleX de 1 a −1) em 8 s, na curva senoidal
    (a largura é o cosseno do ângulo); quatro (dois no celular) em fases de 45°, uma volta a cada 16 s. O halo respira
-   em 8 s, de ida e volta (scale e opacity). P2, o reflexo do Fim: uma passagem de 1,4 s a cada 8 s, a janela e a
+   em 8 s, de ida e volta (scale e opacity). P2, o reflexo do Fim: uma passagem de 2,7 s a cada 9 s, a janela e a
    cópia em sentidos opostos. Só transform e opacity, em camadas HTML; só com script e com a peça na tela
    (.js [data-visivel]). A pausa, a parada fora da tela e o movimento reduzido são as regras do sistema
    (app/movimento.css, .mov-passiva). */
@@ -907,10 +899,10 @@
   animation: inicio-halo 8s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
 }
 .js [data-visivel] .inicio-reflexo-janela {
-  animation: inicio-reflexo-janela 8s linear 1.2s infinite;
+  animation: inicio-reflexo-janela 9s linear 1.2s infinite;
 }
 .js [data-visivel] .inicio-reflexo-luz {
-  animation: inicio-reflexo-luz 8s linear 1.2s infinite;
+  animation: inicio-reflexo-luz 9s linear 1.2s infinite;
 }
 
 /* ---------- a passiva das chapas: a contagem ----------
@@ -927,22 +919,24 @@
   .js .inicio-chapas[data-visivel] .inicio-chapa:nth-child(2) .inicio-chapa-luz {
     animation-delay: -1s;
   }
-  /* P26, o marcador da derrota: o pivô gira, e o ponto faz o arco, da primeira estação à última, e apaga na chegada. */
+  /* P26, o marcador da derrota: o pivô gira, e o ponto faz o arco de estação em estação, sem parar seco: cada trecho
+     parte e assenta na curva, e o seguinte já começa. Apaga na chegada. */
   .js .vd-derrota-via[data-visivel] .vd-derrota-pivo {
-    animation: inicio-derrota 14s linear infinite;
+    animation: inicio-derrota 15s linear infinite;
   }
-  /* P27, a barreira: o que vem de outro endereço corre até a linha; o fluxo se repete a cada período do desenho. */
-  .js .inicio-barreira[data-visivel] .inicio-barreira-fluxo {
-    animation: inicio-fluxo 3.2s linear infinite;
+  /* P27, a barreira: o que vem de outro endereço chega de vários lados, freia na linha e se dissolve nela, um por vez. */
+  .js .inicio-barreira[data-visivel] .inicio-barreira-ponto {
+    animation: inicio-chega 7s linear calc(var(--vez) * -1.4s) infinite;
   }
-  /* P28, a luz do índice. */
-  .js .inicio-indice[data-visivel] .inicio-indice-luz {
-    animation: inicio-indice-atravessa 9s linear infinite;
+  /* P28, a luz do índice: de linha em linha, com a seguinte acendendo sobre o fim da anterior. No celular, a galeria
+     mostra um painel por vez: o ciclo é curto, para o painel à vista não ficar longe parado. */
+  .js .inicio-indice[data-visivel] .inicio-linha-luz {
+    animation: inicio-indice-vez 5.4s linear calc(var(--vez) * -0.9s) infinite;
   }
   @media (min-width: 768px) {
-    .js .inicio-indice[data-visivel] .inicio-indice-luz {
-      animation-name: inicio-indice-desce;
-      animation-duration: 16s;
+    .js .inicio-indice[data-visivel] .inicio-linha-luz {
+      animation-duration: 10.8s;
+      animation-delay: calc(var(--vez) * 1.8s - 10.8s);
     }
   }
   /* P29, o aparelho: gira devagar na luz, sem parar, sobre a sombra que fica. */
@@ -958,29 +952,68 @@
   0% {
     rotate: var(--t0-agora);
     opacity: 0;
+    animation-timing-function: cubic-bezier(0.4, 0.05, 0.4, 0.95);
   }
-  6%,
+  5%,
   94% {
     opacity: 1;
   }
+  31% {
+    rotate: var(--m1-agora);
+    animation-timing-function: cubic-bezier(0.4, 0.05, 0.4, 0.95);
+  }
+  60% {
+    rotate: var(--m2-agora);
+    animation-timing-function: cubic-bezier(0.4, 0.05, 0.4, 0.95);
+  }
+  90%,
   100% {
     rotate: var(--t1-agora);
+  }
+  100% {
     opacity: 0;
   }
 }
-@keyframes inicio-fluxo {
-  to {
-    translate: -3rem 0;
+@keyframes inicio-chega {
+  0% {
+    translate: 90% var(--y);
+    scale: 1;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.22, 0.55, 0.2, 1);
+  }
+  12% {
+    opacity: 0.85;
+  }
+  56% {
+    opacity: 0.85;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  62% {
+    translate: 0 0;
+    scale: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  78%,
+  100% {
+    translate: 0 0;
+    scale: 0.5;
+    opacity: 0;
   }
 }
-@keyframes inicio-indice-atravessa {
-  to {
-    translate: 140% 0;
+@keyframes inicio-indice-vez {
+  0% {
+    translate: -5% 0;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-}
-@keyframes inicio-indice-desce {
-  to {
-    translate: 0 calc(100% + 7rem);
+  13% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  30%,
+  100% {
+    translate: 5% 0;
+    opacity: 0;
   }
 }
 @keyframes inicio-aparelho {
@@ -1010,13 +1043,13 @@
     opacity: 1;
   }
 }
-/* A passagem ocupa 1,4 s dos 8 (17,5%); o resto, a janela parada fora, à direita. */
+/* A passagem ocupa 2,7 s dos 9 (30%); o resto, a janela parada fora, à direita. */
 @keyframes inicio-reflexo-janela {
   0% {
     transform: translateX(-101%);
     animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-  17.5%,
+  30%,
   100% {
     transform: translateX(101%);
   }
@@ -1026,7 +1059,7 @@
     transform: translateX(101%);
     animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-  17.5%,
+  30%,
   100% {
     transform: translateX(-101%);
   }
@@ -1034,16 +1067,13 @@
 @keyframes inicio-contar {
   0% {
     opacity: 0;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-  10% {
+  17% {
     opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-  28% {
-    opacity: 1;
-  }
-  45% {
-    opacity: 0;
-  }
+  52%,
   100% {
     opacity: 0;
   }

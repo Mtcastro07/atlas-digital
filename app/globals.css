@@ -17,15 +17,13 @@
 
 /* ============================================================
    ATLAS DIGITAL — folha global
-   Paleta da marca (contexto de produto, seção 3): navy, bronze e
-   creme, acrescida de neutros quentes para as superfícies claras.
+   Paleta da marca: navy e bronze, com neutros frios, levemente azulados,
+   nas superfícies claras (desde 02/11; até então, creme e neutros quentes).
    Tons de seção, por atributo data-tom:
      escuro — navy, a água da carta (capa, demonstrador, fim);
-     claro  — névoa neutra quente, o papel da folha, onde se lê e se decide;
-     pedra  — o segundo tom claro (16/10), para alternar com a névoa sem
-              ir ao navy (ΔL de 0,050; o branco, que fazia esse papel até
-              16/10, ficava a 0,035). O branco saiu como campo de cena e
-              ficou só como --ficha, o cartão dos tons claros.
+     claro  — a névoa fria, onde se lê e se decide;
+     pedra  — o segundo tom claro, para alternar com a névoa sem ir ao navy.
+              O branco fica só como --ficha, o cartão dos tons claros.
    Os tokens nomeiam função, no vocabulário do shadcn; a cor fica no
    valor. Contrastes medidos sobre o fundo do próprio tom.
    ============================================================ */
@@ -76,11 +74,6 @@
    tokens (producao/esteira/09-movimento.md, seção 3): entrada, saída e mudança de lugar, do Material 3. O código novo
    usa só estas; a curva da casa (ease-atlas) fica para o que já existia. */
 @theme {
-  /* A letra do código mostrado (R10, 28/10, D2): a mono do próprio aparelho, sem @font-face (Menlo no Chrome do Mac, SF
-     Mono no Safari, Droid Sans Mono no Android). Fora do @theme inline, de propósito: font-mono continua a ler
-     var(--font-mono), e o depósito, que dá ao seu bloco a Plex Mono pela mesma variável
-     (components/demos/deposito/fontes.ts), fica como está. */
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, monospace;
   --container-pagina: clamp(70rem, 28rem + 46.67vw, 84rem);
   --ease-atlas: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-entrada: cubic-bezier(0.05, 0.7, 0.1, 1);
@@ -139,11 +132,9 @@
   --agua-rasa: #1d4670; /* oklch(0.387 0.085 251): só luz e traço; o lide daria 4,47:1 sobre ela. Nunca sob texto */
   --bronze-sombra: #6b4318; /* oklch(0.421 0.079 64): o lado escuro do metal */
   --bronze-brilho: #f1d3a1; /* oklch(0.88 0.073 80): o lado aceso do metal, só em objeto */
-  --nevoa: #f5f3f0; /* o papel, com nome fixo, para quando o --background local é o navy */
-  --papel-folha: #fbf9f6; /* só o pico da luz no papel */
-  --papel-sombra: #ece6dd; /* a queda da luz no papel: o apagado a 5,30:1, o vínculo a 4,74 */
-  --pedra: #e9e2d9; /* oklch(0.916 0.014 74): o fundo do tom pedra; ΔL de 0,050 contra a névoa */
-  --ficha: #fefcf9; /* oklch(0.992 0.004 80): o cartão dos tons claros, a folha do índice */
+  --nevoa: #f7f8fa; /* o claro, com nome fixo, para quando o --background local é o navy */
+  --pedra: #edf0f4; /* o fundo do tom pedra */
+  --ficha: #ffffff; /* o cartão dos tons claros, a folha do índice */
 }
 
 /* Tom escuro: navy, o padrão da página. */
@@ -193,33 +184,41 @@
   --vidro-liquido-sombra: 0 18px 40px rgb(0 0 0 / 0.35);
 }
 
+/* O claro frio sobre o navy (02/11; até então, o creme #f3efec, que o :root guarda para os sites de demonstração): só
+   na página sem site de nicho, e em toda peça do tom escuro. #f2f5f9 dá 13,31:1 no navy e 10,79 no cartão. */
+:root:not(:has([data-demo])),
+[data-tom="escuro"] {
+  --foreground: #f2f5f9;
+  --card-foreground: #f2f5f9;
+  --popover-foreground: #f2f5f9;
+  --secondary: #f2f5f9;
+  --border: rgb(242 245 249 / 0.13);
+  --input: rgb(242 245 249 / 0.45);
+  --vidro-borda: rgb(242 245 249 / 0.16);
+  --aresta: rgb(242 245 249 / 0.1);
+}
+
 /* O cartão da água (16/10): #1a395b, a ΔL 0,059 do navy (o #132f50 de antes ficava a 0,021 e só se separava pela
-   aresta); o creme a 10,32:1, o lide a 5,42, o bronze a 5,44. Numa regra à parte, e não no :root: os sites de
-   demonstração leem o --card do :root. */
+   aresta); o lide a 5,42, o bronze a 5,44. Numa regra à parte, e não no :root: os sites de demonstração leem o --card
+   do :root. */
 [data-tom="escuro"] {
   --card: #1a395b;
-  /* O apagado da água sobe de #9fb2c6 a #aebdcd (16/10, passe 2): o grão da matéria (até ~9% de branco por ponto)
-     e a luz de cada página clarearam o fundo, e o ponto mais claro sob o lide caía a 4,08–4,48:1 nos pixels. Com
-     #aebdcd, 4,6:1 ou mais no pior ponto medido; 6,63:1 sobre --meio chapado; 6,16 sobre o cartão. */
+  /* #aebdcd, e não o #9fb2c6 do :root, pela luz de cada página, que clareia o fundo: 6,63:1 sobre --meio chapado; 6,16
+     sobre o cartão. */
   --muted-foreground: #aebdcd;
 }
 
-/* Tons claros: o claro (névoa neutra quente) e a pedra (16/10). Só o fundo, o cartão e o apagado mudam entre eles
-   (abaixo). Até 16/10, também o branco (superfície limpa), que saiu como campo de cena. */
+/* Tons claros: o claro (a névoa fria) e a pedra. Só o fundo e o --muted mudam entre eles (abaixo). */
 [data-tom="claro"],
 [data-tom="pedra"] {
   --foreground: #0f2a47;
   --card-foreground: #0f2a47;
   --secondary: #0f2a47;
-  --secondary-foreground: #f3efec;
-  --muted-foreground: #4b5f75; /* 5,9:1 no claro; 5,12:1 na pedra */
-  /* O vínculo: #7a4e1c, 6,5:1 chapado na névoa e 5,56 na pedra. Até 17/10, #8a5a24 no claro (5,3:1 chapado): com a
-     fibra nova do papel e o pico da luz, o fólio dava 4,17:1 no 5º percentil (régua, 1.440 px, /planos). */
-  --accent: #7a4e1c;
-  /* Divisória translúcida (regra 3), no tom quente das opacas de antes
-     (#e2ddd7 no claro, #e6e1db no branco): sobre a névoa dá #dfd9d3; sobre
-     o branco e os cartões brancos, #e7e4e0. */
-  --border: rgb(98 72 45 / 0.15);
+  --secondary-foreground: #f2f5f9;
+  --muted-foreground: #4b5f75; /* 6,19:1 na névoa; 5,75 na pedra; 5,47 no pico da luz fria da pedra */
+  --accent: #7a4e1c; /* o vínculo: 6,74:1 na névoa; 6,26 na pedra; 5,95 no pico da luz fria da pedra */
+  /* Divisória translúcida, na tinta navy. */
+  --border: rgb(15 42 71 / 0.12);
   --input: rgb(15 42 71 / 0.6); /* 3,9:1 no claro */
   --ring: #8a5a24;
   --vidro: rgb(255 255 255 / 0.62);
@@ -235,19 +234,14 @@
   --vidro-liquido-sombra: 0 10px 30px rgb(15 42 71 / 0.1);
 }
 [data-tom="claro"] {
-  --background: #f5f3f0;
-  --card: var(--ficha); /* até 16/10, #ffffff */
-  --muted: #ebe7e2;
-}
-/* A pedra: a tinta a 11,33:1, o apagado (#44566b) a 5,85, o vínculo (#7a4e1c) a 5,56. */
-[data-tom="pedra"] {
-  --background: var(--pedra);
+  --background: var(--nevoa); /* a tinta a 13,70:1 */
   --card: var(--ficha);
-  --muted: #e0d8cd;
-  /* O apagado mais fundo na pedra (16/10, passe 2): o grão grosso dela escurece o fundo, e, nos pixels, o apagado de
-     #4b5f75 dava 4,36:1 (o vínculo de #8a5a24, 3,91; desde 17/10 o vínculo fundo vale para os dois tons, acima).
-     Chapado sobre a pedra: 5,85:1. */
-  --muted-foreground: #44566b;
+  --muted: #eceff3;
+}
+[data-tom="pedra"] {
+  --background: var(--pedra); /* a tinta a 12,74:1 */
+  --card: var(--ficha);
+  --muted: #e2e6ec;
 }
 
 @layer base {

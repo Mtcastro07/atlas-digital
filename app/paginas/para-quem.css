@@ -4,9 +4,10 @@
    importado uma vez em app/globals.css, depois de ./nichos.css. Dono na
    construção do R10: o agente de para-quem.
    Desde 28/10 (R10, fase 1; D5, a decisão do aprovador), a carta de Niterói
-   é uma chapa de água funda que atravessa a abertura e os públicos: na mesa,
-   presa à direita, da abertura ao último público, que são a legenda dela;
-   cada público, ao passar pelo meio da tela, acende o seu bairro. A prova é
+   é uma chapa de água funda, e os públicos são a legenda dela. Na mesa, de
+   28/10 a 03/11, presa à direita até o último público, que acendia o seu
+   bairro ao passar pelo meio da tela; desde 03/11 (nenhuma parte presa),
+   parada ao lado do título, com os bairros acendendo por tempo. A prova é
    a do estudo (registros/atlas/design-v2/R10/paginas/para-quem.md e
    paginas/para-quem/prova.html). As passivas: P3, a deriva das linhas
    d'água; P4, o sinal do bairro aceso (CONTRATO.md, 4.2). A pausa, a parada
@@ -45,9 +46,10 @@
     .vd-pq-abertura > div {
       min-height: 44rem;
     }
+    /* Do alto do palco até o pé da chapa: o ambiente das passivas é só a chapa (o observador do movimento). */
     .vd-pq-trilho {
       position: absolute;
-      inset: 0;
+      inset: 0 0 auto;
       z-index: 2;
       padding: 0;
       pointer-events: none;
@@ -70,7 +72,7 @@
   }
 
   /* ---------- a chapa ----------
-     A carta numa placa de água funda: o grão da água, o raio de 28 px, o fio de luz na borda de cima, a sombra longa
+     A carta numa placa de água funda: o raio de 28 px, o fio de luz na borda de cima, a sombra longa
      para o oeste (a manhã cedo: o sol vem do leste). */
   .vd-chapa {
     position: relative;
@@ -80,15 +82,13 @@
     border-radius: var(--radius-xl);
     background-color: var(--deep);
     background-image:
-      var(--materia, none),
       radial-gradient(in oklch 70% 60% at 100% 45%, color-mix(in oklch, var(--agua-rasa) 55%, transparent), transparent 75%);
     box-shadow:
-      inset 0 1px 0 rgb(243 239 236 / 0.1),
-      inset 0 0 0 1px rgb(243 239 236 / 0.06),
+      inset 0 1px 0 rgb(242 245 249 / 0.1),
+      inset 0 0 0 1px rgb(242 245 249 / 0.06),
       0 2px 0 var(--moldura);
     color: var(--foreground);
   }
-  /* A sombra numa camada à parte: só a opacidade muda (a chapa se ergue quando o papel chega, na mesa). */
   .vd-chapa::before {
     content: "";
     position: absolute;
@@ -102,17 +102,15 @@
     opacity: 0.5;
   }
   @media (min-width: 1024px) {
-    /* Presa a 96 px do topo; a largura cabe na tela presa (a altura da margem, em rem, mais os 96 px e um respiro). */
+    /* Na abertura, ao lado do título, parada (até 03/11, presa a 96 px do topo até o último público): a largura cabe na
+       primeira tela (a altura da margem, em rem, mais o respiro de cima). */
     .vd-chapa {
-      position: sticky;
-      top: 6rem;
       width: min(100%, calc((100svh - 18rem) * 0.93));
       max-width: none;
       margin-left: auto;
       pointer-events: auto;
-      will-change: transform;
     }
-    /* Na tela baixa de notebook, a chapa presa inteira, com a linha do crédito: a carta encolhe, e a margem, larga, fica
+    /* Na tela baixa de notebook, a chapa inteira, com a linha do crédito: a carta encolhe, e a margem, larga, fica
        mais curta (até 01/11, 678 px a 650 de altura). */
     @media (max-height: 720px) {
       .vd-chapa {
@@ -168,7 +166,7 @@
   }
 
   /* ---------- os marcos ----------
-     HTML sobre a carta, nos nós do OpenStreetMap, em % da caixa: o disco de bronze com o aro creme, a sombra no chão,
+     HTML sobre a carta, nos nós do OpenStreetMap, em % da caixa: o disco de bronze com o aro claro, a sombra no chão,
      a camada acesa (o bronze-brilho e o aro de fora) e o sinal (a onda, P4). O nome do bairro a 13 px, acima e à
      esquerda do marco, com o halo da água funda: é parte do desenho (aria-hidden); a página o diz em texto. */
   .vd-chapa-marcos {
@@ -231,7 +229,7 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    border: 2px solid var(--bronze-brilho);
+    background: radial-gradient(closest-side, rgb(241 211 161 / 0) 48%, var(--bronze-brilho) 74%, rgb(241 211 161 / 0));
     opacity: 0;
   }
   .vd-pino-nome {
@@ -243,7 +241,7 @@
     font-weight: 500;
     letter-spacing: 0.02em;
     color: var(--foreground);
-    /* Sem o halo da prova (o brilho de deslocamento zero, a marca do detector): o creme sobre a terra dá de 6,45 a
+    /* Sem o halo da prova (o brilho de deslocamento zero, a marca do detector): o claro sobre a terra dá de 6,45 a
        9,31:1 sem ele (paginas/para-quem.md, 7); fica só a sombra curta, para o lado da hora. */
     text-shadow: calc(var(--sombra-dx, 0) * 1px) 1px 2px rgb(2 8 18 / 0.6);
   }
@@ -258,30 +256,14 @@
     }
   }
 
-  /* ---------- a margem: o código, a frase e o crédito ----------
-     A margem sobe sobre o pé apagado da carta (em px: o pé não cresce com a letra). O código mora na figura, sem ficha
-     (a regra 5.2, item 1, da síntese), numa linha na mesa e em duas no celular. Por cima da linha acesa, o véu (a mesma
-     linha no apagado), que só aparece na mesa, quando o bairro dela não está aceso. */
+  /* ---------- a margem: a frase e o crédito ----------
+     A margem sobe sobre o pé apagado da carta (em px: o pé não cresce com a letra). */
   .vd-chapa-margem {
     position: relative;
     z-index: 1;
     margin-top: -40px;
     padding: 0 1.5rem 1.25rem;
     overflow-wrap: break-word;
-  }
-  .vd-chapa-codigo {
-    position: relative;
-  }
-  .vd-chapa-codigo-veu {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-  }
-  .vd-chapa-codigo-veu > * {
-    height: 100%;
-  }
-  .vd-chapa-codigo.vd-so-mesa {
-    display: none;
   }
   .vd-chapa-frase {
     margin-top: 0.75rem;
@@ -299,12 +281,6 @@
     .vd-chapa-margem {
       margin-top: -48px;
       padding: 0 1.75rem 1.1rem;
-    }
-    .vd-chapa-codigo.vd-so-mesa {
-      display: block;
-    }
-    .vd-chapa-codigo.vd-so-celular {
-      display: none;
     }
     .vd-chapa-frase,
     .vd-chapa-credito {
@@ -356,15 +332,26 @@
     border: 1.5px solid var(--ring);
     opacity: 0;
   }
+  /* A onda do sinal, a da chapa no bronze do papel (a passiva da legenda): cresce até o dobro e some antes do texto. */
+  .vd-pq-onda {
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(138 90 36 / 0) 48%, var(--ring) 74%, rgb(138 90 36 / 0));
+    opacity: 0;
+    pointer-events: none;
+  }
   @media (min-width: 1024px) {
-    /* Na mesa, o passo da leitura: 120 px entre as entradas (e, em para-quem.tsx, papel embaixo para a chapa seguir presa
-       até a última). */
+    /* Na mesa, os três lado a lado, sob o título, na largura das duas colunas (até 03/11, um sob o outro, 120 px entre
+       eles, com a chapa presa ao lado). */
     .vd-pq-texto {
-      grid-column: 1;
+      grid-column: 1 / -1;
     }
     .vd-pq-publicos {
       margin-top: 5rem;
-      gap: 7.5rem;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      /* 32 px: a 1.024, "Barbearia Santa Rosa" e a seta cabem numa linha. */
+      gap: 2rem;
     }
   }
 
@@ -413,7 +400,8 @@
     content: "";
     position: absolute;
     inset: -1.0625rem 0;
-    background: radial-gradient(circle at 0.75rem 50%, #f1d3a1 0 0.3125rem, rgb(241 211 161 / 0.34) 0.375rem 0.75rem, transparent 0.8125rem) no-repeat;
+    /* Um cometa: a cabeça clara e a cauda dissolvida, sem borda seca. */
+    background: radial-gradient(1.5rem 0.625rem at 1.5rem 50%, #f6e2be, rgb(241 211 161 / 0.5) 34%, rgb(241 211 161 / 0)) no-repeat;
     pointer-events: none;
     opacity: 0;
   }
@@ -468,7 +456,7 @@
   /* ---------- a mão: o marco se ergue e paira (a constante da página) ----------
      Sob o ponteiro, ou no foco do teclado dentro da entrada, o marco do público acende, se ergue 9 px e fica pairando
      sobre a sua sombra (o laço nas propriedades translate e scale, que se somam ao transform da subida). Só na mesa,
-     onde a carta está ao lado. Com Icaraí, a linha do código acende. */
+     onde a carta está ao lado. */
   @media (min-width: 1024px) {
     .vd-pq-palco:has(.vd-pq-entrada[data-i="0"]:is(:hover, :focus-within)) .vd-pino[data-i="0"],
     .vd-pq-palco:has(.vd-pq-entrada[data-i="1"]:is(:hover, :focus-within)) .vd-pino[data-i="1"],
@@ -483,11 +471,6 @@
         transform: scale(0.8);
         opacity: 0.6;
       }
-    }
-    .vd-pq-palco:has(.vd-pq-entrada[data-i="0"]:is(:hover, :focus-within)) .vd-chapa-codigo-veu [data-i="0"],
-    .vd-pq-palco:has(.vd-pq-entrada[data-i="1"]:is(:hover, :focus-within)) .vd-chapa-codigo-veu [data-i="1"],
-    .vd-pq-palco:has(.vd-pq-entrada[data-i="2"]:is(:hover, :focus-within)) .vd-chapa-codigo-veu [data-i="2"] {
-      opacity: 0 !important;
     }
     .vd-pq-entrada:is(:hover, :focus-within) .vd-pq-sinal::after {
       opacity: 1 !important;
@@ -530,7 +513,7 @@
    P3, a deriva: as três linhas d'água, numa camada só, andam ±8 px na horizontal e ±4 px na vertical, em períodos
    diferentes (9 s e 6,5 s, ida e volta, em curva senoidal): a água respira em volta da costa, que fica. No celular,
    ±6 e ±3 px (a carta tem 342 px, e a linha d'água de dentro passa a 4 px da costa). O repouso é a carta de hoje.
-   P4, o sinal: um anel de 28 px sai do marco aceso, cresce até 2,4 vezes e some (3,2 s), e o marco descansa (2,8 s). Só
+   P4, o sinal: uma onda sem aresta sai do marco aceso, cresce até três vezes e se dissolve, e a seguinte já vem. Só
    o bairro aceso emite: o anel mora na camada acesa, que a leitura acende (na mesa) e o repouso deixa em Icaraí. Com o
    movimento reduzido, sem anel. */
 @keyframes pq-deriva-x {
@@ -551,18 +534,16 @@
 }
 @keyframes pq-onda {
   0% {
-    scale: 0.86;
+    scale: 0.6;
     opacity: 0;
-    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+    animation-timing-function: cubic-bezier(0.2, 0.5, 0.35, 1);
   }
-  6% {
-    scale: 1;
-    opacity: 0.75;
-    animation-timing-function: cubic-bezier(0.15, 0.55, 0.35, 1);
+  10% {
+    opacity: 0.9;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-  53.3%,
   100% {
-    scale: 2.4;
+    scale: 3;
     opacity: 0;
   }
 }
@@ -581,124 +562,88 @@
       pq-deriva-y 6.5s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
   .js [data-visivel] .vd-pino-onda {
-    animation: pq-onda 6s linear infinite;
+    animation: pq-onda 3.6s linear infinite;
   }
 }
 
-/* ---------- a leitura (D5) ----------
-   Na rolagem, o público que passa pelo meio da tela acende o seu marco, o aro do seu sinal na legenda e, com Icaraí, a
-   linha do código (o véu dela some); o repouso (Icaraí aceso) se apaga quando o papel chega; a chapa se ergue sobre o
-   papel. Só CSS, na linha do tempo da rolagem: cada entrada nomeia a sua (view-timeline), içadas ao palco
-   (timeline-scope). Sem suporte, na mesa estreita ou com o movimento reduzido, nada acende sozinho: Icaraí fica aceso,
-   e a mão acende os outros. Medido na prova do estudo: [1,0,0], [0,1,0], [0,0,1]. */
-@keyframes pq-leitura {
-  0%,
+/* ---------- a leitura (D5), por tempo ----------
+   Na mesa, os três bairros acendem um de cada vez, na ordem dos públicos, num ciclo de 12 s: o marco acende em 0,84 s,
+   fica 2,6 s e se apaga em 0,96 s, e o seguinte já vem acendendo (curva senoidal, só a opacidade, sem aresta). O ciclo
+   começa com Icaraí no meio da luz, igual ao repouso, que some sem salto. Até 03/11, na linha do tempo da rolagem (o
+   público no meio da tela acendia o seu, com a chapa presa ao lado); o pedido de 03/11: nenhuma parte presa, nenhuma
+   animação ligada à rolagem. Com a pausa, para onde está; fora da tela, sai; com o movimento reduzido, nada acende
+   sozinho: Icaraí fica aceso, e a mão acende os outros. */
+@keyframes pq-vez {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  7% {
+    opacity: 1;
+  }
+  29% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  37%,
   100% {
     opacity: 0;
   }
-  16%,
-  84% {
-    opacity: 1;
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .js [data-visivel] :is(.vd-pino-aceso, .vd-pino-sinal).vd-leitura {
+    animation: pq-vez 12s infinite both;
+  }
+  .js [data-visivel] .vd-pino[data-i="0"] .vd-leitura {
+    animation-delay: -9.5s;
+  }
+  .js [data-visivel] .vd-pino[data-i="1"] .vd-leitura {
+    animation-delay: -5.5s;
+  }
+  .js [data-visivel] .vd-pino[data-i="2"] .vd-leitura {
+    animation-delay: -1.5s;
+  }
+  .js [data-visivel] :is(.vd-pino-aceso, .vd-pino-sinal).vd-repouso {
+    opacity: 0;
   }
 }
-@keyframes pq-leitura-veu {
-  0%,
+@media (prefers-reduced-motion: no-preference) {
+  /* A legenda, no mesmo ciclo, também no celular: o aro do sinal de cada público acende na vez dele, e uma onda sai
+     uma vez. Sem repouso a casar, cada um começa apagado e entra na sua vez (0, 4 e 8 s). */
+  .js [data-visivel] .vd-pq-sinal::after {
+    animation: pq-vez 12s infinite both;
+  }
+  .js [data-visivel] .vd-pq-onda {
+    animation: pq-vez-onda 12s infinite both;
+  }
+  .js [data-visivel] .vd-pq-entrada[data-i="1"] .vd-pq-sinal::after,
+  .js [data-visivel] .vd-pq-entrada[data-i="1"] .vd-pq-onda {
+    animation-delay: 4s;
+  }
+  .js [data-visivel] .vd-pq-entrada[data-i="2"] .vd-pq-sinal::after,
+  .js [data-visivel] .vd-pq-entrada[data-i="2"] .vd-pq-onda {
+    animation-delay: 8s;
+  }
+}
+@keyframes pq-vez-onda {
+  0% {
+    scale: 0.6;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.2, 0.5, 0.35, 1);
+  }
+  3% {
+    opacity: 0.7;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  30%,
   100% {
-    opacity: 1;
-  }
-  16%,
-  84% {
+    scale: 2;
     opacity: 0;
-  }
-}
-@keyframes pq-apaga {
-  to {
-    opacity: 0;
-  }
-}
-@keyframes pq-cobre {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@keyframes pq-ergue {
-  from {
-    opacity: 0.5;
-  }
-  to {
-    opacity: 1;
-  }
-}
-@supports (timeline-scope: --a) and (animation-timeline: view()) {
-  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-    .vd-pq-palco {
-      timeline-scope: --pq-e0, --pq-e1, --pq-e2, --pq-papel;
-    }
-    .vd-pq-entrada[data-i="0"] {
-      view-timeline: --pq-e0 block;
-    }
-    .vd-pq-entrada[data-i="1"] {
-      view-timeline: --pq-e1 block;
-    }
-    .vd-pq-entrada[data-i="2"] {
-      view-timeline: --pq-e2 block;
-    }
-    .vd-pq-legenda {
-      view-timeline: --pq-papel block;
-    }
-    :is(.vd-pino[data-i="0"] :is(.vd-pino-aceso, .vd-pino-sinal).vd-leitura, .vd-pq-entrada[data-i="0"] .vd-pq-sinal::after) {
-      animation: pq-leitura linear both;
-      animation-timeline: --pq-e0;
-      animation-range: cover 28% cover 64%;
-    }
-    :is(.vd-pino[data-i="1"] :is(.vd-pino-aceso, .vd-pino-sinal).vd-leitura, .vd-pq-entrada[data-i="1"] .vd-pq-sinal::after) {
-      animation: pq-leitura linear both;
-      animation-timeline: --pq-e1;
-      animation-range: cover 28% cover 64%;
-    }
-    :is(.vd-pino[data-i="2"] :is(.vd-pino-aceso, .vd-pino-sinal).vd-leitura, .vd-pq-entrada[data-i="2"] .vd-pq-sinal::after) {
-      animation: pq-leitura linear both;
-      animation-timeline: --pq-e2;
-      animation-range: cover 28% cover 64%;
-    }
-    .vd-chapa-codigo-veu [data-i] {
-      animation: pq-leitura-veu linear both;
-      animation-range: cover 28% cover 64%;
-    }
-    .vd-chapa-codigo-veu [data-i="0"] {
-      animation-timeline: --pq-e0;
-    }
-    .vd-chapa-codigo-veu [data-i="1"] {
-      animation-timeline: --pq-e1;
-    }
-    .vd-chapa-codigo-veu [data-i="2"] {
-      animation-timeline: --pq-e2;
-    }
-    /* O repouso se apaga, e o véu cobre a linha, com o alto do papel entre 55% e 20% da tela: antes de a primeira
-       entrada chegar ao meio. */
-    :is(.vd-pino-aceso, .vd-pino-sinal).vd-repouso {
-      animation: pq-apaga linear both;
-      animation-timeline: --pq-papel;
-      animation-range: entry 45% entry 80%;
-    }
-    .vd-chapa-codigo-veu.vd-repouso {
-      animation: pq-cobre linear both;
-      animation-timeline: --pq-papel;
-      animation-range: entry 45% entry 80%;
-    }
-    .vd-chapa::before {
-      animation: pq-ergue linear both;
-      animation-timeline: --pq-papel;
-      animation-range: entry 0% entry 70%;
-    }
   }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* P31, o sinal: cada nicho no seu tempo, sem patamar; os seis correm juntos, em fases diferentes. */
+  /* P31, o sinal: o cometa parte devagar, ganha o fio e assenta no bairro; os seis, cada um numa fase. */
   .js [data-visivel] .vd-pq-fio::after {
     animation: pq-sinal 7s linear calc(var(--vez) * -1.27s) infinite;
   }
@@ -716,13 +661,19 @@
 }
 @keyframes pq-sinal {
   0% {
-    translate: 0 0;
+    translate: -1.5rem 0;
     opacity: 0;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
   }
-  10%,
-  90% {
+  10% {
     opacity: 1;
   }
+  72% {
+    translate: calc(100% - 1.5rem) 0;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  88%,
   100% {
     translate: calc(100% - 1.5rem) 0;
     opacity: 0;

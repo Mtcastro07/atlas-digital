@@ -68,7 +68,7 @@
     padding: 1.25rem 1.375rem 1.25rem 1.125rem;
     border: 1px solid rgb(15 42 71 / 0.18);
     border-radius: var(--radius);
-    background: rgb(254 252 249 / 0.55);
+    background: rgb(255 255 255 / 0.55);
     cursor: pointer;
     transition:
       border-color 200ms var(--ease-lugar),
@@ -246,7 +246,9 @@
 
   /* A conta: a única ficha da página, presa ao lado das escolhas em toda mesa (o MacBook Air de 1440 × 900 deixa
      790 px de janela com a barra do navegador): no pior caso, o Completo com os dois módulos, ela cabe inteira abaixo
-     do cabeçalho, e por isso os passos dela são curtos. No celular, ela sangra 12 px de cada lado da coluna. */
+     do cabeçalho, e por isso os passos dela são curtos. No celular, ela sangra 12 px de cada lado da coluna. Presa sem
+     animação nenhuma: o que fica preso e anima com a rolagem saiu do site em 03/11; ela ficou, porque deixa o total à
+     vista enquanto se escolhe. */
   .orc-conta {
     position: relative;
     padding: 1.25rem 1.75rem 1.5rem;
@@ -385,7 +387,7 @@
     padding: 0.875rem 1rem max(0.875rem, env(safe-area-inset-bottom));
     border-radius: var(--radius) var(--radius) 0 0;
     box-shadow:
-      inset 0 1px 0 rgb(243 239 236 / 0.14),
+      inset 0 1px 0 rgb(242 245 249 / 0.14),
       0 -12px 32px rgb(15 42 71 / 0.18);
     /* Sem visibility na transição (R10, integração): esperando o fim, ela roda na linha principal, e a régua perdia de
        5 a 35 batidas sem nada mudar na tela. Fora da tela, a faixa já está fora do Tab e do leitor de tela (montador.tsx). */
@@ -460,7 +462,7 @@
     }
   }
 
-  /* ---------- a rota direta: a frase e o código que a prova (D12) ---------- */
+  /* ---------- a rota direta: a frase e o caminho (D12) ---------- */
   .orc-rota {
     display: grid;
     gap: 2rem;
@@ -479,24 +481,6 @@
     font-size: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
     line-height: 1.2;
     letter-spacing: -0.02em;
-  }
-  .orc-rota-fonte {
-    display: block;
-    margin-top: 0.375rem;
-    font-size: 0.875rem;
-  }
-  /* No celular, a ficha sangra 16 px e o código quebra dentro dela (quatro linhas a 390 px), sem rolar de lado: o texto
-     do código e a legenda caem na coluna (o esboço, esboco/orcamento/prova.html). */
-  @media (max-width: 767.98px) {
-    .orc-rota .vd-trecho-ficha {
-      --trecho-recuo: 1rem;
-      width: auto;
-      margin-inline: -1rem;
-    }
-    .orc-rota .vd-trecho pre {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
   }
 
   /* ---------- a rota direta: o caminho da mensagem (P20) ---------- */
@@ -528,6 +512,8 @@
     display: block;
     width: 100%;
     padding-left: 1.25rem;
+    /* A camada tem a largura do fio: o curso, em unidades dela, deixa o balão inteiro dentro do fio, sem corte nas pontas. */
+    --balao-l: 8.25rem;
     isolation: isolate;
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -542,7 +528,7 @@
     z-index: -1;
     top: 0;
     left: 0;
-    width: 8.25rem;
+    width: var(--balao-l);
     height: 2.75rem;
     border-radius: 1.375rem 1.375rem 1.375rem 0.25rem;
     background: var(--foreground);
@@ -564,15 +550,17 @@
   .orc-fita {
     --fita-h: 6.5rem;
     contain: inline-size;
+    display: grid;
     height: var(--fita-h);
     margin-top: 2rem;
-    overflow: hidden;
-    mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent);
+    /* Com a letra a 200%, o valor passa da coluna: sem isso, a página ganhava rolagem lateral. O vertical fica livre, para a subida não cortar. */
+    overflow-x: clip;
   }
   .orc-fita-no-alto {
     margin-block: -2.5rem 3.5rem;
   }
   .orc-fita-linha {
+    grid-area: 1 / 1;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -580,6 +568,9 @@
     font-size: 1rem;
     line-height: 1.35;
     color: var(--muted-foreground);
+  }
+  .orc-fita-linha + .orc-fita-linha {
+    opacity: 0;
   }
   .orc-fita-linha b {
     font-family: var(--font-display);
@@ -631,6 +622,7 @@
     position: absolute;
     inset: 0;
     display: block;
+    opacity: 0;
     pointer-events: none;
   }
   .orc-inclui-luz::before {
@@ -639,8 +631,7 @@
     inset-inline: 0;
     top: -3.5rem;
     height: 3.5rem;
-    border-radius: 0.5rem;
-    background: linear-gradient(transparent, rgb(192 138 74 / 0.3) 50%, transparent);
+    background: radial-gradient(closest-side, rgb(192 138 74 / 0.3), rgb(192 138 74 / 0));
   }
 
   /* ---------- "O que o preço cobre.": a cena do endereço, no navy (D14; R10, acabamento, 02/11) ---------- */
@@ -677,66 +668,75 @@
     text-wrap: pretty;
   }
 
-  /* A folha do calendário (P7): a folha de baixo fica, com as bordas das folhas seguintes; a de cima vira. O cabeçalho
-     da folha em navy e os dias numa grade de pontos (7 × 5), sem número nem data; os anéis em bronze, por cima das
-     duas folhas. Tudo pintado uma vez: na virada, só o transform da folha e a opacidade da sombra mudam. */
-  .orc-calendario {
-    --cal-l: 11rem;
-    --cal-a: 12.5rem;
-    position: relative;
+  /* A agenda (P7): vidro sobre o navy, sem anel, sem cartolina. O cabeçalho é mudo, sem mês escrito. */
+  .orc-agenda {
     flex: none;
-    width: min(var(--cal-l), 100%);
-    height: var(--cal-a);
-    perspective: 1400px;
-    perspective-origin: 50% 0;
+    width: min(15rem, 100%);
+    padding: 1.125rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(155deg, rgb(242 245 249 / 0.12), rgb(242 245 249 / 0.035));
+    box-shadow:
+      inset 0 0 0 1px rgb(242 245 249 / 0.14),
+      0 28px 48px -20px rgb(0 0 0 / 0.55);
   }
   @media (min-width: 1024px) {
-    .orc-calendario {
-      --cal-l: 17rem;
-      --cal-a: 19rem;
+    .orc-agenda {
+      width: min(20rem, 100%);
+      padding: 1.5rem;
     }
   }
-  .orc-calendario-folha {
+  .orc-agenda-topo {
+    width: 42%;
+    height: 0.625rem;
+    margin-bottom: 1.125rem;
+    border-radius: 0.3125rem;
+    background: linear-gradient(90deg, rgb(242 245 249 / 0.38), rgb(242 245 249 / 0.14));
+  }
+  .orc-agenda-folhas {
+    position: relative;
+    aspect-ratio: 280 / 200;
+  }
+  .orc-agenda-folha,
+  .orc-agenda-janela,
+  .orc-agenda-luz {
     position: absolute;
     inset: 0;
-    padding: calc(var(--cal-a) * 0.27) calc(var(--cal-l) * 0.09) calc(var(--cal-a) * 0.07);
-    border-radius: var(--radius-pedra);
-    background:
-      linear-gradient(var(--bronze-sombra), var(--bronze-sombra)) top / 100% calc(var(--cal-a) * 0.19) no-repeat border-box,
-      radial-gradient(circle, rgb(15 42 71 / 0.55) 0 calc(var(--cal-l) * 0.018), transparent calc(var(--cal-l) * 0.024)) 0 0 / calc(100% / 7) calc(100% / 5) content-box,
-      #f4efe6;
+    display: block;
   }
-  /* As folhas seguintes, pelas bordas embaixo da que fica, e a sombra longa no navy. */
-  .orc-calendario-fica {
-    box-shadow:
-      0 4px 0 -1px #e8e2d6,
-      0 8px 0 -2px #dcd5c7,
-      0 24px 40px -12px rgb(0 0 0 / 0.5);
+  .orc-agenda-folha {
+    /* A janela da luz, fora de cena, fica a uma folha de distância: a 390 px, isso já é fora da tela. */
+    overflow: clip;
   }
-  /* A sombra que a folha erguida deixa na de baixo: escura junto dos anéis, apagada embaixo. */
-  .orc-calendario-sombra {
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(rgb(15 42 71 / 0.44), rgb(15 42 71 / 0) 70%);
+  .orc-agenda-folha + .orc-agenda-folha {
     opacity: 0;
   }
-  .orc-calendario-vira {
+  .orc-agenda-dias {
     position: absolute;
     inset: 0;
-    transform-origin: 50% calc(var(--cal-a) * 0.06);
-    backface-visibility: hidden;
+    width: 100%;
+    height: 100%;
   }
-  .orc-calendario-aneis {
-    position: absolute;
-    inset: calc(var(--cal-a) * -0.07) 0 auto;
-    height: calc(var(--cal-a) * 0.17);
-    background:
-      linear-gradient(90deg, oklch(0.52 0.08 62), oklch(0.85 0.09 72) 45%, oklch(0.56 0.08 62)) 28% 0 / calc(var(--cal-l) * 0.05) 100% no-repeat,
-      linear-gradient(90deg, oklch(0.52 0.08 62), oklch(0.85 0.09 72) 45%, oklch(0.56 0.08 62)) 72% 0 / calc(var(--cal-l) * 0.05) 100% no-repeat;
+  .orc-agenda-dias-parado rect {
+    fill: rgb(242 245 249 / 0.16);
+  }
+  .orc-agenda-dias-parado .orc-agenda-fim {
+    fill: #d9a76b;
+  }
+  .orc-agenda-dias-aceso rect {
+    fill: #f6e2be;
+  }
+  /* A janela corre e a luz, ao contrário, dentro dela: os dias acesos ficam parados, e a máscara da janela dissolve a frente e o rastro. */
+  .orc-agenda-janela {
+    overflow: hidden;
+    translate: -100% 0;
+    -webkit-mask-image: linear-gradient(112deg, transparent 18%, #000 46%, #000 54%, transparent 82%);
+    mask-image: linear-gradient(112deg, transparent 18%, #000 46%, #000 54%, transparent 82%);
+  }
+  .orc-agenda-luz {
+    translate: 100% 0;
   }
 
-  /* O endereço (P8) e as cinco partes (P18). A letra se mede pela largura da coluna: as 31 letras da mono cabem nela. */
+  /* O endereço (P8) e as cinco partes (P18). A letra se mede pela largura da coluna: as 31 letras do endereço cabem nela. */
   .orc-endereco {
     position: relative;
     container-type: inline-size;
@@ -749,11 +749,11 @@
     color: var(--muted-foreground);
   }
   .orc-url {
-    font-family: var(--font-mono);
-    font-size: calc(100cqi / 14.4);
-    line-height: 1.2;
-    letter-spacing: 0;
-    font-variant-ligatures: none;
+    font-family: var(--font-sub);
+    font-weight: 500;
+    font-size: calc(100cqi / 10.6);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
     color: var(--foreground);
   }
   .orc-url-protocolo {
@@ -765,7 +765,7 @@
   }
   .orc-endereco-sombra {
     position: absolute;
-    top: calc(2.25rem + 100cqi / 14.4 * 2.5);
+    top: calc(2.25rem + 100cqi / 10.6 * 2.3);
     inset-inline: 2%;
     height: 1.75rem;
     border-radius: 50%;
@@ -796,7 +796,8 @@
     top: 0;
     bottom: 0;
     width: 1.25rem;
-    background: radial-gradient(circle at 50% 0.625rem, #f1d3a1 0 0.3125rem, rgb(241 211 161 / 0.3) 0.375rem 0.625rem, transparent 0.6875rem);
+    /* A gota: a cabeça clara embaixo, a cauda sobe e se dissolve. Nenhuma borda seca. */
+    background: radial-gradient(0.4rem 1.5rem at 50% 1.5rem, #f6e2be, rgb(241 211 161 / 0.55) 42%, rgb(241 211 161 / 0)) no-repeat;
     opacity: 0;
   }
   .orc-partes dt {
@@ -819,14 +820,14 @@
       margin-top: 6.5rem;
     }
     .orc-url {
-      font-size: calc(100cqi / 18.75);
+      font-size: calc(100cqi / 13.6);
     }
     .orc-url-protocolo,
     .orc-url-dominio {
       display: inline;
     }
     .orc-endereco-sombra {
-      top: calc(2.25rem + 100cqi / 18.75 * 1.25);
+      top: calc(2.25rem + 100cqi / 13.6 * 1.15);
     }
     /* Na mesa, cinco colunas sob o endereço, com os fios descendo do trilho. */
     .orc-partes {
@@ -862,7 +863,8 @@
       column-gap: 5rem;
     }
   }
-  /* As duas parcelas: a primeira cheia; a segunda enche até a publicação (P22). */
+  /* As duas parcelas: a primeira cheia; a segunda enche até a publicação (P22). A camada é mais larga que a parcela, para
+     a borda da frente andar dissolvida por translate, sem esticar. Em repouso, só a ponta aparece. */
   .orc-metades {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -881,7 +883,7 @@
     overflow: hidden;
     border-radius: var(--radius-pedra);
     background: var(--foreground);
-    color: #f4efe6;
+    color: #f2f5f9;
   }
   .orc-metade-vem {
     background: rgb(15 42 71 / 0.12);
@@ -889,10 +891,11 @@
   }
   .orc-metade-enche {
     position: absolute;
-    inset: 0;
-    background: rgb(192 138 74 / 0.72);
-    transform-origin: left;
-    scale: 0.08 1;
+    inset-block: 0;
+    left: -60%;
+    width: 160%;
+    background: linear-gradient(90deg, rgb(192 138 74 / 0.72) 75%, rgb(192 138 74 / 0));
+    translate: -55% 0;
   }
 }
 
@@ -906,14 +909,16 @@
     animation: orc-respira 900ms cubic-bezier(0.45, 0, 0.55, 1) 5 alternate both;
   }
 
-  /* P7, o mês passa: a folha de cima se ergue, presa nos anéis, e vira por cima deles (rotateX, com a perspectiva de
-     1400 px do calendário); de costas, some, e a de baixo, igual, fica. 2,6 s de virada a cada 10 s. A volta ao começo
-     do ciclo é invisível: a folha volta a 0° exatamente sobre a que ficou, igual a ela. */
-  .js [data-visivel] .orc-calendario-vira {
-    animation: orc-mes-passa 10s infinite;
+  /* P7, todo mês: duas folhas em ciclos de 13 s, meio ciclo uma da outra. Uma sobe e se dissolve enquanto a outra chega
+     por baixo; a luz corre pela folha que está em cena, no mesmo ciclo. Fases negativas, para abrir com o mês à vista. */
+  .js [data-visivel] .orc-agenda-folha {
+    animation: orc-agenda-folha 13s linear calc(-2.6s - var(--vez) * 6.5s) infinite;
   }
-  .js [data-visivel] .orc-calendario-sombra {
-    animation: orc-mes-sombra 10s infinite;
+  .js [data-visivel] .orc-agenda-janela {
+    animation: orc-agenda-janela 13s linear calc(-2.6s - var(--vez) * 6.5s) infinite;
+  }
+  .js [data-visivel] .orc-agenda-luz {
+    animation: orc-agenda-luz 13s linear calc(-2.6s - var(--vez) * 6.5s) infinite;
   }
 
   /* P8, o objeto pousa, no toque: o endereço sobe 10 px e desce, em 9 s; a sombra de contato encolhe e clareia ao contrário.
@@ -927,25 +932,26 @@
       animation: orc-pousa 9s infinite;
     }
   }
-  /* P18, o pulso: desce pelo fio de cada parte, cada um no seu tempo, como o que mantém o endereço no ar. */
+  /* P18, o pulso: a gota parte devagar, ganha o fio e assenta no fim, cada uma no seu tempo, como o que mantém o endereço no ar. */
   .js [data-visivel] .orc-partes > div::after {
-    animation: orc-pulso calc(5.2s + var(--vez) * 0.7s) linear calc(var(--vez) * -1.3s) infinite;
+    animation: orc-pulso calc(4.6s + var(--vez) * 0.7s) linear calc(var(--vez) * -1.3s) infinite;
   }
-  /* P19, a fita: sobe sem parar, um fluxo linear; a volta ao começo é invisível (a fita se repete). */
-  .js [data-visivel] .orc-fita-corre {
-    animation: orc-fita 27s linear infinite;
+  /* P19, a fita: cada valor chega, fica e sai por cima enquanto o seguinte chega. Em 15 s, 5 s por plano. Fases negativas,
+     para abrir com o primeiro à vista. */
+  .js [data-visivel] .orc-fita-linha {
+    animation: orc-fita 15s linear calc(-3s - var(--vez) * 10s) infinite;
   }
-  /* P20, o caminho: o balão vai do aparelho ao WhatsApp, sem parada no meio, e some na chegada. */
+  /* P20, o caminho: o balão nasce junto do aparelho, ganha velocidade, assenta no WhatsApp e se dissolve ali. */
   .js [data-visivel] .orc-caminho-balao {
     animation: orc-balao 7s linear infinite;
   }
-  /* P21, a leitura: a faixa desce pela lista do plano. */
+  /* P21, a leitura: a luz, sem aresta, desce pela lista do plano, nasce e se apaga dentro dela. */
   .js [data-visivel] .orc-inclui-luz {
-    animation: orc-leitura 9s linear infinite;
+    animation: orc-leitura 9s cubic-bezier(0.37, 0, 0.63, 1) infinite;
   }
-  /* P22, a parcela que vem: enche devagar, da esquerda, ida e volta. */
+  /* P22, a parcela que vem: enche devagar, com a borda dissolvida, fica cheia e se apaga, e não volta pelo mesmo caminho. */
   .js [data-visivel] .orc-metade-enche {
-    animation: orc-enche 11s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+    animation: orc-enche 12s linear infinite;
   }
 }
 
@@ -957,30 +963,53 @@
     opacity: 1;
   }
 }
-@keyframes orc-mes-passa {
+/* As duas folhas não se cruzam por inteiro: a que chega só aparece quando a que sai já vai longe. */
+@keyframes orc-agenda-folha {
   0%,
   4% {
-    transform: rotateX(0deg);
-    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
-  }
-  30%,
-  100% {
-    transform: rotateX(180deg);
-  }
-}
-@keyframes orc-mes-sombra {
-  0%,
-  4% {
+    translate: 0 1rem;
+    scale: 0.97;
     opacity: 0;
-    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.2, 1);
   }
   16% {
+    translate: 0 0;
+    scale: 1;
     opacity: 1;
-    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-  31%,
+  49% {
+    translate: 0 0;
+    scale: 1;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0.4);
+  }
+  57%,
   100% {
+    translate: 0 -0.75rem;
+    scale: 1.015;
     opacity: 0;
+  }
+}
+@keyframes orc-agenda-janela {
+  0%,
+  10% {
+    translate: -100% 0;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+  50%,
+  100% {
+    translate: 100% 0;
+  }
+}
+@keyframes orc-agenda-luz {
+  0%,
+  10% {
+    translate: 100% 0;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  }
+  50%,
+  100% {
+    translate: -100% 0;
   }
 }
 @keyframes orc-flutua {
@@ -1009,38 +1038,104 @@
 }
 @keyframes orc-pulso {
   0% {
-    translate: 0 0;
+    translate: 0 -1.5rem;
     opacity: 0;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
   }
-  12%,
-  88% {
+  10% {
     opacity: 1;
   }
+  48% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  58% {
+    translate: 0 calc(100% - 1.5rem);
+  }
+  66%,
   100% {
-    translate: 0 100%;
+    translate: 0 calc(100% - 1.5rem);
     opacity: 0;
   }
 }
+/* A saída acaba logo depois de a chegada começar: dois valores sobrepostos não se leem. */
 @keyframes orc-fita {
-  to {
-    translate: 0 -50%;
+  0%,
+  3% {
+    translate: 0 1.5rem;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.2, 1);
+  }
+  12% {
+    translate: 0 0;
+    opacity: 1;
+  }
+  30% {
+    translate: 0 0;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.75, 0.4);
+  }
+  37%,
+  100% {
+    translate: 0 -1.25rem;
+    opacity: 0;
   }
 }
 @keyframes orc-balao {
   0% {
-    translate: -8.25rem 0;
+    translate: 0 0;
+    scale: 0.94;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.45, 0.05, 0.25, 1);
+  }
+  10% {
+    scale: 1;
+    opacity: 1;
+  }
+  78% {
+    translate: calc(100% - var(--balao-l)) 0;
+  }
+  86% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
   100% {
-    translate: 100% 0;
+    translate: calc(100% - var(--balao-l)) 0;
+    opacity: 0;
   }
 }
 @keyframes orc-leitura {
-  to {
-    translate: 0 calc(100% + 3.5rem);
+  0% {
+    translate: 0 0.5rem;
+    opacity: 0;
+  }
+  14%,
+  86% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 calc(100% + 3rem);
+    opacity: 0;
   }
 }
 @keyframes orc-enche {
-  to {
-    scale: 1 1;
+  0% {
+    translate: -55% 0;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.4, 0.1, 0.3, 1);
+  }
+  7% {
+    opacity: 1;
+  }
+  60% {
+    translate: 25% 0;
+  }
+  84% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  100% {
+    translate: 25% 0;
+    opacity: 0;
   }
 }

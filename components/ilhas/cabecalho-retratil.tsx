@@ -11,6 +11,11 @@ const TOPO = 280;
 const FOLGA = 6;
 /** Intervalo mínimo entre duas leituras, em ms (a leitura vai a getComputedStyle). */
 const INTERVALO = 80;
+/** Sem scrollend, quanto tempo sem rolagem, em ms, conta como a página parada (o vidro volta). */
+const PARADA = 200;
+/** Depois do scrollend, quanto esperar antes de o vidro voltar: a roda do mouse dá um scrollend a cada entalhe, e o
+ * vidro piscava entre um e outro (vf2, 03/11). */
+const ENTALHE = 400;
 
 /** A transição de página em curso, onde o navegador a expõe (o Chrome; os outros, ainda não). */
 const transicaoAtiva = () => (document as Document & { activeViewTransition?: ViewTransition | null }).activeViewTransition;
@@ -25,7 +30,7 @@ const transicaoAtiva = () => (document as Document & { activeViewTransition?: Vi
  * visível, em vidro escuro.
  * A barra de vidro líquido se adapta ao que passa por trás dela, como o
  * vidro da Apple (data-fundo, app/vidro.css): sobre o escuro, vidro escuro
- * e quase transparente, com texto creme; sobre o claro, vidro claro, com
+ * e quase transparente, com texto claro; sobre o claro, vidro claro, com
  * texto navy; sobre os dois ao mesmo tempo, vidro navy denso, que mantém o
  * contraste em qualquer ponto. Lido durante a rolagem (no máximo a cada
  * 80 ms, pela cor de fundo real do que está sob a barra); não grava nada.
@@ -46,6 +51,7 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
     let quadro = 0;
     let lida = 0;
     let pendente = 0;
+    let parada = 0;
 
     const lerFundo = () => {
       if (!elemento || !barra) return;
@@ -98,16 +104,38 @@ export function CabecalhoRetratil({ children }: { children: React.ReactNode }) {
     const aoAssentar = (evento: TransitionEvent) => {
       if (evento.target === elemento && !transicaoAtiva()) lerFundo();
     };
+    // O limitante da rolagem: enquanto a página rola, o <header> leva data-rolando, e a pílula deixa o desfoque, fica em
+    // tinta densa e troca de tom sem transição (app/vidro.css, "rolando"). No <header>, e não no <html>: no <html>, cada
+    // começo e cada fim da rolagem recalculavam o estilo da página inteira (de 400 a 900 elementos, de 3 a 8 ms na mesa,
+    // 03/11); no <header>, de 33 a 57, ~1 ms. O fim vem do scrollend: com a GPU sobrecarregada, os quadros (e os eventos
+    // de rolagem) se espaçam além de qualquer espera, e o vidro voltava no meio do gesto. Sem scrollend (o Safari
+    // antigo), a parada é o silêncio de PARADA ms.
+    const comFim = "onscrollend" in window;
+    const parar = () => elemento?.removeAttribute("data-rolando");
+    const aoRolarDeFato = () => {
+      window.clearTimeout(parada);
+      if (elemento && !elemento.hasAttribute("data-rolando")) elemento.setAttribute("data-rolando", "");
+      if (!comFim) parada = window.setTimeout(parar, PARADA);
+      aoRolar();
+    };
+    const aoFim = () => {
+      window.clearTimeout(parada);
+      parada = window.setTimeout(parar, ENTALHE);
+    };
     elemento?.addEventListener("transitionend", aoAssentar);
-    window.addEventListener("scroll", aoRolar, { passive: true });
+    window.addEventListener("scroll", aoRolarDeFato, { passive: true });
+    window.addEventListener("scrollend", aoFim);
     window.addEventListener("resize", aoRolar, { passive: true });
     return () => {
       viva = false;
       elemento?.removeEventListener("transitionend", aoAssentar);
-      window.removeEventListener("scroll", aoRolar);
+      window.removeEventListener("scroll", aoRolarDeFato);
+      window.removeEventListener("scrollend", aoFim);
       window.removeEventListener("resize", aoRolar);
       cancelAnimationFrame(quadro);
       window.clearTimeout(pendente);
+      window.clearTimeout(parada);
+      parar();
     };
   }, [caminho]);
 

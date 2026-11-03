@@ -1,19 +1,9 @@
-import { Trecho } from "@/components/codigo/trecho";
 import { Envelope, Secao } from "@/components/estrutura";
 import { duvidas } from "@/conteudo/duvidas";
-import { legendaDoCodigo } from "@/conteudo/paginas/duvidas";
 import { figuras } from "@/conteudo/site";
-import { perguntasFrequentes } from "@/lib/dados-estruturados";
 
 /** A grade da mesa tem quatro linhas de perguntas por momento (app/paginas/duvidas.css). */
 if (figuras.momentos.some((m) => m.itens.length > 4)) throw new Error("Dúvidas: um momento passou de quatro perguntas");
-
-/** O começo do primeiro objeto Question, como o servidor o manda, com uma quebra depois de "Question",. */
-function comecoDoJsonLd() {
-  const comeco = /^(\{"@type":"Question",)("name":"[^"]*",)/.exec(JSON.stringify(perguntasFrequentes.mainEntity[0]));
-  if (!comeco) throw new Error("Dúvidas: o JSON-LD da primeira pergunta mudou de forma");
-  return comeco;
-}
 
 /**
  * O objeto de cada momento (R10, acabamento, 02/11; a passiva P35), à direita do título, cada um com o seu movimento,
@@ -23,7 +13,15 @@ function comecoDoJsonLd() {
 function ObjetoDoMomento({ i }: { i: number }) {
   return (
     <span aria-hidden="true" className={`vd-momento-objeto vd-momento-${i + 1}`}>
-      <span className="vd-momento-peca mov-passiva" />
+      <span className="vd-momento-peca mov-passiva">
+        {i === 1 && (
+          <span className="vd-momento-traco mov-passiva">
+            <svg viewBox="0 0 66 40" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 27c5-11 10-22 13-21s-2 22 1 24 7-13 10-12-1 10 2 10 5-8 8-7 0 7 3 7 6-5 9-5 3 3 6 3 6-2 10-3" />
+            </svg>
+          </span>
+        )}
+      </span>
     </span>
   );
 }
@@ -35,7 +33,6 @@ function ObjetoDoMomento({ i }: { i: number }) {
  * a ilha Ancoras abre e mede a resposta, e sem script o navegador abre o <details> do destino.
  */
 export function Duvidas() {
-  const comeco = comecoDoJsonLd();
   return (
     <Secao id="duvidas" tom="claro">
       <Envelope className="vd-mesa">
@@ -62,17 +59,6 @@ export function Duvidas() {
             </div>
           ))}
         </div>
-        <Trecho
-          className="vd-mesa-codigo"
-          trecho={{ linhas: [comeco[1], ` ${comeco[2]}`] }}
-          tintas={[
-            ['"@type"', "chave"],
-            ['"name"', "chave"],
-            ['"Question"', "nome"],
-            [comeco[2].slice(7, -1), "valor"],
-          ]}
-          legenda={legendaDoCodigo}
-        />
       </Envelope>
     </Secao>
   );

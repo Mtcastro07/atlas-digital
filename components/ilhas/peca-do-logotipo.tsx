@@ -1,32 +1,19 @@
 "use client";
 
-import { createElement, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import { TRACOS_DO_GLOBO } from "@/components/marca/logotipo";
 
 /**
- * A peça do logotipo (R10, 28/10; CONTRATO.md, 3.6; a prova: registros/atlas/design-v2/R10/esboco/o-atlas/origem.html):
- * o logotipo em 3D, em pé sobre o papel (a letra no navy, o globo em bronze), e as quatro linhas de código que
- * desenham o globo, lidas no build de components/marca/logotipo.tsx (a seção, no servidor, as passa já em pedaços).
- * As peças do globo são desenhadas pelos próprios atributos das linhas: o que se lê é o que se vê.
+ * A peça do logotipo (R10, 28/10; CONTRATO.md, 3.6): o logotipo em 3D, em pé sobre o papel (a letra no navy, o globo em
+ * bronze), com as quatro peças do globo em camadas.
  * - Em repouso, montada e parada. Ao entrar na tela, uma vez, as quatro peças chegam afastadas e se montam em 600 ms
  *   (o IntersectionObserver abaixo). Sem script, ou com o movimento reduzido, já montada.
  * - A peça é um botão: o ponteiro sobre ela, o clique ou o toque a abrem em camadas (a vista explodida, curta).
- * - Cada linha é um botão: sob o ponteiro, em foco ou tocada, ergue a sua peça e a acende; o toque a deixa erguida até
- *   o próximo. O nome do botão é a tradução, que também está à vista.
- * - Enquanto aberta ou erguida, a peça flutua (a constante desta página, .mov-constante): para fora da tela, na pausa e
- *   com o movimento reduzido (app/movimento.css), e pelo teclado, que não anima (09-movimento.md, 2: 0 ms no teclado).
+ * - Enquanto aberta, a peça flutua (a constante desta página, .mov-constante): para fora da tela, na pausa e com o
+ *   movimento reduzido (app/movimento.css), e pelo teclado, que não anima (09-movimento.md, 2: 0 ms no teclado).
  * Só transform e opacity, em camadas do tamanho do globo (e não da peça inteira: a memória das camadas cai).
  */
-
-export type Pedaco = { texto: string; papel: "nome" | "chave" | "valor" | "apagado" | null };
-export type LinhaDoGlobo = {
-  /** O elemento SVG da linha e os atributos dela, lidos do próprio código. */
-  elemento: string;
-  atributos: Record<string, string>;
-  /** A linha em pedaços com a tinta de cada um; `quebra` é o pedaço em que a linha desce, no celular. */
-  pedacos: Pedaco[];
-  quebra: number;
-  traducao: string;
-};
 
 /** A letra A do logotipo, a mesma de public/marca.svg (o traçado copiado: o arquivo fica uma semana em cache). */
 const LETRA_A =
@@ -34,20 +21,13 @@ const LETRA_A =
 /** A caixa do globo no logotipo (o recorte de GloboDoLogotipo: o círculo de raio 24 em 163, 24). */
 const CAIXA_DO_GLOBO = "139 0 48 48";
 
-type Props = { linhas: LinhaDoGlobo[]; ponte: string; legenda: React.ReactNode; rotulo: string };
-
-export function PecaDoLogotipo({ linhas, ponte, legenda, rotulo }: Props) {
+export function PecaDoLogotipo({ rotulo }: { rotulo: string }) {
   const peca = useRef<HTMLButtonElement>(null);
   const [aberta, setAberta] = useState(false);
-  const [fixa, setFixa] = useState<number | null>(null);
-  const [ativa, setAtiva] = useState<number | null>(null);
   const [entrada, setEntrada] = useState<"pendente" | "indo" | "parada" | null>(null);
   const [teclado, setTeclado] = useState(false);
-  const [comPonteiro, setComPonteiro] = useState(false);
-  const erguida = ativa ?? fixa;
 
   useEffect(() => {
-    setComPonteiro(matchMedia("(hover: hover)").matches);
     // O teclado não anima: o Tab liga, o ponteiro desliga.
     const tab = (e: KeyboardEvent) => e.key === "Tab" && setTeclado(true);
     const ponteiro = () => setTeclado(false);
@@ -91,10 +71,7 @@ export function PecaDoLogotipo({ linhas, ponte, legenda, rotulo }: Props) {
         className="vd-peca"
         aria-pressed={aberta}
         aria-label={rotulo}
-        onClick={() => {
-          setAberta((a) => !a);
-          setFixa(null);
-        }}
+        onClick={() => setAberta((a) => !a)}
       >
         <svg width="0" height="0" className="absolute" aria-hidden="true">
           <defs>
@@ -137,18 +114,14 @@ export function PecaDoLogotipo({ linhas, ponte, legenda, rotulo }: Props) {
                 <use href="#peca-letra" fill="url(#peca-tinta)" />
               </svg>
             </span>
-            {linhas.map((linha, i) => {
-              const desenho = (traco: string) => (
-                <g clipPath="url(#peca-recorte)" fill="none" stroke={traco} strokeWidth="4.5">
-                  {createElement(linha.elemento, linha.atributos)}
+            {TRACOS_DO_GLOBO.map((traco, i) => {
+              const desenho = (cor: string) => (
+                <g clipPath="url(#peca-recorte)" fill="none" stroke={cor} strokeWidth="4.5">
+                  {traco}
                 </g>
               );
               return (
-                <span
-                  key={i}
-                  className={`vd-peca-camada vd-peca-globo${erguida === i ? " erguida" : ""}`}
-                  style={{ "--i": i } as React.CSSProperties}
-                >
+                <span key={i} className="vd-peca-camada vd-peca-globo mov-passiva" style={{ "--i": i } as React.CSSProperties}>
                   <span className="vd-peca-flutua mov-constante">
                     <svg className="e2" viewBox={CAIXA_DO_GLOBO}>
                       {desenho("#6b4318")}
@@ -157,9 +130,6 @@ export function PecaDoLogotipo({ linhas, ponte, legenda, rotulo }: Props) {
                       {desenho("#6b4318")}
                     </svg>
                     <svg viewBox={CAIXA_DO_GLOBO}>{desenho("url(#peca-bronze)")}</svg>
-                    <svg className="acesa" viewBox={CAIXA_DO_GLOBO}>
-                      {desenho("#f1d3a1")}
-                    </svg>
                   </span>
                 </span>
               );
@@ -167,44 +137,6 @@ export function PecaDoLogotipo({ linhas, ponte, legenda, rotulo }: Props) {
           </span>
         </span>
       </button>
-
-      <figure className="vd-peca-codigo" data-ambiente data-passiva="o-atlas-codigo">
-        <p className="vd-peca-ponte">{ponte}</p>
-        <div className="vd-peca-caixa">
-        <span aria-hidden="true" className="vd-peca-janela">
-          <span className="vd-peca-leitura mov-passiva" />
-        </span>
-        <ol className="vd-peca-linhas">
-          {linhas.map((linha, i) => (
-            <li key={i}>
-              <button
-                type="button"
-                className={`vd-peca-linha${erguida === i ? " ativa" : ""}`}
-                aria-pressed={fixa === i}
-                aria-label={linha.traducao}
-                onPointerEnter={comPonteiro ? () => setAtiva(i) : undefined}
-                onPointerLeave={comPonteiro ? () => setAtiva(null) : undefined}
-                onFocus={() => setAtiva(i)}
-                onBlur={() => setAtiva(null)}
-                onClick={() => {
-                  setFixa((f) => (f === i ? null : i));
-                  setAberta(false);
-                }}
-              >
-                <code>
-                  {linha.pedacos.slice(0, linha.quebra).map((p, k) => (p.papel ? <span key={k} className={`vd-tinta-${p.papel}`}>{p.texto}</span> : p.texto))}
-                  <span className="vd-peca-resto">
-                    {linha.pedacos.slice(linha.quebra).map((p, k) => (p.papel ? <span key={k} className={`vd-tinta-${p.papel}`}>{p.texto}</span> : p.texto))}
-                  </span>
-                </code>
-                <span className="vd-peca-traducao">{linha.traducao}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-        </div>
-        <figcaption>{legenda}</figcaption>
-      </figure>
     </div>
   );
 }

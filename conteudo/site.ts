@@ -6,7 +6,7 @@
 // Títulos são listas de linhas: cada entrada vira uma linha no desenho.
 
 import { duvidas } from "@/conteudo/duvidas";
-import { condicaoDeFundacao, faixaDePreco } from "@/conteudo/planos";
+import { condicaoDeFundacao, faixaDePreco, modulos } from "@/conteudo/planos";
 import { reais } from "@/lib/moeda";
 import { porExtenso, type Genero } from "@/lib/por-extenso";
 
@@ -15,7 +15,7 @@ export { contato, mensagens } from "@/conteudo/contato";
 export const metadados = {
   titulo: "Atlas Digital — sites para o comércio local de Niterói",
   descricao:
-    "Sites profissionais para pequenos negócios de Niterói. Primeiro rascunho navegável em até 24 horas após o briefing completo. Preço declarado, sem surpresa.",
+    "Sites profissionais para pequenos negócios de Niterói. O primeiro rascunho do site em até 24 horas depois do briefing completo. Preço publicado, sem surpresa.",
   slogan: "Sua empresa online em 24h",
 };
 
@@ -54,12 +54,12 @@ export const paginas = [
     caminho: "/para-quem",
     menu: "Para quem",
     titulo: "Para quem: sites para negócios de Niterói · Atlas Digital",
-    descricao: "Comércio de bairro, serviço com agenda e profissão regulamentada em Niterói: os públicos atendidos e o que cada nicho exige.",
+    descricao: "Sites para comércio de bairro, serviço com agenda e profissão regulamentada em Niterói, e o que cada ramo precisa ter no site.",
     abertura: {
       rotulo: "Para quem",
       titulo: ["Niterói,", "bairro a bairro."],
       destaque: "Niterói",
-      lide: "Atendimento presencial em qualquer bairro da cidade. O briefing ocorre no próprio estabelecimento.",
+      lide: "Atendimento presencial em qualquer bairro da cidade. A conversa do briefing é feita no seu negócio.",
     },
     porta: porta(3, "públicos", "m", "Comércio de bairro, serviço com agenda e profissão regulamentada."),
   },
@@ -75,7 +75,7 @@ export const paginas = [
       destaque: "degraus",
       // "os efeitos de movimento", e não "a camada de movimento", a língua da agência (17/10, Impeccable, heurística 2): o
       // mesmo nome da lista dos planos ("Todos os efeitos de movimento").
-      lide: "Cada degrau define o número de páginas, as funcionalidades sob medida e os efeitos de movimento. A mensalidade acompanha o degrau.",
+      lide: "Quanto mais alto o plano, mais páginas, mais ferramentas e mais movimento. A mensalidade sobe junto.",
     },
     // A porta em número e palavra, como as outras; o preço vai no resumo, declarado (ata v3.0, IV.1: preço por último, nunca alardeado).
     porta: porta(3, "planos", "m", `De ${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}, com o site de cada plano para abrir e usar.`),
@@ -85,12 +85,12 @@ export const paginas = [
     caminho: "/orcamento",
     menu: "Orçamento",
     titulo: "Orçamento de site com valor na hora · Atlas Digital",
-    descricao: "Plano e módulos, com o valor exato na hora, em criação e mensalidade. A mensagem segue pronta para o WhatsApp; nada é registrado.",
+    descricao: "Escolha o plano e os extras e veja na hora o valor exato da criação e da mensalidade. A mensagem vai pronta para o WhatsApp, e nada fica salvo.",
     abertura: {
       rotulo: "Orçamento",
       titulo: ["Dois toques,", "valor exato."],
       destaque: "exato",
-      lide: "O plano e os módulos definem o total, em criação e mensalidade. A mensagem segue pronta para o WhatsApp.",
+      lide: "Escolha o plano e os extras e veja o total na hora. A mensagem vai pronta para o WhatsApp.",
     },
     porta: porta(2, "toques", "m", "O valor exato na hora e a mensagem pronta para o WhatsApp."),
   },
@@ -99,31 +99,31 @@ export const paginas = [
     caminho: "/o-trabalho",
     menu: "O trabalho",
     titulo: "Como o site é feito, do briefing à publicação · Atlas Digital",
-    descricao: "Visita e briefing, rascunho navegável em 24 horas, duas rodadas de revisão e publicação em 7 a 15 dias úteis.",
+    descricao: "Visita e briefing, rascunho em 24 horas, duas rodadas de revisão e publicação em 7 a 15 dias úteis.",
     abertura: {
       rotulo: "O trabalho",
       titulo: ["Do balcão", "ao endereço próprio."],
       destaque: "próprio",
-      lide: "O prazo corre a partir do briefing completo. Nada é publicado sem aprovação.",
+      lide: "O prazo conta a partir do briefing completo. Nada vai ao ar sem a sua aprovação.",
     },
-    porta: porta(4, "etapas", "f", "Da visita ao rascunho navegável, da aprovação à publicação."),
+    porta: porta(4, "etapas", "f", "Da visita ao rascunho, da aprovação à publicação."),
   },
   {
     id: "atlas",
     caminho: "/o-atlas",
     menu: "O Atlas",
     titulo: "O Atlas: três sócios, origem na UFF · Atlas Digital",
-    descricao: "Formado por três estudantes de Ciência da Computação da Universidade Federal Fluminense, em Niterói: o método acadêmico aplicado a sites para o comércio local.",
+    descricao: "Três estudantes de Ciência da Computação da Universidade Federal Fluminense, em Niterói, que fazem sites para o comércio local.",
     abertura: {
       rotulo: "O Atlas",
       titulo: ["Origem", "na UFF."],
       destaque: "UFF",
       // [provisório] (R10, CONTRATO.md, 5.2): a primeira frase, a da formação, passou a "Quem faz", para a formação
       // aparecer uma vez na página; o lide fica com a segunda frase de hoje, literal.
-      lide: "O método acadêmico aplicado ao comércio local.",
+      lide: "O rigor da universidade, a serviço do comércio local.",
     },
     porta: {
-      frase: "Formado por estudantes de Ciência da Computação da UFF, em Niterói.",
+      frase: "Três estudantes de Ciência da Computação da UFF, em Niterói.",
     },
   },
   {
@@ -131,14 +131,14 @@ export const paginas = [
     caminho: "/duvidas",
     menu: "Dúvidas",
     titulo: "Perguntas frequentes sobre sites · Atlas Digital",
-    descricao: "Prazo, preço, contrato, conteúdo, verificação de qualidade e privacidade: as perguntas que costumam vir antes do orçamento.",
+    descricao: "Prazo, preço, contrato, textos, qualidade e privacidade: as respostas às dúvidas mais comuns antes do orçamento.",
     abertura: {
       rotulo: "Dúvidas",
       titulo: ["Perguntas", "frequentes."],
       destaque: "frequentes",
-      lide: "As respostas que antecedem o orçamento. Outras questões seguem pelo WhatsApp.",
+      lide: "Respostas curtas, antes do orçamento. Outra dúvida? É só chamar no WhatsApp.",
     },
-    porta: porta(duvidas.length, "perguntas", "f", "Prazo, preço, contrato, verificação e privacidade."),
+    porta: porta(duvidas.length, "perguntas", "f", "Prazo, preço, contrato, qualidade e privacidade."),
   },
 ] as const;
 
@@ -221,8 +221,8 @@ export const figuras = {
    */
   momentos: [
     { momento: "Antes de contratar", itens: [{ rotulo: "Instagram", duvida: 4 }, { rotulo: "Celular", duvida: 6 }, { rotulo: "Site existente", duvida: 8 }, { rotulo: "Preço", duvida: 11 }] },
-    { momento: "Na contratação", itens: [{ rotulo: "Pagamento", duvida: 7 }, { rotulo: "Fim do contrato", duvida: 3 }, { rotulo: "O que o cliente faz", duvida: 12 }] },
-    { momento: "Durante o trabalho", itens: [{ rotulo: "As 24 horas", duvida: 1 }, { rotulo: "Textos", duvida: 5 }, { rotulo: "Verificação", duvida: 9 }] },
+    { momento: "Na contratação", itens: [{ rotulo: "Pagamento", duvida: 7 }, { rotulo: "Fim do contrato", duvida: 3 }, { rotulo: "O que você faz", duvida: 12 }] },
+    { momento: "Durante o trabalho", itens: [{ rotulo: "As 24 horas", duvida: 1 }, { rotulo: "Textos", duvida: 5 }, { rotulo: "Qualidade", duvida: 9 }] },
     { momento: "Com o site no ar", itens: [{ rotulo: "Mensalidade", duvida: 2 }, { rotulo: "Privacidade", duvida: 10 }] },
   ],
 };
@@ -232,7 +232,7 @@ export const capa = {
   // A palavra do título que recebe a onda de cor na entrada (Spell UI, Gradient Wave Text; desde 03/10).
   destaque: "24h",
   // Uma frase: a definição vinculante do slogan (ata v3.0, IV.4). O prazo de publicação fica nos passos, logo abaixo.
-  lide: "Primeiro rascunho navegável em até 24 horas após o briefing completo.",
+  lide: "O primeiro rascunho do site, pronto para abrir e testar, em até 24 horas depois do briefing completo.",
   // No início, as duas ações levam às seções da própria página: o montador e os passos.
   acaoPrincipal: { rotulo: "Montar orçamento", destino: "#orcamento" },
   acaoSecundaria: { rotulo: "Conhecer o método", destino: "#trabalho" },
@@ -248,8 +248,8 @@ export const capa = {
     // O que os dez blocos verificam, só o que a régua mede (producao/qualidade/02-regua.md, seção 5; 16/10, Impeccable).
     {
       valor: "10",
-      rotulo: "blocos de verificação antes de cada entrega",
-      detalhe: "Do celular ao computador: leitura em cada tela, contraste, uso pelo teclado, velocidade, privacidade e texto.",
+      rotulo: "testes antes de cada entrega",
+      detalhe: "O seu site é testado do celular ao computador: leitura, velocidade, privacidade e texto.",
     },
     { valor: "0", rotulo: "cookies e rastreadores neste site" },
     { valor: "1", rotulo: "visita presencial ao estabelecimento" },
@@ -269,23 +269,23 @@ export const capa = {
 };
 
 export const paraQuem = {
-  titulo: ["Negócios reconhecidos no bairro", "e ausentes da internet."],
+  titulo: ["Negócios conhecidos no bairro", "e ainda fora da internet."],
   // Os três textos com o mesmo fôlego (duas frases, ~100 caracteres): os blocos ficam simétricos.
   publicos: [
     {
       titulo: "Comércio de bairro",
       plano: "profissional",
-      texto: "Balcão e vitrine. O site informa o estoque, o horário de funcionamento e o trajeto até a porta.",
+      texto: "Loja de balcão. O site mostra o que você tem, o horário e o caminho até a sua porta.",
     },
     {
       titulo: "Serviço com agenda",
       plano: "completo",
-      texto: "Atendimento marcado. O pedido chega com serviço, data e horário definidos, antes da primeira conversa.",
+      texto: "Atendimento com hora marcada. O pedido já chega com o serviço, o dia e o horário escolhidos.",
     },
     {
       titulo: "Profissão regulamentada",
       plano: "essencial",
-      texto: "Nutrição, direito, odontologia. A norma do conselho de cada profissão é conferida na fonte antes do rascunho.",
+      texto: "Nutrição, direito, odontologia. O texto segue as regras do conselho, conferidas antes do rascunho.",
     },
   ],
   /**
@@ -327,20 +327,23 @@ export const escada = {
 } as const;
 
 export const vitrine = {
-  titulo: ["Cada nicho impõe", "uma exigência própria."],
-  seletor: "Escolher demonstrativo",
+  titulo: ["Cada nicho pede", "um site diferente."],
+  seletor: "Escolher o exemplo",
   nota: "Estabelecimentos fictícios, criados para demonstração.",
 };
+
+const paginaAdicional = modulos.find((m) => m.porPagina);
+if (!paginaAdicional) throw new Error("conteudo/site.ts: nenhum extra cobrado por página em conteudo/planos.ts");
 
 export const orcamento = {
   rotulo: "Orçamento",
   // Desde 17/10 (passe 4b), "O valor é apresentado na hora." abre o lide, e não fecha o título: a 68 px, na metade da
   // coluna, o título ocupava cinco linhas. O mesmo texto, reordenado.
-  titulo: ["Componha o orçamento."],
-  lide: "O valor é apresentado na hora. Selecione o plano e os módulos. O total aparece em dois números — criação e mensalidade — e a mensagem segue pronta para o WhatsApp.",
+  titulo: ["Monte o seu orçamento."],
+  lide: "Escolha o plano e os extras e veja na hora quanto custam a criação e a mensalidade. A mensagem vai pronta para o WhatsApp.",
   privacidade:
-    "Nada é registrado nesta página: a mensagem parte do próprio aparelho. Página adicional é orçada em separado.",
-  semScript: "O montador requer JavaScript. A conversa pode começar direto pelo WhatsApp:",
+    `Nada fica salvo: a mensagem só sai quando você envia. Página adicional (${reais(paginaAdicional.criacao)} cada) fica fora desta conta.`,
+  semScript: "O orçamento não abriu neste navegador. Você pode começar a conversa direto pelo WhatsApp:",
   /**
    * O que resta aqui da tabela completa da página Orçamento: o aviso e a linha da condição; o resto mora em
    * conteudo/paginas/orcamento.ts desde o R10.
@@ -364,7 +367,7 @@ export const orcamento = {
  */
 export const passosDoInicio = {
   rotulo: "O trabalho",
-  vinculo: { rotulo: "Ver o trabalho em detalhe", destino: "/o-trabalho" },
+  vinculo: { rotulo: "Ver cada etapa", destino: "/o-trabalho" },
 };
 
 // Sociedade vigente desde 30/09/2026 (ata v3.0; CLAUDE.md, "Decisões tomadas").
@@ -374,7 +377,7 @@ export const passosDoInicio = {
 // três antes da publicação.
 export const quemFaz = {
   titulo: ["Três sócios,", "um responsável por etapa."],
-  lide: "Venda e briefing, desenvolvimento, suporte: nenhuma etapa é terceirizada.",
+  lide: "Venda, desenvolvimento e suporte. Nenhuma etapa é terceirizada.",
   /**
    * `foto`: o nome do arquivo da foto do sócio em public/socios/, sem a
    * extensão (o painel aceita .webp, .avif, .jpg, .jpeg e .png, nessa
@@ -399,25 +402,23 @@ export const quemFaz = {
         numero: "01",
         titulo: "O método",
         texto:
-          "Medir antes de afirmar, testar antes de entregar, escrever código que outra pessoa consiga manter: exigências que não dependem do porte de quem contrata.",
+          "Medir antes de afirmar, testar antes de entregar e deixar o site fácil de outra pessoa cuidar, se um dia for preciso. O cuidado é o mesmo para qualquer tamanho de negócio.",
       },
       {
         numero: "02",
         titulo: "O problema",
         texto:
-          "Comércios com anos de casa e nenhum endereço próprio na internet, dependentes de uma rede social que muda as regras sem aviso.",
+          "Comércios com anos de casa e sem site próprio, que dependem de uma rede social que muda as regras sem aviso.",
       },
       {
         numero: "03",
-        titulo: "A aplicação",
-        texto:
-          "O rigor acadêmico aplicado desde já ao comércio local: preço declarado, prazo por escrito, código verificado antes da entrega.",
+        titulo: "Na prática",
+        texto: "Preço publicado, prazo por escrito e site testado antes da entrega.",
       },
       {
         numero: "04",
-        titulo: "O começo, declarado",
-        texto:
-          "Sem histórico de clientes, os três primeiros contratos têm condição própria: o risco de contratar primeiro é reconhecido no preço.",
+        titulo: "O começo",
+        texto: "Como o Atlas ainda não tem clientes, os três primeiros contratos têm condição própria: quem contrata primeiro corre um risco, e o preço reconhece isso.",
       },
     ],
   },
@@ -425,7 +426,7 @@ export const quemFaz = {
     // No tempo do mito (R10, D17): o texto logo abaixo diz "Atlas sustenta o céu sobre os ombros".
     titulo: "Atlas sustenta o céu.",
     texto:
-      "Na mitologia grega, Atlas sustenta o céu sobre os ombros. O nome traduz o propósito: sustentar o que o cliente já construiu, sem substituí-lo. No logotipo, o globo sobre o ombro da letra A reduz essa figura a uma letra.",
+      "Na mitologia grega, Atlas carrega o céu nos ombros. O nome diz o propósito: sustentar o que você já construiu, sem tomar o seu lugar. No logotipo, o globo fica sobre o ombro da letra A.",
   },
 };
 
@@ -444,25 +445,25 @@ export const trabalho = {
       marca: { valor: "1", rotulo: "visita presencial" },
       // 01-processo.md:77 (quem vai e "nunca se entrega o formulário ao cliente para responder depois") e :78 (30 min no
       // Essencial, 45 no Profissional, 1 h no Completo).
-      texto: `${vendas.nome} vai ao estabelecimento para a conversa de levantamento, de 30 a 60 minutos. O formulário é preenchido ali, com o responsável, e nunca deixado para depois.`,
+      texto: `${vendas.nome} vai até o seu negócio para uma conversa de 30 a 60 minutos. O formulário é preenchido ali mesmo, com você, e não fica para depois.`,
     },
     {
       titulo: "Rascunho",
       marca: { valor: "24 h", rotulo: "após o briefing completo" },
       // 01-processo.md:164 (o endereço temporário, com noindex).
-      texto: "Site navegável, entregue por link, com textos e fotografias reais, sem banco de imagens nem inteligência artificial. Fica num endereço provisório, fora do Google, até a aprovação.",
+      texto: "Você recebe por link o site já navegável, com textos e fotos reais, sem banco de imagens nem inteligência artificial. Ele fica num endereço provisório, fora do Google, até a sua aprovação.",
     },
     {
       titulo: "Revisões",
       marca: { valor: "2", rotulo: "rodadas sem custo" },
       // 01-processo.md:178 ("o que excede o escopo do plano é orçado antes de ser feito, nunca cobrado depois").
-      texto: "Ajustes sobre o rascunho. O que não estiver no plano é orçado antes de ser feito, nunca cobrado depois.",
+      texto: "Você pede os ajustes sobre o rascunho. O que não estiver no plano é orçado antes de ser feito, nunca cobrado depois.",
     },
     {
       titulo: "Publicação",
       marca: { valor: "7 a 15", rotulo: "dias úteis, em geral" },
       // 01-processo.md:203 (a segunda parcela da criação, na publicação).
-      texto: "Após a verificação técnica e a conferência de privacidade. A segunda metade da criação é paga aqui. Domínio, hospedagem e manutenção seguem pela mensalidade.",
+      texto: "Com tudo conferido, o site vai ao ar. A segunda metade da criação é paga aqui. Domínio, hospedagem e manutenção ficam na mensalidade.",
     },
   ],
 };
@@ -474,7 +475,7 @@ export const fundacao = {
   // que "½" e é a forma habitual de um desconto. Em reais (R$ 450 a R$ 1.200), não: os valores constam como
   // [A CONFIRMAR] no contexto comercial, §2. A parte da ata (IV.3) sobre a mensalidade saiu do site em 28/10.
   titulo: condicaoDeFundacao.replace(", ", ",\n").split("\n"),
-  lide: "O risco de contratar uma agência sem histórico é reconhecido no preço. São três contratos, e a condição se encerra com eles. Em troca, cada um vira estudo de caso, com autorização assinada no início.",
+  lide: "Quem contrata uma agência nova corre um risco, e o preço reconhece isso. São só três contratos, e a condição acaba com eles. Em troca, cada um vira estudo de caso, com autorização assinada no início.",
   termos: [
     /** selos: o número desenhado ao lado, um globo da marca por contrato. */
     { valor: "3", rotulo: "contratos com esta condição", selos: 3 },
@@ -483,7 +484,7 @@ export const fundacao = {
 
 export const fim = {
   titulo: ["Comece pelo orçamento."],
-  lide: "Dois toques para o valor exato. A conversa ocorre em seguida, sem compromisso.",
+  lide: "Dois toques para saber o valor. Depois, a conversa, sem compromisso.",
 };
 
 export const rodape = {
@@ -494,7 +495,7 @@ export const rodape = {
    * para o comércio local de Niterói."
    */
   descricao: `Atlas Digital: sites para pequenos negócios de Niterói (RJ), feitos por três estudantes de Ciência da Computação da UFF. Criação de ${reais(faixaDePreco.minimo)} a ${reais(faixaDePreco.maximo)}; primeiro rascunho em até 24 horas após o briefing completo; publicação em 7 a 15 dias úteis, em geral.`,
-  selo: "Este site corresponde ao plano Completo. Essencial e Profissional seguem o mesmo padrão, com menos páginas e menos movimento. Nenhum cookie, nenhum rastreador: nada é gravado no aparelho de quem visita.",
+  selo: "Este site é do plano Completo. O Essencial e o Profissional têm o mesmo padrão, com menos páginas e menos movimento. Nenhum cookie, nenhum rastreador.",
   direitos: "© 2026 Atlas Digital",
 };
 
@@ -503,7 +504,7 @@ export const falarNoWhatsApp = "Falar no WhatsApp";
 // Simulador de planos: os sites de app/demos/, um por plano, no palco da
 // escada (components/secoes/escada.tsx), e os rótulos do diálogo.
 export const simulador = {
-  abrir: "Abrir no simulador",
+  abrir: "Ver o site aqui",
   novaAba: "Abrir em nova aba",
   fechar: "Fechar o simulador",
   aparelhos: { computador: "Computador", celular: "Celular" },
@@ -543,7 +544,7 @@ export const simulador = {
       nome: "Nutrição Icaraí",
       nicho: "Consultório de nutrição",
       paginas: 3,
-      resumo: "Três páginas, o limite do plano, compostas como folha impressa: sumário pontilhado, valores publicados, WhatsApp à mão e o mapa do bairro.",
+      resumo: "Três páginas, o limite do plano: os valores à vista, o WhatsApp à mão e o mapa do bairro.",
       experimente: "Passe pelas três páginas do índice (I, II e III) e abra o WhatsApp pelo botão.",
     },
     {
@@ -556,7 +557,7 @@ export const simulador = {
       nome: "Banho e Tosa São Francisco",
       nicho: "Banho e tosa",
       paginas: 3,
-      resumo: "Três páginas impressas numa cartolina amarela, numa tinta só: o valor e a duração por porte e pelagem, o leva e traz com dia fixo por bairro e o carimbo que abre o WhatsApp.",
+      resumo: "Três páginas: o valor e a duração por porte e pelagem, o leva e traz com dia fixo por bairro e o carimbo que abre o WhatsApp.",
       experimente: "Em Serviços e valores, passe o ponteiro pela tabela do banho; depois, peça o horário pelo carimbo, com a mensagem pronta.",
     },
     {
@@ -569,7 +570,7 @@ export const simulador = {
       nome: "Depósito Engenhoca",
       nicho: "Material de construção",
       paginas: 6,
-      resumo: "Seis páginas em ficha técnica de obra. A calculadora de materiais, funcionalidade sob medida, imprime a lista num cupom; o estado da loja aparece ao vivo.",
+      resumo: "Seis páginas. A calculadora de materiais monta a lista num cupom, pronta para enviar, e o site mostra se a loja está aberta agora.",
       experimente: "Abra a aba 02, mude as medidas e envie a lista pronta pelo cupom.",
     },
     {
@@ -582,7 +583,7 @@ export const simulador = {
       nome: "Cozinha do Ingá",
       nicho: "Restaurante de almoço",
       paginas: 6,
-      resumo: "Seis páginas no papel do cardápio, com a lousa do prato do dia de hoje. O montador de pedido soma os pratos e o frete do bairro e envia o total pelo WhatsApp.",
+      resumo: "Seis páginas, com o prato do dia na lousa. O pedido soma os pratos e o frete do bairro e envia o total pelo WhatsApp.",
       experimente: "Na aba Pedido, escolha dois pratos e o bairro: o frete entra à parte, e o total aparece antes de enviar.",
     },
     {
@@ -595,7 +596,7 @@ export const simulador = {
       nome: "Barbearia Santa Rosa",
       nicho: "Barbearia",
       paginas: 7,
-      resumo: "Sete páginas sobre um palco 3D em WebGL: fichas de metal em relevo viram com a rolagem e na troca de página. Duas funcionalidades sob medida: agendador e agenda de retorno.",
+      resumo: "Sete páginas em 3D, com fichas de metal que viram ao rolar. Duas ferramentas: o agendamento e a agenda de retorno.",
       experimente: "Role o início devagar: a moeda da casa vira nas fichas d’A Navalha e d’O Clássico e na placa de 1996. Depois, calcule a janela de retorno e leve o pedido ao agendador.",
     },
     {
@@ -608,7 +609,7 @@ export const simulador = {
       nome: "Odontologia Boa Viagem",
       nicho: "Clínica odontológica",
       paginas: 12,
-      resumo: "Doze páginas no traço da ficha clínica, sem nenhum valor, que o conselho veda. O mapa dos dentes, peça-assinatura, abre o plano de sessões por região e leva a região ao pedido de avaliação.",
+      resumo: "Doze páginas, sem preços, que o conselho proíbe. No mapa dos dentes, o paciente toca na região e a leva ao pedido de avaliação.",
       experimente: "Na capa, toque numa região do mapa dos dentes: o lápis a circula e os tratamentos dela aparecem. Depois, leve a região ao pedido de avaliação e veja a mensagem montada.",
     },
   ],

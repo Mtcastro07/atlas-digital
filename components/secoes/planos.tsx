@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
 /**
  * O que cada plano inclui (R10, 28/10; até então, três cartões lado a lado, com a prévia do site de cada plano).
  * - Na mesa (1024 px ou mais), a tabela de ofício, uma <table> de 17 linhas: a chave dos nomes presa no alto, "Criação"
- *   e "Por mês" em cima, três grupos e o "—" para a ausência. A coluna do Profissional é a placa navy (D7): o grão da
- *   água, o raio de 28 px e a sombra longa da manhã, da chave à última linha. A grade é a mesma da escada da abertura
+ *   e "Por mês" em cima, três grupos e o "—" para a ausência. A coluna do Profissional é a placa navy (D7): o
+ *   raio de 28 px e a sombra longa da manhã, da chave à última linha. A grade é a mesma da escada da abertura
  *   (quatro colunas, 24 px entre elas): cada degrau pousa na coluna do seu plano.
  * - No celular e no tablet, a galeria de deslizar (D19): um quadro por plano, centrado e encaixado, que abre no
  *   Profissional; o quadro dele é a placa navy.
@@ -80,15 +80,6 @@ export function Planos() {
         {/* ---------- no celular e no tablet: a galeria, um quadro por plano ---------- */}
         <div className="vd-galeria-quadro vd-galeria-lg vd-planos-galeria mt-12 md:mt-16 lg:mt-0" style={{ "--galeria-polegar": 1 / planos.length } as React.CSSProperties}>
           <div aria-hidden="true" className="vd-galeria-trilho mt-0 mb-4" />
-          {/* O nome do plano à vista no meio do quadro de 2,1 telas (Q18). A galeria rola de lado, e o sticky do <h3> ficaria
-              preso a ela: esta plaquinha fica fora dela, e as duas linhas do tempo do CSS escolhem o nome e a acendem. */}
-          <div aria-hidden="true" className="vd-planos-preso">
-            <span>
-              {planos.map((plano) => (
-                <span key={plano.id}>{plano.nome}</span>
-              ))}
-            </span>
-          </div>
           <div className="vd-galeria">
             {planos.map((plano) => (
               <article
@@ -173,7 +164,7 @@ export function Planos() {
               </h2>
               <Lide className="mt-4">{tabela.lide}</Lide>
             </caption>
-            {/* A corrente da placa (a passiva P33): a luz sobe pela coluna do Profissional, da chave à última linha. Fora da
+            {/* A corrente da placa (a passiva P33): a luz deriva pela coluna do Profissional, da chave à última linha. Fora da
                 árvore de acessibilidade: um corpo de tabela só de desenho, porque a tabela é uma grade e a placa, o pseudo dela. */}
             <tbody aria-hidden="true" className="vd-placa-corrente" data-ambiente data-passiva="planos-placa">
               <tr>
@@ -287,7 +278,6 @@ export function Planos() {
             <h2 id="titulo-extras" className="text-numero">
               {extras.titulo}
             </h2>
-            <Lide className="mt-4">{extras.lide}</Lide>
           </header>
           <table className="vd-razao" role="table" aria-labelledby="titulo-extras">
             <thead role="rowgroup">

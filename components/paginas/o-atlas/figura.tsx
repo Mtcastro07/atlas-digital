@@ -66,30 +66,3 @@ const PROJECAO = (() => {
   });
   return { apice, paralelos, meridianos };
 })();
-
-/**
- * A moldura da folha de O Atlas (16/10): a borda graduada de uma prancha de
- * atlas, recuada 24 px da cena (em cima, abaixo do cabeçalho), com a barra
- * de baixo na própria emenda. Faixas de 6 px, em segmentos alternados de um
- * minuto de arco: 40 px o de latitude; o de longitude, 40 · cos 22,88° =
- * 36,85 px, a escala em volta de Niterói. A folha é centrada em Niterói (a
- * fronteira de dois segmentos no meio de cada barra). No celular, só a barra
- * da esquerda e a de baixo, dentro dos 24 px da margem. Desde 17/10, a
- * moldura vai a 32 px da borda onde a margem da página deixa. A única
- * moldura graduada do site.
- * Desde 28/10 (R10, CONTRATO.md, 3.6), sem rótulos: a cidade fica com uma
- * coordenada só, sob "Niterói, RJ". Até então, a latitude deitada na barra
- * da esquerda e uma longitude na de baixo (43°14′ O na mesa, 43°10′ O no
- * celular), que não eram as da cidade e davam duas longitudes na mesma tela
- * (R8/E2, item 30; R8/E4, 11.2; R8/E6, problema 24).
- */
-export function MolduraGraduada() {
-  return (
-    <div aria-hidden="true" className="vd-moldura pointer-events-none absolute inset-0 max-md:hidden">
-      <span className="vd-moldura-barra vd-moldura-esquerda" />
-      <span className="vd-moldura-barra vd-moldura-direita" />
-      <span className="vd-moldura-barra vd-moldura-topo" />
-      <span className="vd-moldura-barra vd-moldura-base" />
-    </div>
-  );
-}

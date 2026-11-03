@@ -16,25 +16,21 @@ export const capaDoInicio = {
  *  alternativa: "Quatro etapas. Nenhuma delas opcional."] */
 export const tituloDosPassos = ["Como o site é feito."];
 
-/** O código dos destaques: a frase para o leigo e a conferência feita no aparelho (paginas/inicio.md, 2.2, e a
+/** A prova dos destaques: a frase para o leigo e a conferência feita no aparelho (paginas/inicio.md, 2.2, e a
  *  crítica do esboço). A conferência é montada na ilha (components/ilhas/conferencia.tsx) com estas peças. */
-export const codigoDosDestaques = {
-  barreira: ["Este endereço", "Outro endereço"],
-  leigo:
-    "É a primeira linha da regra de segurança do site: a página só carrega o que vem do próprio endereço. Um rastreador viria de outro endereço e ficaria de fora.",
+export const provaDosDestaques = {
+  barreira: ["Este site", "Outras empresas"],
+  /** O que isso dá ao cliente (03/11: até então, a frase da regra de segurança do site, para o leigo). O mesmo fato da
+   *  dúvida 10 (conteudo/duvidas.ts): sem rastreador e sem aviso de cookies. */
+  leigo: "O seu site sai igual: sem rastreador e sem aviso de cookies para o seu cliente aceitar.",
   conferencia: {
-    espera: "A conferência roda quando a página abre, neste aparelho.",
+    espera: "A conferência é feita neste aparelho, quando a página abre.",
     /** {hora} vira "às 9h05" (ou "à 1h05"); {cookies} e {arquivos}, a contagem por extenso abaixo. */
-    frase: "Conferido {hora}, quando a página abriu, neste aparelho: {cookies} e {arquivos} de outro endereço.",
+    frase: "Conferido {hora}, neste aparelho: {cookies} e {arquivos} de outras empresas.",
     cookies: { nenhum: "nenhum cookie", um: "1 cookie", varios: "{n} cookies" },
-    arquivos: { nenhum: "nenhum arquivo", um: "1 arquivo", varios: "{n} arquivos" },
+    arquivos: { nenhum: "nada carregado", um: "1 arquivo carregado", varios: "{n} arquivos carregados" },
     /** Só com 0 e 0: a página não leu cookie nem carregou nada de fora. */
     nada: "Nada foi enviado a terceiros.",
-  },
-  como: {
-    resumo: "Como a conferência é feita",
-    texto: (arquivo: string, linhas: string) =>
-      `O navegador lista os arquivos que a página carregou e os cookies que ela consegue ler, e a conta é feita aqui, sem sair do aparelho. A linha acima está no arquivo ${arquivo} do site, na ${linhas}.`,
   },
 };
 

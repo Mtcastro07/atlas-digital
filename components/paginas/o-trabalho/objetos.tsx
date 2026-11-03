@@ -1,4 +1,4 @@
-import { fraseDoMapa, primeiroDia, visita } from "@/conteudo/paginas/o-trabalho";
+import { legendaDoSite, primeiroDia, visita } from "@/conteudo/paginas/o-trabalho";
 
 // Os objetos das etapas de O trabalho (R10, 28/10; em escala de cena desde 02/11): um por etapa, cada um tirado
 // de um dado do kit, sem foto nem exemplo inventado. O CSS mora em app/paginas/o-trabalho.css (.ot-*).
@@ -12,7 +12,7 @@ export function MarcaObrigatoria() {
  * Etapa 1: o formulário da visita, em trecho. Os campos bloqueantes, com as perguntas literais do kit
  * (producao/esteira/02-briefing.md), numa folha de ficha sobre o bloco: a borda da folha de baixo, para o leste (a luz
  * da tarde). O último campo liga a etapa 1 à 2: o rascunho tem data, hora e canal prometidos na visita. A passiva P23: a
- * folha mexe devagar sobre a mesa, e a caneta passa pelos campos, de cima a baixo: o formulário preenchido ali, na visita.
+ * folha flutua sobre a mesa, e a tinta se escreve sob os campos, de cima a baixo: o formulário preenchido ali, na visita.
  */
 export function FichaDaVisita({ idDaRegra }: { idDaRegra: string }) {
   return (
@@ -21,21 +21,22 @@ export function FichaDaVisita({ idDaRegra }: { idDaRegra: string }) {
         <p className="ot-ficha-titulo">
           {visita.titulo} <span>{visita.recorte}</span>
         </p>
-        <div className="ot-ficha-campos">
-        <span aria-hidden="true" className="ot-ficha-caneta mov-passiva" />
         <dl>
-          {[...visita.campos, visita.promessa].map(({ campo, pergunta }) => (
+          {[...visita.campos, visita.promessa].map(({ campo, pergunta }, i) => (
             <div key={campo} className={campo === visita.promessa.campo ? "ot-ficha-promessa" : undefined}>
               <dt>
                 <MarcaObrigatoria />
                 <span className="sr-only">Obrigatório: </span>
                 {campo}
               </dt>
-              <dd>{pergunta}</dd>
+              <dd>
+                {pergunta}
+                {/* Dentro do dd: o dl só aceita dt e dd. A caixa dela é a do campo inteiro (o div). */}
+                <span aria-hidden="true" className="ot-ficha-tinta mov-passiva" style={{ "--vez": i } as React.CSSProperties} />
+              </dd>
             </div>
           ))}
         </dl>
-        </div>
       </div>
     </figure>
   );
@@ -43,7 +44,7 @@ export function FichaDaVisita({ idDaRegra }: { idDaRegra: string }) {
 
 /**
  * Etapa 2: o mostrador das 24 horas (R10, P10; data-passiva="o-trabalho-relogio"), o objeto da cena escura: o círculo, 24
- * traços (maiores a cada seis), as quatro horas da régua e um ponteiro que dá uma volta em 24 s, linear, seguido de um
+ * traços (maiores a cada seis), as quatro horas da régua e um ponteiro que dá uma volta em 24 s, seguido de um
  * rastro de luz. O mostrador é desenho parado; só o ponteiro e o rastro, de HTML, giram (o filho de SVG repintaria a cada
  * quadro). Em repouso, nas 24 h. Decorativo: o texto ao lado diz o prazo.
  */
@@ -129,26 +130,29 @@ export function PrimeiroDia() {
 }
 
 /**
- * Etapa 4: o mapa do site (o sitemap.xml), numa janela em que as linhas correm (a passiva P25), montado das mesmas datas
- * que o alimentam (ultimaAlteracao, lib/datas-das-paginas.ts), na forma que o sitemap.xml servido usa. A linha desta
- * página, em bronze. Sem data no build (sem git, ou clone raso), a janela e a frase não aparecem: data nenhuma é melhor
- * que data errada. O código mora no objeto, sem ficha; a frase para o leigo vem embaixo.
+ * Etapa 4: o site no ar, numa janela de navegador: o endereço e as páginas, cada uma com a data em que mudou, as mesmas do
+ * mapa do site (ultimaAlteracao, lib/datas-das-paginas.ts). A linha desta página, em bronze. A passiva P25: uma luz desce
+ * pelas páginas. Sem data no build (sem git, ou clone raso), a janela não aparece: data nenhuma é melhor que data
+ * errada. Desde 03/11, sem a legenda que explicava o mapa do site (o pedido de texto simples): a legenda diz só o que a janela mostra.
  */
-export function MapaDoSite({ linhas }: { linhas: { loc: string; lastmod: string; estaPagina: boolean }[] }) {
-  const urls = linhas.map(({ loc, lastmod, estaPagina }) => (
-    <span key={loc} className={estaPagina ? "ot-mapa-url ot-mapa-esta" : "ot-mapa-url"}>
-      {`<url>\n<loc>${loc}</loc>\n<lastmod>${lastmod}</lastmod>\n</url>\n`}
-    </span>
-  ));
+export function SiteNoAr({ endereco, linhas }: { endereco: string; linhas: { nome: string; data: string; estaPagina: boolean }[] }) {
   return (
-    <figure className="ot-mapa">
-      <div className="ot-mapa-janela" data-ambiente data-passiva="o-trabalho-mapa" aria-hidden="true">
-        <code className="ot-mapa-corre mov-passiva">
-          {urls}
-          {urls}
-        </code>
+    <figure className="ot-site">
+      <div className="ot-janela" data-ambiente data-passiva="o-trabalho-site" aria-hidden="true">
+        <p className="ot-janela-endereco">{endereco}</p>
+        <div className="ot-janela-visor">
+          <span className="ot-janela-luz mov-passiva" />
+          <ul>
+            {linhas.map(({ nome, data, estaPagina }) => (
+              <li key={nome} className={estaPagina ? "ot-janela-esta" : undefined}>
+                <span>{nome}</span>
+                <span className="ot-janela-data">{data}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-      <figcaption>{fraseDoMapa}</figcaption>
+      <figcaption className="mt-5 text-corpo text-muted-foreground">{legendaDoSite}</figcaption>
     </figure>
   );
 }

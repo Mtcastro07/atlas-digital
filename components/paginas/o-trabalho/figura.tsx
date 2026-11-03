@@ -18,13 +18,13 @@ function alinhamentoDaEscala(i: number, ultimo: number) {
  * Desde 28/10 (R10), a trena é uma fita de metal (o bronze fundido de .vd-metal, com o fio de luz em cima e a sombra
  * curta da tarde), com os 15 traços de dia gravados em navy; os trechos ficam em três linhas, como um cronograma, cada
  * nome sobre o seu traço e com o valor junto (Q18: "Rascunho, 24 h"; "Publicação, de 7 a 15 dias úteis, em geral"), a
- * 17 px, no degrau do corpo (até 28/10, 14 px nos nomes e 12 px na escala). A unidade e a origem da conta ficam à
- * vista, na legenda, e não só no aria-label. A partir de 768 px, atrás dos trechos, a quadrícula dos dias úteis (uma
+ * 17 px, no degrau do corpo (até 28/10, 14 px nos nomes e 12 px na escala). A unidade fica na escala (na coluna estreita, onde ela não cabe,
+ * na legenda); a origem da conta, no lide logo acima (até 03/11, também na legenda, que a repetia). A partir de 768 px, atrás dos trechos, a quadrícula dos dias úteis (uma
  * coluna por dia, uma linha por trecho, em navy a 7%): a escala da própria trena, a única quadrícula do site.
  * O momento da chegada (desde 14/10): os traços de dia descem um a um, da esquerda para a direita (.mov-risca), e, no
  * mesmo passo, uma janela corre sobre os trechos e os escreve (.mov-trena): o prazo se mede na chegada.
- * A passiva (R10, P9; data-passiva="o-trabalho-janela"): o bronze da janela da publicação vai do traço 7 ao 15 e
- * volta, 12 s, ida e volta, pela escala horizontal com a origem no 7: o prazo varia dentro da janela, "em geral". Em
+ * A passiva (R10, P9; data-passiva="o-trabalho-janela"): o bronze da janela da publicação corre do traço 7 ao 15, com a
+ * ponta dissolvida, pela escala horizontal com a origem no 7, e se apaga: o prazo varia dentro da janela, "em geral". Em
  * repouso (o movimento reduzido, sem script), a janela tracejada de hoje, sem o bronze.
  */
 export function ReguaDoTrabalho() {
@@ -64,7 +64,7 @@ export function ReguaDoTrabalho() {
           </span>
         ))}
       </p>
-      <figcaption className="mt-5 text-corpo text-muted-foreground">{regua.legenda}</figcaption>
+      <figcaption className="ot-escala-legenda mt-5 text-corpo text-muted-foreground">{regua.legenda}</figcaption>
     </figure>
   );
 }

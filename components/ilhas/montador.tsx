@@ -73,7 +73,7 @@ function Marca({ tipo }: { tipo: "radio" | "checkbox" }) {
     <svg viewBox="0 0 22 22" aria-hidden="true" className="orc-marca">
       <Forma {...forma} fill="none" stroke="currentColor" strokeOpacity={0.6} strokeWidth={1.5} />
       <Forma {...forma} className="orc-marca-cheio" fill="currentColor" />
-      <path className="orc-marca-cheio" d="m6.6 11.2 3 2.9 5.8-6.2" fill="none" stroke="#f3efec" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
+      <path className="orc-marca-cheio" d="m6.6 11.2 3 2.9 5.8-6.2" fill="none" stroke="#f2f5f9" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

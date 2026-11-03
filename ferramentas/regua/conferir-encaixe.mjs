@@ -38,7 +38,7 @@ for (const largura of [1440, 1024]) {
     return todas.map((d) => {
       chegada.forEach((c) => (c.open = true));
       const momento = d.closest(".vd-mesa-momento");
-      const seguinte = momento.nextElementSibling?.querySelector("h2") ?? document.querySelector(".vd-mesa-codigo");
+      const seguinte = momento.nextElementSibling?.querySelector("h2") ?? document.querySelector("nav:has(.cm-proxima), footer");
       d.open = true;
       const resposta = d.querySelector(".vd-duvida-resposta p").getBoundingClientRect();
       const pergunta = d.querySelector("summary").getBoundingClientRect();

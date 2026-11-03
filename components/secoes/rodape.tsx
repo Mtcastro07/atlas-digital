@@ -1,33 +1,28 @@
 import Link from "next/link";
 
-import { Colofao, IndiceDoRodape } from "@/components/comuns/rodape-da-pagina";
+import { IndiceDoRodape } from "@/components/comuns/rodape-da-pagina";
 import { Envelope } from "@/components/estrutura";
 import { Logotipo } from "@/components/marca/logotipo";
 import { textoParaIas } from "@/conteudo/paginas/comuns";
 import { contato, metadados, navegacao, rodape } from "@/conteudo/site";
-import { colofaoDe } from "@/lib/colofao";
 import { linkWhatsApp } from "@/lib/whatsapp";
 
 const [usuarioDoEmail, dominioDoEmail] = contato.email.split("@");
 
-/** As frases do colofão das sete páginas, calculadas no servidor, no build: o relatório da régua não vai ao navegador. */
-const colofoes = Object.fromEntries(["/", ...navegacao.map((item) => item.caminho)].map((caminho) => [caminho, colofaoDe(caminho)]));
-
 /**
  * Rodapé em névoa: a marca e, em três colunas da mesma largura (desde
  * 02/10), a descrição, o índice das seis páginas e o contato; no pé, o
- * selo, o colofão e o texto para as IAs. Desde 28/10 (R10,
+ * selo e o texto para as IAs (até 03/11, entre eles, o colofão: as letras e a medida da régua de quadros da página
+ * aberta, que saíram pelo pedido de texto simples). Desde 28/10 (R10,
  * esboco/comuns/ESBOCO.md, 1.1), em três degraus e nada abaixo de 16 px
  * (até então, tudo em 12 e 14): o índice na voz do menu, com fios, de 18
  * a 21 px, e a página aberta marcada (o peso e o traço de bronze, além da
  * cor: components/comuns/rodape-da-pagina.tsx); o contato a 17 px, em
- * navy; a descrição, o selo e o colofão a 16 px, no apagado. Saíram os
+ * navy; a descrição e o selo a 16 px, no apagado. Saíram os
  * rótulos "Páginas" e "Contato": as listas se leem pelo que são. O
  * logotipo, numa linha própria, leva ao início (que não está no índice) e,
  * como o do cabeçalho, o globo gira sob o ponteiro, no computador, e a
- * cada aparecimento, no celular (ilhas/giro-do-globo.tsx). O colofão (D13)
- * dá as letras do site e a medida da régua de quadros da página aberta,
- * lida no build (lib/colofao.ts); sem medida, só as letras. A descrição é
+ * cada aparecimento, no celular (ilhas/giro-do-globo.tsx). A descrição é
  * também a description dos dados estruturados: fica palavra por palavra
  * (D10). O atalho do WhatsApp sai de cena sobre ele (data-sem-atalho): o contato está à vista.
  * Fica no layout: o mesmo em todas as páginas.
@@ -74,7 +69,6 @@ export function Rodape() {
         </div>
         <div className="cm-rodape-pe">
           <p className="cm-rodape-nota">{rodape.selo}</p>
-          <Colofao frases={colofoes} className="cm-rodape-nota" />
           <div className="cm-rodape-fim">
             {/* O texto do site para as IAs (app/llms.txt/route.ts). Um <a> comum: é um arquivo de texto, e não uma página
                 do app; sem seta, porque não sai do site. */}

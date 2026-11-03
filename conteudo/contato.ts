@@ -15,6 +15,7 @@ export const contato = {
 
 /** Mensagens prontas dos vínculos de WhatsApp fora do montador. */
 export const mensagens = {
-  contato: "Contato solicitado pelo site do Atlas Digital.",
-  flutuante: "Contato solicitado pelo site.",
+  // Na voz de quem envia, o cliente (desde 03/11; até então, "Contato solicitado pelo site", como um formulário).
+  contato: "Olá! Vi o site do Atlas Digital e quero conversar sobre um site.",
+  flutuante: "Olá! Vim pelo site e quero conversar sobre um site.",
 };

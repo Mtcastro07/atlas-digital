@@ -60,7 +60,7 @@ export function Orcamento() {
 /**
  * A figura da página Orçamento: o próprio montador, logo abaixo do título "Dois toques, valor exato." (desde 16/10), a
  * abertura e a ferramenta numa cena só. Desde 28/10 (R10), as escolhas no papel e a conta como o objeto da página, e,
- * depois delas, a rota direta: "A conta é feita neste aparelho.", com o código que a prova (D12). O aviso para quem
+ * depois delas, a rota direta: "A conta é feita neste aparelho.", com o caminho da mensagem (D12). O aviso para quem
  * está sem script vem antes do montador.
  */
 export function MontadorDaPagina() {

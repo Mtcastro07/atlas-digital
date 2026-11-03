@@ -15,7 +15,7 @@ type Item = { id: string; rotulo: string; caminho: string };
  * servidor — o caminho de cada página é conhecido na compilação. Entre os
  * itens, 24 px a partir de 1280 px e 16 px abaixo (até 03/10, 26 px, fora
  * da grade de 4 px); o texto a 16 px desde 28/10 (R10: nada que decide
- * abaixo de 16 px; até então, text-nota, 14 px), no creme a 75% de hoje.
+ * abaixo de 16 px; até então, text-nota, 14 px), no claro a 75% de hoje.
  */
 export function NavegacaoDoAtlas({ itens }: { itens: Item[] }) {
   const caminho = usePathname();

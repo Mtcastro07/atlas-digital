@@ -9,7 +9,7 @@ import { linkWhatsApp } from "@/lib/whatsapp";
 
 /**
  * Chamada final, centrada, antes do rodapé, só no início. Da branchCto: a
- * cena (aurora, luz quente e grão) e um reflexo que atravessa o título a
+ * cena (aurora e luz quente) e um reflexo que atravessa o título a
  * cada 8 s (ambiente contínuo, pausável; app/movimento.css) — com
  * movimento reduzido, o título fica liso. A folga sob o título guarda as
  * descendentes do reflexo, que pinta só dentro da caixa do texto. A cena,
@@ -41,8 +41,7 @@ const titulo = fim.titulo.join(" ");
 
 export function Fim() {
   return (
-    // Na mesa, três quartos da tela (até 01/11, a tela inteira, com 372 px vazios sob a ação; a marca L10): o amanhecer fecha a noite que a capa abriu. A matéria da água vem da Secao
-    // (até 16/10, o grão só aqui, .vd-grao, com as bordas apagadas por máscara).
+    // Na mesa, três quartos da tela (até 01/11, a tela inteira, com 372 px vazios sob a ação; a marca L10): o amanhecer fecha a noite que a capa abriu. 
     // O pé maior que o alto: o texto fica no céu, acima do horizonte e da luz que sobe dele.
     // O pé: o mar (4 rem) mais a luz que sobe do horizonte (app/vidro.css, --subida), para o texto ficar acima dela.
     // data-sem-atalho (17/10, segundo fechamento): o "Falar no WhatsApp" da cena já está à vista, e o atalho o cobria.

@@ -56,7 +56,7 @@ function vigiarRolagem(lista: HTMLElement | null) {
  *   WhatsApp", a 17 px (o número fica no rodapé: a 17 px, não cabia a
  *   320 px);
  * - o painel opaco, sem o vidro desfocado de uma camada da tela inteira:
- *   a água com o grão (.vd-materia), que já cobria tudo;
+ *   a água com a rampa (.vd-materia), que já cobria tudo;
  * - abre e fecha só por opacidade e translate (desce 16 px, 300 ms); as
  *   linhas sobem 12 px e acendem, de 30 em 30 ms, em 560 ms (app/comuns.css).
  * O foco preso, o <main> inerte e o Esc, como antes.

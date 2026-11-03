@@ -39,20 +39,20 @@ export const textosDaPagina = {
   exemplo: "Site de exemplo",
   novaAba: "abre numa nova aba",
   nichos: {
-    frase: `${porExtenso(comExemplo, "m", true)} dos ${porExtenso(paraQuem.nichos.lista.length)} nichos têm um site de exemplo pronto. Ao lado de cada um, o bairro do exemplo (estabelecimentos fictícios).`,
+    frase: `${porExtenso(comExemplo, "m", true)} dos ${porExtenso(paraQuem.nichos.lista.length)} nichos têm um site de exemplo para abrir; o bairro ao lado é o do exemplo (estabelecimentos fictícios).`,
   },
   /**
-   * A frase do código, na margem da chapa [provisório: CONTRATO.md, 3.2]. "Três dos seis": o esboço dizia "dos sites
+   * A frase da margem da chapa [provisório: CONTRATO.md, 3.2]. "Três dos seis": o esboço dizia "dos sites
    * de exemplo", e o índice da mesma página mostra seis. A alternativa é a do PDF (esboco/CRITICA-PDF.md, 2, item 10).
    */
   carta: {
-    frase: (pontos: number) =>
-      `Este trecho do código do site põe Icaraí na carta. A posição vem do OpenStreetMap, o mapa aberto feito por voluntários. Os ${porExtenso(pontos)} pontos são os bairros de ${porExtenso(pontos)} dos ${porExtenso(sitesDeExemplo)} sites de exemplo (estabelecimentos fictícios).`,
+    // Desde 03/11, sem a explicação do OpenStreetMap (o pedido de texto simples); o crédito, abaixo, fica: a licença o exige.
+    frase: (pontos: number) => `Os bairros de ${porExtenso(pontos)} dos ${porExtenso(sitesDeExemplo)} sites de exemplo (estabelecimentos fictícios).`,
     credito: "© colaboradores do OpenStreetMap",
   },
   /** O lide da vitrine [provisório: paginas/para-quem.md, 3.4; R9, 5.2]. Os fatos são os de hoje e os do kit. */
   vitrine:
-    "Na nutrição, o conselho da profissão proíbe depoimento e foto de resultado. Num depósito de material de construção, a conta da quantidade e o horário à vista são indispensáveis. O site parte dessas regras, e não do visual.",
+    "Na nutrição, o conselho proíbe depoimento e foto de resultado. No depósito de material de construção, o horário à vista e a conta do material são indispensáveis. O site parte disso, e não da aparência.",
 };
 
 /** O título dos públicos, literal, com espaço inseparável em "no bairro" e "da internet": a preposição não fica no fim da linha. */

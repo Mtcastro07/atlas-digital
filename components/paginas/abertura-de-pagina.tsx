@@ -13,14 +13,12 @@ type Props = {
   disposicao?: "lado" | "embaixo";
   /** "lado": quantas das 12 colunas a figura ocupa a partir de 1024 px; o texto fica com o resto. */
   colunasDaFigura?: keyof typeof COLUNAS;
-  /** A luz da página (16/10): a classe do pico (vd-cena na água, vd-papel no papel), a emenda (z-[1], quando algo
+  /** A luz da página (16/10): a classe do pico (vd-cena na água), a emenda (z-[1], quando algo
    *  atravessa para a cena de baixo) e o estilo com as variáveis da hora. */
   className?: string;
   style?: React.CSSProperties;
   /** O lugar da figura na abertura, quando ela pousa na emenda (Planos, O Atlas; 16/10). */
   classeDaFigura?: string;
-  /** Uma camada da cena inteira, atrás do texto e da figura (a moldura graduada de O Atlas; 16/10). */
-  fundo?: React.ReactNode;
 };
 
 /** As colunas do texto e da figura, lado a lado (classes inteiras, para o Tailwind as achar). */
@@ -55,7 +53,7 @@ const COLUNAS = {
  * bairros. O Orçamento dava 5 (na metade da coluna, "Dois toques," não
  * cabia numa linha); desde 16/10, a figura dele, o montador, vai embaixo.
  * Título em text-display, 40 a 96 px desde 16/10.
- * Desde 16/10 ("Identidade mais profunda"), a abertura leva a matéria do
+ * Desde 16/10 ("Identidade mais profunda"), a abertura leva a superfície do
  * tom (.vd-materia), e o número da página com o rótulo saem de cima do
  * título (o rótulo sobre o título, a marca T2) para o canto, como o número
  * da prancha de um atlas: na mesa, no canto de cima, à direita, na margem
@@ -67,7 +65,7 @@ const COLUNAS = {
  * mesmo texto, na mesma ordem e no mesmo lugar do HTML (antes do h1), sem
  * o fio de 40 px.
  */
-export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = "lado", colunasDaFigura = 6, className, style, classeDaFigura, fundo }: Props) {
+export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = "lado", colunasDaFigura = 6, className, style, classeDaFigura }: Props) {
   const indice = paginasInternas.findIndex((p) => p.id === pagina);
   const { abertura } = paginasInternas[indice];
   const total = paginasInternas.length;
@@ -81,7 +79,6 @@ export function AberturaDePagina({ pagina, tom = "escuro", figura, disposicao = 
       className={cn("vd-materia relative -mt-18 overflow-x-clip pt-38 pb-24 md:pt-46 md:pb-36", className)}
       style={style}
     >
-      {fundo}
       <Envelope className={`lg:relative ${lado ? "grid items-center gap-16 lg:grid-cols-12 lg:gap-14" : ""}`}>
         {/* Embaixo, a coluna do texto vai à largura da página (até 16/10, 58rem): a 96 px, "endereço próprio." não cabia
             em 928 px e o título de O trabalho quebrava em três linhas. */}

@@ -18,7 +18,7 @@ export function GET() {
     ...planos.map((p) => `- Plano ${p.nome}: ${reais(p.criacao)} de criação, e ${reais(p.mensal)} por mês. ${p.itens.join("; ")}.`),
     ...modulos.map((m) => {
       const preco = precoDoModulo(m);
-      return `- Módulo ${m.nome}: ${m.descricao} ${preco.criacao}, ${preco.mensal}.`;
+      return `- Extra ${m.nome}: ${m.descricao} ${preco.criacao}, ${preco.mensal}.`;
     }),
     ...trabalho.passos.map((p) => `- ${p.titulo}: ${p.marca.valor} ${p.marca.rotulo}. ${p.texto}`),
     `- Públicos: ${paraQuem.publicos.map((p) => p.titulo).join(", ")}.`,

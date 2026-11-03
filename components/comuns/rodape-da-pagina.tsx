@@ -29,26 +29,3 @@ export function IndiceDoRodape({ itens }: { itens: Item[] }) {
     </ul>
   );
 }
-
-/** O número da medida dentro da frase do colofão (lib/colofao.ts: "Ao rolar, 99,4 de cada 100 quadros …"). */
-const MEDIDA = /(\S+)(?= de cada 100 quadros)/;
-
-/**
- * O colofão da página aberta (D13): as sete frases vêm prontas do servidor (lib/colofao.ts, que lê o relatório da régua
- * no build); aqui só se escolhe a da página. O número da medida, quando há, vai em destaque, com "100 quadros" preso.
- */
-export function Colofao({ frases, className }: { frases: Record<string, string>; className?: string }) {
-  const caminho = usePathname();
-  const [antes, numero, depois] = (frases[caminho] ?? frases["/"]).split(MEDIDA);
-  return (
-    <p className={className}>
-      {antes}
-      {numero && (
-        <>
-          <span className="cm-colofao-numero">{numero}</span>
-          {depois.replace("100 quadros", "100\u00a0quadros")}
-        </>
-      )}
-    </p>
-  );
-}

@@ -35,12 +35,19 @@
     display: block;
     padding-left: var(--de);
   }
+  /* A unidade da escala, por extenso, só quando o "dias úteis" do fim dela some (a coluna estreita, abaixo). */
+  .ot-escala-legenda {
+    display: none;
+  }
   @container (max-width: 40rem) {
     .ot-trecho-nome {
       padding-left: 0;
     }
     .ot-escala-unidade {
       display: none;
+    }
+    .ot-escala-legenda {
+      display: block;
     }
   }
   .ot-traco {
@@ -69,7 +76,7 @@
     position: absolute;
     inset: 0;
     transform-origin: left center;
-    background: linear-gradient(90deg in oklch, oklch(0.47 0.085 62), oklch(0.66 0.1 68) 70%, oklch(0.78 0.095 72));
+    background: linear-gradient(90deg in oklch, oklch(0.47 0.085 62), oklch(0.66 0.1 68) 62%, oklch(0.74 0.095 72 / 0));
     opacity: 0;
   }
 
@@ -217,37 +224,58 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 3.5rem;
   }
-  /* O mapa do site: o código mora na janela, em navy, e corre (P25). */
-  .ot-mapa-janela {
-    height: 17rem;
-    overflow: hidden;
+  /* O site no ar: uma janela de navegador em navy, com o endereço e as páginas, e a luz que desce por elas (P25). */
+  .ot-janela {
+    padding: 0.75rem;
     border-radius: var(--radius);
     background: var(--deep);
     box-shadow: var(--sombra-longa);
+    color: rgb(242 245 249 / 0.72);
   }
-  .ot-mapa-corre {
-    display: block;
-    padding-inline: 1.25rem;
-    font-family: var(--font-mono);
+  .ot-janela-endereco {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    background: rgb(242 245 249 / 0.08);
     font-size: 0.875rem;
     line-height: 1.5rem;
-    font-variant-ligatures: none;
-    white-space: pre;
-    color: rgb(244 239 230 / 0.72);
+    overflow-wrap: anywhere;
   }
-  .ot-mapa-url {
-    display: block;
-    padding-block: 0.5rem;
+  .ot-janela-visor {
+    --curso-da-luz: 12rem;
+    position: relative;
+    margin-top: 0.5rem;
+    overflow: hidden;
   }
-  .ot-mapa-esta {
+  .ot-janela-visor li {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+  .ot-janela-visor li + li {
+    border-top: 1px solid rgb(242 245 249 / 0.1);
+  }
+  .ot-janela-esta {
     color: #f1d3a1;
   }
-  .ot-mapa figcaption {
-    max-width: 34em;
-    margin-top: 1.25rem;
-    font-size: var(--text-corpo);
-    line-height: 1.5;
-    color: var(--muted-foreground);
+  .ot-janela-data {
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .ot-janela-luz {
+    position: absolute;
+    left: 8%;
+    width: 84%;
+    top: -2rem;
+    height: 12rem;
+    background: radial-gradient(closest-side, rgb(241 211 161 / 0.24), rgb(241 211 161 / 0));
+    opacity: 0;
+    pointer-events: none;
   }
   @media (min-width: 1024px) {
     .ot-visita {
@@ -286,8 +314,14 @@
       column-gap: 5rem;
       align-items: center;
     }
-    .ot-mapa-corre {
-      font-size: 0.9375rem;
+    .ot-janela {
+      padding: 1rem;
+    }
+    .ot-janela-visor {
+      --curso-da-luz: 15rem;
+    }
+    .ot-janela-visor li {
+      padding-block: 1rem;
     }
   }
 
@@ -302,7 +336,7 @@
   }
 
   /* ---------- etapa 1: o formulário da visita ----------
-     Uma folha de ficha, com a fibra e a sombra longa da tarde, sobre a borda de uma segunda folha, deslocada 6 px para
+     Uma folha de ficha, com a sombra longa da tarde, sobre a borda de uma segunda folha, deslocada 6 px para
      o leste: o bloco de formulários. O raio é o da ficha (18 px). */
   .ot-ficha {
     position: relative;
@@ -315,7 +349,7 @@
     inset: 0;
     z-index: -1;
     border-radius: var(--radius);
-    background: var(--papel-sombra);
+    background: var(--muted);
     transform: translate(calc(var(--sombra-dx, 1) * 6px), 7px);
     box-shadow: var(--sombra-curta);
   }
@@ -323,7 +357,6 @@
     padding: 1.75rem 1.75rem 1.5rem;
     border-radius: var(--radius);
     background-color: var(--ficha);
-    background-image: var(--fibra);
     box-shadow: var(--sombra-longa);
   }
   .ot-ficha-titulo {
@@ -341,30 +374,20 @@
     font-weight: 400;
     color: var(--muted-foreground);
   }
-  /* A caneta (P23): uma camada do tamanho da lista, que anda em x e y; a ponta fica no canto dela. */
-  .ot-ficha-campos {
-    position: relative;
-  }
-  .ot-ficha-caneta {
+  /* A tinta (P23): sob cada campo, uma lavagem de bronze com o traço embaixo, e a ponta sempre dissolvida. */
+  .ot-ficha-tinta {
     position: absolute;
-    inset: 0;
+    inset: 0 -0.75rem;
+    border-radius: 0.5rem;
     pointer-events: none;
     opacity: 0;
-  }
-  .ot-ficha-caneta::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 4.5rem;
-    height: 1.75rem;
-    margin-top: 0.5rem;
-    border-bottom: 2px solid var(--accent);
-    border-right: 3px solid var(--accent);
-    border-radius: 0 0 2px 0;
-    background: linear-gradient(90deg, transparent, rgb(192 138 74 / 0.18));
+    transform-origin: left center;
+    background:
+      linear-gradient(90deg, var(--accent) 0 55%, rgb(192 138 74 / 0)) bottom / 100% 2px no-repeat,
+      linear-gradient(90deg, rgb(192 138 74 / 0.13) 0 45%, rgb(192 138 74 / 0));
   }
   .ot-ficha dl > div {
+    position: relative;
     padding-block: 0.875rem;
     border-bottom: 1px solid rgb(15 42 71 / 0.12);
   }
@@ -432,7 +455,8 @@
     width: 3px;
     height: 44%;
     border-radius: 2px;
-    background: #f1d3a1;
+    /* A ponta se dissolve antes do aro. */
+    background: linear-gradient(to top, #f1d3a1 62%, rgb(241 211 161 / 0));
     transform-origin: 50% 100%;
   }
   /* O rastro: uma cunha de luz atrás do ponteiro, parada na camada dela, que gira com ele. */
@@ -440,7 +464,10 @@
     position: absolute;
     inset: 4%;
     border-radius: 50%;
-    background: conic-gradient(from 300deg, rgb(241 211 161 / 0) 0deg, rgb(241 211 161 / 0.34) 60deg, transparent 60.5deg);
+    background: conic-gradient(from 285deg, rgb(241 211 161 / 0) 0deg, rgb(241 211 161 / 0.34) 75deg, transparent 75.5deg);
+    /* Sem o arco duro na borda: a cunha se apaga antes do aro. */
+    -webkit-mask-image: radial-gradient(closest-side, #000 58%, transparent);
+    mask-image: radial-gradient(closest-side, #000 58%, transparent);
   }
   @media (min-width: 1024px) {
     .ot-relogio {
@@ -566,22 +593,25 @@
 
   /* As passivas (R10, CONTRATO.md, 4.2). A pausa, a saída da tela e o movimento reduzido são do sistema
      (app/movimento.css, .mov-passiva). Só transform e opacity, num alvo de HTML.
-     P9, a janela da publicação (data-passiva="o-trabalho-janela"): o bronze vai do traço 7 ao 15 e volta, pela escala
-     horizontal com a origem no 7, 6 s para cada lado, na curva senoidal; aparece e some em 0,7 s junto do 7 (nunca em
-     menos de 600 ms). Espera o momento da chegada (1,2 s). */
+     P9, a janela da publicação (data-passiva="o-trabalho-janela"): o bronze corre do traço 7 ao 15 com a ponta
+     dissolvida, assenta e se apaga, e não volta pelo mesmo caminho. Espera o momento da chegada (1,2 s). */
   .js [data-visivel] .ot-varredura {
-    animation: ot-varredura 6s cubic-bezier(0.37, 0, 0.63, 1) 1.2s infinite alternate both;
+    animation: ot-varredura 11s linear 1.2s infinite both;
   }
-  /* P10, o mostrador das 24 h: o ponteiro e o rastro dão uma volta em 24 s, lineares, sem patamar. */
+  /* P10, o mostrador das 24 h: o ponteiro e o rastro dão uma volta em 24 s, em quatro quartos que incham e cedem, sem
+     chegar a parar (a curva não zera a velocidade). */
   .js [data-visivel] :is(.ot-relogio-ponteiro, .ot-relogio-rastro) {
-    animation: ot-ponteiro 24s linear infinite;
+    animation: ot-mostrador 24s infinite;
   }
-  /* P23, a folha e a caneta. A folha mexe 2° em 16 s; a caneta anda pelos cinco campos, um por vez. */
+  /* P23, a folha e a tinta. A folha flutua em dois períodos primos entre si, e o gesto não se repete. A tinta escreve os
+     cinco campos, de cima a baixo: cada um começa antes de o anterior acabar, assenta e se apaga. */
   .js [data-visivel] .ot-ficha-folha {
-    animation: ot-folha 8s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+    animation:
+      ot-folha-gira 13s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate,
+      ot-folha-paira 9s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
-  .js [data-visivel] .ot-ficha-caneta {
-    animation: ot-caneta 15s linear infinite;
+  .js [data-visivel] .ot-ficha-tinta {
+    animation: ot-tinta 13s linear calc(var(--vez) * 2s - 13s) infinite;
   }
   /* P24, as duas rodadas, em sentidos opostos. */
   .js [data-visivel] .ot-rodadas-fora {
@@ -590,22 +620,25 @@
   .js [data-visivel] .ot-rodadas-dentro {
     animation: ot-ponteiro 12s linear infinite reverse;
   }
-  /* P25, o mapa do site: as linhas sobem na janela, sem parar; a volta ao começo é invisível (a lista se repete). */
-  .js [data-visivel] .ot-mapa-corre {
-    animation: ot-mapa 42s linear infinite;
+  /* P25: a luz nasce e se apaga dentro da janela (cortada na borda, ganharia uma aresta); a volta ao começo é apagada. */
+  .js [data-visivel] .ot-janela-luz {
+    animation:
+      ot-janela-luz 10s cubic-bezier(0.37, 0, 0.63, 1) infinite,
+      ot-janela-luz-deriva 7s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
 }
 
 /* A constante da página (.mov-constante): as 24 horas passam. Na mesa, sob o ponteiro, o cursor percorre a barra em
-   2,4 s, linear (o tempo passa por igual), e o sulco do que falta encolhe à frente dele; ao sair, volta às 24 h. No
+   3,2 s, parte e assenta na curva, e volta do mesmo jeito (sem salto ao recomeçar), e o sulco do que falta encolhe à
+   frente dele; ao sair, volta às 24 h. No
    toque, a barra fica cheia: quem marca as 24 h é o mostrador, logo abaixo (até 02/11, o cursor ligado à rolagem, que
    deixava a página na porta dos 95% no celular 4×). Só transform e opacity. */
 @media (prefers-reduced-motion: no-preference) and (hover: hover) {
   .ot-etapa-dia:hover .ot-dia-trilho {
-    animation: ot-dia-correr 2.4s linear infinite;
+    animation: ot-dia-correr 3.2s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
   .ot-etapa-dia:hover .ot-dia-falta {
-    animation: ot-dia-faltar 2.4s linear infinite;
+    animation: ot-dia-faltar 3.2s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
 }
 /* A janela e o conteúdo da trena (o nome vem do corrimão, que os usou até 15/10). */
@@ -628,50 +661,102 @@
   0% {
     transform: scaleX(0.02);
     opacity: 0;
+    animation-timing-function: cubic-bezier(0.3, 0.1, 0.25, 1);
   }
-  12% {
+  8% {
     opacity: 1;
+  }
+  58% {
+    transform: scaleX(1);
+  }
+  80% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
   100% {
     transform: scaleX(1);
-    opacity: 1;
+    opacity: 0;
   }
 }
-@keyframes ot-folha {
+@keyframes ot-folha-gira {
   from {
-    rotate: -1.4deg;
+    rotate: -0.7deg;
+  }
+  to {
+    rotate: 0.6deg;
+  }
+}
+@keyframes ot-folha-paira {
+  from {
     translate: 0 4px;
   }
   to {
-    rotate: 0.8deg;
     translate: 0 -4px;
   }
 }
-@keyframes ot-caneta {
-  0% { translate: 0 0; opacity: 0; }
-  3% { opacity: 1; }
-  18% { translate: 62% 0; opacity: 1; }
-  20% { translate: 62% 0; opacity: 0; }
-  21% { translate: 0 20%; opacity: 0; }
-  23% { opacity: 1; }
-  38% { translate: 62% 20%; opacity: 1; }
-  40% { translate: 62% 20%; opacity: 0; }
-  41% { translate: 0 40%; opacity: 0; }
-  43% { opacity: 1; }
-  58% { translate: 62% 40%; opacity: 1; }
-  60% { translate: 62% 40%; opacity: 0; }
-  61% { translate: 0 60%; opacity: 0; }
-  63% { opacity: 1; }
-  78% { translate: 62% 60%; opacity: 1; }
-  80% { translate: 62% 60%; opacity: 0; }
-  81% { translate: 0 80%; opacity: 0; }
-  83% { opacity: 1; }
-  98% { translate: 62% 80%; opacity: 1; }
-  100% { translate: 62% 80%; opacity: 0; }
+@keyframes ot-tinta {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.3, 1);
+  }
+  3% {
+    opacity: 1;
+  }
+  20% {
+    transform: scaleX(1);
+  }
+  52% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  68%,
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
 }
-@keyframes ot-mapa {
+@keyframes ot-janela-luz {
+  0% {
+    translate: 0 0;
+    opacity: 0;
+  }
+  30%,
+  70% {
+    opacity: 1;
+  }
+  100% {
+    translate: 0 var(--curso-da-luz);
+    opacity: 0;
+  }
+}
+@keyframes ot-janela-luz-deriva {
+  from {
+    transform: translateX(-9%);
+  }
   to {
-    translate: 0 -50%;
+    transform: translateX(9%);
+  }
+}
+@keyframes ot-mostrador {
+  0% {
+    rotate: 0deg;
+    animation-timing-function: cubic-bezier(0.32, 0.14, 0.68, 0.86);
+  }
+  25% {
+    rotate: 90deg;
+    animation-timing-function: cubic-bezier(0.32, 0.14, 0.68, 0.86);
+  }
+  50% {
+    rotate: 180deg;
+    animation-timing-function: cubic-bezier(0.32, 0.14, 0.68, 0.86);
+  }
+  75% {
+    rotate: 270deg;
+    animation-timing-function: cubic-bezier(0.32, 0.14, 0.68, 0.86);
+  }
+  100% {
+    rotate: 360deg;
   }
 }
 @keyframes ot-ponteiro {

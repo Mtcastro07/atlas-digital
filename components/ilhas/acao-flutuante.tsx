@@ -36,7 +36,7 @@ const INTERVALO = 80;
  * (.vd-metal) e a sombra pelo tom do que passa por trás (data-fundo, lido
  * como no cabeçalho: lib/fundo-sob.ts): no papel e na pedra, uma sombra
  * curta e tingida de navy, que cabe na margem; na água, dois aros (um
- * escuro e um creme) e o fio de luz, sem sombra. Na margem do texto (24
+ * escuro e um claro) e o fio de luz, sem sombra. Na margem do texto (24
  * px), ou 12 px acima da área insegura, e fora dela com o aparelho deitado.
  * Revoga a sombra de 34 px a 55% de preto de 03/10 ("parte da identidade
  * do site"): ela saía cortada pela borda da tela em todas as amostras e

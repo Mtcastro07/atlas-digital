@@ -54,7 +54,7 @@ function geometria(g: Prancha) {
   const folga = g.traco * 1.6;
   return {
     /** O centro, o raio e os ângulos da viagem do marcador (a passiva P26), em unidades da prancha. */
-    via: { cx: g.cx, cy: g.cy, r: g.r, t0: T[0].toFixed(4), t1: T[3].toFixed(4) },
+    via: { cx: g.cx, cy: g.cy, r: g.r, t0: T[0].toFixed(4), m1: T[1].toFixed(4), m2: T[2].toFixed(4), t1: T[3].toFixed(4) },
     estacoes: T.map((t) => ponto(t, g.r)),
     rumo: arco(angulo(-g.alem), angulo(g.largura + g.alem), g.r),
     chamadas: raio(T[0], g.r + folga, rt + folga) + raio(T[1], g.r + folga, rp + folga) + raio(T[3], g.r + folga, rt + folga),
@@ -121,11 +121,15 @@ const VIA = {
   "--cy": G.mesa.via.cy,
   "--r": G.mesa.via.r,
   "--t0": `${G.mesa.via.t0}rad`,
+  "--m1": `${G.mesa.via.m1}rad`,
+  "--m2": `${G.mesa.via.m2}rad`,
   "--t1": `${G.mesa.via.t1}rad`,
   "--cxc": G.celular.via.cx,
   "--cyc": G.celular.via.cy,
   "--rc": G.celular.via.r,
   "--t0c": `${G.celular.via.t0}rad`,
+  "--m1c": `${G.celular.via.m1}rad`,
+  "--m2c": `${G.celular.via.m2}rad`,
   "--t1c": `${G.celular.via.t1}rad`,
 } as React.CSSProperties;
 

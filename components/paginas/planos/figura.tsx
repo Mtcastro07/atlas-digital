@@ -59,11 +59,11 @@ export function EscadaDePrecos() {
           {ALTURAS.map((altura, i) => (
             <span key={i} className="vd-corrimao-coluna" style={{ "--h": altura, "--h-antes": ALTURAS[i - 1] ?? altura } as React.CSSProperties}>
               <span className="vd-corrimao-h">
-                <span className="vd-corrimao-fio mov-passiva" />
+                <span className="vd-corrimao-fio mov-passiva" style={{ "--ordem": i * 2 } as React.CSSProperties} />
               </span>
               {i > 0 && (
                 <span className="vd-corrimao-v">
-                  <span className="vd-corrimao-fio mov-passiva" />
+                  <span className="vd-corrimao-fio mov-passiva" style={{ "--ordem": i * 2 - 1 } as React.CSSProperties} />
                 </span>
               )}
             </span>

@@ -22,9 +22,9 @@ const manhaCedo = {
 
 /**
  * Para quem: a cidade antes do serviço. Desde 28/10 (R10, D5, a decisão do aprovador), a carta de Niterói é uma chapa
- * de água funda que atravessa a abertura e os públicos: na mesa, presa à direita, da abertura ao último público, que
- * são a legenda dela (cada um acende o seu bairro ao passar pelo meio da tela); no celular, no fluxo, sob o lide, com
- * Icaraí aceso. Depois, o índice dos nichos, a vitrine e a próxima página.
+ * de água funda, e os públicos são a legenda dela: na mesa, parada ao lado do título da abertura, com os três bairros
+ * acendendo um de cada vez (de 28/10 a 03/11, presa à direita até o último público); no celular, no fluxo, sob o lide,
+ * com Icaraí aceso. Depois, o índice dos nichos, a vitrine e a próxima página.
  * O palco (.vd-pq-palco) guarda a abertura, a chapa e os públicos: a chapa fica numa coluna posta por cima das duas
  * seções, e não dentro de uma delas (a abertura vem sem figura). A água (.vd-pq-agua) junta a abertura e a chapa numa
  * cena só no celular; na mesa, não tem caixa (display: contents), e a abertura pinta a sua. O CSS: app/paginas/para-quem.css.

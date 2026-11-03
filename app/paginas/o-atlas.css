@@ -9,76 +9,11 @@
    ============================================================ */
 
 @layer components {
-  /* ---------- a folha de O Atlas (16/10) ----------
-     A moldura graduada (components/paginas/o-atlas/figura.tsx, MolduraGraduada):
-     faixas de 6 px, recuadas 24 px da cena (a de cima, abaixo dos 72 px do
-     cabeçalho; a de baixo, na emenda), com os fios dos dois lados e os
-     segmentos de um minuto de arco alternados (o bronze da ação a 70% e a
-     água). Cada faixa é um ladrilho de dois minutos, centrado: a fronteira
-     de dois segmentos cai no meio da faixa, em Niterói. No celular, a
-     moldura fica dentro dos 24 px da margem.
-     Desde 17/10 (passe 4, fechamento com o Impeccable), o recuo cresce até
-     32 px quando a margem da página deixa (a margem do Envelope menos 16 px:
-     a barra e 10 px de folga até o texto; 32 px a partir de 1.136 px de
-     cena). Desde 28/10 (R10), sem os rótulos de latitude e de longitude: a
-     cidade fica com uma coordenada só, sob "Niterói, RJ". */
-  .vd-moldura {
-    container-type: inline-size;
-    --moldura-barra: 6px;
-    --minuto-lat: 40px;
-    --minuto-lon: 36.85px; /* 40 · cos 22,88° */
-    --moldura-seg: color-mix(in srgb, var(--primary) 70%, transparent);
-  }
-  /* Nos filhos: o cqi resolve contra a própria moldura (a cena inteira, sem a barra de rolagem). A margem do Envelope é
-     a sobra da coluna (--container-pagina) dividida por dois, mais os 2,5 rem dele (components/estrutura.tsx). */
-  .vd-moldura > * {
-    --moldura-recuo: clamp(24px, (100cqi - min(100cqi, var(--container-pagina))) / 2 + 2.5rem - 16px, 32px);
-  }
-  @media (max-width: 767.98px) {
-    .vd-moldura {
-      --moldura-barra: 4px;
-    }
-    .vd-moldura > * {
-      --moldura-recuo: 11px;
-    }
-  }
-  .vd-moldura-barra {
-    position: absolute;
-    border: 0 solid var(--moldura-seg);
-  }
-  .vd-moldura-esquerda,
-  .vd-moldura-direita {
-    top: calc(72px + var(--moldura-recuo));
-    bottom: 0;
-    width: var(--moldura-barra);
-    border-inline-width: 1px;
-    background: linear-gradient(180deg, var(--moldura-seg) 50%, transparent 50%) 0 50% / 100% calc(2 * var(--minuto-lat)) repeat-y;
-  }
-  .vd-moldura-esquerda {
-    left: var(--moldura-recuo);
-  }
-  .vd-moldura-direita {
-    right: var(--moldura-recuo);
-  }
-  .vd-moldura-topo,
-  .vd-moldura-base {
-    left: var(--moldura-recuo);
-    right: var(--moldura-recuo);
-    height: var(--moldura-barra);
-    border-block-width: 1px;
-    background: linear-gradient(90deg, var(--moldura-seg) 50%, transparent 50%) 50% 0 / calc(2 * var(--minuto-lon)) 100% repeat-x;
-  }
-  .vd-moldura-topo {
-    top: calc(72px + var(--moldura-recuo));
-  }
-  .vd-moldura-base {
-    bottom: 0;
-  }
   /* O papel sob o globo que pousa: a grade da projeção cônica, que se apaga embaixo e nos lados, e a sombra de
      contato, deslocada para o leste (a luz do fim da tarde vem do oeste). */
   .vd-projecao {
     fill: none;
-    stroke: rgb(138 90 36 / 0.14);
+    stroke: rgb(15 42 71 / 0.1);
     stroke-width: 1px;
     vector-effect: non-scaling-stroke;
     -webkit-mask-image: radial-gradient(50% 100% at 50% 0%, #000 45%, transparent 100%);
@@ -340,7 +275,7 @@
     inset: 0;
     border: 1.5px solid var(--primary);
     border-radius: 50%;
-    background: radial-gradient(closest-side, rgb(192 138 74 / 0.42), rgb(192 138 74 / 0.12));
+    background: radial-gradient(closest-side, rgb(192 138 74 / 0.32), rgb(192 138 74 / 0.08));
     opacity: 0.7;
   }
   .vd-estrela-nucleo {
@@ -365,7 +300,8 @@
     margin: -0.5rem 0 0 -0.5rem;
     border-radius: 50%;
     background: var(--primary);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 28%, transparent);
+    /* O halo se dissolve: um anel sólido deixaria o viajante com cara de botão. */
+    box-shadow: 0 0 0.875rem 0.25rem color-mix(in srgb, var(--primary) 42%, transparent);
     opacity: 0;
   }
   /* O capítulo sob o ponteiro, ou com o vínculo em foco, acende a sua estrela. */
@@ -526,10 +462,6 @@
   .vd-peca-camada .e3 {
     transform: translateZ(-9px);
   }
-  .vd-peca-camada .acesa {
-    opacity: 0;
-    transition: opacity 240ms var(--ease-atlas);
-  }
   /* As quatro peças do globo: montadas, no plano da letra; abertas, afastam-se pouco, em profundidade, e continuam a
      ler como globo. */
   .vd-peca-globo {
@@ -560,12 +492,6 @@
       transform: var(--aberta);
     }
   }
-  .vd-peca-globo.erguida {
-    transform: translate3d(-17%, -61%, 56px);
-  }
-  .vd-peca-globo.erguida .acesa {
-    opacity: 1;
-  }
   [data-entrada="indo"] .vd-peca-globo {
     transition-duration: 600ms;
     transition-timing-function: var(--ease-entrada);
@@ -574,158 +500,10 @@
   [data-entrada="pendente"] .vd-peca-globo {
     transition: none;
   }
-  [data-teclado] :is(.vd-peca-camada, .vd-peca-inclinacao, .vd-peca-camada .acesa),
-  [data-teclado] .vd-peca-linha::before {
+  [data-teclado] :is(.vd-peca-camada, .vd-peca-inclinacao) {
     transition: none;
   }
 
-  .vd-peca-caixa {
-    position: relative;
-  }
-  .vd-peca-janela {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-  .vd-peca-leitura {
-    position: absolute;
-    inset: 0;
-    display: block;
-  }
-  .vd-peca-leitura::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: -4rem;
-    height: 4rem;
-    background: linear-gradient(transparent, rgb(192 138 74 / 0.24), transparent);
-  }
-
-  /* ---------- o código: as quatro linhas, logo abaixo da peça ----------
-     Sem caixa, sem filete, sem barra de janela, sem número de linha, sem cursor (o código que mora numa figura: a
-     síntese do R10, 5.2, item 1). Cada linha é um botão: o código à esquerda, o que ele desenha à direita, a 16 px.
-     No celular, uma coluna; a linha longa desce antes do terceiro atributo, com recuo. */
-  .vd-peca-codigo {
-    max-width: 48rem;
-    margin: 1.5rem auto 0;
-  }
-  @media (min-width: 768px) {
-    .vd-peca-codigo {
-      margin-top: 1.75rem;
-    }
-  }
-  .vd-peca-ponte {
-    max-width: 30em;
-    margin-inline: auto;
-    font-size: var(--text-destaque);
-    line-height: 1.5;
-    letter-spacing: -0.011em;
-    color: var(--foreground);
-    text-wrap: pretty;
-  }
-  .vd-peca-linhas {
-    margin: 0.75rem -0.75rem 0;
-    display: grid;
-    text-align: left;
-  }
-  .vd-peca-linha {
-    all: unset;
-    box-sizing: border-box;
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    border-radius: var(--radius);
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .vd-peca-linha::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    border-radius: inherit;
-    background: #ebe4da;
-    opacity: 0;
-    transition: opacity 200ms var(--ease-atlas);
-  }
-  .vd-peca-linha.ativa::before {
-    opacity: 1;
-  }
-  .vd-peca-linha:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 0;
-  }
-  .vd-peca-linha code {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    line-height: 1.375rem;
-    letter-spacing: 0;
-    font-variant-ligatures: none;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    color: var(--muted-foreground);
-  }
-  .vd-peca-resto {
-    display: block;
-    padding-left: 2ch;
-  }
-  .vd-peca-traducao {
-    margin-top: 2px;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-    transition: color 200ms var(--ease-atlas);
-  }
-  .vd-peca-linha.ativa .vd-peca-traducao {
-    color: var(--foreground);
-  }
-  .vd-peca-codigo figcaption {
-    margin-top: 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-  }
-  .vd-peca-codigo figcaption code {
-    font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    letter-spacing: 0;
-  }
-  @media (min-width: 768px) {
-    .vd-peca-linhas {
-      margin: 1.75rem 0 0;
-      gap: 2px;
-    }
-    /* Flexível, e não grade de 30 rem: com a letra a 200%, a tradução desce, e o código quebra dentro da coluna. */
-    .vd-peca-linha {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      column-gap: 1.5rem;
-      padding: 0.8125rem 1rem;
-    }
-    .vd-peca-linha code {
-      flex: 0 1 30rem;
-      min-width: 0;
-      font-size: 0.9375rem;
-      line-height: 1.5rem;
-    }
-    .vd-peca-resto {
-      display: inline;
-      padding-left: 0;
-    }
-    .vd-peca-traducao {
-      flex: 1 1 9rem;
-      margin-top: 0;
-    }
-    .vd-peca-codigo figcaption {
-      margin-top: 1rem;
-    }
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -738,8 +516,7 @@
   .js [data-visivel] .vd-carta-viajante {
     animation: mov-viajante 16s cubic-bezier(0.37, 0, 0.63, 1) infinite;
   }
-  /* A flutuação da peça aberta ou erguida (a constante desta página): ±10 px em profundidade, cada peça num tempo. */
-  .vd-peca-globo.erguida .vd-peca-flutua,
+  /* A flutuação da peça aberta (a constante desta página): ±10 px em profundidade, cada peça num tempo. */
   .vd-peca[aria-pressed="true"] .vd-peca-flutua {
     animation: mov-flutua 2.6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
     animation-delay: calc(var(--i) * -0.45s);
@@ -755,8 +532,7 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  :is(.vd-peca-camada, .vd-peca-inclinacao, .vd-peca-camada .acesa, .vd-capitulo-vinculo),
-  .vd-peca-linha::before {
+  :is(.vd-peca-camada, .vd-peca-inclinacao, .vd-capitulo-vinculo) {
     transition: none;
   }
 }
@@ -966,9 +742,10 @@
     margin: -0.5625rem 0 0 -0.5625rem;
     border-radius: 50%;
     background: var(--primary);
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--primary) 26%, transparent);
+    box-shadow: 0 0 1.125rem 0.375rem color-mix(in srgb, var(--primary) 40%, transparent);
   }
-  /* A faixa de luz: no celular, desce com o marcador; na mesa, anda com ele pelas colunas. */
+  /* A faixa de luz: no celular, desce com o marcador; na mesa, anda com ele pelas colunas. Uma elipse de luz fria, sem aresta: sobre
+     a pedra fria, o branco dá menos de 10 níveis de diferença e a faixa some. */
   .vd-rota-janela {
     position: absolute;
     inset: 0;
@@ -984,9 +761,9 @@
     content: "";
     position: absolute;
     inset-inline: -1.5rem;
-    top: -12rem;
+    top: -6rem;
     height: 12rem;
-    background: linear-gradient(transparent, rgb(255 255 255 / 0.38) 45%, rgb(255 255 255 / 0.38) 55%, transparent);
+    background: radial-gradient(closest-side, rgb(200 218 245 / 0.7), rgb(200 218 245 / 0));
   }
   .vd-rota-lista {
     position: relative;
@@ -1079,10 +856,10 @@
       top: 0.625rem;
     }
     .vd-rota-luz::before {
-      inset: 0 auto 0 -22%;
+      inset: 0 auto 0 -1%;
       width: 22%;
       height: auto;
-      background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.62) 45%, rgb(255 255 255 / 0.62) 55%, transparent);
+      background: radial-gradient(closest-side, rgb(200 218 245 / 0.7), rgb(200 218 245 / 0));
     }
     .vd-etapas {
       position: relative;
@@ -1158,33 +935,29 @@
   .js .vd-retrato[data-visto] > .vd-retrato-luz {
     animation: mov-luz-uma-vez 1.2s cubic-bezier(0.37, 0, 0.63, 1) 2 alternate both;
   }
-  /* A rota (P16): o marcador anda sem parar da visita ao suporte, e a faixa de luz vai com ele. Linear, um fluxo. */
-  .js .vd-rota[data-visivel] .vd-rota-marcador {
+  /* A rota (P16): o marcador vai da visita ao suporte, e a luz vai com ele. Na mesa, de coluna em coluna: cada trecho parte
+     e assenta na curva. No celular, as etapas não têm altura igual: desce num gesto só. Nasce e se apaga, sem salto ao recomeçar. */
+  .js .vd-rota[data-visivel] :is(.vd-rota-marcador, .vd-rota-luz) {
     animation: mov-rota-desce 22s linear infinite;
-  }
-  .js .vd-rota[data-visivel] .vd-rota-luz {
-    animation: mov-rota-luz-desce 22s linear infinite;
   }
   @media (min-width: 1024px) {
     .js .vd-rota[data-visivel] :is(.vd-rota-marcador, .vd-rota-luz) {
-      animation: mov-rota-anda 22s linear infinite;
+      animation: mov-rota-anda 20s linear infinite;
     }
   }
   /* A peça do mito (P17): o céu sobre o ombro. A letra balança devagar em 3D, sem parar, e o globo flutua. */
   .js .vd-origem-nome[data-visivel] .vd-peca-inclinacao {
     animation: mov-peca-balanca 7s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
   }
-  /* No toque, sem o laço na peça: com o giro ou só com a subida, a trava de 45 batidas na rolagem do celular 4× (acabamento,
-     02/11, em A/B: 0 em 7 sem o laço; 3 em 5 com a subida). A entrada, uma vez, fica; quem se move no toque é a leitura
-     das linhas, logo abaixo (P36). */
+  /* No toque, sem o laço na peça inteira: com o giro ou só com a subida, a trava de 45 batidas na rolagem do celular 4×
+     (acabamento, 02/11, em A/B: 0 em 7 sem o laço; 3 em 5 com a subida). Lá, só o globo paira sobre o ombro. */
   @media (hover: none) {
     .js .vd-origem-nome[data-visivel] .vd-peca-inclinacao {
       animation: none;
     }
-  }
-  /* P36, a leitura do código: a faixa desce pelas quatro linhas que desenham o globo. */
-  .js [data-visivel] .vd-peca-leitura {
-    animation: mov-peca-leitura 8s linear infinite;
+    .js .vd-origem-nome[data-visivel] .vd-peca-globo {
+      animation: mov-globo-paira 6s cubic-bezier(0.37, 0, 0.63, 1) infinite alternate;
+    }
   }
 }
 @keyframes mov-retrato-aproxima {
@@ -1196,32 +969,60 @@
   }
 }
 @keyframes mov-rota-desce {
-  from {
+  0% {
     translate: 0 0;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.3, 0.12, 0.7, 0.88);
   }
-  to {
+  5% {
+    opacity: 1;
+  }
+  92% {
     translate: 0 100%;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
   }
-}
-@keyframes mov-rota-luz-desce {
-  from {
-    translate: 0 0;
-  }
-  to {
-    translate: 0 calc(100% + 12rem);
+  100% {
+    translate: 0 100%;
+    opacity: 0;
   }
 }
 @keyframes mov-rota-anda {
-  from {
+  0% {
     translate: 0 0;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.42, 0.04, 0.38, 0.98);
   }
-  to {
-    translate: 122% 0;
+  4% {
+    opacity: 1;
+  }
+  20% {
+    translate: 20% 0;
+    animation-timing-function: cubic-bezier(0.42, 0.04, 0.38, 0.98);
+  }
+  40% {
+    translate: 40% 0;
+    animation-timing-function: cubic-bezier(0.42, 0.04, 0.38, 0.98);
+  }
+  60% {
+    translate: 60% 0;
+    animation-timing-function: cubic-bezier(0.42, 0.04, 0.38, 0.98);
+  }
+  80% {
+    translate: 80% 0;
+  }
+  92% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  100% {
+    translate: 80% 0;
+    opacity: 0;
   }
 }
-@keyframes mov-peca-leitura {
+@keyframes mov-globo-paira {
   to {
-    translate: 0 calc(100% + 4rem);
+    translate: 0 -14%;
   }
 }
 @keyframes mov-peca-balanca {

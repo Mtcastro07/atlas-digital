@@ -29,7 +29,7 @@ const inscreverReduzir = (avisar: () => void) => {
  *   A escolha não é gravada: a página não guarda nada no aparelho.
  * Desde 28/10 (R10), no cabeçalho do Atlas (escrito), o rótulo escrito, sem cápsula e sem ícone, mais
  * discreto que o "Menu": Inter 400, 16 px, a 75% da cor do texto da barra
- * (o creme no vidro escuro, o navy no claro). À vista, "Pausar" e
+ * (o claro no vidro escuro, o navy no claro). À vista, "Pausar" e
  * "Retomar"; o nome acessível leva o complemento ("Pausar animações"), e o
  * rótulo é o começo dele. Sem aria-pressed: o nome que troca já diz o
  * estado. O menu do celular acha o botão por data-pausa-do-ambiente
@@ -62,9 +62,21 @@ export function ControleDoMovimento({ escrito = false }: { escrito?: boolean }) 
       // O que passa uma vez só (a luz dos retratos, no celular) não recomeça quando volta à tela.
       if (escrito && naTela) elemento.setAttribute("data-visto", "");
     };
+    // No Atlas, só começa o que está à vista de fato: metade do objeto, ou um quarto da tela se ele for maior. A passiva
+    // que nascia numa fresta do pé da tela (as chapas de /, no fim de um arremesso) corria na faixa de ~84 px que o
+    // Chrome sem janela da régua não apresenta, e cada quadro dela contava como parcial (03/11). O resto espera,
+    // pendente, a próxima parada ou a metade do objeto (o limiar de 0,5 do observador).
+    const aVista = (elemento: Element) => {
+      if (!escrito) return true;
+      const r = elemento.getBoundingClientRect();
+      return Math.min(r.bottom, innerHeight) - Math.max(r.top, 0) >= Math.min(r.height / 2, innerHeight / 4) - 1;
+    };
     const aplicar = () => {
-      pendentes.forEach((elemento) => marcar(elemento, true));
-      pendentes.clear();
+      pendentes.forEach((elemento) => {
+        if (!aVista(elemento)) return;
+        marcar(elemento, true);
+        pendentes.delete(elemento);
+      });
     };
     const adiar = () => {
       window.clearTimeout(espera);
@@ -84,7 +96,7 @@ export function ControleDoMovimento({ escrito = false }: { escrito?: boolean }) 
       }
       if (escrito && performance.now() - rolou < PARADA) adiar();
       else aplicar();
-    });
+    }, escrito ? { threshold: [0, 0.5] } : undefined);
     document.querySelectorAll("[data-ambiente]").forEach((elemento) => observador.observe(elemento));
     window.addEventListener("scroll", aoRolar, { passive: true });
     return () => {

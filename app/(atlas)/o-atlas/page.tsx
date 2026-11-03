@@ -1,5 +1,5 @@
 import { AberturaDePagina } from "@/components/paginas/abertura-de-pagina";
-import { GloboDeNiteroi, MolduraGraduada } from "@/components/paginas/o-atlas/figura";
+import { GloboDeNiteroi } from "@/components/paginas/o-atlas/figura";
 import { ProximaPagina } from "@/components/paginas/proxima-pagina";
 import { Historia } from "@/components/secoes/historia";
 import { QuemFaz } from "@/components/secoes/quem-faz";
@@ -30,8 +30,8 @@ const fimDaTarde = {
  * 14 a 16/10, a tarja de bronze subia no "UFF": o segundo gesto de texto
  * do site, com a onda do "24h" (09-movimento.md, seção 6.1; o crítico de
  * fora). Na história, a linha sob o ponteiro acende o círculo.
- * Desde 16/10, a abertura é a folha da marca: a luz do fim da tarde, a
- * moldura graduada em minutos de arco e o globo gravado, que, a partir de
+ * Desde 16/10, a abertura é a folha da marca: a luz do fim da tarde e o
+ * globo gravado (até 02/11, numa moldura graduada: o aprovador a tirou), que, a partir de
  * 768 px, desce e atravessa a emenda (a abertura fica por cima da
  * história, z-[1]; a figura pousa na emenda, e o globo passa 22% dela).
  */
@@ -42,7 +42,6 @@ export default function PaginaDoAtlas() {
       <AberturaDePagina
         pagina="atlas"
         figura={<GloboDeNiteroi />}
-        fundo={<MolduraGraduada />}
         className="vd-cena z-[1]"
         style={fimDaTarde}
         classeDaFigura="md:self-end md:-mb-36"

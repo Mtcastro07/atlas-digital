@@ -18,11 +18,10 @@
    Identidade mais profunda (16/10, pedido de Matheus Castro Oliveira de
    Luna Garcia: "busque deixar um design mais profundo e detalhado, mesmo
    que seja contra alguma ata"): a regra 3 ("fundos limpos… nenhum degradê
-   decorativo novo") fica revogada no site. Toda cena leva a matéria do seu
-   tom (.vd-materia: o grão da água, a fibra do papel, o grão da pedra), a
-   água em repouso leva a rampa do tom, e cada página tem um pico de luz só,
-   com direção e hora (.vd-cena na água, .vd-papel no papel; o lado das
-   sombras vem do data-hora da página). O metal (.vd-metal) é o bronze
+   decorativo novo") fica revogada no site. A água em repouso leva a rampa do
+   tom, as seções claras, a luz fria do canto (.vd-materia), e a água tem um
+   pico de luz por página, com direção e hora (.vd-cena; o lado das sombras e
+   o da luz vêm do data-hora da página). O metal (.vd-metal) é o bronze
    fundido da pílula de ação. Registro: registros/atlas/despoluir.md,
    "Identidade mais profunda, 16.10.2026".
    ============================================================ */
@@ -41,13 +40,16 @@
 [data-hora="fim-da-tarde"],
 [data-hora="hora-azul"] {
   --sombra-dx: 1;
+  --luz-canto: 0%;
 }
 [data-hora="manha-cedo"],
 [data-hora="manha"] {
   --sombra-dx: -1;
+  --luz-canto: 100%;
 }
 [data-hora="meio-dia"] {
   --sombra-dx: 0;
+  --luz-canto: 100%;
 }
 [data-tom] {
   --tinta-sombra: 15 42 71;
@@ -79,50 +81,20 @@
   --acende-luz: linear-gradient(in oklch 180deg, rgb(29 70 112 / 0.55), rgb(29 70 112 / 0.18) 55%, rgb(29 70 112 / 0));
 }
 
-/* ---------- a matéria de cada tom (16/10) ----------
-   Ruído fractal em SVG, num ladrilho de 180 px, já tingido e com alfa (sem
-   mix-blend-mode: é o caminho mais leve), com a região do filtro igual ao
-   ladrilho (sem isso, o ruído se costura a 216 px e a emenda aparece a cada
-   180). É a matéria do tom, e não um
-   efeito: aparece onde o tom aparece (.vd-materia, em Secao, nas aberturas,
-   na próxima página, no rodapé e no menu), como o grão fixo da barbearia.
-   A água: o grão fino, branco. O papel: a fibra e a formação da polpa
-   (abaixo). A pedra: o grão grosso, pardo. O alfa de cada ponto vai
-   de 0 a ~7% (a linha do alfa da matriz estica o ruído em volta do meio).
-   A pedra, mais leve desde o passe 2 (de .55/−.18 a .42/−.13): sob o texto
-   pequeno, o grão dela chegava a ~20% de pardo, e o vínculo caía a 3,9:1. */
-[data-tom="escuro"] {
-  --materia: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='m' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .2 -.07'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>");
-}
-/* A fibra do papel tem nome próprio (16/10, passe 2): até 28/10, a maré de Dúvidas a pintava dentro da água.
-   Desde 17/10 (passe 4b), papel, e não metal escovado: até então, um ruído só, esticado 75 vezes na horizontal
-   (.012 × .9), que se lia em estrias finas e paralelas (a avaliação A do fechamento com o Impeccable). Agora, três
-   camadas, como a folha de verdade: as fibras curtas, pouco deitadas (.07 × .2, quatro oitavas), e o grão fino, num
-   ladrilho de 180 px; e a formação, as nuvens largas da polpa (.005), num ladrilho de 600 px, para que a repetição não
-   se veja. O mesmo pardo e o mesmo teto de alfa (~7% por ponto). */
-:root {
-  --fibra:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='f' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.07 .2' numOctaves='4' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .384 0 0 0 0 .282 0 0 0 0 .176 0 0 0 .18 -.064'/></filter><filter id='g' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.6' numOctaves='2' seed='5' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .384 0 0 0 0 .282 0 0 0 0 .176 0 0 0 .13 -.05'/></filter><rect width='100%25' height='100%25' filter='url(%23f)'/><rect width='100%25' height='100%25' filter='url(%23g)'/></svg>"),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='p' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.005' numOctaves='3' seed='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .384 0 0 0 0 .282 0 0 0 0 .176 0 0 0 .13 -.048'/></filter><rect width='100%25' height='100%25' filter='url(%23p)'/></svg>");
-}
-[data-tom="claro"] {
-  --materia: var(--fibra);
-}
-[data-tom="pedra"] {
-  --materia: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='m' x='0' y='0' width='1' height='1'><feTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .384 0 0 0 0 .282 0 0 0 0 .176 0 0 0 .42 -.13'/></filter><rect width='100%25' height='100%25' filter='url(%23m)'/></svg>");
-}
-
 @layer components {
   /* ---------- vidro ----------
-     Tinta translúcida do tom + desfoque do que passa por trás + filete
-     de luz na borda superior. Use com parcimônia: o desfoque custa GPU,
-     então fica em superfícies pequenas (os controles e o menu do celular). */
+     Tinta translúcida do tom + o fundo saturado + filete de luz na borda
+     superior. Só em controles no fluxo (os segmentos da escada, da vitrine
+     e do simulador), sobre fundo liso que anda junto com eles: sem o
+     desfoque desde 03/11, que ali não se via (a diferença medida contra
+     blur(20px) saturate(170%) ficou em até 3 níveis de 255) e custava uma
+     passada da GPU a cada quadro. */
   .vd-vidro {
     position: relative;
     isolation: isolate;
     background: var(--vidro);
-    -webkit-backdrop-filter: blur(20px) saturate(170%);
-    backdrop-filter: blur(20px) saturate(170%);
+    -webkit-backdrop-filter: saturate(170%);
+    backdrop-filter: saturate(170%);
     border: 1px solid var(--vidro-borda);
     box-shadow:
       inset 0 1px 0 var(--vidro-brilho),
@@ -154,7 +126,7 @@
      backdrop-filter é a saída para os demais. Como o vidro da Apple, ela
      se adapta ao que passa por trás (data-fundo no <header>, lido por
      components/ilhas/cabecalho-retratil.tsx; regras na barra adaptativa, adiante):
-     sobre o escuro, tinta navy leve e fundo escurecido, com texto creme;
+     sobre o escuro, tinta navy leve e fundo escurecido, com texto claro;
      sobre o claro, vidro claro, com texto navy; sobre os dois, tinta navy
      densa. --vidro-filtro leva o que se soma ao desfoque — e à refração,
      que o lê da mesma variável. Um reflexo especular na borda de cima e um
@@ -204,19 +176,20 @@
     -webkit-backdrop-filter: blur(3px) saturate(125%);
     backdrop-filter: blur(3px) saturate(125%);
   }
-  /* ---------- a matéria e a água em repouso (16/10) ----------
-     .vd-materia pinta a matéria do tom (acima, --materia) e mais nada. Na
-     água, a cena sem pico de luz leva também a rampa do tom: da superfície
-     (--meio, o mais claro que fica sob texto) à água funda, de cima para
-     baixo. O seletor da água pesa 0,1,0 (:where), para a .vd-cena, declarada
-     depois, vencer. O papel e a pedra ficam chapados no tom. Até 16/10, o
-     grão só existia no Fim (.vd-grao, com as bordas apagadas por máscara
-     porque as cenas vizinhas não o tinham); saiu com esta classe. */
-  .vd-materia {
-    background-image: var(--materia, none);
+  /* ---------- a superfície de cada tom ----------
+     Lisa em todos os tons (desde 02/11; até então, o grão da água, a fibra do papel e o grão da pedra, em feTurbulence).
+     .vd-materia pinta o que o tom tem além da cor. Na água, a rampa: da superfície (--meio, o mais claro que fica sob
+     texto) à água funda, de cima para baixo; o seletor pesa 0,1,0 (:where), para a .vd-cena, declarada depois, vencer.
+     Nas seções claras, uma luz fria parada, que entra do canto de cima do lado da hora (--luz-canto) e acaba antes
+     da borda de baixo. A segunda seção seguida no mesmo tom fica sem ela: a emenda não aparece. */
+  :where(section[data-tom="claro"], section[data-tom="pedra"]).vd-materia {
+    background-image: radial-gradient(70% 44rem at var(--luz-canto, 100%) 0, rgb(214 228 247 / 0.42), rgb(214 228 247 / 0.14) 50%, rgb(214 228 247 / 0));
+  }
+  :where(section[data-tom="claro"] + section[data-tom="claro"], section[data-tom="pedra"] + section[data-tom="pedra"]).vd-materia {
+    background-image: none;
   }
   :where([data-tom="escuro"]).vd-materia {
-    background-image: var(--materia, none), linear-gradient(in oklch 180deg, var(--meio), var(--background) 55%, var(--deep));
+    background-image: linear-gradient(in oklch 180deg, var(--meio), var(--background) 55%, var(--deep));
   }
 
   /* ---------- cena: o pico de luz na água ----------
@@ -226,33 +199,15 @@
      --aurora-y a fria; --cena-topo e --cena-base orientam o degradê (a
      chamada final desce do navy à moldura), e --cena-angulo dá a direção.
      Desde 16/10, uma cena destas por página, a da hora da página (a capa, de
-     madrugada; o Fim, o amanhecer), com a matéria por baixo e a
-     interpolação em oklch. Na água, a luz é navy mais claro, no mesmo matiz
+     madrugada; o Fim, o amanhecer), com a interpolação em oklch. Na água, a luz é navy mais claro, no mesmo matiz
      (--agua-rasa): o bronze em alfa baixo sobre o navy dá cinza-lama. O
      quente só no Fim e no metal aceso. Nenhuma luz anda nem segue a rolagem. */
   .vd-cena {
     background-image:
-      var(--materia, none),
       radial-gradient(in oklch 52% 58% at var(--luz-x, 78%) var(--luz-y, 40%), var(--luz-quente) 0%, transparent 70%),
       radial-gradient(in oklch 48% 62% at var(--aurora-x, 6%) var(--aurora-y, 0%), var(--luz-fria) 0%, transparent 72%),
       linear-gradient(in oklch var(--cena-angulo, 180deg), var(--cena-topo, var(--moldura)) 0%, var(--meio) 58%, var(--cena-base, var(--background)) 100%);
   }
-  /* O pico de luz no papel: a fonte fica na borda, nunca no centro (o halo centrado é a marca C6), e o papel cai para
-     --papel-sombra longe dela (sob texto, nunca abaixo dele). */
-  .vd-papel {
-    background-image:
-      var(--materia, none),
-      radial-gradient(in oklch 80% 95% at var(--luz-x, 50%) var(--luz-y, -10%), var(--papel-folha) 0%, var(--background) 50%, var(--papel-sombra) 100%);
-  }
-  /* Quando a cena de baixo continua no mesmo papel (O trabalho), a luz volta ao tom na emenda: sem isso, a queda da
-     luz acabava em --papel-sombra, e a borda com as etapas, no papel liso, aparecia. */
-  .vd-papel.vd-papel-continua {
-    background-image:
-      var(--materia, none),
-      linear-gradient(180deg, transparent 70%, var(--background)),
-      radial-gradient(in oklch 80% 95% at var(--luz-x, 50%) var(--luz-y, -10%), var(--papel-folha) 0%, var(--background) 50%, var(--papel-sombra) 100%);
-  }
-
   /* ---------- o metal: bronze fundido (16/10) ----------
      A pílula de ação (a variante default de buttonVariants) é metal, parado:
      um degradê de cima para baixo (#d59f63 a #bb864b; o navy do rótulo a 7,01
@@ -294,7 +249,7 @@
 
   /* ---------- o atalho do WhatsApp (celular e tablet; 16/10, passe 3) ----------
      O metal, com a sombra pelo tom do que passa por trás (data-fundo, ilhas/acao-flutuante.tsx). Na água e no misto,
-     dois aros (o escuro e o creme) e o fio de luz, sem sombra: sombra escura sobre navy não se lê. No papel e na
+     dois aros (o escuro e o claro) e o fio de luz, sem sombra: sombra escura sobre navy não se lê. No papel e na
      pedra, a sombra curta, tingida de navy, que desce 16 px e sai 10 px dos lados: cabe nos 24 px da margem (até
      16/10, 0 14px 34px -10px a 55% de preto, cortada pela borda da tela em todas as amostras; A1 e A2).
      A entrada e a saída nos tokens (09-movimento.md, seção 2; até 16/10, 400 ms nas duas, translúcido sobre o texto
@@ -307,7 +262,7 @@
       inset 0 1px 0 rgb(255 240 215 / 0.6),
       inset 0 -1px 0 rgb(107 67 24 / 0.35),
       0 0 0 1px rgb(2 8 18 / 0.55),
-      0 0 0 2px rgb(243 239 236 / 0.16);
+      0 0 0 2px rgb(242 245 249 / 0.16);
     translate: 0 12px;
     opacity: 0;
     pointer-events: none;
@@ -465,87 +420,6 @@
     .vd-acende:focus-visible .vd-acende-seta {
       translate: 6px 0;
     }
-  }
-
-  /* ---------- o código à vista (R10, 28/10, S3) ----------
-     O recipiente único do código mostrado (components/codigo/trecho.tsx):
-     a ficha lisa no papel (o --ficha, o fio de 1 px a 12% do navy, raio
-     de 18 px, do tamanho do código, sem sombra), a mesma ficha sobre o
-     --deep no tom escuro, e o código sem ficha quando mora numa figura. A
-     letra é a mono do aparelho (--font-mono), 14/22 px no celular e 15/24
-     na mesa, sem ligaduras, sem itálico, sem espaçamento. A legenda, a
-     16 px no apagado, alinha com o texto do código (o mesmo recuo). As
-     quatro tintas de C-codigo.md, 3.3: o valor do negócio no bronze, o
-     nome na tinta do texto, a chave na água rasa (no escuro, no apagado),
-     a pontuação e o comentário no apagado. Abaixo de 1024 px, a ficha
-     nunca passa da coluna: o código rola dentro dela, e não a página. */
-  .vd-trecho {
-    --trecho-recuo: 0px;
-    max-width: 100%;
-    margin: 0;
-  }
-  .vd-trecho pre {
-    margin: 0;
-    overflow-x: auto;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    line-height: 1.375rem;
-    letter-spacing: 0;
-    font-variant-ligatures: none;
-    font-style: normal;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    tab-size: 2;
-  }
-  .vd-trecho code {
-    font: inherit;
-  }
-  @media (min-width: 1024px) {
-    .vd-trecho pre {
-      font-size: 0.9375rem;
-      line-height: 1.5rem;
-    }
-  }
-  .vd-trecho-ficha {
-    --trecho-recuo: 1.5rem;
-    width: fit-content;
-  }
-  .vd-trecho-ficha pre {
-    padding: 1rem var(--trecho-recuo);
-    border: 1px solid rgb(15 42 71 / 0.12);
-    border-radius: var(--radius);
-    background: var(--ficha);
-  }
-  [data-tom="escuro"] .vd-trecho-ficha pre {
-    border-color: rgb(243 239 236 / 0.12);
-    background: var(--deep);
-  }
-  .vd-trecho figcaption {
-    margin-top: 0.75rem;
-    padding-inline: var(--trecho-recuo);
-    max-width: 52ch;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--muted-foreground);
-    text-wrap: pretty;
-  }
-  .vd-tinta-valor {
-    color: var(--bronze-sombra);
-  }
-  .vd-tinta-nome {
-    color: var(--foreground);
-  }
-  .vd-tinta-chave {
-    color: var(--agua-rasa);
-  }
-  .vd-tinta-apagado {
-    color: var(--muted-foreground);
-  }
-  [data-tom="escuro"] .vd-tinta-valor {
-    color: var(--bronze-brilho);
-  }
-  [data-tom="escuro"] .vd-tinta-chave {
-    color: var(--muted-foreground);
   }
 
   /* ---------- brilho do botão principal ----------
@@ -856,7 +730,7 @@
     left: 4px;
     width: calc((100% - 8px) / var(--n));
     border-radius: 999px;
-    background: rgb(243 239 236 / 0.16);
+    background: rgb(242 245 249 / 0.16);
     box-shadow:
       inset 0 1px 0 rgb(255 255 255 / 0.2),
       0 4px 12px -4px var(--sombra);
@@ -1025,6 +899,27 @@ header[data-fundo="claro"] .vd-barra {
 header[data-fundo="misto"] .vd-barra {
   --vidro-filtro: saturate(170%) brightness(0.45);
   background-color: rgb(15 42 71 / 0.72);
+}
+/* O limitante da rolagem: enquanto a página rola (header[data-rolando], ilhas/cabecalho-retratil.tsx), a pílula, a única
+   superfície de vidro sob a qual a página passa, deixa o desfoque e a refração (a da ilha VidroLiquido vem no style e
+   perde para o !important) e fica com uma tinta densa, da cor que o vidro dá sobre o fundo liso de cada tom. O desfoque
+   e a refração eram uma passada a mais da GPU a cada quadro, e a troca de tom com transição repintava a pílula na linha
+   principal por 450 ms a cada emenda de seção: 02/11, com GPU fraca, de 25-27% para 69-80% das batidas em dia na mesa.
+   Sem transição, o texto nunca passa por um tom intermediário ilegível. Parada, a tinta volta ao vidro na transição de
+   450 ms da pílula, e o desfoque reaparece por baixo dela. */
+header[data-rolando] .vd-barra {
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  background-color: rgb(10 29 50 / 0.94);
+}
+header[data-rolando][data-fundo="claro"] .vd-barra {
+  background-color: rgb(255 255 255 / 0.94);
+}
+header[data-rolando][data-fundo="misto"] .vd-barra {
+  background-color: rgb(15 42 71 / 0.94);
+}
+header[data-rolando] :is(.vd-barra, .vd-barra *) {
+  transition: none !important;
 }
 
 /* Onde o navegador não desfoca o fundo, ou o sistema pede menos

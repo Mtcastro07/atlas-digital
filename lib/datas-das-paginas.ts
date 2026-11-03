@@ -6,7 +6,7 @@ import path from "node:path";
 // dela. O Google só aceita datas "consistently and verifiably accurate" (app/sitemap.ts). A Hostinger compila sem o
 // histórico, e um clone raso daria a todas a data do último commit: nesses casos vale conteudo/medidas/datas.json, as
 // mesmas datas gravadas por ferramentas/gravar-datas.mjs antes de publicar. Só o servidor a chama (o sitemap.xml e a
-// linha <lastmod> de /o-trabalho). Conferido por ferramentas/conferir-sistema.mjs, que acusa o arquivo atrasado.
+// janela das páginas de /o-trabalho). Conferido por ferramentas/conferir-sistema.mjs, que acusa o arquivo atrasado.
 const GRAVADAS = "conteudo/medidas/datas.json";
 
 // shortcut: o conteudo/site.ts e os CSS comuns entram na lista das sete, e uma mudança neles muda a data de todas (o
@@ -85,7 +85,6 @@ const ARQUIVOS: Record<string, string[]> = {
     "conteudo/duvidas.ts",
     "conteudo/planos.ts",
     "app/paginas/duvidas.css",
-    "conteudo/paginas/duvidas.ts",
   ],
 };
 

@@ -18,8 +18,8 @@ export const metadata: Metadata = { title: "Página não encontrada · Atlas Dig
 export default function NaoEncontrada() {
   return (
     // id="conteudo": o destino do vínculo "Ir para o conteúdo", do layout raiz.
-    // vd-materia (17/10, segundo fechamento com o Impeccable): a água do site, com o grão e a rampa, como toda cena no
-    // navy; até então, o navy chapado, a única tela do site sem a matéria (a marca P2; a avaliação A).
+    // vd-materia (17/10, segundo fechamento com o Impeccable): a água do site, com a rampa, como toda cena no navy;
+    // até então, o navy chapado (a marca P2; a avaliação A).
     <main id="conteudo" tabIndex={-1} data-tom="escuro" className="vd-materia grid min-h-svh items-center text-center">
       <Envelope className="py-16">
         <a
@@ -33,7 +33,7 @@ export default function NaoEncontrada() {
         <p className="sr-only">Erro 404</p>
         <h1 className="mx-auto mt-14 max-w-[14ch] text-display">Esta página não existe.</h1>
         <Lide className="mx-auto mt-6 max-w-[44ch]">
-          O endereço pode ter mudado, ou foi digitado com algum caractere a mais. O restante do site continua no lugar.
+          O endereço pode ter mudado ou estar digitado errado. O resto do site continua aqui.
         </Lide>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
           <a href="/" className={buttonVariants({ size: "lg" })}>
