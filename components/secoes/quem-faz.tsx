@@ -21,8 +21,8 @@ type Foto = { src: string; kb: number };
  * nova entra na próxima compilação (no npm run dev, na próxima carga).
  */
 function fotoDe(nome: string): Foto | null {
-  // O retrato recortado (R10, 02/11; ferramentas/tratar-retratos.mjs): o mesmo recorte nos três, com a cor da foto.
-  if (existsSync(path.join(process.cwd(), "public", "socios", "tratados", `${nome}.webp`))) return { src: `/socios/tratados/${nome}.webp`, kb: 0 };
+  // Desde 03/11, a foto inteira, e não o recorte fechado no rosto de public/socios/tratados/ (pedido do usuário: "que
+  // envolva mais a foto do que apenas a cara"); o quadro 4:5 do CSS tira só as laterais.
   for (const extensao of EXTENSOES) {
     const arquivo = path.join(process.cwd(), "public", "socios", nome + extensao);
     if (existsSync(arquivo)) return { src: `/socios/${nome}${extensao}`, kb: Math.round(statSync(arquivo).size / 1024) };
@@ -47,10 +47,11 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
  * kit (producao/esteira/01-processo.md; as fontes, célula a célula, em conteudo/paginas/o-atlas.ts).
  * - O h2 e o lide de hoje, literais. A formação e a origem, ditas uma vez na página, abrem a seção, ligadas à história
  *   e ao nome, logo acima: a sala de aula é a da UFF, e o nome traduz o propósito.
- * - Os três retratos em toda a largura do Envelope, no mesmo recorte (ferramentas/tratar-retratos.mjs). O movimento é
- *   a passiva P13: a aproximação lenta de cada retrato e a luz que passa na borda, sem véu sobre o rosto.
- * - O nome completo em Archivo 500; a função embaixo, no bronze do vínculo (o site mostra funções, e não títulos:
- *   01-processo.md:24); o compromisso de cada um [provisório], no apagado.
+ * - Os três retratos em toda a largura do Envelope, como retrato editorial (03/11, pedido do usuário: "mais mínimo…
+ *   clean, luxury, e que envolva mais a foto do que apenas a cara"): a foto inteira num quadro 4:5, sem moldura nem
+ *   borda de bronze. O movimento é a passiva P13, só a aproximação lenta, sem véu sobre o rosto.
+ * - Embaixo, só o nome completo e a função, no apagado (o site mostra funções, e não títulos: 01-processo.md:24). O
+ *   compromisso de cada um [provisório] saiu da vista em 03/11; o texto segue em conteudo/paginas/o-atlas.ts.
  * - A rota: as cinco etapas numa linha, com o marcador que anda (a passiva P16). Na mesa, uma <table> de verdade, com uma
  *   coluna por etapa: em cima, quem responde; embaixo, quem participa. No celular, a mesma rota na vertical, numa lista.
  * - A ação: "Falar com os sócios no WhatsApp", na pílula de metal (sem o halo); o atalho flutuante some enquanto ela
@@ -59,7 +60,7 @@ function avisoDaVaga(nome: string, foto: Foto | null) {
  * curto de Gabriel e a chapa navy com o vidro líquido, cuja nota sobre o nome passou à origem (secoes/historia.tsx).
  */
 export function QuemFaz() {
-  const { ordem, compromissos, etapas } = quemFazDetalhe;
+  const { ordem, etapas } = quemFazDetalhe;
   const socios = ordem.map((i) => quemFaz.socios[i]);
   const fotos = socios.map((socio) => fotoDe(socio.foto));
   /** O nome e o texto de quem responde pela etapa; os outros, com o nome e o que fazem nela. Sem foto na rota (03/11). */
@@ -87,17 +88,15 @@ export function QuemFaz() {
                   <span className="vd-retrato-foto">
                     {foto ? (
                       <span className="vd-retrato-lente mov-passiva">
-                        <img src={foto.src} alt="" width={640} height={640} loading="lazy" decoding="async" />
+                        <img src={foto.src} alt="" width={480} height={480} sizes="(min-width: 768px) 30vw, 100vw" loading="lazy" decoding="async" />
                       </span>
                     ) : (
                       socio.iniciais
                     )}
                   </span>
-                  <span className="vd-retrato-luz mov-passiva" />
                 </span>
                 <h3 className="vd-socio-nome">{socio.nome}</h3>
                 <p className="vd-socio-funcao">{socio.funcao}</p>
-                <p className="vd-socio-compromisso">{compromissos[s]}</p>
                 {aviso && (
                   <p className="mt-1.5 text-base text-accent">
                     {aviso.rotulo} {aviso.caminho}
