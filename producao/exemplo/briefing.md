@@ -10,6 +10,7 @@
 - **Quem fez:** — (direção do nicho, `producao/esteira/nichos/pet-shop.md`)
 - **Material completo no grupo em:** — (site de exemplo: sem o relógio das 24 horas)
 - **Plano e módulos:** Essencial, sem módulo
+- **Nicho:** pet-shop
 
 ## 1. O negócio
 

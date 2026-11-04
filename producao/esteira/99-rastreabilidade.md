@@ -496,3 +496,15 @@ Um crítico de fora da frente revisou o que está acima e achou sete defeitos. C
 
 **O que não saiu, e por quê.** As pendências da sociedade (o contador, o CNPJ, o advogado, a Presença, a Hostinger) seguem na seção 5: travam a publicação de todo site de cliente. Também ficam no kit as citações do site do Atlas como origem de uma regra ("medido no site do Atlas") e `../referencias/atlas/`, o código de estudo: são a prova das regras, e não pendências.
 
+## 15. Registro de 04.11.2026: o prompt sem campos e o CSV
+
+**A origem.** Pedidos do usuário de 04.11.2026: o papel de "engenharia de software e arquitetura de sistemas com foco em web design"; "reescreva o prompt sem campos e aceite CSV", com o caminho do arquivo como único campo, e "veja bem, pelo formulário, o que pode ou não pode retirar".
+
+| O que mudou | Onde |
+|---|---|
+| O papel: engenheiro de software sênior e arquiteto de sistemas web, com foco em design de sites, preso ao tamanho do plano e à regra de abstração do kit | `../claude/prompt-modelo.md` (1.1); `../claude/estudo-de-prompts.md`, seção 2 |
+| O prompt 2.0: um só campo, o caminho do formulário (PDF ou CSV); o resto vem do formulário ou tem padrão fixo (quem conduz, pelo git; quem aprova, pela regra do kit; a parada na etapa 4; o Figma do formulário, ou criado) | `../claude/prompt-modelo.md`, com a tabela "O que o prompt não pergunta" |
+| O nicho na capa e o desenho no Figma no Bloco 6, no formulário e no modelo; o CSV de formulário digital, com o número do bloco em cada pergunta e em UTF-8 | `modelos/formulario-de-briefing.html`; `modelos/briefing.md`; `../exemplo/briefing.md` |
+
+**Conferido:** o `novo-site` gera o site de exemplo com e sem briefing, sem erro.
+

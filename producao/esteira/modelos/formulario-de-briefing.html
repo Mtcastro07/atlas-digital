@@ -8,8 +8,9 @@
   Formulário de briefing 2.0 (03.11.2026), a versão impressa de producao/esteira/modelos/briefing.md:
   a mesma numeração de blocos e os mesmos campos ●, para a transcrição ser direta. O porquê de cada
   campo está em producao/esteira/02-briefing.md. Substitui o formulário 1.0 (atlas-formulario-briefing.html).
-  Depois da visita: transcreva para briefing.md (o modelo), na raiz do projeto, e fotografe estas páginas
-  para material/. Não deixe este arquivo nem a foto dele na raiz: o novo-site só reconhece o projeto vazio
+  Depois da visita: o PDF (escaneado ou preenchido na tela) ou o CSV de um formulário digital vai para
+  material/; o Claude Code o transcreve para briefing.md (o modelo). No formulário digital, cada pergunta
+  leva o número do bloco no título ("1 · Nome de fachada"), e o CSV sai em UTF-8. Não deixe este arquivo nem a foto dele na raiz: o novo-site só reconhece o projeto vazio
   com producao/, ordem.json, briefing.md e material/.
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,6 +113,7 @@ footer .meta{border-top:none;padding-top:0;margin-top:0}
     <p class="lide">Preenchido pelo sócio de vendas, conversando com o dono, no estabelecimento. É a origem de cada fato do site: o que não estiver aqui não entra no site.</p>
     <div class="meta">
       <span><b>nome de fachada |</b> ________________________</span>
+      <span><b>nicho |</b> ______________________</span>
       <span><b>quem fez (nome completo) |</b> ______________________</span>
       <span><b>visita |</b> ____/____/______ às ____h____</span>
       <span><b>material completo no grupo |</b> ____/____/______ às ____h____</span>
@@ -129,6 +131,7 @@ footer .meta{border-top:none;padding-top:0;margin-top:0}
     <p><strong>Duração:</strong> 30 minutos no Essencial, 45 no Profissional, 1 hora no Completo, mais as fotos. É conversa, não interrogatório: pergunte com as suas palavras.</p>
     <p><strong>Campos com ● são bloqueantes.</strong> Sem eles o site não sai, e a visita não termina sem eles. As marcas <span class="selo">P</span> e <span class="selo">C</span> indicam o que só vale no Profissional e no Completo.</p>
     <p><strong>"Não sei" é resposta útil:</strong> significa que o Atlas decide. Em branco, não.</p>
+    <p><strong>O nicho, na capa:</strong> um dos doze do kit (construção, nutrição, barbearia, odontologia, restaurante, pet shop, oficina, academia, psicologia, medicina, imobiliária, advocacia) ou "novo: &lt;ramo&gt;".</p>
     <p><strong>Antes da visita, leia o arquivo do nicho</strong> (<code>producao/esteira/nichos/&lt;nicho&gt;.md</code>, seção 4) e copie para o Bloco 12 os campos "bloqueante neste nicho". Nos nichos de saúde, de direito e no pet shop com veterinário, o Bloco 4 é obrigatório.</p>
     <p><strong>Fotos e logotipo chegam hoje.</strong> No Essencial, o cliente envia as fotos, orientado por você pelo protocolo; no Profissional e no Completo, você as faz no local. "Depois eu mando" é a causa número um de atraso.</p>
     <p><strong>Trate por "o senhor" ou "a senhora",</strong> conforme a pessoa.</p>
@@ -393,6 +396,13 @@ footer .meta{border-top:none;padding-top:0;margin-top:0}
     <div class="item-rep"><span class="num">3.</span><div class="linha-resp"></div></div>
     <div class="item-rep"><span class="num">4.</span><div class="linha-resp"></div></div>
     <div class="item-rep"><span class="num">5.</span><div class="linha-resp"></div></div>
+  </div>
+
+  <div class="campo">
+    <span class="rot">Desenho no Figma</span>
+    <div class="perg">O senhor já tem algum desenho do site, ou da marca, no Figma?</div>
+    <div class="dica">Se tiver, anote o endereço do arquivo e peça o acesso de leitura para o Atlas. Se não tiver, o Atlas cria o arquivo: o cliente não precisa ter Figma.</div>
+    <div class="linha-resp"></div>
   </div>
 
   <div class="duplo">

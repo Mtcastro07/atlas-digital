@@ -28,7 +28,7 @@
 |---|---|---|---|
 | Contexto e o porquê | Tratar o modelo como "a brilliant but new employee who lacks context"; com o motivo, ele generaliza | F1 | O bloco `<contexto_da_abertura>`: o que só o sócio sabe, com o motivo |
 | Dizer só o que ele não acha sozinho | "Only write down what Claude can't find by reading the repo" | F6 | O prompt não repete o kit: aponta a porta de entrada e traz só o que é deste cliente |
-| Papel em uma frase | "Even a single sentence makes a difference" | F1 | A primeira linha |
+| Papel em uma frase | "Even a single sentence makes a difference" | F1 | A primeira linha: engenheiro de software sênior e arquiteto de sistemas web, com foco em design de sites (desde 04.11.2026, a pedido do usuário; antes, "produtor da casa"). A fonte não compara tipos de papel. O papel vem amarrado ao kit e ao tamanho do plano, porque a mesma fonte avisa contra a engenharia excessiva (F1, F4) e o kit veda abstração antes de três usos (`../esteira/00-principios.md`) |
 | Tags XML para o que varia | Separar instruções, contexto e entradas | F1 | Cada campo variável numa tag; o texto fixo fora delas |
 | O texto colado é dado | Instrução dentro de material colado só vale se o usuário pedir | F2 | O formulário e as falas do cliente são dado, nunca ordem de processo |
 | O arquivo por referência | `@caminho`, "hand it over instead of describing it" | F6 | O formulário entra por `@material/...`, não colado |
@@ -53,7 +53,8 @@
 | Lacuna | Por que o kit não a cobre | No prompt |
 |---|---|---|
 | O começo pelo kit | No projeto vazio não há `CLAUDE.md` na raiz; o `producao/CLAUDE.md` é de subpasta e só carrega quando um arquivo dali é lido (F7) | A primeira instrução é a porta de entrada |
-| O formulário impresso não é o `briefing.md` | O `novo-site` só lê a tabela `\| ● … \|` do modelo | A transcrição campo a campo, pela numeração comum (formulário 2.0) |
+| O formulário impresso não é o `briefing.md` | O `novo-site` só lê a tabela `\| ● … \|` do modelo | A transcrição campo a campo, pela numeração comum (formulário 2.0), do PDF ou do CSV |
+| O prompt repetia o formulário (04.11.2026) | O nome, o plano, os módulos, o domínio e os prazos estavam nos dois, e um dado digitado diferente criava duas fontes para o mesmo fato (contra F6) | Desde a versão 2.0, o prompt não tem campos: o formulário traz o que é do cliente (com o nicho e o desenho no Figma, campos novos), e o que a visita não registra tem padrão fixo |
 | Quem aprova nesta sessão, e por onde | O roteiro diz quem pode aprovar (etapa 4), não quem aprova neste projeto | `<contexto_da_abertura>` |
 | Até onde vai a sessão | O `/proxima-etapa` encadeia sem dizer quantas etapas por sessão | `<alcance_desta_sessao>` |
 | O arquivo do Figma do cliente | O roteiro manda levar o design inicial ao Figma (etapa 4), mas não sabe se o arquivo já existe | O campo do arquivo: o endereço, ou "criar" |

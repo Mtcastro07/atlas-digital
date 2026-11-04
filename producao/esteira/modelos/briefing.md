@@ -4,7 +4,8 @@
   briefing.md na raiz do repositório do cliente. ● = bloqueante: sem ele o site
   não sai. "Não sei" é resposta válida (o Atlas decide); em branco, não.
   A versão impressa, para a visita, é formulario-de-briefing.html (2.0, 03.11.2026), com a mesma
-  numeração de blocos: transcreva-a para cá campo a campo, sem deduzir o que ficou em branco, e
+  numeração de blocos; chega em PDF, ou em CSV de um formulário digital com o número do bloco em cada
+  pergunta: transcreva-a para cá campo a campo, sem deduzir o que ficou em branco, e
   guarde a foto das páginas em material/ (nunca na raiz: o novo-site só reconhece o projeto vazio
   com producao/, ordem.json, briefing.md e material/). Duração da visita: 30 min no Essencial,
   45 no Profissional, 1 h no Completo, mais as fotos.
@@ -16,6 +17,7 @@
 - **Quem fez:** [nome completo do sócio]
 - **Material completo no grupo em:** [dia.mês.ano, hora] ← o relógio das 24 horas começa aqui
 - **Plano e módulos:** [Essencial · Profissional · Completo] + [Agenda · Presença · Página adicional ×n]
+- **Nicho:** [um dos doze de `producao/00-do-pedido-ao-site.md`, seção 3, ou "novo: <ramo>"]
 
 ## 1. O negócio
 
@@ -90,6 +92,7 @@
 | ● Referências do mundo físico fotografadas (mínimo cinco: letreiro, fachada, material, ferramenta, uniforme, embalagem, impresso) | 1. <br>2. <br>3. <br>4. <br>5. |
 | Cores da empresa | |
 | O que o dono **não** quer (cor, estilo, coisa) | |
+| Desenho no Figma (endereço do arquivo, ou "não há": o Atlas cria) | |
 
 ## 7. Material visual
 
